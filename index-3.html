@@ -10,22 +10,22 @@
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
 <style>
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;height:100%;overflow:hidden}
   body{overscroll-behavior:none}
-  @keyframes qzpulse{0%,100%{stroke-width:1.4;filter:drop-shadow(0 0 0 rgba(255,159,28,0))}50%{stroke-width:2.6;filter:drop-shadow(0 0 7px rgba(255,159,28,.85))}}
-  @keyframes qzrpulse{0%,100%{stroke-width:5;filter:drop-shadow(0 0 0 rgba(255,159,28,0))}50%{stroke-width:7;filter:drop-shadow(0 0 9px rgba(255,159,28,.9))}}
+  @keyframes qzpulse{0%,100%{stroke-width:1.4;filter:drop-shadow(0 0 0 rgba(76,125,255,0))}50%{stroke-width:2.6;filter:drop-shadow(0 0 7px rgba(76,125,255,.85))}}
+  @keyframes qzrpulse{0%,100%{stroke-width:5;filter:drop-shadow(0 0 0 rgba(76,125,255,0))}50%{stroke-width:7;filter:drop-shadow(0 0 9px rgba(76,125,255,.9))}}
   @keyframes qzspin{to{transform:rotate(360deg)}}
   @keyframes qzpop{0%{transform:scale(.7);opacity:0}60%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
   @keyframes qzfade{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:translateY(0)}}
   .qz-target{animation:qzpulse 1.1s ease-in-out infinite}
   .qz-rtarget{animation:qzrpulse 1.1s ease-in-out infinite}
   .qz-ov::-webkit-scrollbar{width:8px;height:8px}
-  .qz-ov::-webkit-scrollbar-thumb{background:#E7D8C6;border-radius:8px}
+  .qz-ov::-webkit-scrollbar-thumb{background:#DDD9D2;border-radius:8px}
   .park-learn-strip button{white-space:nowrap}
   .atlas-shell{height:100dvh;min-height:0 !important;overflow:hidden;padding:clamp(8px,2vw,16px) clamp(8px,2vw,18px) !important}
   .atlas-header{flex:none;margin-bottom:10px !important}
@@ -59,7 +59,7 @@
   }
 </style>
 </helmet>
-<div data-screen-label="Maps Arcade" class="atlas-shell" style="min-height:100vh;width:100%;display:flex;flex-direction:column;align-items:center;font-family:Nunito,sans-serif;color:#2B2620;background:radial-gradient(1200px 600px at 80% -10%,#FFF3E0 0%,rgba(255,243,224,0) 60%),linear-gradient(165deg,#FFF4E6 0%,#FFE7CF 55%,#FFDDC1 100%);padding:clamp(12px,3vw,22px) clamp(10px,3vw,26px) 32px">
+<div data-screen-label="Maps Arcade" class="atlas-shell" style="min-height:100vh;width:100%;display:flex;flex-direction:column;align-items:center;font-family:'Plus Jakarta Sans',sans-serif;color:#161519;background:radial-gradient(1200px 600px at 80% -10%,#E6E2FB 0%,rgba(255,243,224,0) 60%),linear-gradient(165deg,#EAE7E1 0%,#E3DFD8 55%,#DCD7CF 100%);padding:clamp(12px,3vw,22px) clamp(10px,3vw,26px) 32px">
 
   <header class="atlas-header" style="width:100%;max-width:1180px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px">
     <button onClick="{{ onHome }}" title="Home" style="display:flex;align-items:center;gap:13px;border:none;background:transparent;cursor:pointer;padding:0">
@@ -67,27 +67,27 @@
         <svg width="26" height="26" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="#fff" stroke-width="2"></circle><ellipse cx="12" cy="12" rx="4.4" ry="10" fill="none" stroke="#fff" stroke-width="2"></ellipse><line x1="2" y1="12" x2="22" y2="12" stroke="#fff" stroke-width="2"></line></svg>
       </div>
       <div style="display:flex;flex-direction:column;line-height:1;text-align:left">
-        <span style="font-family:Fredoka,sans-serif;font-weight:700;font-size:23px;letter-spacing:.5px;color:#2B2620;white-space:nowrap">MAPS ARCADE</span>
-        <span style="font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#C7A98F;margin-top:3px">{{ tagline }}</span>
+        <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:23px;letter-spacing:.5px;color:#161519;white-space:nowrap">MAPS ARCADE</span>
+        <span style="font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#A9A5B0;margin-top:3px">{{ tagline }}</span>
       </div>
     </button>
 
     <sc-if value="{{ screenPlay }}">
       <div style="display:flex;align-items:center;gap:12px">
-        <span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:16px;color:#fff;background:{{ contColor }};padding:7px 16px;border-radius:11px;box-shadow:0 6px 14px -7px rgba(0,0,0,.5)">{{ topicLabel }}</span>
-        <span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:15px;color:#B79A82">Question {{ qNum }} / {{ qTotal }}</span>
+        <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:16px;color:#fff;background:{{ contColor }};padding:7px 16px;border-radius:11px;box-shadow:0 6px 14px -7px rgba(0,0,0,.5)">{{ topicLabel }}</span>
+        <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:15px;color:#9A96A1">Question {{ qNum }} / {{ qTotal }}</span>
       </div>
     </sc-if>
 
     <div class="atlas-header-actions" style="display:flex;align-items:center;gap:9px">
       <sc-if value="{{ screenPlay }}">
-        <div style="display:flex;flex-direction:column;align-items:flex-start;background:#FFFFFF;border:1.5px solid #F0E4D6;border-radius:14px;padding:8px 14px;min-width:88px;box-shadow:0 6px 16px -10px rgba(120,70,30,.4)" class="atlas-score">
-          <span style="font-size:11px;font-weight:800;letter-spacing:1px;color:#C7A98F;text-transform:uppercase">Score</span>
-          <span style="font-family:Fredoka,sans-serif;font-weight:700;font-size:22px;color:#2B2620;line-height:1.1">{{ score }}</span>
+        <div style="display:flex;flex-direction:column;align-items:flex-start;background:#FFFFFF;border:1.5px solid #EBE8E2;border-radius:14px;padding:8px 14px;min-width:88px;box-shadow:0 6px 16px -10px rgba(120,70,30,.4)" class="atlas-score">
+          <span style="font-size:11px;font-weight:800;letter-spacing:1px;color:#A9A5B0;text-transform:uppercase">Score</span>
+          <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:22px;color:#161519;line-height:1.1">{{ score }}</span>
         </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-start;background:#FFFFFF;border:1.5px solid #FBE6C2;border-radius:14px;padding:8px 14px;min-width:88px;box-shadow:0 6px 16px -10px rgba(255,176,32,.55)" class="atlas-streak">
+        <div style="display:flex;flex-direction:column;align-items:flex-start;background:#FFFFFF;border:1.5px solid #EDEAE4;border-radius:14px;padding:8px 14px;min-width:88px;box-shadow:0 6px 16px -10px rgba(255,176,32,.55)" class="atlas-streak">
           <span style="font-size:11px;font-weight:800;letter-spacing:1px;color:#E0A94B;text-transform:uppercase">Streak</span>
-          <span style="font-family:Fredoka,sans-serif;font-weight:700;font-size:22px;color:#E8920E;line-height:1.1">{{ streak }}</span>
+          <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:22px;color:#4C7DFF;line-height:1.1">{{ streak }}</span>
         </div>
       </sc-if>
       <button onClick="{{ onToggleSound }}" title="{{ soundTitle }}" style="{{ soundBtnStyle }}" class="atlas-sound">
@@ -99,27 +99,27 @@
   <div class="atlas-frame" style="width:100%;max-width:1180px;background:#FFFFFF;border-radius:26px;box-shadow:0 24px 60px -26px rgba(80,50,20,.45);border:1px solid #fff;overflow:hidden;position:relative">
 
     <sc-if value="{{ screenPlay }}">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding:clamp(12px,3vw,20px) clamp(14px,4vw,26px) clamp(10px,2.5vw,16px);border-bottom:1px solid #F5ECE0">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding:clamp(12px,3vw,20px) clamp(14px,4vw,26px) clamp(10px,2.5vw,16px);border-bottom:1px solid #F1EFEA">
         <div style="display:flex;flex-direction:column;gap:5px;flex:1 1 220px;min-width:0">
-          <span style="font-size:12px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:#C7A98F">{{ promptLabel }}</span>
+          <span style="font-size:12px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:#A9A5B0">{{ promptLabel }}</span>
           <sc-if value="{{ modeLocate }}">
-            <span style="font-family:Fredoka,sans-serif;font-weight:700;font-size:clamp(26px,5.5vw,40px);line-height:1.05;color:#2B2620;overflow-wrap:anywhere">{{ promptName }}</span>
+            <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:clamp(26px,5.5vw,40px);line-height:1.05;color:#161519;overflow-wrap:anywhere">{{ promptName }}</span>
           </sc-if>
           <sc-if value="{{ modeName }}">
-            <span style="font-family:Fredoka,sans-serif;font-weight:700;font-size:clamp(22px,5vw,32px);line-height:1.05;color:#2B2620">{{ nameModePrompt }}</span>
+            <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:clamp(22px,5vw,32px);line-height:1.05;color:#161519">{{ nameModePrompt }}</span>
           </sc-if>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex:1 1 240px;min-width:200px;max-width:300px">
-          <div style="display:flex;align-items:center;gap:5px;background:#FFF8F0;border:1.5px solid #F4E2D0;border-radius:11px;padding:4px;position:relative">
-            <sc-if value="{{ modeLocate }}"><div style="position:absolute;top:4px;left:4px;width:84px;height:28px;background:#fff;border-radius:8px;box-shadow:0 3px 8px -3px rgba(120,70,30,.4);border:1px solid #F0DCC8"></div></sc-if>
-            <sc-if value="{{ modeName }}"><div style="position:absolute;top:4px;left:92px;width:84px;height:28px;background:#fff;border-radius:8px;box-shadow:0 3px 8px -3px rgba(120,70,30,.4);border:1px solid #F0DCC8"></div></sc-if>
-            <button onClick="{{ onPlayModeLocate }}" style="position:relative;width:84px;height:28px;border:none;background:transparent;cursor:pointer;font-family:Fredoka,sans-serif;font-weight:600;font-size:13px;color:#5A4A3C;border-radius:8px">Find it</button>
-            <button onClick="{{ onPlayModeName }}" style="position:relative;width:84px;height:28px;border:none;background:transparent;cursor:pointer;font-family:Fredoka,sans-serif;font-weight:600;font-size:13px;color:#5A4A3C;border-radius:8px">Name it</button>
+          <div style="display:flex;align-items:center;gap:5px;background:#F7F5F1;border:1.5px solid #F4E2D0;border-radius:11px;padding:4px;position:relative">
+            <sc-if value="{{ modeLocate }}"><div style="position:absolute;top:4px;left:4px;width:84px;height:28px;background:#fff;border-radius:8px;box-shadow:0 3px 8px -3px rgba(120,70,30,.4);border:1px solid #E6E2DB"></div></sc-if>
+            <sc-if value="{{ modeName }}"><div style="position:absolute;top:4px;left:92px;width:84px;height:28px;background:#fff;border-radius:8px;box-shadow:0 3px 8px -3px rgba(120,70,30,.4);border:1px solid #E6E2DB"></div></sc-if>
+            <button onClick="{{ onPlayModeLocate }}" style="position:relative;width:84px;height:28px;border:none;background:transparent;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:13px;color:#4A4752;border-radius:8px">Find it</button>
+            <button onClick="{{ onPlayModeName }}" style="position:relative;width:84px;height:28px;border:none;background:transparent;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:13px;color:#4A4752;border-radius:8px">Name it</button>
           </div>
           <div style="display:flex;align-items:center;gap:8px;width:100%">
-            <span style="font-size:11px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:#C7A98F">Combo</span>
-            <span style="font-family:Fredoka,sans-serif;font-weight:700;font-size:15px;color:#E8920E">{{ multLabel }}</span>
-            <div style="flex:1;height:8px;border-radius:6px;background:#FBEFDD;overflow:hidden"><div style="{{ comboFillStyle }}"></div></div>
+            <span style="font-size:11px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:#A9A5B0">Combo</span>
+            <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:15px;color:#4C7DFF">{{ multLabel }}</span>
+            <div style="flex:1;height:8px;border-radius:6px;background:#F2F0EA;overflow:hidden"><div style="{{ comboFillStyle }}"></div></div>
           </div>
         </div>
       </div>
@@ -131,7 +131,7 @@
       <sc-if value="{{ loading }}">
         <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#F4FAFC;z-index:8">
           <div style="width:42px;height:42px;border-radius:50%;border:4px solid #DCEBF2;border-top-color:#7FB4D6;animation:qzspin 1s linear infinite"></div>
-          <span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:16px;color:#8FB0C2">Unrolling the map…</span>
+          <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:16px;color:#8FB0C2">Unrolling the map…</span>
         </div>
       </sc-if>
 
@@ -145,9 +145,9 @@
 
       <sc-if value="{{ screenPlay }}">
         <div style="position:absolute;right:16px;bottom:16px;display:flex;flex-direction:column;gap:8px;z-index:7" class="atlas-zoom">
-          <button onClick="{{ onZoomIn }}" title="Zoom in" style="width:42px;height:42px;border-radius:12px;border:1.5px solid #E7DDCF;background:#fff;color:#5A4A3C;font-family:Fredoka,sans-serif;font-weight:600;font-size:22px;line-height:1;cursor:pointer;box-shadow:0 6px 16px -8px rgba(80,50,20,.5)" style-hover="background:#F6EFE6">+</button>
-          <button onClick="{{ onZoomOut }}" title="Zoom out" style="width:42px;height:42px;border-radius:12px;border:1.5px solid #E7DDCF;background:#fff;color:#5A4A3C;font-family:Fredoka,sans-serif;font-weight:600;font-size:24px;line-height:1;cursor:pointer;box-shadow:0 6px 16px -8px rgba(80,50,20,.5)" style-hover="background:#F6EFE6">&minus;</button>
-          <button onClick="{{ onZoomReset }}" title="Reset view" style="width:42px;height:42px;border-radius:12px;border:1.5px solid #E7DDCF;background:#fff;color:#8A7563;font-family:Fredoka,sans-serif;font-weight:600;font-size:16px;line-height:1;cursor:pointer;box-shadow:0 6px 16px -8px rgba(80,50,20,.5)" style-hover="background:#F6EFE6">&#8862;</button>
+          <button onClick="{{ onZoomIn }}" title="Zoom in" style="width:42px;height:42px;border-radius:12px;border:1.5px solid #E4E1DB;background:#fff;color:#4A4752;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:22px;line-height:1;cursor:pointer;box-shadow:0 6px 16px -8px rgba(80,50,20,.5)" style-hover="background:#F2F0EC">+</button>
+          <button onClick="{{ onZoomOut }}" title="Zoom out" style="width:42px;height:42px;border-radius:12px;border:1.5px solid #E4E1DB;background:#fff;color:#4A4752;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:24px;line-height:1;cursor:pointer;box-shadow:0 6px 16px -8px rgba(80,50,20,.5)" style-hover="background:#F2F0EC">&minus;</button>
+          <button onClick="{{ onZoomReset }}" title="Reset view" style="width:42px;height:42px;border-radius:12px;border:1.5px solid #E4E1DB;background:#fff;color:#6E6A76;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:16px;line-height:1;cursor:pointer;box-shadow:0 6px 16px -8px rgba(80,50,20,.5)" style-hover="background:#F2F0EC">&#8862;</button>
         </div>
       </sc-if>
 
@@ -155,9 +155,9 @@
         <div style="position:absolute;top:16px;left:16px;z-index:9;max-width:62%;display:flex;align-items:center;gap:11px;background:#FFFFFF;border:1.5px solid #EFE2D2;border-radius:14px;padding:11px 15px;box-shadow:0 12px 28px -12px rgba(40,20,0,.4);animation:qzfade .3s ease both">
           <span style="{{ sourceDotStyle }}"></span>
           <span style="display:flex;flex-direction:column;line-height:1.25;text-align:left">
-            <span style="font-size:10.5px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;color:#C7A98F">Source &middot; {{ sourceTypeLabel }}</span>
-            <span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:16px;color:#2B2620">{{ sourceName }}</span>
-            <span style="font-size:12.5px;font-weight:600;color:#9C8A78">{{ sourcePlace }}</span>
+            <span style="font-size:10.5px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;color:#A9A5B0">Source &middot; {{ sourceTypeLabel }}</span>
+            <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:16px;color:#161519">{{ sourceName }}</span>
+            <span style="font-size:12.5px;font-weight:600;color:#8B8793">{{ sourcePlace }}</span>
           </span>
         </div>
       </sc-if>
@@ -172,22 +172,22 @@
       <sc-if value="{{ screenHome }}">
         <div class="atlas-panel-overlay qz-ov" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,250,244,.92);backdrop-filter:blur(3px);z-index:6;animation:qzfade .3s ease both;padding:24px">
           <div style="width:min(880px,100%);text-align:center">
-            <h1 style="font-family:Fredoka,sans-serif;font-weight:700;font-size:clamp(28px,5.5vw,42px);margin:0 0 6px;color:#2B2620;line-height:1.1">Maps Arcade</h1>
-            <p style="margin:0 0 26px;font-size:15px;font-weight:600;color:#9C8A78">Pick a map collection to practice.</p>
+            <h1 style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:clamp(28px,5.5vw,42px);margin:0 0 6px;color:#161519;line-height:1.1">Maps Arcade</h1>
+            <p style="margin:0 0 26px;font-size:15px;font-weight:600;color:#8B8793">Pick a map collection to practice.</p>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px">
-              <button onClick="{{ onPickWorld }}" style="display:flex;align-items:stretch;text-align:left;background:#fff;border:1.5px solid #F0E4D6;border-radius:18px;overflow:hidden;cursor:pointer;box-shadow:0 12px 28px -16px rgba(80,50,20,.5);transition:transform .15s, box-shadow .15s;padding:0" style-hover="transform:translateY(-3px);box-shadow:0 18px 36px -18px rgba(80,50,20,.6)">
+              <button onClick="{{ onPickWorld }}" style="display:flex;align-items:stretch;text-align:left;background:#fff;border:1.5px solid #EBE8E2;border-radius:18px;overflow:hidden;cursor:pointer;box-shadow:0 12px 28px -16px rgba(80,50,20,.5);transition:transform .15s, box-shadow .15s;padding:0" style-hover="transform:translateY(-3px);box-shadow:0 18px 36px -18px rgba(80,50,20,.6)">
                 <div style="width:8px;background:linear-gradient(180deg,#2FA37A,#2C9AD6);flex:none"></div>
                 <div style="display:flex;flex-direction:column;gap:6px;padding:20px 22px;flex:1">
-                  <span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:22px;color:#2B2620">World Mapping</span>
-                  <span style="font-size:14px;font-weight:600;color:#8A7563">6 continents · 169 countries</span>
+                  <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:22px;color:#161519">World Mapping</span>
+                  <span style="font-size:14px;font-weight:600;color:#6E6A76">6 continents · 169 countries</span>
                   <span style="display:inline-flex;align-self:flex-start;background:#F0F8F3;color:#2FA37A;border:1.5px solid #C8E8D7;border-radius:8px;padding:3px 10px;font-size:11.5px;font-weight:800;letter-spacing:.6px;margin-top:6px">FIND IT · NAME IT</span>
                 </div>
               </button>
-              <button onClick="{{ onPickIndia }}" style="display:flex;align-items:stretch;text-align:left;background:#fff;border:1.5px solid #F0E4D6;border-radius:18px;overflow:hidden;cursor:pointer;box-shadow:0 12px 28px -16px rgba(80,50,20,.5);transition:transform .15s, box-shadow .15s;padding:0" style-hover="transform:translateY(-3px);box-shadow:0 18px 36px -18px rgba(80,50,20,.6)">
-                <div style="width:8px;background:linear-gradient(180deg,#E8920E,#2C6FBF);flex:none"></div>
+              <button onClick="{{ onPickIndia }}" style="display:flex;align-items:stretch;text-align:left;background:#fff;border:1.5px solid #EBE8E2;border-radius:18px;overflow:hidden;cursor:pointer;box-shadow:0 12px 28px -16px rgba(80,50,20,.5);transition:transform .15s, box-shadow .15s;padding:0" style-hover="transform:translateY(-3px);box-shadow:0 18px 36px -18px rgba(80,50,20,.6)">
+                <div style="width:8px;background:linear-gradient(180deg,#4C7DFF,#2C6FBF);flex:none"></div>
                 <div style="display:flex;flex-direction:column;gap:6px;padding:20px 22px;flex:1">
-                  <span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:22px;color:#2B2620">India Mapping</span>
-                  <span style="font-size:14px;font-weight:600;color:#8A7563">Rivers · National Parks</span>
+                  <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:22px;color:#161519">India Mapping</span>
+                  <span style="font-size:14px;font-weight:600;color:#6E6A76">Rivers · National Parks</span>
                 </div>
               </button>
             </div>
@@ -199,16 +199,16 @@
       <sc-if value="{{ screenWorldMenu }}">
         <div class="atlas-panel-overlay qz-ov" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,250,244,.86);backdrop-filter:blur(3px);z-index:6;animation:qzfade .3s ease both;padding:20px">
           <div style="width:min(820px,100%);text-align:center">
-            <button onClick="{{ onHome }}" style="border:none;background:transparent;color:#B79A82;font-family:Fredoka,sans-serif;font-weight:600;font-size:14px;cursor:pointer;padding:0;margin-bottom:6px">&larr; Home</button>
-            <h2 style="font-family:Fredoka,sans-serif;font-weight:700;font-size:clamp(24px,5vw,34px);margin:0 0 4px;color:#2B2620">Choose a continent</h2>
-            <p style="margin:0 0 20px;font-size:15px;font-weight:600;color:#B79A82">Pick a region to drill — the map will zoom right in.</p>
+            <button onClick="{{ onHome }}" style="border:none;background:transparent;color:#9A96A1;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:14px;cursor:pointer;padding:0;margin-bottom:6px">&larr; Home</button>
+            <h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:clamp(24px,5vw,34px);margin:0 0 4px;color:#161519">Choose a continent</h2>
+            <p style="margin:0 0 20px;font-size:15px;font-weight:600;color:#9A96A1">Pick a region to drill — the map will zoom right in.</p>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
               <sc-for list="{{ continents }}" as="cont" hint-placeholder-count="6">
                 <button onClick="{{ cont.onClick }}" style="{{ cont.style }}" style-hover="transform:translateY(-3px);box-shadow:0 16px 30px -14px rgba(80,50,20,.5)">
                   <span style="width:14px;height:14px;border-radius:50%;flex:none;background:{{ cont.color }}"></span>
                   <span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.15">
-                    <span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:19px;color:#2B2620">{{ cont.name }}</span>
-                    <span style="font-size:13px;font-weight:700;color:#B79A82">{{ cont.count }} countries</span>
+                    <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:19px;color:#161519">{{ cont.name }}</span>
+                    <span style="font-size:13px;font-weight:700;color:#9A96A1">{{ cont.count }} countries</span>
                   </span>
                 </button>
               </sc-for>
@@ -221,16 +221,16 @@
       <sc-if value="{{ screenIndiaMenu }}">
         <div class="atlas-panel-overlay qz-ov" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,250,244,.86);backdrop-filter:blur(3px);z-index:6;animation:qzfade .3s ease both;padding:20px">
           <div style="width:min(720px,100%);text-align:center">
-            <button onClick="{{ onHome }}" style="border:none;background:transparent;color:#B79A82;font-family:Fredoka,sans-serif;font-weight:600;font-size:14px;cursor:pointer;padding:0;margin-bottom:6px">&larr; Home</button>
-            <h2 style="font-family:Fredoka,sans-serif;font-weight:700;font-size:clamp(24px,5vw,34px);margin:0 0 4px;color:#2B2620">India Mapping</h2>
-            <p style="margin:0 0 20px;font-size:15px;font-weight:600;color:#B79A82">Pick a topic to practice.</p>
+            <button onClick="{{ onHome }}" style="border:none;background:transparent;color:#9A96A1;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:14px;cursor:pointer;padding:0;margin-bottom:6px">&larr; Home</button>
+            <h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:clamp(24px,5vw,34px);margin:0 0 4px;color:#161519">India Mapping</h2>
+            <p style="margin:0 0 20px;font-size:15px;font-weight:600;color:#9A96A1">Pick a topic to practice.</p>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
               <sc-for list="{{ indiaCategories }}" as="cat" hint-placeholder-count="2">
                 <button onClick="{{ cat.onClick }}" style="{{ cat.style }}" style-hover="transform:translateY(-3px);box-shadow:0 16px 30px -14px rgba(80,50,20,.5)">
                   <span style="width:14px;height:14px;border-radius:50%;flex:none;background:{{ cat.color }}"></span>
                   <span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.15">
-                    <span style="display:flex;align-items:center;gap:8px"><span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:19px;color:#2B2620">{{ cat.name }}</span></span>
-                    <span style="font-size:13px;font-weight:700;color:#B79A82">{{ cat.subtitle }}</span>
+                    <span style="display:flex;align-items:center;gap:8px"><span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:19px;color:#161519">{{ cat.name }}</span></span>
+                    <span style="font-size:13px;font-weight:700;color:#9A96A1">{{ cat.subtitle }}</span>
                   </span>
                 </button>
               </sc-for>
@@ -243,16 +243,16 @@
       <sc-if value="{{ screenRiverSystems }}">
         <div class="atlas-panel-overlay qz-ov" style="position:absolute;inset:0;display:flex;align-items:stretch;justify-content:center;background:rgba(255,250,244,.86);backdrop-filter:blur(3px);z-index:6;animation:qzfade .3s ease both;padding:20px;overflow:auto">
           <div style="width:min(900px,100%);text-align:center;margin:auto 0;padding:8px 0">
-            <button onClick="{{ onBackToIndiaMenu }}" style="border:none;background:transparent;color:#B79A82;font-family:Fredoka,sans-serif;font-weight:600;font-size:14px;cursor:pointer;padding:0;margin-bottom:6px">&larr; India topics</button>
-            <h2 style="font-family:Fredoka,sans-serif;font-weight:700;font-size:clamp(24px,5vw,34px);margin:0 0 4px;color:#2B2620">River systems</h2>
-            <p style="margin:0 0 20px;font-size:15px;font-weight:600;color:#B79A82">Practice one system at a time — the map zooms to its region.</p>
+            <button onClick="{{ onBackToIndiaMenu }}" style="border:none;background:transparent;color:#9A96A1;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:14px;cursor:pointer;padding:0;margin-bottom:6px">&larr; India topics</button>
+            <h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:clamp(24px,5vw,34px);margin:0 0 4px;color:#161519">River systems</h2>
+            <p style="margin:0 0 20px;font-size:15px;font-weight:600;color:#9A96A1">Practice one system at a time — the map zooms to its region.</p>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;padding-bottom:10px">
               <sc-for list="{{ riverSystems }}" as="sys" hint-placeholder-count="1">
                 <button onClick="{{ sys.onClick }}" style="{{ sys.style }}" style-hover="transform:translateY(-3px);box-shadow:0 16px 30px -14px rgba(80,50,20,.5)">
                   <span style="width:16px;height:16px;border-radius:50%;flex:none;background:{{ sys.color }}"></span>
                   <span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.2">
-                    <span style="display:flex;align-items:center;gap:8px"><span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:19px;color:#2B2620">{{ sys.name }}</span></span>
-                    <span style="font-size:13px;font-weight:600;color:#9C8A78">{{ sys.blurb }}</span>
+                    <span style="display:flex;align-items:center;gap:8px"><span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:19px;color:#161519">{{ sys.name }}</span></span>
+                    <span style="font-size:13px;font-weight:600;color:#8B8793">{{ sys.blurb }}</span>
                   </span>
                 </button>
               </sc-for>
@@ -265,7 +265,7 @@
       <sc-if value="{{ screenParkRegions }}">
         <div class="atlas-panel-overlay qz-ov" style="position:absolute;inset:0;display:flex;align-items:stretch;justify-content:center;background:rgba(255,250,244,.86);backdrop-filter:blur(3px);z-index:6;animation:qzfade .3s ease both;padding:20px;overflow:auto">
           <div style="width:min(940px,100%);text-align:center;margin:auto 0;padding:8px 0">
-            <button onClick="{{ onBackToIndiaMenu }}" style="border:none;background:transparent;color:#B79A82;font-family:Fredoka,sans-serif;font-weight:600;font-size:14px;cursor:pointer;padding:0;margin-bottom:6px">&larr; India topics</button>
+            <button onClick="{{ onBackToIndiaMenu }}" style="border:none;background:transparent;color:#9A96A1;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:14px;cursor:pointer;padding:0;margin-bottom:6px">&larr; India topics</button>
             <div style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap">
               <span style="width:46px;height:46px;border-radius:16px;background:linear-gradient(145deg,#2FA37A,#135F3E);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 12px 22px -12px rgba(20,90,55,.75)">
                 <svg width="29" height="29" viewBox="0 0 32 32" aria-hidden="true">
@@ -273,19 +273,19 @@
                   <path d="M16 8 V27 M11 17 L16 21 L21 16" fill="none" stroke="#137047" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
               </span>
-              <h2 style="font-family:Fredoka,sans-serif;font-weight:700;font-size:clamp(24px,5vw,34px);margin:0;color:#2B2620">National Parks</h2>
+              <h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:clamp(24px,5vw,34px);margin:0;color:#161519">National Parks</h2>
             </div>
-            <p style="margin:8px 0 18px;font-size:15px;font-weight:600;color:#B79A82">Learn park locations first, then practice by broad UPSC regions.</p>
+            <p style="margin:8px 0 18px;font-size:15px;font-weight:600;color:#9A96A1">Learn park locations first, then practice by broad UPSC regions.</p>
             <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
-              <button onClick="{{ onPracticeAllParks }}" style="border:2px solid #B9DCC8;background:#F0FAF4;color:#15784E;font-family:Fredoka,sans-serif;font-weight:600;font-size:15px;padding:11px 18px;border-radius:13px;cursor:pointer">Practice all</button>
+              <button onClick="{{ onPracticeAllParks }}" style="border:2px solid #B9DCC8;background:#F0FAF4;color:#15784E;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:15px;padding:11px 18px;border-radius:13px;cursor:pointer">Practice all</button>
             </div>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;padding-bottom:8px">
               <sc-for list="{{ parkRegions }}" as="reg" hint-placeholder-count="5">
                 <div style="{{ reg.style }}">
                   <span style="width:16px;height:16px;border-radius:50%;flex:none;background:{{ reg.color }}"></span>
                   <span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.2;flex:1;min-width:0">
-                    <span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:17px;color:#2B2620">{{ reg.name }}</span><span style="font-size:12px;font-weight:800;color:#B79A82">{{ reg.count }}</span></span>
-                    <span style="font-size:12.5px;font-weight:600;color:#9C8A78">{{ reg.blurb }}</span>
+                    <span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:17px;color:#161519">{{ reg.name }}</span><span style="font-size:12px;font-weight:800;color:#9A96A1">{{ reg.count }}</span></span>
+                    <span style="font-size:12.5px;font-weight:600;color:#8B8793">{{ reg.blurb }}</span>
                     <span style="display:flex;gap:8px;margin-top:9px;flex-wrap:wrap">
                       <button onClick="{{ reg.onLearn }}" style="{{ reg.learnStyle }}">Learn</button>
                       <button onClick="{{ reg.onPractice }}" style="{{ reg.practiceStyle }}">Practice</button>
@@ -303,9 +303,9 @@
         <div style="position:absolute;left:12px;right:12px;bottom:12px;z-index:6;pointer-events:none">
           <div style="width:min(1040px,100%);margin:0 auto;background:rgba(255,255,255,.92);border:1.5px solid #DCEBDE;border-radius:17px;box-shadow:0 18px 38px -24px rgba(20,70,45,.55);padding:9px 10px;pointer-events:auto;backdrop-filter:blur(7px)" class="park-learn-strip">
             <div style="display:flex;align-items:center;gap:9px;min-width:0">
-              <button onClick="{{ onBackToParkRegions }}" title="Park regions" style="width:34px;height:34px;border:1.5px solid #D7EBD7;background:#fff;color:#15784E;border-radius:11px;font-family:Fredoka,sans-serif;font-weight:700;font-size:18px;cursor:pointer;flex:none">&larr;</button>
+              <button onClick="{{ onBackToParkRegions }}" title="Park regions" style="width:34px;height:34px;border:1.5px solid #D7EBD7;background:#fff;color:#15784E;border-radius:11px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:18px;cursor:pointer;flex:none">&larr;</button>
               <span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.08;min-width:138px;max-width:245px;flex:none">
-                <span style="font-family:Fredoka,sans-serif;font-weight:700;font-size:17px;color:#203A2B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">{{ parkLearnTitle }}</span>
+                <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:17px;color:#203A2B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">{{ parkLearnTitle }}</span>
                 <span style="font-size:12px;font-weight:700;color:#6E8874;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">{{ parkLearnSubtitle }}</span>
               </span>
               <div style="display:flex;gap:7px;overflow-x:auto;overflow-y:hidden;flex:1;min-width:150px;padding:2px 2px 4px" class="qz-ov">
@@ -313,7 +313,7 @@
                 <button onClick="{{ opt.onClick }}" style="{{ opt.style }}">{{ opt.label }}</button>
               </sc-for>
               </div>
-              <button onClick="{{ onPracticeLearnRegion }}" style="border:2px solid #B9DCC8;background:#F0FAF4;color:#15784E;font-family:Fredoka,sans-serif;font-weight:700;font-size:13px;padding:8px 12px;border-radius:11px;cursor:pointer;flex:none">Practice region</button>
+              <button onClick="{{ onPracticeLearnRegion }}" style="border:2px solid #B9DCC8;background:#F0FAF4;color:#15784E;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:13px;padding:8px 12px;border-radius:11px;cursor:pointer;flex:none">Practice region</button>
             </div>
           </div>
         </div>
@@ -322,34 +322,34 @@
       <!-- SETUP -->
       <sc-if value="{{ screenSetup }}">
         <div class="atlas-panel-overlay qz-ov" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,250,244,.84);backdrop-filter:blur(3px);z-index:6;animation:qzfade .3s ease both;padding:16px">
-          <div style="width:min(560px,100%);background:#fff;border-radius:22px;padding:clamp(20px,4vw,30px) clamp(20px,4vw,32px);box-shadow:0 30px 70px -24px rgba(80,50,20,.55);border:1px solid #F5ECE0;max-height:96%;overflow:auto" class="qz-ov">
-            <button onClick="{{ onBack }}" style="border:none;background:transparent;color:#B79A82;font-family:Fredoka,sans-serif;font-weight:600;font-size:14px;cursor:pointer;padding:0;margin-bottom:10px">{{ setupBackLabel }}</button>
+          <div style="width:min(560px,100%);background:#fff;border-radius:22px;padding:clamp(20px,4vw,30px) clamp(20px,4vw,32px);box-shadow:0 30px 70px -24px rgba(80,50,20,.55);border:1px solid #F1EFEA;max-height:96%;overflow:auto" class="qz-ov">
+            <button onClick="{{ onBack }}" style="border:none;background:transparent;color:#9A96A1;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:14px;cursor:pointer;padding:0;margin-bottom:10px">{{ setupBackLabel }}</button>
             <div style="display:flex;align-items:center;gap:11px;margin-bottom:22px;flex-wrap:wrap">
               <span style="width:18px;height:18px;border-radius:50%;background:{{ contColor }}"></span>
-              <h2 style="font-family:Fredoka,sans-serif;font-weight:700;font-size:clamp(22px,5vw,30px);margin:0;color:#2B2620">{{ setupTitle }}</h2>
-              <span style="font-size:14px;font-weight:700;color:#B79A82">{{ setupCountLabel }}</span>
+              <h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:clamp(22px,5vw,30px);margin:0;color:#161519">{{ setupTitle }}</h2>
+              <span style="font-size:14px;font-weight:700;color:#9A96A1">{{ setupCountLabel }}</span>
             </div>
 
-            <p style="margin:0 0 10px;font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#C7A98F">How many to practice?</p>
+            <p style="margin:0 0 10px;font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#A9A5B0">How many to practice?</p>
             <div style="display:flex;flex-wrap:wrap;gap:9px;margin-bottom:24px">
               <sc-for list="{{ countOptions }}" as="opt" hint-placeholder-count="4">
                 <button onClick="{{ opt.onClick }}" style="{{ opt.style }}">{{ opt.label }}</button>
               </sc-for>
             </div>
 
-            <p style="margin:0 0 10px;font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#C7A98F">Quiz style</p>
+            <p style="margin:0 0 10px;font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#A9A5B0">Quiz style</p>
             <div style="display:flex;gap:11px;margin-bottom:28px;flex-wrap:wrap">
               <button onClick="{{ onModeLocate }}" style="{{ setupLocateStyle }}">
-                <span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:16px">Find it</span>
-                <span style="font-size:12.5px;font-weight:600;color:#9C8A78">{{ findItHelp }}</span>
+                <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:16px">Find it</span>
+                <span style="font-size:12.5px;font-weight:600;color:#8B8793">{{ findItHelp }}</span>
               </button>
               <button onClick="{{ onModeName }}" style="{{ setupNameStyle }}">
-                <span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:16px">Name it</span>
-                <span style="font-size:12.5px;font-weight:600;color:#9C8A78">Pick from 3 options</span>
+                <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:16px">Name it</span>
+                <span style="font-size:12.5px;font-weight:600;color:#8B8793">Pick from 3 options</span>
               </button>
             </div>
 
-            <button onClick="{{ onStart }}" style="width:100%;border:none;color:#fff;font-family:Fredoka,sans-serif;font-weight:600;font-size:19px;padding:15px;border-radius:15px;cursor:pointer;background:{{ accent }};box-shadow:0 12px 26px -10px rgba(255,122,77,.8)" style-hover="filter:brightness(1.05)">Start quiz &rarr;</button>
+            <button onClick="{{ onStart }}" style="width:100%;border:none;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:19px;padding:15px;border-radius:15px;cursor:pointer;background:{{ accent }};box-shadow:0 12px 26px -10px rgba(255,122,77,.8)" style-hover="filter:brightness(1.05)">Start quiz &rarr;</button>
           </div>
         </div>
       </sc-if>
@@ -357,28 +357,28 @@
       <!-- RESULTS -->
       <sc-if value="{{ screenResults }}">
         <div class="atlas-panel-overlay qz-ov" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,250,244,.86);backdrop-filter:blur(3px);z-index:6;animation:qzfade .3s ease both;padding:16px">
-          <div style="width:min(600px,100%);background:#fff;border-radius:22px;padding:clamp(20px,4vw,30px) clamp(20px,4vw,34px);box-shadow:0 30px 70px -24px rgba(80,50,20,.55);border:1px solid #F5ECE0;max-height:96%;overflow:auto" class="qz-ov">
-            <h2 style="font-family:Fredoka,sans-serif;font-weight:700;font-size:clamp(24px,5.5vw,32px);margin:0 0 4px;color:#2B2620">{{ resultTitle }}</h2>
-            <p style="margin:0 0 22px;font-size:15px;font-weight:600;color:#B79A82">{{ topicLabel }} &middot; {{ resultMode }}</p>
+          <div style="width:min(600px,100%);background:#fff;border-radius:22px;padding:clamp(20px,4vw,30px) clamp(20px,4vw,34px);box-shadow:0 30px 70px -24px rgba(80,50,20,.55);border:1px solid #F1EFEA;max-height:96%;overflow:auto" class="qz-ov">
+            <h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:clamp(24px,5.5vw,32px);margin:0 0 4px;color:#161519">{{ resultTitle }}</h2>
+            <p style="margin:0 0 22px;font-size:15px;font-weight:600;color:#9A96A1">{{ topicLabel }} &middot; {{ resultMode }}</p>
 
             <div style="display:flex;gap:14px;margin-bottom:24px;flex-wrap:wrap">
               <div style="flex:1 1 130px;background:#F4FAF6;border:1.5px solid #D6EEE0;border-radius:16px;padding:16px;text-align:center">
                 <div style="font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#7CB79A">Correct</div>
-                <div style="font-family:Fredoka,sans-serif;font-weight:700;font-size:30px;color:#15784E">{{ resultCorrect }}/{{ qTotal }}</div>
+                <div style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:30px;color:#15784E">{{ resultCorrect }}/{{ qTotal }}</div>
               </div>
               <div style="flex:1 1 130px;background:#F6F4FE;border:1.5px solid #DCD3F7;border-radius:16px;padding:16px;text-align:center">
                 <div style="font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#9B8CD8">Accuracy</div>
-                <div style="font-family:Fredoka,sans-serif;font-weight:700;font-size:30px;color:#5B45D6">{{ resultAccuracy }}%</div>
+                <div style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:30px;color:#5B45D6">{{ resultAccuracy }}%</div>
               </div>
-              <div style="flex:1 1 130px;background:#FFF8EC;border:1.5px solid #FBE6C2;border-radius:16px;padding:16px;text-align:center">
+              <div style="flex:1 1 130px;background:#F7F5F1;border:1.5px solid #EDEAE4;border-radius:16px;padding:16px;text-align:center">
                 <div style="font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#E0A94B">Score</div>
-                <div style="font-family:Fredoka,sans-serif;font-weight:700;font-size:30px;color:#E8920E">{{ score }}</div>
+                <div style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:30px;color:#4C7DFF">{{ score }}</div>
               </div>
             </div>
 
             <sc-if value="{{ hasMissed }}">
               <div style="margin-bottom:24px">
-                <p style="margin:0 0 10px;font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#C7A98F">{{ reviewLabel }} ({{ missedCount }})</p>
+                <p style="margin:0 0 10px;font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#A9A5B0">{{ reviewLabel }} ({{ missedCount }})</p>
                 <div style="display:flex;flex-wrap:wrap;gap:8px">
                   <sc-for list="{{ missedList }}" as="m" hint-placeholder-count="4">
                     <span style="background:#FFECEC;color:#C13238;border:1.5px solid #FFC9CB;border-radius:10px;padding:6px 12px;font-weight:700;font-size:14px">{{ m.name }}</span>
@@ -389,11 +389,11 @@
 
             <div style="display:flex;flex-direction:column;gap:11px">
               <sc-if value="{{ hasMissed }}">
-                <button onClick="{{ onPracticeWrong }}" style="width:100%;border:none;color:#fff;font-family:Fredoka,sans-serif;font-weight:600;font-size:18px;padding:15px;border-radius:15px;cursor:pointer;background:{{ accent }};box-shadow:0 12px 26px -10px rgba(255,122,77,.8)" style-hover="filter:brightness(1.05)">Practice the {{ missedCount }} I missed &rarr;</button>
+                <button onClick="{{ onPracticeWrong }}" style="width:100%;border:none;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:18px;padding:15px;border-radius:15px;cursor:pointer;background:{{ accent }};box-shadow:0 12px 26px -10px rgba(255,122,77,.8)" style-hover="filter:brightness(1.05)">Practice the {{ missedCount }} I missed &rarr;</button>
               </sc-if>
               <div style="display:flex;gap:11px;flex-wrap:wrap">
-                <button onClick="{{ onRestart }}" style="flex:1 1 180px;border:1.5px solid #EADFD2;background:#fff;color:#5A4A3C;font-family:Fredoka,sans-serif;font-weight:600;font-size:16px;padding:13px;border-radius:14px;cursor:pointer" style-hover="background:#F6EFE6">{{ restartLabel }}</button>
-                <button onClick="{{ onMenu }}" style="flex:1 1 180px;border:1.5px solid #EADFD2;background:#fff;color:#5A4A3C;font-family:Fredoka,sans-serif;font-weight:600;font-size:16px;padding:13px;border-radius:14px;cursor:pointer" style-hover="background:#F6EFE6">{{ menuLabel }}</button>
+                <button onClick="{{ onRestart }}" style="flex:1 1 180px;border:1.5px solid #E6E3DD;background:#fff;color:#4A4752;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:16px;padding:13px;border-radius:14px;cursor:pointer" style-hover="background:#F2F0EC">{{ restartLabel }}</button>
+                <button onClick="{{ onMenu }}" style="flex:1 1 180px;border:1.5px solid #E6E3DD;background:#fff;color:#4A4752;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:16px;padding:13px;border-radius:14px;cursor:pointer" style-hover="background:#F2F0EC">{{ menuLabel }}</button>
               </div>
             </div>
           </div>
@@ -402,13 +402,13 @@
     </div>
 
     <sc-if value="{{ screenPlay }}">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:clamp(10px,3vw,16px) clamp(12px,4vw,26px);border-top:1px solid #F5ECE0;background:#FFFDFA">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:clamp(10px,3vw,16px) clamp(12px,4vw,26px);border-top:1px solid #F1EFEA;background:#FBFAF8">
         <div style="display:flex;align-items:center;gap:11px;flex-wrap:wrap">
-          <button onClick="{{ onMenu }}" title="Quit" style="display:flex;align-items:center;gap:7px;border:1.5px solid #EADFD2;background:#fff;color:#8A7563;font-family:Fredoka,sans-serif;font-weight:600;font-size:15px;padding:11px 16px;border-radius:13px;cursor:pointer" style-hover="background:#F6EFE6">&larr; Quit</button>
-          <button onClick="{{ onHint }}" style="display:flex;align-items:center;gap:9px;border:1.5px solid #FBE0C4;background:#FFF6EC;color:#D9760B;font-family:Fredoka,sans-serif;font-weight:600;font-size:15px;padding:11px 18px;border-radius:13px;cursor:pointer" style-hover="background:#FFEED8">
-            <span style="display:inline-flex;width:22px;height:22px;border-radius:50%;background:#FFD89B;color:#A85F08;align-items:center;justify-content:center;font-weight:800;font-size:13px">?</span>
+          <button onClick="{{ onMenu }}" title="Quit" style="display:flex;align-items:center;gap:7px;border:1.5px solid #E6E3DD;background:#fff;color:#6E6A76;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:15px;padding:11px 16px;border-radius:13px;cursor:pointer" style-hover="background:#F2F0EC">&larr; Quit</button>
+          <button onClick="{{ onHint }}" style="display:flex;align-items:center;gap:9px;border:1.5px solid #EBE7E1;background:#F6F4F0;color:#D9760B;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:15px;padding:11px 18px;border-radius:13px;cursor:pointer" style-hover="background:#F0EEE8">
+            <span style="display:inline-flex;width:22px;height:22px;border-radius:50%;background:#C9D6F7;color:#A85F08;align-items:center;justify-content:center;font-weight:800;font-size:13px">?</span>
             Hint
-            <span style="font-size:13px;font-weight:800;color:#C99A5B;background:#FCEBD4;border-radius:8px;padding:2px 8px">{{ hintsLeft }} left</span>
+            <span style="font-size:13px;font-weight:800;color:#C99A5B;background:#EFEDE7;border-radius:8px;padding:2px 8px">{{ hintsLeft }} left</span>
           </button>
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;max-width:480px">
@@ -417,18 +417,18 @@
           </sc-for>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
-          <button onClick="{{ onPrevious }}" style="{{ previousBtnStyle }}" style-hover="background:#F6EFE6">&larr; Previous</button>
-          <button onClick="{{ onSkip }}" style="border:1.5px solid #EADFD2;background:#fff;color:#8A7563;font-family:Fredoka,sans-serif;font-weight:600;font-size:15px;padding:11px 22px;border-radius:13px;cursor:pointer" style-hover="background:#F6EFE6">{{ skipLabel }}</button>
+          <button onClick="{{ onPrevious }}" style="{{ previousBtnStyle }}" style-hover="background:#F2F0EC">&larr; Previous</button>
+          <button onClick="{{ onSkip }}" style="border:1.5px solid #E6E3DD;background:#fff;color:#6E6A76;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:15px;padding:11px 22px;border-radius:13px;cursor:pointer" style-hover="background:#F2F0EC">{{ skipLabel }}</button>
         </div>
       </div>
     </sc-if>
   </div>
 
-  <p style="max-width:1180px;width:100%;margin:16px 2px 0;font-size:13.5px;font-weight:600;color:#B79A82;line-height:1.5">Tip: build streaks of 3+ to unlock combo multipliers. Tap the logo to return home anytime.</p>
+  <p style="max-width:1180px;width:100%;margin:16px 2px 0;font-size:13.5px;font-weight:600;color:#9A96A1;line-height:1.5">Tip: build streaks of 3+ to unlock combo multipliers. Tap the logo to return home anytime.</p>
 </div>
 </x-dc>
 <script>window.__PARKS_DATA__={"source":"Wikipedia List of national parks of India; coordinates from Wikidata/Wikipedia","count":110,"regions":[{"key":"north","name":"Region 1 · North & North-West","color":"#2C9AD6","bounds":[[69.03373413085943,22.612690734863396],[85.08059997558622,35.95133132934593]],"blurb":"24 national parks · J&K, Ladakh, Himachal, Uttarakhand, Haryana, Punjab, Rajasthan and UP","states":["Jammu and Kashmir","Ladakh","Himachal Pradesh","Uttarakhand","Haryana","Punjab","Rajasthan","Uttar Pradesh"]},{"key":"west_central","name":"Region 2 · West-Central","color":"#C9489B","bounds":[[67.73624877929704,15.154599952697868],[83.2577774047851,27.324370574951228]],"blurb":"21 national parks · Gujarat, Madhya Pradesh and Maharashtra","states":["Gujarat","Madhya Pradesh","Maharashtra"]},{"key":"south","name":"Region 3 · South & Deccan","color":"#4E9F3D","bounds":[[73.22930603027349,6.304255771636963],[94.72777862548857,20.36608810424799]],"blurb":"32 national parks · Goa, Karnataka, Telangana, AP, Kerala, TN and island parks","states":["Goa","Karnataka","Telangana","Andhra Pradesh","Kerala","Tamil Nadu","Andaman and Nicobar Islands"]},{"key":"east_central","name":"Region 4 · East & Central-East","color":"#188F70","bounds":[[79.78956298828142,17.332831192016716],[90.32754821777338,28.580968093872183]],"blurb":"14 national parks · Bihar, Jharkhand, West Bengal, Sikkim, Chhattisgarh and Odisha","states":["Bihar","Jharkhand","West Bengal","Sikkim","Chhattisgarh","Odisha"]},{"key":"northeast","name":"Region 5 · North-East","color":"#6C5CE7","bounds":[[89.24483947753906,21.496229934692327],[97.86516113281279,29.91334457397461]],"blurb":"19 national parks · Arunachal, Assam, Manipur, Meghalaya, Mizoram, Nagaland and Tripura","states":["Arunachal Pradesh","Assam","Manipur","Meghalaya","Mizoram","Nagaland","Tripura"]}],"parks":[{"id":7001,"name":"Campbell Bay National Park","state":"Andaman and Nicobar Islands","region":"south","lon":93.761944,"lat":7.112778,"sourceName":"Campbell Bay National Park"},{"id":7002,"name":"Galathea National Park","state":"Andaman and Nicobar Islands","region":"south","lon":93.833,"lat":6.923,"sourceName":"Galathea National Park"},{"id":7003,"name":"Mahatma Gandhi Marine National Park","state":"Andaman and Nicobar Islands","region":"south","lon":92.656944,"lat":11.570556,"sourceName":"Mahatma Gandhi Marine National Park"},{"id":7004,"name":"Mount Harriet National Park","state":"Andaman and Nicobar Islands","region":"south","lon":92.7571,"lat":11.8074,"sourceName":"Mount Manipur National Park"},{"id":7005,"name":"Rani Jhansi Marine National Park","state":"Andaman and Nicobar Islands","region":"south","lon":92.666667,"lat":11.783333,"sourceName":"Rani Jhansi Marine National Park"},{"id":7006,"name":"Saddle Peak National Park","state":"Andaman and Nicobar Islands","region":"south","lon":93.005556,"lat":13.158611,"sourceName":"Saddle Peak National Park"},{"id":7007,"name":"North Button Island National Park","state":"Andaman and Nicobar Islands","region":"south","lon":93.068056,"lat":12.317222,"sourceName":"North Button Island National Park"},{"id":7008,"name":"Middle Button Island National Park","state":"Andaman and Nicobar Islands","region":"south","lon":93.026111,"lat":12.275556,"sourceName":"Middle Button Island National Park"},{"id":7009,"name":"South Button Island National Park","state":"Andaman and Nicobar Islands","region":"south","lon":93.020278,"lat":12.223889,"sourceName":"South Button Island National Park"},{"id":7010,"name":"Papikonda National Park","state":"Andhra Pradesh","region":"south","lon":81.4856,"lat":17.483,"sourceName":"Papikonda National Park"},{"id":7011,"name":"Rajiv Gandhi National Park (Rameswaram)","state":"Andhra Pradesh","region":"south","lon":78.560833,"lat":14.726944,"sourceName":"Rajiv Gandhi National Park (Rameswaram)"},{"id":7012,"name":"Sri Venkateswara National Park","state":"Andhra Pradesh","region":"south","lon":79.3378,"lat":13.7511,"sourceName":"Sri Venkateswara National Park"},{"id":7013,"name":"Mouling National Park","state":"Arunachal Pradesh","region":"northeast","lon":94.866667,"lat":28.583333,"sourceName":"Mouling National Park"},{"id":7014,"name":"Namdapha National Park","state":"Arunachal Pradesh","region":"northeast","lon":96.110294,"lat":27.649841,"sourceName":"Namdapha National Park"},{"id":7015,"name":"Dibru-Saikhowa National Park","state":"Assam","region":"northeast","lon":95.340294,"lat":27.649841,"sourceName":"Dibru-Saikhowa National Park"},{"id":7016,"name":"Dihing Patkai National Park","state":"Assam","region":"northeast","lon":95.526,"lat":27.331,"sourceName":"Dehing Patkai National Park"},{"id":7017,"name":"Raimona National Park","state":"Assam","region":"northeast","lon":89.97611,"lat":26.65972,"sourceName":"Raimona National Park"},{"id":7018,"name":"Kaziranga National Park","state":"Assam","region":"northeast","lon":93.35,"lat":26.666667,"sourceName":"Kaziranga National Park"},{"id":7019,"name":"Manas National Park","state":"Assam","region":"northeast","lon":90.933333,"lat":26.716667,"sourceName":"Manas National Park"},{"id":7020,"name":"Nameri National Park","state":"Assam","region":"northeast","lon":92.79,"lat":27.01,"sourceName":"Nameri National Park"},{"id":7021,"name":"Orang National Park","state":"Assam","region":"northeast","lon":92.36,"lat":26.61,"sourceName":"Orang National Park"},{"id":7022,"name":"Sikhna Jwhwlao National Park","state":"Assam","region":"northeast","lon":90.295892,"lat":26.716967,"sourceName":"Sikhna Jwhwlao National Park"},{"id":7023,"name":"Valmiki National Park","state":"Bihar","region":"east_central","lon":84.1793,"lat":27.0652,"sourceName":"Valmiki National Park"},{"id":7024,"name":"Guru Ghasidas National Park","state":"Chhattisgarh","region":"east_central","lon":82.471944,"lat":23.601944,"sourceName":"Guru Ghasidas - Tamor Pingla Tiger Reserve"},{"id":7025,"name":"Indravati National Park","state":"Chhattisgarh","region":"east_central","lon":81,"lat":19.333333,"sourceName":"Indravati National Park"},{"id":7026,"name":"Kanger Ghati National Park","state":"Chhattisgarh","region":"east_central","lon":82.011,"lat":18.832,"sourceName":"Kanger Ghati National Park"},{"id":7027,"name":"Mollem National Park","state":"Goa","region":"south","lon":74.258611,"lat":15.373611,"sourceName":"Bhagwan Mahaveer Sanctuary and Mollem National Park"},{"id":7028,"name":"Blackbuck National Park","state":"Gujarat","region":"west_central","lon":72,"lat":22.033333,"sourceName":"Blackbuck National Park"},{"id":7029,"name":"Gir Forest National Park","state":"Gujarat","region":"west_central","lon":70.79667,"lat":21.13556,"sourceName":"Gir Forest"},{"id":7030,"name":"Marine National Park, Gulf of Kutch","state":"Gujarat","region":"west_central","lon":69.6167,"lat":22.4667,"sourceName":"Marine National Park, Gulf of Kutch"},{"id":7031,"name":"Vansda National Park","state":"Gujarat","region":"west_central","lon":73.4667,"lat":20.7333,"sourceName":"Vansda National Park"},{"id":7032,"name":"Kalesar National Park","state":"Haryana","region":"north","lon":77.551944,"lat":30.331944,"sourceName":"Kalesar National Park"},{"id":7033,"name":"Sultanpur National Park","state":"Haryana","region":"north","lon":76.8899,"lat":28.4623,"sourceName":"Sultanpur National Park"},{"id":7034,"name":"Great Himalayan National Park","state":"Himachal Pradesh","region":"north","lon":77.951021,"lat":31.804288,"sourceName":"Great Himalayan National Park"},{"id":7035,"name":"Inderkilla National Park","state":"Himachal Pradesh","region":"north","lon":77.41,"lat":32.23,"sourceName":"Inderkilla National Park"},{"id":7036,"name":"Khirganga National Park","state":"Himachal Pradesh","region":"north","lon":77.510227,"lat":31.99343,"sourceName":"Khirganga National Park"},{"id":7037,"name":"Pin Valley National Park","state":"Himachal Pradesh","region":"north","lon":77.588889,"lat":31.574167,"sourceName":"Pin Valley National Park"},{"id":7038,"name":"Simbalbara National Park","state":"Himachal Pradesh","region":"north","lon":77.473,"lat":30.439,"sourceName":"Simbalbara National Park"},{"id":7039,"name":"Dachigam National Park","state":"Jammu and Kashmir","region":"north","lon":75.02,"lat":34.14,"sourceName":"Dachigam National Park"},{"id":7040,"name":"Kishtwar National Park","state":"Jammu and Kashmir","region":"north","lon":75.992778,"lat":33.601111,"sourceName":"Kishtwar National Park"},{"id":7041,"name":"Kazinag National Park","state":"Jammu and Kashmir","region":"north","lon":74.033333,"lat":34.166667,"sourceName":"Kazinag National Park"},{"id":7042,"name":"City Forest National Park (Salim Ali)","state":"Jammu and Kashmir","region":"north","lon":74.804,"lat":34.081,"sourceName":"Salim Ali National Park"},{"id":7043,"name":"Betla National Park","state":"Jharkhand","region":"east_central","lon":84.1901,"lat":23.8878,"sourceName":"Betla National Park"},{"id":7044,"name":"Anshi National Park","state":"Karnataka","region":"south","lon":74.36,"lat":14.99,"sourceName":"Dandeli National Park"},{"id":7045,"name":"Bandipur National Park","state":"Karnataka","region":"south","lon":76.627222,"lat":11.664444,"sourceName":"Bandipur National Park"},{"id":7046,"name":"Bannerghatta National Park","state":"Karnataka","region":"south","lon":77.575556,"lat":12.800833,"sourceName":"Bannerghatta National Park"},{"id":7047,"name":"Kudremukh National Park","state":"Karnataka","region":"south","lon":75.2,"lat":13.25,"sourceName":"Kudremukh National Park"},{"id":7048,"name":"Nagarhole National Park","state":"Karnataka","region":"south","lon":76.151111,"lat":12.06,"sourceName":"Nagarhole National Park"},{"id":7049,"name":"Anamudi Shola National Park","state":"Kerala","region":"south","lon":77.083333,"lat":10.208333,"sourceName":"Anamudi Shola National Park"},{"id":7050,"name":"Eravikulam National Park","state":"Kerala","region":"south","lon":77.083,"lat":10.2,"sourceName":"Eravikulam National Park"},{"id":7051,"name":"Mathikettan Shola National Park","state":"Kerala","region":"south","lon":77.133333,"lat":10.033333,"sourceName":"Mathikettan Shola National Park"},{"id":7052,"name":"Pambadum Shola National Park","state":"Kerala","region":"south","lon":77.266944,"lat":10.143889,"sourceName":"Pampadum Shola National Park"},{"id":7053,"name":"Periyar National Park","state":"Kerala","region":"south","lon":77.18,"lat":9.5775,"sourceName":"Periyar National Park"},{"id":7054,"name":"Silent Valley National Park","state":"Kerala","region":"south","lon":76.466667,"lat":11.133333,"sourceName":"Silent Valley National Park"},{"id":7055,"name":"Hemis National Park","state":"Ladakh","region":"north","lon":77.433333,"lat":33.983333,"sourceName":"Hemis National Park"},{"id":7056,"name":"Bandhavgarh National Park","state":"Madhya Pradesh","region":"west_central","lon":80.961944,"lat":23.699444,"sourceName":"Bandhavgarh National Park"},{"id":7057,"name":"Dinosaur Fossils National Park","state":"Madhya Pradesh","region":"west_central","lon":80.613611,"lat":23.110278,"sourceName":"Mandla Plant Fossils National Park"},{"id":7058,"name":"Ghughua Fossil National Park","state":"Madhya Pradesh","region":"west_central","lon":80.613611,"lat":23.110278,"sourceName":"Mandla Plant Fossils National Park"},{"id":7059,"name":"Kanha National Park","state":"Madhya Pradesh","region":"west_central","lon":80.645,"lat":22.2275,"sourceName":"Kanha National Park"},{"id":7060,"name":"Kuno National Park","state":"Madhya Pradesh","region":"west_central","lon":77.166667,"lat":25.666667,"sourceName":"Kuno National Park"},{"id":7061,"name":"Madhav National Park","state":"Madhya Pradesh","region":"west_central","lon":77.75,"lat":25.466667,"sourceName":"Madhav National Park"},{"id":7062,"name":"Panna National Park","state":"Madhya Pradesh","region":"west_central","lon":80.010222,"lat":24.730444,"sourceName":"Panna National Park"},{"id":7063,"name":"Pench National Park","state":"Madhya Pradesh","region":"west_central","lon":79.3033,"lat":21.6716,"sourceName":"Pench National Park"},{"id":7064,"name":"Sanjay National Park","state":"Madhya Pradesh","region":"west_central","lon":81.655278,"lat":23.968611,"sourceName":"Sanjay National Park"},{"id":7065,"name":"Satpura National Park","state":"Madhya Pradesh","region":"west_central","lon":78.231,"lat":22.495,"sourceName":"Satpura National Park"},{"id":7066,"name":"Van Vihar National Park","state":"Madhya Pradesh","region":"west_central","lon":77.36977,"lat":23.22948,"sourceName":"Van Vihar National Park"},{"id":7067,"name":"Chandoli National Park","state":"Maharashtra","region":"west_central","lon":73.775,"lat":17.191667,"sourceName":"Chandoli National Park"},{"id":7068,"name":"Gugamal National Park","state":"Maharashtra","region":"west_central","lon":77.148611,"lat":21.405556,"sourceName":"Gugamal National Park"},{"id":7069,"name":"Nawegaon National Park","state":"Maharashtra","region":"west_central","lon":80.166667,"lat":20.933333,"sourceName":"Nawegaon National Park"},{"id":7070,"name":"Sanjay Gandhi National Park","state":"Maharashtra","region":"west_central","lon":72.9167,"lat":19.25,"sourceName":"Sanjay Gandhi National Park"},{"id":7071,"name":"Tadoba Andhari National Park","state":"Maharashtra","region":"west_central","lon":79.42528,"lat":20.24873,"sourceName":"Tadoba-Andhari Tiger Reserve"},{"id":7072,"name":"Pench National Park (Jawaharlal Nehru)","state":"Maharashtra","region":"west_central","lon":79.3033,"lat":21.6716,"sourceName":"Pench National Park"},{"id":7073,"name":"Keibul Lamjao National Park","state":"Manipur","region":"northeast","lon":93.8402,"lat":24.4856,"sourceName":"Keibul Lamjao National Park"},{"id":7074,"name":"Shiroi National Park","state":"Manipur","region":"northeast","lon":94.230833,"lat":24.230833,"sourceName":"Shirui National Park"},{"id":7075,"name":"Balphakram National Park","state":"Meghalaya","region":"northeast","lon":90.75,"lat":25.5,"sourceName":"Balpakram National Park"},{"id":7076,"name":"Nokrek National Park","state":"Meghalaya","region":"northeast","lon":90.116667,"lat":25.533333,"sourceName":"Nokrek National Park"},{"id":7077,"name":"Murlen National Park","state":"Mizoram","region":"northeast","lon":93.3,"lat":23.616944,"sourceName":"Murlen National Park"},{"id":7078,"name":"Phawngpui National Park","state":"Mizoram","region":"northeast","lon":93.05,"lat":22.666667,"sourceName":"Phawngpui National Park"},{"id":7079,"name":"Ntangki National Park","state":"Nagaland","region":"northeast","lon":93.45,"lat":25.56,"sourceName":"Ntangki National Park"},{"id":7080,"name":"Bhitarkanika National Park","state":"Odisha","region":"east_central","lon":86.9341,"lat":20.6625,"sourceName":"Bhitarkanika National Park"},{"id":7081,"name":"Simlipal National Park","state":"Odisha","region":"east_central","lon":86.33,"lat":21.75,"sourceName":"Simlipal National Park"},{"id":7082,"name":"Desert National Park","state":"Rajasthan","region":"north","lon":70.516667,"lat":26.316667,"sourceName":"Desert National Park"},{"id":7083,"name":"Keoladeo National Park","state":"Rajasthan","region":"north","lon":77.516667,"lat":27.166667,"sourceName":"Kevladev National Park"},{"id":7084,"name":"Mukundara Hills National Park","state":"Rajasthan","region":"north","lon":75.856,"lat":24.868,"sourceName":"Mukundara Hills National Park"},{"id":7085,"name":"Ranthambore National Park","state":"Rajasthan","region":"north","lon":76.50257,"lat":26.01733,"sourceName":"Ranthambore National Park"},{"id":7086,"name":"Sariska National Park","state":"Rajasthan","region":"north","lon":76.436944,"lat":27.3175,"sourceName":"Sariska Tiger Reserve"},{"id":7087,"name":"Khangchendzonga National Park","state":"Sikkim","region":"east_central","lon":88.3123,"lat":27.6563,"sourceName":"Khangchendzonga National Park"},{"id":7088,"name":"Indira Gandhi National Park (Annamalai)","state":"Tamil Nadu","region":"south","lon":77.125,"lat":10.366944,"sourceName":"Anaimalai Tiger Reserve"},{"id":7089,"name":"Guindy National Park","state":"Tamil Nadu","region":"south","lon":80.23079,"lat":13.00259,"sourceName":"Guindy National Park"},{"id":7090,"name":"Gulf of Mannar Marine National Park","state":"Tamil Nadu","region":"south","lon":79.4725,"lat":9.1375,"sourceName":"Gulf of Mannar Marine National Park"},{"id":7091,"name":"Mudumalai National Park","state":"Tamil Nadu","region":"south","lon":76.5,"lat":11.6,"sourceName":"Mudumalai National Park"},{"id":7092,"name":"Mukurthi National Park","state":"Tamil Nadu","region":"south","lon":76.475,"lat":11.266667,"sourceName":"Mukurthi National Park"},{"id":7093,"name":"Mahavir Harina Vanasthali National Park","state":"Telangana","region":"south","lon":78.585833,"lat":17.34,"sourceName":"Mahavir Harina Vanasthali National Park"},{"id":7094,"name":"Kasu Brahmananda Reddy National Park","state":"Telangana","region":"south","lon":78.41,"lat":17.42,"sourceName":"Kasu Brahmananda Reddy National Park"},{"id":7095,"name":"Mrugavani National Park","state":"Telangana","region":"south","lon":78.341111,"lat":17.357778,"sourceName":"Mrugavani National Park"},{"id":7096,"name":"Bison (Rajbari) National Park","state":"Tripura","region":"northeast","lon":91.4,"lat":23.28,"sourceName":"Rajbari National Park"},{"id":7097,"name":"Clouded Leopard National Park","state":"Tripura","region":"northeast","lon":91.322544,"lat":23.668222,"sourceName":"Clouded Leopard National Park"},{"id":7098,"name":"Dudhwa National Park","state":"Uttar Pradesh","region":"north","lon":80.699263,"lat":28.470872,"sourceName":"Dudhwa National Park"},{"id":7099,"name":"Gangotri National Park","state":"Uttarakhand","region":"north","lon":79.1455,"lat":31.088194,"sourceName":"Gangotri National Park"},{"id":7100,"name":"Govind Pashu Vihar National Park","state":"Uttarakhand","region":"north","lon":78.29,"lat":31.1,"sourceName":"Govind Pashu Vihar National Park"},{"id":7101,"name":"Jim Corbett National Park","state":"Uttarakhand","region":"north","lon":78.933333,"lat":29.533333,"sourceName":"Jim Corbett National Park"},{"id":7102,"name":"Nanda Devi National Park","state":"Uttarakhand","region":"north","lon":79.849722,"lat":30.418611,"sourceName":"Nanda Devi National Park"},{"id":7103,"name":"Rajaji National Park","state":"Uttarakhand","region":"north","lon":78.033333,"lat":30.083333,"sourceName":"Rajaji National Park"},{"id":7104,"name":"Valley of Flowers National Park","state":"Uttarakhand","region":"north","lon":79.6175,"lat":30.73,"sourceName":"Valley of Flowers National Park"},{"id":7105,"name":"Buxa National Park","state":"West Bengal","region":"east_central","lon":89.58,"lat":26.65,"sourceName":"Buxa Tiger Reserve"},{"id":7106,"name":"Gorumara National Park","state":"West Bengal","region":"east_central","lon":88.8,"lat":26.7,"sourceName":"Gorumara National Park"},{"id":7107,"name":"Jaldapara National Park","state":"West Bengal","region":"east_central","lon":89.3775,"lat":26.628611,"sourceName":"Jaldapara National Park"},{"id":7108,"name":"Neora Valley National Park","state":"West Bengal","region":"east_central","lon":88.7,"lat":27.06,"sourceName":"Neora Valley National Park"},{"id":7109,"name":"Singalila National Park","state":"West Bengal","region":"east_central","lon":88.066667,"lat":27.116667,"sourceName":"Singalila National Park"},{"id":7110,"name":"Sundarbans National Park","state":"West Bengal","region":"east_central","lon":88.75,"lat":21.75,"sourceName":"Sundarbans National Park"}]};</script>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;},&quot;primaryColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#FF7A4D&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;oceanColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#AFDCEC&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;},&quot;primaryColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#6E96FF&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;oceanColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#AFDCEC&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
 class Component extends DCLogic {
   constructor(props){
     super(props);
@@ -457,7 +457,7 @@ class Component extends DCLogic {
     this.WORLD = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
     this.PALETTE = ['#F6D9A8','#CFE8C0','#BFE1E6','#E9CFE4','#F4CBC0','#D9D7F0'];
     this.ORDER = ['Africa','Europe','Asia','North America','South America','Oceania'];
-    this.CONT_COLOR = {Africa:'#E8920E',Europe:'#6C5CE7',Asia:'#E0563B','North America':'#2FA37A','South America':'#C9489B',Oceania:'#2C9AD6'};
+    this.CONT_COLOR = {Africa:'#4C7DFF',Europe:'#6C5CE7',Asia:'#E0563B','North America':'#2FA37A','South America':'#C9489B',Oceania:'#2C9AD6'};
     this.CONT_DATA = {
       'Europe':[[250,'France'],[276,'Germany'],[826,'United Kingdom'],[380,'Italy'],[724,'Spain'],[620,'Portugal'],[372,'Ireland'],[528,'Netherlands'],[56,'Belgium'],[756,'Switzerland'],[40,'Austria'],[616,'Poland'],[203,'Czechia'],[703,'Slovakia'],[348,'Hungary'],[642,'Romania'],[100,'Bulgaria'],[300,'Greece'],[752,'Sweden'],[578,'Norway'],[246,'Finland'],[208,'Denmark'],[352,'Iceland'],[804,'Ukraine'],[112,'Belarus'],[688,'Serbia'],[191,'Croatia'],[70,'Bosnia & Herzegovina'],[8,'Albania'],[440,'Lithuania'],[428,'Latvia'],[233,'Estonia'],[498,'Moldova'],[705,'Slovenia'],[807,'North Macedonia'],[499,'Montenegro'],[442,'Luxembourg'],[470,'Malta'],[196,'Cyprus'],[20,'Andorra'],[438,'Liechtenstein'],[492,'Monaco'],[674,'San Marino']],
       'Asia':[[156,'China'],[356,'India'],[392,'Japan'],[410,'South Korea'],[408,'North Korea'],[496,'Mongolia'],[643,'Russia'],[398,'Kazakhstan'],[860,'Uzbekistan'],[795,'Turkmenistan'],[417,'Kyrgyzstan'],[762,'Tajikistan'],[4,'Afghanistan'],[586,'Pakistan'],[364,'Iran'],[368,'Iraq'],[682,'Saudi Arabia'],[887,'Yemen'],[512,'Oman'],[784,'United Arab Emirates'],[760,'Syria'],[400,'Jordan'],[376,'Israel'],[422,'Lebanon'],[792,'Turkey'],[764,'Thailand'],[704,'Vietnam'],[116,'Cambodia'],[418,'Laos'],[104,'Myanmar'],[458,'Malaysia'],[360,'Indonesia'],[608,'Philippines'],[50,'Bangladesh'],[524,'Nepal'],[144,'Sri Lanka'],[64,'Bhutan'],[268,'Georgia'],[51,'Armenia'],[31,'Azerbaijan'],[634,'Qatar'],[414,'Kuwait'],[48,'Bahrain'],[702,'Singapore'],[96,'Brunei'],[158,'Taiwan'],[462,'Maldives'],[626,'Timor-Leste'],[275,'Palestine']],
@@ -477,7 +477,7 @@ class Component extends DCLogic {
       {key:'kaveri', name:'Kaveri System', color:'#0E9AA7', bounds:[[75,9.5],[80.8,13.8]], blurb:'Kaveri and southern tributaries'},
       {key:'west', name:'West-Flowing & Inland', color:'#8A6F3D', bounds:[[69.5,20.5],[82.3,27.2]], blurb:'Narmada, Tapi, Mahi, Sabarmati and Luni'},
       {key:'eastcoast', name:'Other East-Flowing', color:'#C9489B', bounds:[[76.5,8.5],[88,24]], blurb:'Pennar, Subarnarekha, Brahmani and coastal rivers'},
-      {key:'kerala', name:'Kerala & West Coast', color:'#E8920E', bounds:[[73,8],[77.6,16.2]], blurb:'Periyar, Pamba and Mahadayi/Mandovi'},
+      {key:'kerala', name:'Kerala & West Coast', color:'#4C7DFF', bounds:[[73,8],[77.6,16.2]], blurb:'Periyar, Pamba and Mahadayi/Mandovi'},
       {key:'barak', name:'Barak System', color:'#9B59B6', bounds:[[91,22],[94.8,26]], blurb:'Manipur, Mizoram, Assam and Surma-Barak'}
     ];
     this.RIVERS = [
@@ -740,7 +740,7 @@ class Component extends DCLogic {
     };
   }
 
-  get accent(){ return this.props.primaryColor || '#FF7A4D'; }
+  get accent(){ return this.props.primaryColor || '#6E96FF'; }
   get ocean(){ return this.props.oceanColor || '#AFDCEC'; }
 
   componentDidMount(){
@@ -840,7 +840,7 @@ class Component extends DCLogic {
     this.gRiverLabels = g.append('g').attr('id','river-labels').attr('clip-path',`url(#${this.riverClipId})`).style('display','none').style('pointer-events','none');
     this.RIVERS.forEach(r=>{
       const label=this.gRiverLabels.append('text')
-        .attr('font-family','Fredoka, sans-serif')
+        .attr('font-family','Plus Jakarta Sans, sans-serif')
         .attr('font-weight',700)
         .attr('font-size',10.5)
         .attr('fill','#24435F')
@@ -910,7 +910,7 @@ class Component extends DCLogic {
         const self=this;
         this.gIndia.selectAll('path').data(feats).join('path')
           .attr('d', this.pathGen)
-          .attr('fill', '#FFEFD8')
+          .attr('fill', '#F3F1ED')
           .attr('stroke', '#9E7A4E')
           .attr('stroke-width', 0.55)
           .attr('stroke-linejoin','round')
@@ -1304,7 +1304,7 @@ class Component extends DCLogic {
       pin.append('path').attr('d','M0,-13 C-7,-13 -11,-8 -11,-2 C-11,6 -3,10 0,15 C3,10 11,6 11,-2 C11,-8 7,-13 0,-13Z').attr('fill','#fff').attr('stroke',color).attr('stroke-width',2);
       pin.append('path').attr('d','M0,-8 C-4,-4 -5,-1 -5,2 C-5,5 -3,7 0,7 C3,7 5,5 5,2 C5,-1 4,-4 0,-8Z').attr('fill',color).attr('opacity',.95);
       pin.append('path').attr('d','M0,-4 V6 M-3,1 L0,4 L4,0').attr('fill','none').attr('stroke','#fff').attr('stroke-width',1.3).attr('stroke-linecap','round').attr('stroke-linejoin','round');
-      const label=g.append('text').attr('y',-17).attr('text-anchor','middle').attr('font-family','Fredoka, sans-serif').attr('font-weight',600).attr('font-size',11).attr('fill','#21432B').attr('paint-order','stroke').attr('stroke','#fff').attr('stroke-width',3.5).attr('stroke-linejoin','round').style('pointer-events','none').text(p.name.replace(/ National Park/g,''));
+      const label=g.append('text').attr('y',-17).attr('text-anchor','middle').attr('font-family','Plus Jakarta Sans, sans-serif').attr('font-weight',600).attr('font-size',11).attr('fill','#21432B').attr('paint-order','stroke').attr('stroke','#fff').attr('stroke-width',3.5).attr('stroke-linejoin','round').style('pointer-events','none').text(p.name.replace(/ National Park/g,''));
       g.datum(p); hit.datum(p);
       g.on('click',(event)=>{ self.handleParkClick(event, p.id); });
       this.parkById[p.id]={g:g.node(), hit:hit.node(), pin:pin.node(), label:label.node(), data:p, color};
@@ -1343,7 +1343,7 @@ class Component extends DCLogic {
       g.append('line').attr('class','park-label-leader').attr('stroke','#7CB794').attr('stroke-width',1.4).attr('stroke-linecap','round').attr('opacity',.75).style('display','none');
       g.append('circle').attr('r',6).attr('fill',color).attr('stroke','#fff').attr('stroke-width',2);
       g.append('rect').attr('class','park-label-bg').attr('rx',6).attr('ry',6).attr('fill','rgba(255,255,255,.88)').attr('stroke','rgba(185,220,200,.95)').attr('stroke-width',1).style('display','none');
-      g.append('text').attr('class','park-label-text').attr('x',9).attr('y',4).attr('font-family','Fredoka, sans-serif').attr('font-weight',600).attr('font-size',11.2).attr('fill','#24382A').attr('paint-order','stroke').attr('stroke','#fff').attr('stroke-width',3).attr('stroke-linejoin','round').text(label);
+      g.append('text').attr('class','park-label-text').attr('x',9).attr('y',4).attr('font-family','Plus Jakarta Sans, sans-serif').attr('font-weight',600).attr('font-size',11.2).attr('fill','#24382A').attr('paint-order','stroke').attr('stroke','#fff').attr('stroke-width',3).attr('stroke-linejoin','round').text(label);
     });
     this.updateParkFeedbackPositions();
   }
@@ -1610,7 +1610,7 @@ class Component extends DCLogic {
     } catch(e){ return Infinity; }
   }
   sourceMeta(type){
-    const M={glacier:{color:'#7FB4D6',label:'Glacier'},mountain:{color:'#8B6F4E',label:'Mountain'},hills:{color:'#A98B63',label:'Hills / Plateau'},lake:{color:'#3E8FB8',label:'Lake'},spring:{color:'#2FA37A',label:'Spring'},river:{color:'#2C6FBF',label:'Distributary'}};
+    const M={glacier:{color:'#7FB4D6',label:'Glacier'},mountain:{color:'#5E5B65',label:'Mountain'},hills:{color:'#A98B63',label:'Hills / Plateau'},lake:{color:'#3E8FB8',label:'Lake'},spring:{color:'#2FA37A',label:'Spring'},river:{color:'#2C6FBF',label:'Distributary'}};
     return M[type]||M.mountain;
   }
   drawFeatureIcon(g, type){
@@ -1625,7 +1625,7 @@ class Component extends DCLogic {
     } else if(type==='hills'){
       g.append('path').attr('d','M-12,0 Q-7,-9 -2,-1 Q2,-12 7,-2 Q10,-6 12,0 Z').attr('fill','#A98B63').attr('stroke','#7A6038').attr('stroke-width',1.1).attr('stroke-linejoin','round');
     } else {
-      g.append('path').attr('d','M-10,0 L0,-15 L10,0 Z').attr('fill','#8B6F4E').attr('stroke','#5E4A32').attr('stroke-width',1.2).attr('stroke-linejoin','round');
+      g.append('path').attr('d','M-10,0 L0,-15 L10,0 Z').attr('fill','#5E5B65').attr('stroke','#5E4A32').attr('stroke-width',1.2).attr('stroke-linejoin','round');
       g.append('path').attr('d','M-3.6,-5.4 L0,-15 L3.6,-5.4 L1.4,-3.6 L0,-4.9 L-1.6,-3.6 Z').attr('fill','#fff');
     }
     g.append('circle').attr('r',2).attr('fill','#C0531F').attr('stroke','#fff').attr('stroke-width',0.8);
@@ -1645,7 +1645,7 @@ class Component extends DCLogic {
     if(this.gIndia){
       this.gIndia.selectAll('path')
         .each(function(){ this.__feedback=false; this.classList.remove('qz-target'); })
-        .attr('fill','#FFEFD8')
+        .attr('fill','#F3F1ED')
         .attr('stroke','#9E7A4E')
         .attr('stroke-width',0.55);
       this.updateIndiaStateInteractivity();
@@ -1669,7 +1669,7 @@ class Component extends DCLogic {
       else this.gParks.style('display','none');
     }
     if(this.state.app==='india'){
-      const ie=this.pathById[356]; if(ie){ ie.setAttribute('fill','#FFEFD8'); ie.setAttribute('stroke','#D4B58E'); ie.setAttribute('stroke-width','0.9'); }
+      const ie=this.pathById[356]; if(ie){ ie.setAttribute('fill','#F3F1ED'); ie.setAttribute('stroke','#D4B58E'); ie.setAttribute('stroke-width','0.9'); }
     }
   }
 
@@ -1728,7 +1728,7 @@ class Component extends DCLogic {
       p.g.parentNode.appendChild(p.g);
       p.g.__feedback=true;
       p.pin.classList.add('qz-rtarget');
-      p.pin.style.filter='drop-shadow(0 0 8px rgba(255,159,28,.9))';
+      p.pin.style.filter='drop-shadow(0 0 8px rgba(76,125,255,.9))';
       p.label.style.display='';
       return;
     }
@@ -2010,7 +2010,7 @@ class Component extends DCLogic {
     const isRivers = isIndia && s.category!=='parks';
     const choices = s.choices.map(c=>{
       const targetChoiceId=this.answerTargetId(s.target);
-      const base={display:'flex',alignItems:'center',justifyContent:'center',pointerEvents:'auto',flex:'0 1 auto',minWidth:'90px',padding:'13px 16px',borderRadius:'14px',cursor:'pointer',fontFamily:'Fredoka, sans-serif',fontWeight:600,fontSize:'clamp(15px,3.5vw,18px)',background:'#FFFFFF',color:'#2B2620',border:'2px solid #ECDFCF',boxShadow:'0 8px 20px -8px rgba(80,50,20,.45)',transition:'transform .12s, background .12s'};
+      const base={display:'flex',alignItems:'center',justifyContent:'center',pointerEvents:'auto',flex:'0 1 auto',minWidth:'90px',padding:'13px 16px',borderRadius:'14px',cursor:'pointer',fontFamily:'Plus Jakarta Sans, sans-serif',fontWeight:600,fontSize:'clamp(15px,3.5vw,18px)',background:'#FFFFFF',color:'#161519',border:'2px solid #E6E3DD',boxShadow:'0 8px 20px -8px rgba(80,50,20,.45)',transition:'transform .12s, background .12s'};
       let style={...base};
       if(s.hintRemovedId===c.id && !s.answeredThisRound) style={...base,opacity:.3,pointerEvents:'none',textDecoration:'line-through',boxShadow:'none'};
       if(s.answeredThisRound){ style.pointerEvents='none';
@@ -2021,9 +2021,9 @@ class Component extends DCLogic {
     });
     const continents = this.ORDER.filter(n=>this.continents[n]).map(n=>({
       name:n, count:this.continents[n].length, color:this.CONT_COLOR[n], onClick:()=>this.openSetupWorld(n),
-      style:{display:'flex',alignItems:'center',gap:'12px',textAlign:'left',background:'#fff',border:'1.5px solid #F0E4D6',borderRadius:'16px',padding:'16px 18px',cursor:'pointer',boxShadow:'0 8px 20px -12px rgba(80,50,20,.4)',transition:'transform .15s, box-shadow .15s'}
+      style:{display:'flex',alignItems:'center',gap:'12px',textAlign:'left',background:'#fff',border:'1.5px solid #EBE8E2',borderRadius:'16px',padding:'16px 18px',cursor:'pointer',boxShadow:'0 8px 20px -12px rgba(80,50,20,.4)',transition:'transform .15s, box-shadow .15s'}
     }));
-    const catTile=()=>({display:'flex',alignItems:'center',gap:'12px',textAlign:'left',background:'#fff',border:'1.5px solid #F0E4D6',borderRadius:'16px',padding:'16px 18px',cursor:'pointer',boxShadow:'0 8px 20px -12px rgba(80,50,20,.4)',transition:'transform .15s, box-shadow .15s'});
+    const catTile=()=>({display:'flex',alignItems:'center',gap:'12px',textAlign:'left',background:'#fff',border:'1.5px solid #EBE8E2',borderRadius:'16px',padding:'16px 18px',cursor:'pointer',boxShadow:'0 8px 20px -12px rgba(80,50,20,.4)',transition:'transform .15s, box-shadow .15s'});
     const indiaCategories=[
       {name:'Rivers', subtitle:'River systems and tributaries', color:'#2C6FBF', onClick:()=>this.onPickIndiaRivers(), style:catTile()},
       {name:'National Parks', subtitle:'Region-wise national park practice', color:'#168A55', onClick:()=>this.onPickIndiaParks(), style:catTile()}
@@ -2031,9 +2031,9 @@ class Component extends DCLogic {
     const riverSystems=this.RIVER_SYSTEMS.map(sys=>({
       name:sys.name, blurb:sys.blurb, color:sys.color,
       onClick:()=>this.onPickRiverSystem(sys.key),
-      style:{display:'flex',alignItems:'center',gap:'13px',textAlign:'left',background:'#fff',border:'1.5px solid #F0E4D6',borderRadius:'16px',padding:'16px 18px',cursor:'pointer',boxShadow:'0 8px 20px -12px rgba(80,50,20,.4)',transition:'transform .15s, box-shadow .15s'}
+      style:{display:'flex',alignItems:'center',gap:'13px',textAlign:'left',background:'#fff',border:'1.5px solid #EBE8E2',borderRadius:'16px',padding:'16px 18px',cursor:'pointer',boxShadow:'0 8px 20px -12px rgba(80,50,20,.4)',transition:'transform .15s, box-shadow .15s'}
     }));
-    const smallBtn={border:'1.5px solid #D7EBD7',background:'#F7FCF8',color:'#15784E',fontFamily:'Fredoka, sans-serif',fontWeight:600,fontSize:'13px',padding:'7px 11px',borderRadius:'10px',cursor:'pointer'};
+    const smallBtn={border:'1.5px solid #D7EBD7',background:'#F7FCF8',color:'#15784E',fontFamily:'Plus Jakarta Sans, sans-serif',fontWeight:600,fontSize:'13px',padding:'7px 11px',borderRadius:'10px',cursor:'pointer'};
     const parkRegions=this.PARK_REGIONS.map(reg=>({
       name:reg.name, blurb:reg.blurb, color:reg.color, count:this.PARKS.filter(p=>p.region===reg.key).length,
       onLearn:()=>this.onLearnParkRegion(reg.key), onPractice:()=>this.onPracticeParkRegion(reg.key),
@@ -2044,18 +2044,18 @@ class Component extends DCLogic {
     const parkReg = s.parkRegion ? (this.PARK_REGIONS.find(x=>x.key===s.parkRegion)||{}) : null;
     const parkRegionName = parkReg ? parkReg.name : 'All National Parks';
     const total=isParks ? (s.parkRegion ? this.PARKS.filter(p=>p.region===s.parkRegion).length : this.PARKS.length) : (isIndia ? (s.riverSystem ? this.RIVERS.filter(r=>r.sys===s.riverSystem).length : this.RIVERS.length) : (this.activeContinent?this.continents[this.activeContinent].length:0));
-    const chip=(active)=>({border:'2px solid '+(active?this.accent:'#ECDFCF'),background:active?'#FFF1E9':'#fff',color:active?'#C0531F':'#5A4A3C',fontFamily:'Fredoka, sans-serif',fontWeight:600,fontSize:'15px',padding:'9px 18px',borderRadius:'12px',cursor:'pointer'});
+    const chip=(active)=>({border:'2px solid '+(active?this.accent:'#E6E3DD'),background:active?'#F4F2EE':'#fff',color:active?'#C0531F':'#4A4752',fontFamily:'Plus Jakarta Sans, sans-serif',fontWeight:600,fontSize:'15px',padding:'9px 18px',borderRadius:'12px',cursor:'pointer'});
     const presets=[5,8,10,15,20].filter(n=>n<total);
     const countOptions=presets.map(v=>({label:String(v), value:v, style:chip(s.setupCount===v), onClick:()=>this.setState({setupCount:v})}));
     countOptions.push({label:'Custom…', value:'custom', style:{...chip(false),border:'2px dashed #D8C8B8'}, onClick:()=>this.setCustomPracticeCount()});
     countOptions.push({label:`All ${total}`, value:total, style:chip(s.setupCount===total), onClick:()=>this.setState({setupCount:total})});
-    const modeBtn=(active)=>({flex:'1 1 200px',display:'flex',flexDirection:'column',alignItems:'flex-start',gap:'3px',textAlign:'left',border:'2px solid '+(active?this.accent:'#ECDFCF'),background:active?'#FFF1E9':'#fff',borderRadius:'14px',padding:'14px 16px',cursor:'pointer'});
+    const modeBtn=(active)=>({flex:'1 1 200px',display:'flex',flexDirection:'column',alignItems:'flex-start',gap:'3px',textAlign:'left',border:'2px solid '+(active?this.accent:'#E6E3DD'),background:active?'#F4F2EE':'#fff',borderRadius:'14px',padding:'14px 16px',cursor:'pointer'});
     const tk=s.toast?s.toast.kind:null;
     const tcs={correct:{bg:'#E7F7EE',bd:'#9FE0BF',fg:'#15784E'},wrong:{bg:'#FFEBEB',bd:'#FFC0C2',fg:'#C13238'},hint:{bg:'#FFF4E0',bd:'#FBD89B',fg:'#B5760A'},level:{bg:'#EEE9FE',bd:'#C9BCF7',fg:'#5B45D6'}};
     const tc=tcs[tk]||tcs.hint;
     const missed=s.wrongList;
     const learnStates=this.parkStatesForRegion(s.parkRegion);
-    const stateChip=(active)=>({border:'1.5px solid '+(active?'#168A55':'#D7EBD7'),background:active?'#E9F8EF':'#fff',color:active?'#15784E':'#6E8874',fontFamily:'Fredoka, sans-serif',fontWeight:600,fontSize:'12.5px',padding:'6px 10px',borderRadius:'999px',cursor:'pointer',flex:'0 0 auto'});
+    const stateChip=(active)=>({border:'1.5px solid '+(active?'#168A55':'#D7EBD7'),background:active?'#E9F8EF':'#fff',color:active?'#15784E':'#6E8874',fontFamily:'Plus Jakarta Sans, sans-serif',fontWeight:600,fontSize:'12.5px',padding:'6px 10px',borderRadius:'999px',cursor:'pointer',flex:'0 0 auto'});
     const parkLearnStateOptions=learnStates.map(st=>({label:st, style:stateChip(s.parkLearnState===st), onClick:()=>this.selectParkLearnState(st)}));
     const visibleLearnParks=this.activeLearnParks();
     const topicLabel = isParks ? parkRegionName : (isIndia ? (sysName || 'India · Rivers') : (s.continent||''));
@@ -2075,7 +2075,7 @@ class Component extends DCLogic {
       nameModePrompt: isParks ? (s.target?`Which state/UT is ${s.target.name} in?`:'Which state/UT?') : (isIndia ? 'Which river is glowing?' : 'Which country is glowing?'),
       score:s.score, streak:s.streak, best:s.best, hintsLeft:s.hintsLeft,
       qNum:s.qIndex+1, qTotal, multLabel:'×'+m,
-      comboFillStyle:{width:comboPct+'%',height:'100%',borderRadius:'6px',background:'linear-gradient(90deg,#FFD15C,#FF9F1C)',transition:'width .4s'},
+      comboFillStyle:{width:comboPct+'%',height:'100%',borderRadius:'6px',background:'linear-gradient(90deg,#FFD15C,#4C7DFF)',transition:'width .4s'},
       choices, continents, indiaCategories,
       setupTotal:total, countOptions,
       setupTitle: isParks ? parkRegionName : (isIndia ? (sysName || 'India · Rivers') : s.continent),
@@ -2106,14 +2106,14 @@ class Component extends DCLogic {
       sourceName: s.sourceInfo?s.sourceInfo.name:'',
       sourcePlace: s.sourceInfo?s.sourceInfo.place:'',
       sourceTypeLabel: s.sourceInfo?s.sourceInfo.label:'',
-      sourceColor: s.sourceInfo?s.sourceInfo.color:'#8B6F4E',
-      sourceDotStyle: {width:'12px',height:'12px',borderRadius:'50%',flex:'none',background:(s.sourceInfo?s.sourceInfo.color:'#8B6F4E')},
+      sourceColor: s.sourceInfo?s.sourceInfo.color:'#5E5B65',
+      sourceDotStyle: {width:'12px',height:'12px',borderRadius:'50%',flex:'none',background:(s.sourceInfo?s.sourceInfo.color:'#5E5B65')},
       showToast:!!s.toast, toastText:s.toast?s.toast.text:'',
-      toastStyle:{fontFamily:'Fredoka, sans-serif',fontWeight:600,fontSize:'17px',padding:'12px 22px',borderRadius:'14px',whiteSpace:'nowrap',background:tc.bg,color:tc.fg,border:'2px solid '+tc.bd,boxShadow:'0 12px 28px -12px rgba(40,20,0,.4)'},
+      toastStyle:{fontFamily:'Plus Jakarta Sans, sans-serif',fontWeight:600,fontSize:'17px',padding:'12px 22px',borderRadius:'14px',whiteSpace:'nowrap',background:tc.bg,color:tc.fg,border:'2px solid '+tc.bd,boxShadow:'0 12px 28px -12px rgba(40,20,0,.4)'},
       onHint:()=>this.onHint(), onSkip:()=>this.onSkip(),
       onPrevious:()=>this.previousQuestion(),
       skipLabel:s.answeredThisRound?'Next →':'Skip →',
-      previousBtnStyle:{border:'1.5px solid #EADFD2',background:'#fff',color:s.qIndex>0?'#8A7563':'#CBB9A8',fontFamily:'Fredoka, sans-serif',fontWeight:600,fontSize:'15px',padding:'11px 18px',borderRadius:'13px',cursor:s.qIndex>0?'pointer':'not-allowed',opacity:s.qIndex>0?1:.55,pointerEvents:s.qIndex>0?'auto':'none'},
+      previousBtnStyle:{border:'1.5px solid #E6E3DD',background:'#fff',color:s.qIndex>0?'#6E6A76':'#CBB9A8',fontFamily:'Plus Jakarta Sans, sans-serif',fontWeight:600,fontSize:'15px',padding:'11px 18px',borderRadius:'13px',cursor:s.qIndex>0?'pointer':'not-allowed',opacity:s.qIndex>0?1:.55,pointerEvents:s.qIndex>0?'auto':'none'},
       onZoomIn:()=> this.svgSel && this.svgSel.transition().duration(250).call(this.zoom.scaleBy, 1.6),
       onZoomOut:()=> this.svgSel && this.svgSel.transition().duration(250).call(this.zoom.scaleBy, 0.62),
       onZoomReset:()=> this.resetZoom(true),
@@ -2122,11 +2122,11 @@ class Component extends DCLogic {
       soundOn:s.sound, onToggleSound:()=>this.toggleSound(),
       soundIcon: s.sound?'♪':'♪',
       soundTitle: s.sound?'Sound on (click to mute)':'Sound off (click to enable)',
-      soundBtnStyle:{display:'flex',alignItems:'center',justifyContent:'center',width:'40px',height:'40px',borderRadius:'12px',border:'1.5px solid '+(s.sound?'#FBE0C4':'#EADFD2'),background:s.sound?'#FFF6EC':'#fff',color:s.sound?'#D9760B':'#B79A82',cursor:'pointer',boxShadow:'0 4px 12px -6px rgba(80,50,20,.4)',position:'relative',textDecoration:s.sound?'none':'line-through'},
+      soundBtnStyle:{display:'flex',alignItems:'center',justifyContent:'center',width:'40px',height:'40px',borderRadius:'12px',border:'1.5px solid '+(s.sound?'#EBE7E1':'#E6E3DD'),background:s.sound?'#F6F4F0':'#fff',color:s.sound?'#D9760B':'#9A96A1',cursor:'pointer',boxShadow:'0 4px 12px -6px rgba(80,50,20,.4)',position:'relative',textDecoration:s.sound?'none':'line-through'},
       dots: s.queue.map((q,i)=>{
         const wrong = s.wrongList.some(w=>w.id===q.id);
         const answered = i < s.qIndex || (i===s.qIndex && s.answeredThisRound);
-        let bg='#ECE0CE', bd='#ECE0CE';
+        let bg='#E6E3DD', bd='#E6E3DD';
         if(answered){ if(wrong){ bg='#FF5A5F'; bd='#FF5A5F'; } else { bg='#22A36A'; bd='#22A36A'; } }
         if(i===s.qIndex && !s.answeredThisRound){ bg='#fff'; bd=this.accent; }
         return {style:{width:'10px',height:'10px',borderRadius:'50%',background:bg,border:'2px solid '+bd,flex:'none'}};
