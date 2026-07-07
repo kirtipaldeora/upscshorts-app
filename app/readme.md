@@ -1,4 +1,4 @@
-# michi — UPSC Current Affairs React App
+# Penni — UPSC Current Affairs React App
 
 `michi` is a premium, fully offline-capable Progressive Web App (PWA) designed for UPSC aspirants. It provides daily current-affairs briefs (from sources like *The Hindu* and *UPSCPrep*), subject-wise revision tools, a geography geography map quiz arcade, previous year questions (PYQs), and comprehensive settings with haptic feedback.
 
