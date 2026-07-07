@@ -1,121 +1,268 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft, faMoon, faSun, faUser, faScroll, faEarthAsia, faLayerGroup, faBell, faShieldHalved } from '@fortawesome/free-solid-svg-icons'
+import {
+  faArrowLeft,
+  faSun,
+  faMoon,
+  faFileImport,
+  faClone,
+  faDownload,
+  faFileExport,
+  faRotate,
+  faTrash,
+  faArrowRotateLeft,
+  faChevronRight,
+} from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
 import { useBookmarkStore } from '@/stores/useBookmarkStore'
 import { useThemeStore } from '@/stores/useThemeStore'
+import { useHaptic } from '@/hooks/useHaptic'
 
-export function ProfileScreen() {
-  const { setScreen, articlesByDate, gsFilter, setGsFilter } = useAppStore()
-  const { bookmarkedIds } = useBookmarkStore()
+interface ProfileScreenProps {
+  onOpenUpload: () => void
+  onShowToast: (msg: string) => void
+}
+
+export function ProfileScreen({ onOpenUpload, onShowToast }: ProfileScreenProps) {
+  const {
+    setScreen,
+    articlesByDate,
+    setOverlay,
+    setFlashcardQueue,
+    setFlashcardIndex,
+    setArticlesByDate,
+    setActiveArticle,
+  } = useAppStore()
+  const { bookmarkedIds, clearAll } = useBookmarkStore()
   const { theme, toggle } = useThemeStore()
+  const haptic = useHaptic()
 
-  const totalArticles = Object.values(articlesByDate).flat().length
+  const allArticles = Object.values(articlesByDate).flat()
+  const totalArticles = allArticles.length
   const totalDates = Object.keys(articlesByDate).length
+  const totalBookmarks = bookmarkedIds.length
 
-  type GsPaper = 'GS 1' | 'GS 2' | 'GS 3' | 'GS 4'
-  const gsPapers: GsPaper[] = ['GS 1', 'GS 2', 'GS 3', 'GS 4']
+  async function handleBack() {
+    await haptic()
+    setScreen('feed')
+  }
+
+  async function handleToggleTheme() {
+    await haptic()
+    toggle()
+  }
+
+  async function handleImportJson() {
+    await haptic()
+    onOpenUpload()
+  }
+
+  async function handleAllFlashcards() {
+    await haptic()
+    const cards = allArticles.map((a) => a.deepDive.flashcard).filter(Boolean)
+    if (cards.length > 0) {
+      setActiveArticle(null)
+      setFlashcardQueue(cards)
+      setFlashcardIndex(0)
+      setOverlay('flashcards')
+    } else {
+      onShowToast('No flashcards available')
+    }
+  }
+
+  async function handleExportBookmarks() {
+    await haptic()
+    if (!totalBookmarks) {
+      onShowToast('No bookmarks')
+      return
+    }
+    let t = 'michi — Bookmarks\n' + '='.repeat(40) + '\n\n'
+    const bookmarkedArticles = allArticles.filter((c) => bookmarkedIds.includes(c.id))
+
+    const fdf = (d: string) => {
+      return new Date(d).toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      })
+    }
+
+    bookmarkedArticles.forEach((c) => {
+      t += `${c.headline}\n${fdf(c.date)} | ${c.category} | ${c.gsPaper} | ${c.source}\n\n${c.deepDive.explanation.replace(/<[^>]*>/g, '')}\n\nMains: ${c.deepDive.possibleMainsQuestion}\n\n${'-'.repeat(40)}\n\n`
+    })
+
+    const blob = new Blob([t], { type: 'text/plain' })
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(blob)
+    a.download = 'michi_bookmarks.txt'
+    a.click()
+    onShowToast('Exported')
+  }
+
+  async function handleBackupContent() {
+    await haptic()
+    const blob = new Blob([JSON.stringify(articlesByDate, null, 1)], {
+      type: 'application/json',
+    })
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(blob)
+    a.download = 'michi_backup.json'
+    a.click()
+    onShowToast('Backup exported')
+  }
+
+  async function handleResetContent() {
+    await haptic()
+    if (window.confirm('Reset all content?')) {
+      localStorage.removeItem('u4ct')
+      setArticlesByDate({})
+      onShowToast('Reset')
+      window.location.reload()
+    }
+  }
+
+  async function handleClearBookmarks() {
+    await haptic()
+    if (window.confirm('Clear all bookmarks?')) {
+      clearAll()
+      onShowToast('Cleared')
+    }
+  }
+
+  async function handleResetApp() {
+    await haptic()
+    if (window.confirm('Reset all app data?')) {
+      localStorage.clear()
+      window.location.reload()
+    }
+  }
 
   return (
-    <div
-      style={{
-        position: 'absolute',
-        inset: 0,
-        display: 'flex',
-        flexDirection: 'column',
-        background: 'transparent',
-        zIndex: 10,
-        animation: 'scrIn 0.35s cubic-bezier(0.22,1,0.36,1)',
-      }}
-    >
+    <div className="screen active" style={{ animation: 'scrIn 0.35s cubic-bezier(0.22,1,0.36,1)' }}>
       {/* Header */}
-      <div style={{ height: 58, display: 'flex', alignItems: 'center', gap: 12, padding: '0 18px', flexShrink: 0, position: 'relative', zIndex: 2 }}>
-        <button onClick={() => setScreen('feed')} className="icon-btn">
+      <div className="screen-header">
+        <button onClick={handleBack} aria-label="Back">
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
-        <h2 style={{ fontSize: 21, fontWeight: 900, letterSpacing: -0.3, flex: 1, color: 'var(--on)' }}>Profile</h2>
+        <h2>Profile</h2>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '12px 16px calc(110px + env(safe-area-inset-bottom))', position: 'relative', zIndex: 2 }}>
-
-        {/* Profile card */}
-        <div style={{ textAlign: 'center', padding: 24, background: 'var(--card)', borderRadius: 26, marginBottom: 22, boxShadow: 'var(--shadow-soft)', color: 'var(--ink)' }}>
-          <div style={{ width: 66, height: 66, borderRadius: 24, background: 'var(--yellow)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, fontWeight: 900, color: 'var(--yellow-ink)', margin: '0 auto 12px' }}>
-            <FontAwesomeIcon icon={faUser} />
-          </div>
-          <h3 style={{ fontSize: 19, fontWeight: 900, marginBottom: 2, color: 'var(--ink)' }}>UPSC Aspirant</h3>
-          <p style={{ fontSize: 12, color: 'var(--ink2)', fontWeight: 700 }}>michi · Daily Reader</p>
-
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 32, marginTop: 16 }}>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--acc)' }}>{totalArticles}</div>
-              <div style={{ fontSize: 10, color: 'var(--ink3)', marginTop: 1, fontWeight: 800 }}>Articles</div>
+      {/* Body */}
+      <div className="screen-body">
+        {/* Profile Card */}
+        <div className="profile-card">
+          <div className="profile-avatar">U</div>
+          <h3>UPSC Aspirant</h3>
+          <p>Civil Services 2025</p>
+          <div className="profile-stats">
+            <div className="profile-stat">
+              <div className="ps-num">{totalArticles}</div>
+              <div className="ps-label">Articles</div>
             </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--acc)' }}>{bookmarkedIds.length}</div>
-              <div style={{ fontSize: 10, color: 'var(--ink3)', marginTop: 1, fontWeight: 800 }}>Bookmarks</div>
+            <div className="profile-stat">
+              <div className="ps-num">{totalDates}</div>
+              <div className="ps-label">Days</div>
             </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--acc)' }}>{totalDates}</div>
-              <div style={{ fontSize: 10, color: 'var(--ink3)', marginTop: 1, fontWeight: 800 }}>Days</div>
+            <div className="profile-stat">
+              <div className="ps-num">{totalBookmarks}</div>
+              <div className="ps-label">Saved</div>
             </div>
           </div>
         </div>
 
-        {/* GS Paper filter */}
-        <p style={{ fontSize: 10, fontWeight: 900, color: 'var(--on2)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8, padding: '0 6px' }}>
-          GS Papers
-        </p>
-        {gsPapers.map((gs) => (
-          <div
-            key={gs}
-            onClick={() => setGsFilter({ ...gsFilter, [gs]: !gsFilter[gs] })}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 15px', background: 'var(--card)', borderRadius: 18, marginBottom: 8, cursor: 'pointer', boxShadow: 'var(--shadow-soft)', color: 'var(--ink)' }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 13, background: 'var(--card2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ink2)', fontSize: 13 }}>
-                <FontAwesomeIcon icon={faScroll} />
-              </div>
-              <span style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--ink)' }}>{gs} Paper</span>
+        {/* Preferences group */}
+        <div className="setting-group">
+          <div className="setting-group-title">Preferences</div>
+          <div className="setting-item" onClick={handleToggleTheme}>
+            <div className="setting-left">
+              <FontAwesomeIcon icon={theme === 'dark' ? faMoon : faSun} style={{ width: 14 }} />
+              <span>Dark Mode</span>
             </div>
-            {/* Toggle */}
-            <div
-              style={{
-                width: 46, height: 26, borderRadius: 13,
-                background: gsFilter[gs] ? 'var(--yellow)' : 'var(--border)',
-                position: 'relative', cursor: 'pointer', transition: 'all 0.3s',
+            <button
+              className={`toggle ${theme === 'dark' ? 'on' : ''}`}
+              onClick={(e) => {
+                e.stopPropagation()
+                handleToggleTheme()
               }}
-            >
-              <div style={{
-                position: 'absolute', width: 20, height: 20, borderRadius: '50%', background: '#fff',
-                top: 3, left: gsFilter[gs] ? 23 : 3, transition: 'all 0.3s', boxShadow: '0 2px 6px rgba(0,0,0,.2)',
-              }} />
-            </div>
-          </div>
-        ))}
-
-        {/* Appearance */}
-        <p style={{ fontSize: 10, fontWeight: 900, color: 'var(--on2)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8, marginTop: 14, padding: '0 6px' }}>
-          Appearance
-        </p>
-        <div
-          onClick={toggle}
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 15px', background: 'var(--card)', borderRadius: 18, marginBottom: 8, cursor: 'pointer', boxShadow: 'var(--shadow-soft)', color: 'var(--ink)' }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 13, background: 'var(--card2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ink2)', fontSize: 13 }}>
-              <FontAwesomeIcon icon={theme === 'dark' ? faSun : faMoon} />
-            </div>
-            <span style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--ink)' }}>Dark Mode</span>
-          </div>
-          <div style={{ width: 46, height: 26, borderRadius: 13, background: theme === 'dark' ? 'var(--yellow)' : 'var(--border)', position: 'relative', transition: 'all 0.3s' }}>
-            <div style={{ position: 'absolute', width: 20, height: 20, borderRadius: '50%', background: '#fff', top: 3, left: theme === 'dark' ? 23 : 3, transition: 'all 0.3s', boxShadow: '0 2px 6px rgba(0,0,0,.2)' }} />
+              aria-label="Toggle Dark Mode"
+            />
           </div>
         </div>
 
-        {/* App info */}
-        <p style={{ textAlign: 'center', fontSize: 11, color: 'var(--on3)', fontWeight: 700, marginTop: 24 }}>
-          michi v1.0 · UPSC Current Affairs
-        </p>
+        {/* Content group */}
+        <div className="setting-group">
+          <div className="setting-group-title">Content</div>
+          
+          <div className="setting-item" onClick={handleImportJson}>
+            <div className="setting-left">
+              <FontAwesomeIcon icon={faFileImport} style={{ width: 14 }} />
+              <span>Import JSON</span>
+            </div>
+            <FontAwesomeIcon icon={faChevronRight} style={{ color: 'var(--ink3)', fontSize: 11 }} />
+          </div>
+
+          <div className="setting-item" onClick={handleAllFlashcards}>
+            <div className="setting-left">
+              <FontAwesomeIcon icon={faClone} style={{ width: 14 }} />
+              <span>All Flashcards</span>
+            </div>
+            <span style={{ fontSize: 12, color: 'var(--text3)', fontWeight: 700 }}>
+              {totalArticles}
+            </span>
+          </div>
+
+          <div className="setting-item" onClick={handleExportBookmarks}>
+            <div className="setting-left">
+              <FontAwesomeIcon icon={faDownload} style={{ width: 14 }} />
+              <span>Export Bookmarks</span>
+            </div>
+            <span style={{ fontSize: 12, color: 'var(--text3)', fontWeight: 700 }}>
+              {totalBookmarks}
+            </span>
+          </div>
+
+          <div className="setting-item" onClick={handleBackupContent}>
+            <div className="setting-left">
+              <FontAwesomeIcon icon={faFileExport} style={{ width: 14 }} />
+              <span>Backup All Content (JSON)</span>
+            </div>
+            <span style={{ fontSize: 12, color: 'var(--text3)', fontWeight: 700 }}>
+              {totalArticles}
+            </span>
+          </div>
+
+          <div className="setting-item" onClick={handleResetContent}>
+            <div className="setting-left">
+              <FontAwesomeIcon icon={faRotate} style={{ width: 14, color: 'var(--acc)' }} />
+              <span>Reset Content</span>
+            </div>
+            <FontAwesomeIcon icon={faChevronRight} style={{ color: 'var(--text3)', fontSize: 11 }} />
+          </div>
+        </div>
+
+        {/* Data group */}
+        <div className="setting-group">
+          <div className="setting-group-title">Data</div>
+
+          <div className="setting-item" onClick={handleClearBookmarks}>
+            <div className="setting-left">
+              <FontAwesomeIcon icon={faTrash} style={{ width: 14, color: '#E05252' }} />
+              <span style={{ color: '#E05252' }}>Clear Bookmarks</span>
+            </div>
+          </div>
+
+          <div className="setting-item" onClick={handleResetApp}>
+            <div className="setting-left">
+              <FontAwesomeIcon icon={faArrowRotateLeft} style={{ width: 14, color: '#E05252' }} />
+              <span style={{ color: '#E05252' }}>Reset App</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div style={{ textAlign: 'center', padding: '16px 16px 24px', color: 'var(--text3)', fontSize: 11, fontWeight: 700 }}>
+          Built for UPSC aspirants<br />
+          <span style={{ color: 'var(--accent)' }}>michi</span>
+        </div>
       </div>
     </div>
   )

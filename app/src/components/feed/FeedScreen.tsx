@@ -30,7 +30,7 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
         animation: 'scrIn 0.35s cubic-bezier(0.22,1,0.36,1)',
       }}
     >
-      <TopBar onOpenUpload={onOpenUpload} />
+      <TopBar />
 
       {/* Hero header */}
       <div style={{ padding: '4px 20px 12px', position: 'relative', zIndex: 2, flexShrink: 0, textAlign: 'center' }}>

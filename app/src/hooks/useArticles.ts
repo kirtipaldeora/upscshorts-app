@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useAppStore } from '@/stores/useAppStore'
 import type { ArticlesByDate } from '@/types/article'
 
-const LS_KEY = 'u4ca' // original localStorage key for cached articles
+const LS_KEY = 'u4ct' // original localStorage key for cached articles
 
 function loadFromLS(): ArticlesByDate {
   try {

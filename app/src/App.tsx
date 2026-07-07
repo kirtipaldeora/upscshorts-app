@@ -97,7 +97,12 @@ export default function App() {
           {activeScreen === 'revise' && <ReviseScreen />}
           {activeScreen === 'search' && <SearchScreen />}
           {activeScreen === 'bookmarks' && <BookmarksScreen />}
-          {activeScreen === 'profile' && <ProfileScreen />}
+          {activeScreen === 'profile' && (
+            <ProfileScreen
+              onOpenUpload={() => setUploadVisible(true)}
+              onShowToast={showToast}
+            />
+          )}
         </div>
 
         {/* Bottom navigation */}

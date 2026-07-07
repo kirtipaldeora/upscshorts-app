@@ -9,7 +9,7 @@ interface DeepDiveProps {
 }
 
 export function DeepDive({ onShowToast }: DeepDiveProps) {
-  const { activeArticle, setOverlay, overlayScreen } = useAppStore()
+  const { activeArticle, setOverlay, overlayScreen, setFlashcardQueue, setFlashcardIndex } = useAppStore()
   const haptic = useHaptic()
 
   const visible = overlayScreen === 'deep-dive'
@@ -38,7 +38,11 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
   }
 
   function openFlashcards() {
-    setOverlay('flashcards')
+    if (a?.deepDive.flashcard) {
+      setFlashcardQueue([a.deepDive.flashcard])
+      setFlashcardIndex(0)
+      setOverlay('flashcards')
+    }
   }
 
   const col = a ? CATEGORY_COLORS[a.category] : '#9DBCE8'
