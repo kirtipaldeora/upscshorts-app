@@ -6,6 +6,7 @@ import {
   faScroll,
   faEarthAsia,
   faPenNib,
+  faArrowLeft,
 } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
 import { usePracticeStore } from '@/stores/usePracticeStore'
@@ -33,7 +34,7 @@ interface PracticeScreenProps {
 type ActiveQuiz = { title: string; questions: Question[] } | null
 
 export function PracticeScreen({ onShowToast, onOpenMapsArcade, onOpenPYQ, onOpenMains }: PracticeScreenProps) {
-  const { articlesByDate, selectedDate, setOverlay } = useAppStore()
+  const { articlesByDate, selectedDate, setScreen } = useAppStore()
   const { stats, settings, pyqData, pyqReady, setPyqData } = usePracticeStore()
   const { bookmarkedIds } = useBookmarkStore()
   const [activeQuiz, setActiveQuiz] = useState<ActiveQuiz>(null)
@@ -74,22 +75,17 @@ export function PracticeScreen({ onShowToast, onOpenMapsArcade, onOpenPYQ, onOpe
   }
 
   return (
-    <div
-      style={{
-        position: 'absolute',
-        inset: 0,
-        display: 'flex',
-        flexDirection: 'column',
-        animation: 'scrIn 0.35s cubic-bezier(0.22,1,0.36,1)',
-      }}
-    >
+    <div className="screen active" style={{ animation: 'scrIn 0.35s cubic-bezier(0.22,1,0.36,1)' }}>
       {/* Header */}
-      <div style={{ height: 58, display: 'flex', alignItems: 'center', padding: '0 18px', flexShrink: 0, zIndex: 2, position: 'relative' }}>
-        <h2 style={{ fontSize: 21, fontWeight: 900, letterSpacing: -0.3, color: 'var(--on)' }}>Practice</h2>
+      <div className="screen-header">
+        <button onClick={() => setScreen('feed')} aria-label="Back">
+          <FontAwesomeIcon icon={faArrowLeft} />
+        </button>
+        <h2>Practice</h2>
       </div>
 
       {/* Body */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px calc(110px + env(safe-area-inset-bottom))', position: 'relative', zIndex: 2 }}>
+      <div className="screen-body" style={{ paddingBottom: 'calc(110px + env(safe-area-inset-bottom))' }}>
 
         {/* Hero — streak + target */}
         <div className="pn-hero">

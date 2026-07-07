@@ -3,7 +3,7 @@ import {
   faHouse,
   faBookOpen,
   faDumbbell,
-  faScroll,
+  faEarthAsia,
   faUser,
 } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore, type Screen } from '@/stores/useAppStore'
@@ -17,19 +17,19 @@ interface NavItem {
 }
 
 interface BottomNavProps {
-  onOpenPYQ: () => void
+  onOpenMapsArcade: () => void
 }
 
-export function BottomNav({ onOpenPYQ }: BottomNavProps) {
+export function BottomNav({ onOpenMapsArcade }: BottomNavProps) {
   const { activeScreen, setScreen } = useAppStore()
   const haptic = useHaptic()
 
   const items: NavItem[] = [
-    { screen: 'feed',     icon: faHouse,    label: 'Feed' },
-    { screen: 'revise',   icon: faBookOpen, label: 'Revise' },
-    { screen: 'practice', icon: faDumbbell, label: 'Practice' },
-    { icon: faScroll,     label: 'PYQ',     action: onOpenPYQ },
-    { screen: 'profile',  icon: faUser,     label: 'Profile' },
+    { screen: 'feed',     icon: faHouse,      label: 'Feed' },
+    { screen: 'revise',   icon: faBookOpen,   label: 'Revise' },
+    { icon: faEarthAsia,  label: 'Arcade',    action: onOpenMapsArcade },
+    { screen: 'practice', icon: faDumbbell,   label: 'Practice' },
+    { screen: 'profile',  icon: faUser,       label: 'Profile' },
   ]
 
   async function handleTap(item: NavItem) {

@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-  faXmark,
+  faArrowLeft,
   faUser,
   faSun,
   faMoon,
@@ -79,14 +79,14 @@ export function SettingsScreen({ onClose, onShowToast }: SettingsScreenProps) {
   }
 
   return (
-    <div className="quiz-overlay">
-      <div className="quiz-header">
-        <span className="qz-title">Settings</span>
-        <button className="icon-btn" onClick={onClose}>
-          <FontAwesomeIcon icon={faXmark} />
+    <div className="screen active" style={{ animation: 'scrIn 0.35s cubic-bezier(0.22,1,0.36,1)' }}>
+      <div className="screen-header">
+        <button onClick={onClose} aria-label="Back">
+          <FontAwesomeIcon icon={faArrowLeft} />
         </button>
+        <h2>Settings</h2>
       </div>
-      <div className="quiz-body">
+      <div className="screen-body" style={{ paddingBottom: 'calc(110px + env(safe-area-inset-bottom))' }}>
 
         {/* Account */}
         <div className="setting-group">
@@ -174,7 +174,7 @@ export function SettingsScreen({ onClose, onShowToast }: SettingsScreenProps) {
         {/* AI evaluation */}
         <div className="setting-group">
           <div className="setting-group-title">AI evaluation (Mains)</div>
-          <div className="setting-item" style={{ flexWrap: 'wrap', gap: 8 }}>
+          <div className="setting-item">
             <div className="setting-left">
               <FontAwesomeIcon icon={faKey} style={{ width: 14 }} />
               <span>Claude API key</span>

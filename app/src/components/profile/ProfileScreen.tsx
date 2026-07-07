@@ -7,6 +7,7 @@ import {
   faClone,
   faDownload,
   faFilePen,
+  faArrowLeft,
 } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
 import { useBookmarkStore } from '@/stores/useBookmarkStore'
@@ -101,6 +102,9 @@ export function ProfileScreen({ onOpenUpload, onShowToast, onOpenSettings, onOpe
     <div className="screen active" style={{ animation: 'scrIn 0.35s cubic-bezier(0.22,1,0.36,1)' }}>
       {/* Header */}
       <div className="screen-header">
+        <button onClick={handleBack} aria-label="Back">
+          <FontAwesomeIcon icon={faArrowLeft} />
+        </button>
         <h2>Profile</h2>
         <button onClick={onOpenSettings} aria-label="Settings" style={{ marginLeft: 'auto' }}>
           <FontAwesomeIcon icon={faGear} />

@@ -21,12 +21,12 @@ export function SplashScreen({ onDone }: SplashScreenProps) {
     <div id="splash" className={exiting ? 'exit' : ''}>
       {/* Logo box */}
       <div className="slw">
-        <div className="sl">m</div>
+        <div className="sl">P</div>
       </div>
 
       {/* App name */}
       <div className="st">
-        michi
+        Penni
         <span>.</span>
       </div>
     </div>

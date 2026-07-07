@@ -30,7 +30,7 @@ export default function App() {
   const [phase, setPhase] = useState<AppPhase>(getInitialPhase)
   const [uploadVisible, setUploadVisible] = useState(false)
   const [mainsRecordOpen, setMainsRecordOpen] = useState<MainsRecord | null>(null)
-  const { activeScreen, overlayScreen, setOverlay } = useAppStore()
+  const { activeScreen, overlayScreen, setOverlay, setScreen } = useAppStore()
   const { message: toastMsg, show: showToast, clear: clearToast } = useToast()
 
   const handleSplashDone = useCallback(() => {
@@ -115,15 +115,21 @@ export default function App() {
             <ProfileScreen
               onOpenUpload={() => setUploadVisible(true)}
               onShowToast={showToast}
-              onOpenSettings={() => setOverlay('settings')}
+              onOpenSettings={() => setScreen('settings')}
               onOpenMainsRecord={(rec) => setMainsRecordOpen(rec)}
+            />
+          )}
+          {activeScreen === 'settings' && (
+            <SettingsScreen
+              onClose={() => setScreen('profile')}
+              onShowToast={showToast}
             />
           )}
         </div>
 
         {/* Bottom navigation */}
         <BottomNav
-          onOpenPYQ={() => setOverlay('pyq-vault')}
+          onOpenMapsArcade={() => setOverlay('maps-arcade')}
         />
       </div>
 
@@ -150,17 +156,10 @@ export default function App() {
           <MainsScreen
             onClose={() => setOverlay(null)}
             onShowToast={showToast}
-            onOpenSettings={() => setOverlay('settings')}
-          />
-        </div>
-      )}
-
-      {/* Settings Screen */}
-      {overlayScreen === 'settings' && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 500 }}>
-          <SettingsScreen
-            onClose={() => setOverlay(null)}
-            onShowToast={showToast}
+            onOpenSettings={() => {
+              setOverlay(null)
+              setScreen('settings')
+            }}
           />
         </div>
       )}

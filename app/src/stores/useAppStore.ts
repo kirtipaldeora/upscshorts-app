@@ -9,6 +9,7 @@ export type Screen =
   | 'bookmarks'
   | 'profile'
   | 'practice'
+  | 'settings'
 
 export type ViewMode = 'deck' | 'list'
 
@@ -21,7 +22,6 @@ export type OverlayScreen =
   | 'upload'
   | 'digest'
   | 'mains'
-  | 'settings'
 
 interface AppStore {
   // ─── Articles ───────────────────────────────────────────────

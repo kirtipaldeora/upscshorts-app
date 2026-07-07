@@ -69,7 +69,7 @@ export function TopBar({ showBack, onBack, onOpenUpload }: TopBarProps) {
           </button>
         )}
         <h1 style={{ fontSize: 21, fontWeight: 900, letterSpacing: -0.3, color: 'var(--on)' }}>
-          michi<span style={{ color: 'var(--yellow)' }}>.</span>
+          Penni<span style={{ color: 'var(--yellow)' }}>.</span>
         </h1>
       </div>
 
