@@ -1,149 +1,266 @@
 import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft, faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import {
+  faArrowLeft,
+  faChevronDown,
+  faChevronRight,
+  faBookOpen,
+  faListOl,
+  faTableCellsLarge,
+  faEarthAsia,
+  faScroll,
+  faBookmark,
+} from '@fortawesome/free-solid-svg-icons'
+import { faBookmark as faBookmarkRegular } from '@fortawesome/free-regular-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
-import { CATEGORIES, CATEGORY_COLORS, CATEGORY_ICONS } from '@/constants/categories'
+import { useBookmarkStore } from '@/stores/useBookmarkStore'
+import { useHaptic } from '@/hooks/useHaptic'
+import { CATEGORIES, CATEGORY_COLORS, CATEGORY_ICONS, fmtShort } from '@/constants/categories'
 import type { Category } from '@/types/article'
 
 export function ReviseScreen() {
-  const { setScreen, articlesByDate, setActiveArticle, setOverlay } = useAppStore()
+  const {
+    setScreen,
+    articlesByDate,
+    setActiveArticle,
+    setOverlay,
+    setCategoryFilter,
+  } = useAppStore()
+  const { toggle, isBookmarked } = useBookmarkStore()
+  const haptic = useHaptic()
+
+  const [view, setView] = useState<'main' | 'categories'>('main')
   const [openCat, setOpenCat] = useState<Category | null>(null)
 
-  // Collect all articles grouped by category
-  const byCategory: Record<string, typeof allArticles> = {}
   const allArticles = Object.values(articlesByDate).flat()
+
+  // Group articles by category
+  const byCategory: Record<string, typeof allArticles> = {}
   for (const a of allArticles) {
     if (!byCategory[a.category]) byCategory[a.category] = []
     byCategory[a.category].push(a)
   }
 
-  function openArticle(a: (typeof allArticles)[number]) {
+  const fdf = (d: string) => {
+    return new Date(d).toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+    })
+  }
+
+  async function handleBack() {
+    await haptic()
+    setScreen('feed')
+  }
+
+  async function handleOpenDigest() {
+    await haptic()
+    setOverlay('digest')
+  }
+
+  async function handleOpenArcade() {
+    await haptic()
+    setOverlay('maps-arcade')
+  }
+
+  async function handleOpenPYQ() {
+    await haptic()
+    setOverlay('pyq-vault')
+  }
+
+  async function handleArticleClick(a: typeof allArticles[0]) {
+    await haptic()
     setActiveArticle(a)
     setOverlay('deep-dive')
   }
 
+  async function handleToggleBookmark(e: React.MouseEvent, id: string) {
+    e.stopPropagation()
+    await haptic()
+    toggle(id)
+  }
+
+  async function handleCategoryClick(c: Category) {
+    await haptic()
+    setCategoryFilter(c)
+    setScreen('feed')
+  }
+
+  if (view === 'categories') {
+    return (
+      <div className="screen active" style={{ animation: 'scrIn 0.35s cubic-bezier(0.22,1,0.36,1)' }}>
+        {/* Categories Header */}
+        <div className="screen-header">
+          <button onClick={() => setView('main')} aria-label="Back">
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </button>
+          <h2>Categories</h2>
+        </div>
+
+        {/* Categories Body */}
+        <div className="screen-body">
+          <div className="cat-grid">
+            {CATEGORIES.map((c) => {
+              const arts = byCategory[c] ?? []
+              const count = arts.length
+              const color = CATEGORY_COLORS[c]
+              const iconName = CATEGORY_ICONS[c]
+
+              return (
+                <div
+                  key={c}
+                  className="cat-card"
+                  onClick={() => handleCategoryClick(c)}
+                >
+                  <div className="cat-color" style={{ background: color }}></div>
+                  <FontAwesomeIcon
+                    icon={{ prefix: 'fas', iconName: iconName.replace('fa-', '') } as never}
+                    style={{ color: color, fontSize: 22, marginBottom: 10, display: 'block' }}
+                  />
+                  <h3>{c}</h3>
+                  <span>{count} article{count !== 1 ? 's' : ''}</span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div
-      style={{
-        position: 'absolute',
-        inset: 0,
-        display: 'flex',
-        flexDirection: 'column',
-        background: 'transparent',
-        zIndex: 10,
-        animation: 'scrIn 0.35s cubic-bezier(0.22,1,0.36,1)',
-      }}
-    >
-      {/* Header */}
-      <div style={{ height: 58, display: 'flex', alignItems: 'center', gap: 12, padding: '0 18px', flexShrink: 0, position: 'relative', zIndex: 2 }}>
-        <button onClick={() => setScreen('feed')} className="icon-btn">
+    <div className="screen active" style={{ animation: 'scrIn 0.35s cubic-bezier(0.22,1,0.36,1)' }}>
+      {/* Main Revise Header */}
+      <div className="screen-header">
+        <button onClick={handleBack} aria-label="Back">
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
-        <h2 style={{ fontSize: 21, fontWeight: 900, letterSpacing: -0.3, flex: 1, color: 'var(--on)' }}>Revise by Subject</h2>
+        <h2>
+          Revise by <span style={{ color: 'var(--yellow)' }}>Subject</span>
+        </h2>
       </div>
 
-      {/* Body */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '12px 16px calc(110px + env(safe-area-inset-bottom))', position: 'relative', zIndex: 2 }}>
+      {/* Main Revise Body */}
+      <div className="screen-body">
+        {/* Quick Row (Categories & Daily Digest) */}
+        <div className="quick-row">
+          <div className="quick-tile" onClick={() => setView('categories')}>
+            <div className="qt-ic" style={{ background: 'rgba(226,154,181,.18)', color: 'var(--accent)' }}>
+              <FontAwesomeIcon icon={faTableCellsLarge} />
+            </div>
+            <h4>Categories</h4>
+            <span>Browse by subject</span>
+          </div>
+
+          <div className="quick-tile" onClick={handleOpenDigest}>
+            <div className="qt-ic" style={{ background: 'rgba(143,207,192,.2)', color: 'var(--teal)' }}>
+              <FontAwesomeIcon icon={faListOl} />
+            </div>
+            <h4>Daily Digest</h4>
+            <span>Top stories of the day</span>
+          </div>
+        </div>
+
+        {/* Maps Arcade Card */}
+        <div className="arcade-card" onClick={handleOpenArcade}>
+          <div className="ac-icon">
+            <FontAwesomeIcon icon={faEarthAsia} />
+          </div>
+          <div className="ac-info">
+            <h3>Maps Arcade</h3>
+            <p>Practice world & India geography — locate and name places, rivers and more.</p>
+          </div>
+          <div className="ac-go">
+            <FontAwesomeIcon icon={faArrowLeft} style={{ transform: 'rotate(180deg)' }} />
+          </div>
+        </div>
+
+        {/* PYQ Vault Card */}
+        <div className="pyq-card" onClick={handleOpenPYQ}>
+          <div className="pc-icon">
+            <FontAwesomeIcon icon={faScroll} />
+          </div>
+          <div className="pc-info">
+            <h3>PYQ Vault</h3>
+            <p>Access previous years questions, syllabus structure and standard references.</p>
+          </div>
+          <div className="pc-go">
+            <FontAwesomeIcon icon={faArrowLeft} style={{ transform: 'rotate(180deg)' }} />
+          </div>
+        </div>
+
+        {/* Subject cards list */}
         {CATEGORIES.map((cat) => {
-          const articles = byCategory[cat] ?? []
-          if (!articles.length) return null
+          const arts = byCategory[cat] ?? []
+          if (!arts.length) return null
+
           const isOpen = openCat === cat
           const color = CATEGORY_COLORS[cat]
-          const icon = CATEGORY_ICONS[cat]
+          const iconName = CATEGORY_ICONS[cat]
+          const uniqueDates = new Set(arts.map((a) => a.date)).size
+
+          // Sort articles by date newest first
+          const sortedArts = [...arts].sort((a, b) => b.date.localeCompare(a.date))
 
           return (
             <div
               key={cat}
-              style={{
-                background: 'var(--panel)',
-                border: '1px solid var(--panel-border)',
-                backdropFilter: 'blur(16px)',
-                borderRadius: 24,
-                marginBottom: 10,
-                overflow: 'hidden',
-              }}
+              className={`subject-card ${isOpen ? 'open' : ''}`}
             >
-              {/* Category header */}
-              <div
+              {/* Subject Header */}
+              <div 
+                className="subject-header" 
                 onClick={() => setOpenCat(isOpen ? null : cat)}
-                style={{
-                  padding: '14px 16px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 12,
-                  cursor: 'pointer',
-                  transition: 'background 0.15s',
-                }}
               >
-                <div
-                  style={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: 16,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 17,
-                    flexShrink: 0,
-                    background: 'rgba(255,255,255,0.85)',
-                    color: color,
-                  }}
+                <div className="subject-color" style={{ background: color }}></div>
+                <div 
+                  className="subject-icon" 
+                  style={{ background: color + '12', color: color }}
                 >
-                  <FontAwesomeIcon icon={{ prefix: 'fas', iconName: icon.replace('fa-', '') } as never} />
+                  <FontAwesomeIcon icon={{ prefix: 'fas', iconName: iconName.replace('fa-', '') } as never} />
                 </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <h3 style={{ fontSize: 14.5, fontWeight: 800, marginBottom: 1, color: 'var(--on)' }}>{cat}</h3>
-                  <span style={{ fontSize: 11, color: 'var(--on2)', fontWeight: 600 }}>{articles.length} article{articles.length !== 1 ? 's' : ''}</span>
+                <div className="subject-info">
+                  <h3>{cat}</h3>
+                  <span>
+                    {arts.length} article{arts.length !== 1 ? 's' : ''} · {uniqueDates} day{uniqueDates !== 1 ? 's' : ''}
+                  </span>
                 </div>
-                <div
-                  style={{
-                    width: 28,
-                    height: 28,
-                    borderRadius: 10,
-                    background: 'var(--panel2)',
-                    border: '1px solid var(--panel-border)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'var(--on2)',
-                    fontSize: 10,
-                    transition: 'transform 0.3s',
-                    transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                  }}
-                >
+                <div className="subject-expand">
                   <FontAwesomeIcon icon={faChevronDown} />
                 </div>
               </div>
 
-              {/* Articles list */}
-              <div
-                style={{
-                  maxHeight: isOpen ? 2000 : 0,
-                  overflow: 'hidden',
-                  transition: 'max-height 0.4s ease',
-                }}
-              >
-                {articles.map((a) => (
-                  <div
-                    key={a.id}
-                    onClick={() => openArticle(a)}
-                    style={{
-                      padding: '11px 16px 11px 72px',
-                      borderTop: '1px solid var(--panel-border)',
-                      cursor: 'pointer',
-                      transition: 'background 0.15s',
-                    }}
-                  >
-                    <h4 style={{ fontSize: 12.5, fontWeight: 700, lineHeight: 1.35, marginBottom: 3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--on)' }}>
-                      {a.headline}
-                    </h4>
-                    <div style={{ fontSize: 10, color: 'var(--on2)', display: 'flex', gap: 6, alignItems: 'center', fontWeight: 600 }}>
-                      <span>{a.date}</span>
-                      <span>·</span>
-                      <span>{a.source}</span>
+              {/* Subject Articles List */}
+              <div className="subject-articles">
+                {sortedArts.map((a) => {
+                  const bookmarked = isBookmarked(a.id)
+                  return (
+                    <div
+                      key={a.id}
+                      className="subject-article"
+                      onClick={() => handleArticleClick(a)}
+                    >
+                      <h4>{a.headline}</h4>
+                      <div className="sa-meta">
+                        <span>{fdf(a.date)}</span>
+                        <span style={{ color: 'var(--border)' }}>|</span>
+                        <span>{a.gsPaper}</span>
+                        <span style={{ color: 'var(--border)' }}>|</span>
+                        <span style={{ color: 'var(--teal)' }}>{a.source}</span>
+                        
+                        {/* Bookmark Button */}
+                        <button
+                          className={`sa-bm ${bookmarked ? 'bookmarked' : ''}`}
+                          onClick={(e) => handleToggleBookmark(e, a.id)}
+                        >
+                          <FontAwesomeIcon 
+                            icon={bookmarked ? faBookmark : faBookmarkRegular} 
+                          />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
           )

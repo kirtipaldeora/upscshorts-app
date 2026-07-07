@@ -98,12 +98,12 @@ export function MapsArcade() {
       }}
     >
       {/* Header */}
-      <div style={{ height: 58, display: 'flex', alignItems: 'center', gap: 12, padding: '0 18px', flexShrink: 0, background: 'transparent' }}>
-        <button onClick={handleClose} className="icon-btn" aria-label="Back">
+      <div className="ma-header">
+        <button onClick={handleClose} aria-label="Back">
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
-        <h2 style={{ fontSize: 20, fontWeight: 900, flex: 1, color: 'var(--on)' }}>
-          Maps <span style={{ color: 'var(--yellow)' }}>Arcade</span>
+        <h2>
+          Maps <span>Arcade</span>
         </h2>
         {state.phase === 'playing' && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

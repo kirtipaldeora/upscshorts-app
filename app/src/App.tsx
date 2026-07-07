@@ -12,6 +12,7 @@ import { Flashcards } from '@/components/flashcards/Flashcards'
 import { ImportSheet } from '@/components/upload/ImportSheet'
 import { MapsArcade } from '@/components/maps-arcade/MapsArcade'
 import { PYQVault } from '@/components/pyq-vault/PYQVault'
+import { Digest } from '@/components/feed/Digest'
 import { Toast, useToast } from '@/components/ui/Toast'
 import { useAppStore } from '@/stores/useAppStore'
 
@@ -119,6 +120,9 @@ export default function App() {
 
       {/* Flashcards */}
       <Flashcards />
+
+      {/* Daily Digest */}
+      <Digest />
 
       {/* Maps Arcade */}
       {overlayScreen === 'maps-arcade' && <MapsArcade />}
