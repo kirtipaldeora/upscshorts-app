@@ -1,4 +1,4 @@
-const VERSION = 'michi-v1';
+const VERSION = 'penni-v2';
 const CORE = [
   './',
   './index.html',
@@ -17,6 +17,8 @@ const CORE = [
   './assets/vendor/react.min.js',
   './assets/vendor/react-dom.min.js',
   './assets/vendor/babel.min.js',
+  './assets/vendor/jspdf.umd.min.js',
+  './penni.js',
   './assets/data/countries-110m.json',
   './assets/icons/icon-192.png',
   './assets/icons/icon-512.png'

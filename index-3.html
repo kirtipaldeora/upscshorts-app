@@ -1075,8 +1075,7 @@ class Component extends DCLogic {
       return Promise.resolve();
     }
     const sources=[
-      {url:'data/india-rivers-osm.geojson', label:'OpenStreetMap traced river LineStrings'},
-      {url:'data/india-rivers-ne-10m.geojson', label:'Natural Earth 10m river LineStrings'}
+      {url:'india-rivers-osm.geojson', label:'OpenStreetMap traced river LineStrings'}
     ];
     return sources.reduce((p,src)=>p.then(()=>fetch(src.url)
       .then(r=>r.ok?r.json():Promise.reject())
@@ -1246,7 +1245,7 @@ class Component extends DCLogic {
         if(this.RIVER_DEBUG && console && console.info) console.info(`[Maps Arcade] loaded national parks: ${this.PARKS.length}`);
       };
     if(typeof window!=='undefined' && window.__PARKS_DATA__){ try{ apply(window.__PARKS_DATA__); return Promise.resolve(); }catch(e){} }
-    return fetch('data/india-national-parks.json')
+    return fetch('india-national-parks.json')
       .then(r=>r.ok?r.json():Promise.reject())
       .then(apply)
       .catch(()=>{ if(this.RIVER_DEBUG && console && console.warn) console.warn('[Maps Arcade] Could not load data/india-national-parks.json'); });
