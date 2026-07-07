@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBookmark } from '@fortawesome/free-solid-svg-icons'
 import type { Article } from '@/types/article'
-import { CATEGORY_COLORS, CATEGORY_ICONS } from '@/constants/categories'
+import { CATEGORY_COLORS, CATEGORY_ICONS, fmtShort } from '@/constants/categories'
 import { useBookmarkStore } from '@/stores/useBookmarkStore'
 import { useAppStore } from '@/stores/useAppStore'
 import { useHaptic } from '@/hooks/useHaptic'
@@ -14,212 +14,175 @@ interface DeckViewProps {
 
 export function DeckView({ articles, onShowToast }: DeckViewProps) {
   const [centerIdx, setCenterIdx] = useState(0)
+  const [mounted, setMounted] = useState(false)
+  const [touchStartX, setTouchStartX] = useState<number | null>(null)
+  const [touchStartY, setTouchStartY] = useState<number | null>(null)
+  
   const { toggle, isBookmarked } = useBookmarkStore()
   const { setActiveArticle, setOverlay } = useAppStore()
   const haptic = useHaptic()
+
+  useEffect(() => {
+    // Reset active index if list of articles changes
+    setCenterIdx(0)
+    setMounted(false)
+    const t = setTimeout(() => setMounted(true), 50)
+    return () => clearTimeout(t)
+  }, [articles])
 
   if (!articles.length) return null
 
   const total = articles.length
 
-  // Show center + 1 left + 1 right (3 visible)
-  function getPosition(i: number): 'center' | 'left' | 'right' | 'hidden' {
-    if (i === centerIdx) return 'center'
-    if (i === (centerIdx - 1 + total) % total) return 'left'
-    if (i === (centerIdx + 1) % total) return 'right'
-    return 'hidden'
-  }
-
   async function handleCardClick(i: number) {
-    await haptic()
     if (i === centerIdx) {
-      // Open deep dive for center card
+      await haptic()
       setActiveArticle(articles[i])
       setOverlay('deep-dive')
     } else {
+      await haptic()
       setCenterIdx(i)
     }
   }
 
-  async function handleBm(e: React.MouseEvent, id: string) {
+  async function handleBookmark(e: React.MouseEvent, id: string) {
     e.stopPropagation()
     await haptic()
     toggle(id)
     onShowToast(isBookmarked(id) ? 'Bookmark removed' : 'Bookmarked!')
   }
 
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        inset: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      {articles.map((a, i) => {
-        const pos = getPosition(i)
-        if (pos === 'hidden') return null
+  // Touch Swipe Handlers
+  function handleTouchStart(e: React.TouchEvent) {
+    setTouchStartX(e.touches[0].clientX)
+    setTouchStartY(e.touches[0].clientY)
+  }
 
-        const catColor = CATEGORY_COLORS[a.category]
-        const catIconName = CATEGORY_ICONS[a.category]
-        const bookmarked = isBookmarked(a.id)
-        const isCenter = pos === 'center'
+  async function handleTouchEnd(e: React.TouchEvent) {
+    if (touchStartX === null || touchStartY === null) return
+    const diffX = e.changedTouches[0].clientX - touchStartX
+    const diffY = e.changedTouches[0].clientY - touchStartY
 
-        const cardStyle: React.CSSProperties = {
-          position: 'absolute',
-          width: 'min(76%, 330px)',
-          height: 'min(78%, 470px)',
-          borderRadius: 32,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          padding: '26px 22px 22px',
-          textAlign: 'center',
-          cursor: 'pointer',
-          userSelect: 'none',
-          WebkitUserSelect: 'none',
-          willChange: 'transform',
-          transition: 'transform 0.5s cubic-bezier(0.22,1,0.36,1), opacity 0.5s, box-shadow 0.5s',
-          ...(isCenter
-            ? {
-                background: 'var(--card)',
-                boxShadow: 'var(--shadow)',
-                transform: 'translateX(0) scale(1)',
-                zIndex: 10,
-              }
-            : {
-                background: 'var(--panel)',
-                border: '1px solid var(--panel-border)',
-                backdropFilter: 'blur(16px)',
-                transform: pos === 'left' ? 'translateX(-72%) scale(0.88)' : 'translateX(72%) scale(0.88)',
-                opacity: 0.7,
-                zIndex: 5,
-              }),
+    // Detect horizontal swipe if delta X is significantly larger than delta Y
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
+      if (diffX > 0) {
+        // Swipe right -> previous card
+        if (centerIdx > 0) {
+          await haptic()
+          setCenterIdx(centerIdx - 1)
         }
+      } else {
+        // Swipe left -> next card
+        if (centerIdx < total - 1) {
+          await haptic()
+          setCenterIdx(centerIdx + 1)
+        }
+      }
+    }
+    setTouchStartX(null)
+    setTouchStartY(null)
+  }
 
-        return (
-          <div key={a.id} style={cardStyle} onClick={() => handleCardClick(i)}>
-            {/* Date badge */}
-            <p style={{ fontSize: 12.5, fontWeight: 800, color: isCenter ? 'var(--ink2)' : 'var(--on2)', letterSpacing: 0.4, textTransform: 'uppercase', marginBottom: 8 }}>
-              {a.date}
-            </p>
+  return (
+    <>
+      <div
+        className="deck-stage"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
+        {articles.map((a, i) => {
+          const d = i - centerIdx
+          const isCenter = d === 0
+          const bookmarked = isBookmarked(a.id)
+          const catColor = CATEGORY_COLORS[a.category]
+          const catIconName = CATEGORY_ICONS[a.category]
 
-            {/* Bookmark button (center only) */}
-            {isCenter && (
+          // Dynamic positioning style
+          let transformStr = ''
+          let opacityVal = 0
+          let zIndexVal = 20 - Math.abs(d)
+
+          if (!mounted) {
+            // Slide/Scale up transition when first loading
+            transformStr = 'translateY(24px) scale(0.92)'
+            opacityVal = 0
+          } else {
+            if (d === 0) {
+              transformStr = 'translateX(0) rotate(0deg) scale(1)'
+              opacityVal = 1
+            } else if (Math.abs(d) === 1) {
+              transformStr = `translateX(${d * 70}%) rotate(${d * 5}deg) scale(0.84)`
+              opacityVal = 0.96
+            } else if (Math.abs(d) === 2) {
+              transformStr = `translateX(${d * 124}%) rotate(${d * 9}deg) scale(0.7)`
+              opacityVal = 0.55
+            } else {
+              transformStr = `translateX(${d * 150}%) scale(0.6)`
+              opacityVal = 0
+              zIndexVal = 0
+            }
+          }
+
+          const cardStyle: React.CSSProperties = {
+            transform: transformStr,
+            opacity: opacityVal,
+            zIndex: zIndexVal,
+            pointerEvents: Math.abs(d) > 2 ? 'none' : 'auto',
+          }
+
+          const formattedDate = fmtShort(a.date).toUpperCase()
+
+          return (
+            <div
+              key={a.id}
+              className={`deck-card ${isCenter ? 'is-center' : 'is-side'}`}
+              style={cardStyle}
+              onClick={() => handleCardClick(i)}
+            >
+              {/* Bookmark button */}
               <button
-                onClick={(e) => handleBm(e, a.id)}
-                style={{
-                  position: 'absolute',
-                  top: 16,
-                  right: 16,
-                  width: 38,
-                  height: 38,
-                  borderRadius: 13,
-                  border: 'none',
-                  background: bookmarked ? 'var(--yellow)' : 'var(--card2)',
-                  color: bookmarked ? 'var(--yellow-ink)' : 'var(--ink2)',
-                  fontSize: 14,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
+                onClick={(e) => handleBookmark(e, a.id)}
+                className={`dk-bm ${bookmarked ? 'on' : ''}`}
               >
                 <FontAwesomeIcon icon={faBookmark} />
               </button>
-            )}
 
-            {/* Category icon */}
-            <div
-              style={{
-                width: 104,
-                height: 104,
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 40,
-                margin: 'auto 0',
-                flexShrink: 0,
-                background: catColor + '22',
-                color: catColor,
-                opacity: isCenter ? 1 : 0.75,
-                filter: isCenter ? 'none' : 'saturate(0.7)',
-              }}
-            >
-              <FontAwesomeIcon icon={{ prefix: 'fas', iconName: catIconName.replace('fa-', '') } as never} />
-            </div>
+              {/* Date / GS paper header */}
+              <div className="dk-date">
+                {formattedDate} · {a.gsPaper}
+              </div>
 
-            {/* Headline */}
-            {isCenter && (
-              <>
-                <h3
-                  style={{
-                    fontWeight: 800,
-                    fontSize: 17.5,
-                    lineHeight: 1.3,
-                    color: 'var(--ink)',
-                    marginBottom: 8,
-                    display: '-webkit-box',
-                    WebkitLineClamp: 3,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden',
-                  }}
-                >
-                  {a.headline}
-                </h3>
-                <p
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 600,
-                    color: 'var(--ink2)',
-                    lineHeight: 1.55,
-                    marginBottom: 12,
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden',
-                  }}
-                >
-                  {a.summary}
-                </p>
-                <div style={{ display: 'flex', gap: 6, justifyContent: 'center', flexWrap: 'wrap' }}>
-                  <span style={{ padding: '5px 12px', borderRadius: 14, fontSize: 9.5, fontWeight: 800, letterSpacing: 0.5, textTransform: 'uppercase', background: 'var(--card2)', color: 'var(--ink2)' }}>
+              {/* Category icon */}
+              <div
+                className="dk-icon"
+                style={{
+                  background: catColor + '22',
+                  color: catColor,
+                }}
+              >
+                <FontAwesomeIcon icon={{ prefix: 'fas', iconName: catIconName.replace('fa-', '') } as never} />
+              </div>
+
+              {/* Core Card Info */}
+              <div>
+                <div className="dk-head">{a.headline}</div>
+                <div className="dk-sub">{a.summary}</div>
+                <div className="dk-tags">
+                  <span className="dk-tag" style={{ color: catColor }}>
                     {a.category}
                   </span>
-                  <span style={{ padding: '5px 12px', borderRadius: 14, fontSize: 9.5, fontWeight: 800, letterSpacing: 0.5, textTransform: 'uppercase', background: 'var(--card2)', color: 'var(--ink2)' }}>
-                    {a.gsPaper}
-                  </span>
+                  <span className="dk-tag">{a.source}</span>
                 </div>
-              </>
-            )}
-          </div>
-        )
-      })}
+              </div>
+            </div>
+          )
+        })}
+      </div>
 
       {/* Counter */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 'calc(94px + env(safe-area-inset-bottom))',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 5,
-          background: 'var(--panel2)',
-          border: '1px solid var(--panel-border)',
-          backdropFilter: 'blur(12px)',
-          color: 'var(--on2)',
-          fontSize: 11.5,
-          fontWeight: 800,
-          padding: '7px 16px',
-          borderRadius: 18,
-          letterSpacing: 0.5,
-        }}
-      >
+      <div className="deck-cnt">
         {centerIdx + 1} / {total}
       </div>
-    </div>
+    </>
   )
 }

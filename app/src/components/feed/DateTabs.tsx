@@ -6,66 +6,33 @@ interface DateTabsProps {
 }
 
 export function DateTabs({ dates }: DateTabsProps) {
-  const { selectedDate, setSelectedDate } = useAppStore()
+  const { selectedDate, setSelectedDate, getArticlesForDate } = useAppStore()
 
-  function label(d: string) {
+  function getLabel(d: string) {
     if (d === TODAY) return 'Today'
     if (d === YESTERDAY) return 'Yesterday'
-    return fmtShort(d)
+    return dayName(d)
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        gap: 8,
-        padding: '2px 20px 12px',
-        flexShrink: 0,
-        overflowX: 'auto',
-        scrollbarWidth: 'none',
-        position: 'relative',
-        zIndex: 2,
-      }}
-    >
+    <div className="date-tabs">
       {dates.map((d) => {
         const active = d === selectedDate
+        const articleCount = getArticlesForDate(d).length
+        const dateLabel = fmtShort(d) // e.g. "7 Jul"
+        
         return (
           <button
             key={d}
             onClick={() => setSelectedDate(d)}
-            style={{
-              padding: '9px 16px',
-              fontSize: 12,
-              fontWeight: 800,
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              border: active ? '1px solid transparent' : '1px solid var(--panel-border)',
-              background: active ? '#fff' : 'var(--panel2)',
-              backdropFilter: 'blur(12px)',
-              borderRadius: 20,
-              transition: 'all 0.25s',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              lineHeight: 1.25,
-              letterSpacing: 0.3,
-              color: active ? '#4A4E8C' : 'var(--on2)',
-              boxShadow: active ? 'var(--shadow-soft)' : 'none',
-            }}
+            className={`date-tab ${active ? 'active' : ''} ${articleCount ? 'has-data' : ''}`}
           >
-            <span
-              style={{
-                display: 'block',
-                fontSize: 9,
-                fontWeight: 700,
-                opacity: 0.6,
-                textTransform: 'uppercase',
-                letterSpacing: 0.6,
-              }}
-            >
-              {dayName(d)}
+            {getLabel(d)}
+            <span className="dt-day">
+              {dateLabel}
+              {articleCount > 0 ? ` · ${articleCount}` : ''}
             </span>
-            {label(d)}
+            <span className="dt-dot"></span>
           </button>
         )
       })}

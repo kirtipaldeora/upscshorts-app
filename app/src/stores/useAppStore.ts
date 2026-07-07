@@ -78,8 +78,13 @@ export const useAppStore = create<AppStore>()((set, get) => ({
   // Feed state
   selectedDate: TODAY,
   setSelectedDate: (d) => set({ selectedDate: d }),
-  viewMode: 'list',
-  setViewMode: (v) => set({ viewMode: v }),
+  viewMode: (localStorage.getItem('u4view') as ViewMode) || 'deck',
+  setViewMode: (v) => {
+    try {
+      localStorage.setItem('u4view', v)
+    } catch { /* noop */ }
+    set({ viewMode: v })
+  },
   categoryFilter: null,
   setCategoryFilter: (c) => set({ categoryFilter: c }),
 
