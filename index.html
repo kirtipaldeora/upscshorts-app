@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>UPSC Shorts</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{display:['Space Grotesk','sans-serif'],body:['DM Sans','sans-serif']},colors:{accent:'#D4A853','accent-dim':'#B8912E',teal:'#4ECDC4'}}}}
+</script>
+<style>
+:root{--accent:#D4A853;--teal:#4ECDC4;--bg:#0A0A0A;--bg2:#111;--card:#151515;--card2:#1C1C1C;--text:#F0EDE6;--text2:#A8A49C;--text3:#6B6860;--border:#252525;--nav:#080808;--overlay:rgba(0,0,0,0.75)}
+html.light{--bg:#F5F3EE;--bg2:#EDEAE4;--card:#FFF;--card2:#F0EDE6;--text:#1A1814;--text2:#6B6560;--text3:#9E9890;--border:#DDD8D0;--nav:#F5F3EE;--overlay:rgba(0,0,0,0.4)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow:hidden;height:100dvh;width:100vw}
+h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
+::-webkit-scrollbar{width:0;height:0}
+::selection{background:var(--accent);color:#000}
+
+#splash{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+#splash::before{content:'';position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(212,168,83,0.06) 0%,transparent 70%);animation:sg 3s ease-in-out infinite alternate;pointer-events:none}
+@keyframes sg{0%{transform:scale(.8);opacity:.5}100%{transform:scale(1.3);opacity:1}}
+.slw{position:relative;width:72px;height:72px;margin-bottom:28px;opacity:0;transform:scale(.5);animation:sli .8s cubic-bezier(.34,1.56,.64,1) .3s forwards}
+@keyframes sli{to{opacity:1;transform:scale(1)}}
+.sl{width:72px;height:72px;border-radius:18px;background:linear-gradient(145deg,#E8C97A,#B8912E);display:flex;align-items:center;justify-content:center;font-size:30px;color:#0A0A0A;font-weight:700;font-family:'Space Grotesk';position:relative;z-index:2}
+.sr{position:absolute;inset:-8px;border-radius:22px;border:1.5px solid rgba(212,168,83,.3);opacity:0;animation:sri .6s ease .8s forwards,srr 8s linear .8s infinite}
+.sr2{position:absolute;inset:-16px;border-radius:26px;border:1px solid rgba(212,168,83,.12);opacity:0;animation:sri .6s ease 1s forwards}
+@keyframes sri{to{opacity:1}}
+@keyframes srr{to{transform:rotate(360deg)}}
+.st{font-size:34px;font-weight:700;letter-spacing:-.5px;opacity:0;transform:translateY(16px);animation:sti .7s cubic-bezier(.22,1,.36,1) .7s forwards}
+@keyframes sti{to{opacity:1;transform:translateY(0)}}
+.st span{color:var(--accent);opacity:0;animation:sai .5s ease 1.1s forwards}
+@keyframes sai{to{opacity:1}}
+.ss{color:var(--text3);font-size:13px;letter-spacing:3px;text-transform:uppercase;margin-top:8px;opacity:0;transform:translateY(10px);animation:sti .6s ease 1.3s forwards}
+.sbw{position:absolute;bottom:100px;width:120px;height:2px;background:var(--border);border-radius:1px;overflow:hidden;opacity:0;animation:sti .4s ease 1.5s forwards}
+.sb{height:100%;width:0;background:var(--accent);border-radius:1px;animation:sbf 1.2s ease-in-out 1.6s forwards}
+@keyframes sbf{to{width:100%}}
+.sh{position:absolute;bottom:60px;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text3);font-size:11px;opacity:0;animation:sti .5s ease 2.2s forwards}
+.sh i{font-size:14px;animation:hb 2s ease-in-out 2.4s infinite}
+@keyframes hb{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(-6px);opacity:1}}
+#splash.exit{animation:se .6s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes se{to{opacity:0;transform:scale(1.04);filter:blur(4px)}}
+.sp{position:absolute;width:3px;height:3px;border-radius:50%;background:var(--accent);opacity:0;pointer-events:none}
+.sp1{top:20%;left:15%;animation:fp 4s ease-in-out 1s infinite}
+.sp2{top:70%;left:80%;animation:fp 5s ease-in-out 1.5s infinite}
+.sp3{top:40%;left:75%;animation:fp 3.5s ease-in-out .8s infinite}
+.sp4{top:80%;left:25%;animation:fp 4.5s ease-in-out 1.2s infinite}
+.sp5{top:15%;left:60%;animation:fp 3s ease-in-out 1.8s infinite}
+@keyframes fp{0%,100%{opacity:0;transform:translateY(0) scale(.5)}25%{opacity:.4}50%{opacity:.6;transform:translateY(-20px) scale(1)}75%{opacity:.3}100%{opacity:0;transform:translateY(-40px) scale(.5)}}
+
+#onboarding{position:fixed;inset:0;z-index:900;background:var(--bg);display:none;flex-direction:column}
+#onboarding.active{display:flex}
+.ob-slides{flex:1;position:relative;overflow:hidden}
+.ob-slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;transition:transform .5s cubic-bezier(.4,0,.2,1),opacity .5s}
+.ob-slide.left{transform:translateX(-100%);opacity:0}
+.ob-slide.right{transform:translateX(100%);opacity:0}
+.ob-slide.active{transform:translateX(0);opacity:1}
+.ob-icon{width:80px;height:80px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:24px}
+.ob-slide h2{font-size:24px;font-weight:700;text-align:center;margin-bottom:12px}
+.ob-slide p{color:var(--text2);text-align:center;font-size:15px;line-height:1.6;max-width:320px}
+.ob-dots{display:flex;gap:8px;justify-content:center;padding:20px}
+.ob-dot{width:8px;height:8px;border-radius:4px;background:var(--border);transition:all .3s}
+.ob-dot.active{width:24px;background:var(--accent)}
+.ob-bottom{padding:20px 32px 40px;display:flex;gap:12px}
+.ob-bottom button{flex:1;padding:14px;border-radius:12px;font-size:15px;font-weight:600;font-family:'Space Grotesk';cursor:pointer;border:none;transition:all .2s}
+.btn-skip{background:var(--card2);color:var(--text2)}
+.btn-next{background:var(--accent);color:#0A0A0A}
+.gs-select{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:20px}
+.gs-chip{padding:8px 16px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:transparent;color:var(--text2);transition:all .2s}
+.gs-chip.selected{border-color:var(--accent);background:rgba(212,168,83,.1);color:var(--accent)}
+
+#app{position:fixed;inset:0;display:none;flex-direction:column;background:var(--bg)}
+#app.active{display:flex}
+.top-bar{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex-shrink:0;background:var(--bg);z-index:50;position:relative}
+.top-bar .left-area{display:flex;align-items:center;gap:10px}
+.top-bar .back-btn{width:32px;height:32px;border-radius:8px;border:none;background:transparent;color:var(--text2);font-size:14px;cursor:pointer;display:none;align-items:center;justify-content:center;transition:all .2s}
+.top-bar .back-btn.show{display:flex}
+.top-bar h1{font-size:18px;font-weight:700;letter-spacing:-.3px}
+.top-bar h1 span{color:var(--accent)}
+.top-bar .top-actions{display:flex;gap:4px}
+.top-bar .top-actions button{width:36px;height:36px;border-radius:10px;border:none;background:transparent;color:var(--text2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.top-bar .top-actions button:hover{background:var(--card2);color:var(--text)}
+.date-tabs{display:flex;gap:0;padding:0 8px;flex-shrink:0;background:var(--bg);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.date-tabs::-webkit-scrollbar{display:none}
+.date-tab{padding:10px 14px;font-size:12px;font-weight:500;color:var(--text3);white-space:nowrap;cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .25s;font-family:'DM Sans';position:relative}
+.date-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.date-tab .dt-day{display:block;font-size:10px;font-weight:400;color:var(--text3);margin-top:1px}
+.date-tab.active .dt-day{color:var(--accent);opacity:.7}
+.date-tab .dt-dot{width:4px;height:4px;border-radius:50%;background:var(--accent);position:absolute;bottom:6px;left:50%;transform:translateX(-50%);display:none}
+.date-tab.has-data .dt-dot{display:block}
+.date-tab.active.has-data .dt-dot{bottom:4px}
+.update-banner{padding:12px 16px;background:linear-gradient(135deg,rgba(212,168,83,.1),rgba(212,168,83,.03));border-bottom:1px solid rgba(212,168,83,.12);display:flex;align-items:center;gap:10px;flex-shrink:0;cursor:pointer;transition:background .2s}
+.update-banner:hover{background:linear-gradient(135deg,rgba(212,168,83,.16),rgba(212,168,83,.06))}
+.update-banner i{color:var(--accent);font-size:14px}
+.update-banner .ub-text{flex:1}
+.update-banner .ub-text strong{font-size:13px;font-weight:600;display:block}
+.update-banner .ub-text span{font-size:11px;color:var(--text3)}
+.update-banner .ub-time{font-size:11px;color:var(--text3);white-space:nowrap}
+
+/* SCROLLABLE FEED */
+.feed-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:8px 10px 20px;-webkit-overflow-scrolling:touch}
+.feed-card{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden;transition:border-color .2s}
+.feed-card:active{border-color:var(--text3)}
+.card-accent{height:3px;border-radius:14px 14px 0 0}
+.card-body{padding:18px}
+.card-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tag{padding:3px 9px;border-radius:5px;font-size:10px;font-weight:600;letter-spacing:.3px;text-transform:uppercase}
+.tag-cat{border:1px solid}
+.tag-gs{background:var(--card2);color:var(--text2);border:1px solid var(--border)}
+.tag-src{background:transparent;color:var(--teal);border:1px solid rgba(78,205,196,.25);font-weight:500;text-transform:none;letter-spacing:0;font-size:10px}
+.card-headline{font-size:17px;font-weight:700;line-height:1.3;margin-bottom:6px;letter-spacing:-.3px}
+.card-meta{font-size:11px;color:var(--text3);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.card-summary{font-size:14px;line-height:1.7;color:var(--text);margin-bottom:12px}
+.card-why{background:var(--card2);border-radius:9px;padding:12px;margin-bottom:12px;border-left:3px solid var(--accent)}
+.card-why-label{font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.card-why-text{font-size:12px;line-height:1.6;color:var(--text2)}
+.card-actions{display:flex;align-items:center;gap:6px;padding-top:10px;border-top:1px solid var(--border)}
+.card-actions button{height:34px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:11px;cursor:pointer;display:flex;align-items:center;gap:5px;padding:0 11px;transition:all .2s;font-family:'DM Sans';font-weight:500}
+.card-actions button:hover{background:var(--card2);color:var(--text)}
+.card-actions .btn-deep{background:var(--accent);color:#0A0A0A;border-color:var(--accent);margin-left:auto;font-weight:600}
+.card-actions .btn-bm.bookmarked{color:var(--accent);border-color:var(--accent)}
+
+/* Screens */
+.screen{position:absolute;top:0;left:0;right:0;bottom:calc(60px + env(safe-area-inset-bottom));display:none;flex-direction:column;background:var(--bg);z-index:10}
+.screen.active{display:flex}
+.screen-header{height:52px;display:flex;align-items:center;gap:12px;padding:0 16px;flex-shrink:0;border-bottom:1px solid var(--border)}
+.screen-header h2{font-size:18px;font-weight:700;flex:1}
+.screen-header button{width:36px;height:36px;border-radius:10px;border:none;background:transparent;color:var(--text2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.screen-body{flex:1;overflow-y:auto;padding:16px}
+
+.subject-card{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden}
+.subject-header{padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:background .15s}
+.subject-header:hover{background:var(--card2)}
+.subject-color{width:3px;height:32px;border-radius:2px;flex-shrink:0}
+.subject-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.subject-info{flex:1;min-width:0}
+.subject-info h3{font-size:14px;font-weight:600;margin-bottom:1px}
+.subject-info span{font-size:11px;color:var(--text3)}
+.subject-expand{width:24px;height:24px;border-radius:6px;background:var(--card2);display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:10px;transition:transform .3s}
+.subject-card.open .subject-expand{transform:rotate(180deg)}
+.subject-articles{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.subject-card.open .subject-articles{max-height:2000px}
+.subject-article{padding:10px 16px 10px 68px;border-top:1px solid var(--border);cursor:pointer;transition:background .15s}
+.subject-article:hover{background:var(--card2)}
+.subject-article h4{font-size:12.5px;font-weight:500;line-height:1.35;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.subject-article .sa-meta{font-size:10px;color:var(--text3);display:flex;gap:6px;align-items:center}
+.subject-article .sa-bm{margin-left:auto;background:none;border:none;color:var(--text3);font-size:11px;cursor:pointer;padding:4px}
+.subject-article .sa-bm.bookmarked{color:var(--accent)}
+
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cat-card{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.cat-card:hover{transform:translateY(-2px);border-color:var(--text3)}
+.cat-card .cat-color{position:absolute;top:0;left:0;right:0;height:3px}
+.cat-card i{font-size:20px;margin-bottom:8px;display:block}
+.cat-card h3{font-size:13px;font-weight:600;margin-bottom:3px}
+.cat-card span{font-size:11px;color:var(--text3)}
+
+.search-box{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:11px;padding:10px 14px;margin-bottom:14px}
+.search-box i{color:var(--text3);font-size:14px}
+.search-box input{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:15px;font-family:'DM Sans'}
+.search-box input::placeholder{color:var(--text3)}
+.search-filters{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;margin-bottom:6px;scrollbar-width:none}
+.search-filters::-webkit-scrollbar{display:none}
+.filter-chip{padding:5px 12px;border-radius:7px;font-size:11px;font-weight:500;white-space:nowrap;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text2);transition:all .2s}
+.filter-chip.active{background:var(--accent);color:#0A0A0A;border-color:var(--accent)}
+.search-result{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:14px;margin-bottom:8px;cursor:pointer;transition:all .2s}
+.search-result:hover{border-color:var(--text3)}
+.search-result h4{font-size:14px;font-weight:600;margin-bottom:5px;line-height:1.3}
+.search-result p{font-size:12.5px;color:var(--text2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.search-result .sr-meta{display:flex;gap:6px;margin-top:6px}
+
+.bm-item{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:14px;margin-bottom:8px;cursor:pointer;transition:all .2s;position:relative}
+.bm-item:hover{border-color:var(--text3)}
+.bm-item .bm-cat{position:absolute;top:0;left:14px;width:36px;height:3px;border-radius:0 0 3px 3px}
+.bm-item h4{font-size:14px;font-weight:600;margin-bottom:3px;line-height:1.3;margin-top:3px}
+.bm-item .bm-meta{font-size:10px;color:var(--text3);margin-bottom:6px;display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.bm-item p{font-size:12.5px;color:var(--text2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.bm-item .bm-actions{display:flex;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.bm-item .bm-actions button{padding:5px 10px;border-radius:7px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text2);transition:all .2s;display:flex;align-items:center;gap:4px;font-family:'DM Sans'}
+.bm-item .bm-actions .btn-dive{margin-left:auto;background:var(--accent);color:#0A0A0A;border-color:var(--accent);font-weight:600}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:60%;color:var(--text3);gap:12px}
+.empty-state i{font-size:36px;opacity:.25}
+.empty-state p{font-size:13px;text-align:center;max-width:240px;line-height:1.5}
+
+#deep-dive{position:fixed;inset:0;z-index:200;background:var(--bg);display:none;flex-direction:column;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+#deep-dive.active{display:flex;transform:translateX(0)}
+.dd-header{height:52px;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.dd-header h2{font-size:15px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dd-body{flex:1;overflow-y:auto;padding:18px 16px 40px}
+.dd-explain{font-size:14.5px;line-height:1.85;color:var(--text);margin-bottom:22px}
+.dd-explain strong{color:var(--accent);font-weight:600}
+.dd-divider{height:1px;background:var(--border);margin:18px 0}
+.dd-section-title{font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.dd-section-title i{font-size:10px}
+.dd-fact-box{background:var(--card2);border-radius:10px;padding:12px 14px;border:1px solid var(--border);margin-bottom:16px}
+.dd-fact-box li{font-size:12.5px;line-height:1.7;color:var(--text2);margin-bottom:7px;padding-left:2px}
+.dd-fact-box li:last-child{margin-bottom:0}
+.dd-fact-box li::marker{color:var(--accent)}
+.dd-question{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:14px 14px 14px 18px;font-size:13.5px;line-height:1.75;color:var(--text2);font-style:italic;position:relative}
+.dd-question::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:11px 0 0 11px;background:var(--accent)}
+.dd-flashcard-btn{width:100%;padding:13px;border-radius:11px;background:var(--accent);color:#0A0A0A;font-size:13px;font-weight:700;font-family:'Space Grotesk';border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;margin-top:6px}
+.dd-flashcard-btn:hover{filter:brightness(1.1)}
+
+#flashcards{position:fixed;inset:0;z-index:250;background:var(--bg);display:none;flex-direction:column;transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+#flashcards.active{display:flex;transform:translateY(0)}
+.fc-header{height:52px;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.fc-header h2{font-size:16px;font-weight:700;flex:1}
+.fc-counter{font-size:12px;color:var(--text3);font-weight:500}
+.fc-container{flex:1;display:flex;align-items:center;justify-content:center;padding:24px;perspective:1000px}
+.fc-card{width:100%;max-width:360px;height:260px;position:relative;cursor:pointer;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1)}
+.fc-card.flipped{transform:rotateY(180deg)}
+.fc-front,.fc-back{position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.fc-front{background:var(--card)}
+.fc-front h3{font-size:12px;font-weight:600;margin-bottom:10px;color:var(--accent);text-transform:uppercase;letter-spacing:.5px}
+.fc-front p{font-size:14px;line-height:1.6;color:var(--text)}
+.fc-back{background:linear-gradient(135deg,var(--accent),#E8C97A);transform:rotateY(180deg);color:#0A0A0A}
+.fc-back p{font-size:13px;line-height:1.65;font-weight:500}
+.fc-nav{display:flex;justify-content:center;gap:14px;padding:18px;padding-bottom:calc(18px + env(safe-area-inset-bottom))}
+.fc-nav button{width:44px;height:44px;border-radius:11px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:15px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.fc-nav button:hover{background:var(--card2)}
+
+#upload{position:fixed;inset:0;z-index:200;background:var(--overlay);display:none;align-items:flex-end;justify-content:center}
+#upload.active{display:flex}
+.upload-sheet{width:100%;max-width:480px;background:var(--bg);border-radius:20px 20px 0 0;padding:20px;max-height:85vh;transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);overflow-y:auto}
+#upload.active .upload-sheet{transform:translateY(0)}
+.upload-handle{width:36px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 16px}
+.upload-zone{border:2px dashed var(--border);border-radius:13px;padding:28px 16px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:14px}
+.upload-zone:hover{border-color:var(--accent);background:rgba(212,168,83,.03)}
+.upload-zone i{font-size:26px;color:var(--text3);margin-bottom:8px;display:block}
+.upload-zone p{color:var(--text2);font-size:13px}
+.upload-zone span{color:var(--accent);font-weight:600}
+.upload-sources{display:flex;gap:8px;margin-bottom:14px}
+.upload-src{flex:1;padding:10px;border-radius:9px;border:1px solid var(--border);background:var(--card);text-align:center;cursor:pointer;transition:all .2s;font-size:11px;color:var(--text2);font-weight:500}
+.upload-src:hover{border-color:var(--accent);color:var(--accent)}
+.upload-src i{display:block;font-size:16px;margin-bottom:4px}
+.proc-steps{display:none;flex-direction:column;gap:10px}
+.proc-steps.active{display:flex}
+.proc-step{display:flex;align-items:center;gap:10px;padding:10px;border-radius:9px;background:var(--card);border:1px solid var(--border)}
+.proc-step .pi{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.proc-step .pi.pending{background:var(--card2);color:var(--text3)}
+.proc-step .pi.active{background:rgba(212,168,83,.12);color:var(--accent);animation:spin 1s linear infinite}
+.proc-step .pi.done{background:rgba(78,205,196,.12);color:var(--teal)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.proc-step .pt{font-size:12px;font-weight:500}
+.proc-step .pt.pending{color:var(--text3)}
+.proc-step .pt.active{color:var(--accent)}
+.proc-step .pt.done{color:var(--teal)}
+.upload-success{display:none;flex-direction:column;align-items:center;gap:10px;padding:16px 0}
+.upload-success.active{display:flex}
+.upload-success i{font-size:36px;color:var(--teal)}
+.upload-success h3{font-size:17px;font-weight:700}
+.upload-success p{color:var(--text2);font-size:13px;text-align:center}
+.upload-success button{margin-top:6px;padding:11px 28px;border-radius:11px;background:var(--accent);color:#0A0A0A;font-size:13px;font-weight:700;font-family:'Space Grotesk';border:none;cursor:pointer}
+
+#digest{position:fixed;inset:0;z-index:200;background:var(--bg);display:none;flex-direction:column;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+#digest.active{display:flex;transform:translateX(0)}
+
+/* MAPS ARCADE */
+#maps-arcade{position:fixed;inset:0;z-index:300;background:var(--bg);display:none;flex-direction:column;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+#maps-arcade.active{display:flex;transform:translateX(0)}
+.ma-header{height:52px;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--nav)}
+.ma-header h2{font-size:16px;font-weight:700;flex:1}
+.ma-header h2 span{color:var(--accent)}
+.ma-header button{width:36px;height:36px;border-radius:10px;border:none;background:transparent;color:var(--text2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.ma-header button:hover{background:var(--card2);color:var(--text)}
+#ma-frame{flex:1;width:100%;border:none;background:#FFF4E6}
+.ma-loading{position:absolute;inset:52px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:var(--text3);pointer-events:none;transition:opacity .3s}
+.ma-loading.hide{opacity:0}
+.ma-loading i{font-size:34px;color:var(--accent);animation:spin 1s linear infinite}
+.ma-loading p{font-size:13px}
+.arcade-card{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,rgba(78,205,196,.12),rgba(212,168,83,.08));border:1px solid rgba(78,205,196,.25);border-radius:14px;padding:16px;margin-bottom:14px;cursor:pointer;transition:all .2s}
+.arcade-card:hover{transform:translateY(-2px);border-color:var(--teal)}
+.arcade-card .ac-icon{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,var(--teal),#3BB0A8);display:flex;align-items:center;justify-content:center;color:#04201E;font-size:20px;flex-shrink:0}
+.arcade-card .ac-info{flex:1;min-width:0}
+.arcade-card .ac-info h3{font-size:15px;font-weight:700;margin-bottom:2px}
+.arcade-card .ac-info p{font-size:11.5px;color:var(--text2);line-height:1.4}
+.arcade-card .ac-go{color:var(--teal);font-size:14px;flex-shrink:0}
+.digest-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.digest-num{width:26px;height:26px;border-radius:7px;background:var(--accent);color:#0A0A0A;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.digest-content{flex:1;min-width:0}
+.digest-content h4{font-size:13px;font-weight:600;margin-bottom:3px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.digest-content p{font-size:11.5px;color:var(--text2);line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+.setting-group{margin-bottom:22px}
+.setting-group-title{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;padding:0 4px}
+.setting-item{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:11px;margin-bottom:6px;cursor:pointer;transition:all .15s}
+.setting-item:hover{border-color:var(--text3)}
+.setting-item:first-of-type{border-radius:11px 11px 3px 3px}
+.setting-item:last-of-type{border-radius:3px 3px 11px 11px;margin-bottom:0}
+.setting-item:only-of-type{border-radius:11px}
+.setting-left{display:flex;align-items:center;gap:10px}
+.setting-left i{width:28px;text-align:center;color:var(--text2);font-size:14px}
+.setting-left span{font-size:13px;font-weight:500}
+.toggle{width:42px;height:22px;border-radius:11px;background:var(--border);position:relative;cursor:pointer;transition:all .3s;border:none;padding:0;flex-shrink:0}
+.toggle.on{background:var(--accent)}
+.toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:3px;left:3px;transition:all .3s}
+.toggle.on::after{left:23px}
+.profile-card{text-align:center;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:22px}
+.profile-avatar{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#E8C97A);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#0A0A0A;font-family:'Space Grotesk';margin:0 auto 10px}
+.profile-card h3{font-size:17px;font-weight:700;margin-bottom:2px}
+.profile-card p{font-size:12px;color:var(--text2)}
+.profile-stats{display:flex;justify-content:center;gap:28px;margin-top:14px}
+.profile-stat{text-align:center}
+.profile-stat .ps-num{font-size:20px;font-weight:700;color:var(--accent);font-family:'Space Grotesk'}
+.profile-stat .ps-label{font-size:10px;color:var(--text3);margin-top:1px}
+
+.bottom-nav{position:absolute;bottom:0;left:0;right:0;height:60px;background:var(--nav);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;flex-shrink:0;z-index:100;padding-bottom:env(safe-area-inset-bottom);box-sizing:content-box}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:5px 10px;border-radius:8px;transition:all .2s;border:none;background:none;color:var(--text3);font-size:9px;font-weight:500;font-family:'DM Sans'}
+.nav-item i{font-size:17px;transition:all .2s}
+.nav-item.active{color:var(--accent)}
+.nav-item.active i{transform:scale(1.08)}
+.nav-upload{width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,var(--accent),#E8C97A);display:flex;align-items:center;justify-content:center;color:#0A0A0A;font-size:18px;border:none;cursor:pointer;margin-top:-18px;box-shadow:0 4px 18px rgba(212,168,83,.25);transition:all .2s}
+.nav-upload:hover{transform:scale(1.05)}
+
+.toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 18px;border-radius:9px;font-size:12px;font-weight:500;z-index:500;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;box-shadow:0 6px 24px rgba(0,0,0,.3)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(min-width:480px){.cat-grid{grid-template-columns:repeat(3,1fr)}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="sp sp1"></div><div class="sp sp2"></div><div class="sp sp3"></div><div class="sp sp4"></div><div class="sp sp5"></div>
+  <div class="slw"><div class="sr2"></div><div class="sr"></div><div class="sl">U</div></div>
+  <div class="st">UPSC <span>Shorts</span></div>
+  <div class="ss">Current Affairs. Simplified.</div>
+  <div class="sbw"><div class="sb"></div></div>
+  <div class="sh"><i class="fas fa-chevron-up"></i><span>Scroll to explore</span></div>
+</div>
+
+<div id="onboarding">
+  <div class="ob-slides">
+    <div class="ob-slide active"><div class="ob-icon" style="background:rgba(212,168,83,.1);color:var(--accent)"><i class="fas fa-newspaper"></i></div><h2>Daily Updates, Saved Forever</h2><p>Every day's current affairs from The Hindu and UPSCPrep are recorded by date. Go back to any day and revise.</p></div>
+    <div class="ob-slide right"><div class="ob-icon" style="background:rgba(78,205,196,.1);color:var(--teal)"><i class="fas fa-layer-group"></i></div><h2>Organised by Subject</h2><p>All articles sorted by UPSC subjects — Polity, Economy, Environment and more. Revise subject-wise.</p></div>
+    <div class="ob-slide right"><div class="ob-icon" style="background:rgba(212,168,83,.1);color:var(--accent)"><i class="fas fa-sliders-h"></i></div><h2>Choose Your Focus</h2><p>Select the GS papers you're preparing for.<div class="gs-select"><div class="gs-chip selected" data-gs="GS1">GS Paper 1</div><div class="gs-chip selected" data-gs="GS2">GS Paper 2</div><div class="gs-chip selected" data-gs="GS3">GS Paper 3</div><div class="gs-chip" data-gs="GS4">GS Paper 4</div></div></p></div>
+  </div>
+  <div class="ob-dots"><div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div></div>
+  <div class="ob-bottom"><button class="btn-skip" onclick="finishOb()">Skip</button><button class="btn-next" onclick="nextObS()">Next</button></div>
+</div>
+
+<div id="app">
+  <div class="screen active" id="feed-screen">
+    <div class="top-bar">
+      <div class="left-area"><button class="back-btn" id="feed-back" onclick="clearFilter()"><i class="fas fa-arrow-left"></i></button><h1>UPSC <span>Shorts</span></h1></div>
+      <div class="top-actions"><button onclick="openMapsArcade()" aria-label="Maps Arcade" title="Maps Arcade"><i class="fas fa-earth-asia" style="color:var(--teal)"></i></button><button onclick="showScr('search-screen')" aria-label="Search"><i class="fas fa-search"></i></button><button onclick="showScr('cat-screen')" aria-label="Categories"><i class="fas fa-table-cells-large"></i></button><button onclick="openDigest()"><i class="fas fa-list-ol"></i></button><button onclick="toggleTheme()"><i class="fas fa-moon" id="theme-icon"></i></button></div>
+    </div>
+    <div class="update-banner" id="update-banner" onclick="simUpdate()"><i class="fas fa-rotate"></i><div class="ub-text"><strong>Update available</strong><span>The Hindu & UPSCPrep — new topics ready</span></div><div class="ub-time">8:00 AM</div></div>
+    <div class="date-tabs" id="date-tabs"></div>
+    <div class="feed-scroll" id="feed-scroll"></div>
+  </div>
+  <div class="screen" id="revise-screen"><div class="screen-header"><button onclick="showScr('feed-screen')"><i class="fas fa-arrow-left"></i></button><h2>Revise by Subject</h2></div><div class="screen-body" id="revise-body"></div></div>
+  <div class="screen" id="cat-screen"><div class="screen-header"><button onclick="showScr('feed-screen')"><i class="fas fa-arrow-left"></i></button><h2>Categories</h2></div><div class="screen-body" id="cat-body"></div></div>
+  <div class="screen" id="search-screen"><div class="screen-header"><button onclick="showScr('feed-screen')"><i class="fas fa-arrow-left"></i></button><h2>Search</h2></div><div class="screen-body" style="padding-top:8px"><div class="search-box"><i class="fas fa-search"></i><input type="text" id="search-input" placeholder="Search topics, keywords, dates..." oninput="doSearch()"></div><div class="search-filters" id="search-filters"></div><div id="search-results"></div></div></div>
+  <div class="screen" id="bm-screen"><div class="screen-header"><button onclick="showScr('feed-screen')"><i class="fas fa-arrow-left"></i></button><h2>Bookmarks</h2><button onclick="exportBm()"><i class="fas fa-download"></i></button></div><div class="screen-body" id="bm-body"></div></div>
+  <div class="screen" id="profile-screen"><div class="screen-header"><button onclick="showScr('feed-screen')"><i class="fas fa-arrow-left"></i></button><h2>Profile</h2></div><div class="screen-body" id="profile-body"></div></div>
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-nav="feed-screen" onclick="navTo(this)"><i class="fas fa-house"></i><span>Feed</span></button>
+    <button class="nav-item" data-nav="revise-screen" onclick="navTo(this)"><i class="fas fa-book-open"></i><span>Revise</span></button>
+    <button class="nav-upload" onclick="openUpload()" aria-label="Upload PDF"><i class="fas fa-plus"></i></button>
+    <button class="nav-item" data-nav="bm-screen" onclick="navTo(this)"><i class="fas fa-bookmark"></i><span>Saved</span></button>
+    <button class="nav-item" data-nav="profile-screen" onclick="navTo(this)"><i class="fas fa-user"></i><span>Profile</span></button>
+  </nav>
+</div>
+
+<div id="deep-dive"><div class="dd-header"><button onclick="closeDD()"><i class="fas fa-arrow-left"></i></button><h2 id="dd-title"></h2><button onclick="shareById(curDDId)"><i class="fas fa-share-alt"></i></button></div><div class="dd-body" id="dd-body"></div></div>
+<div id="flashcards"><div class="fc-header"><button onclick="closeFC()"><i class="fas fa-arrow-left"></i></button><h2>Flashcards</h2><span class="fc-counter" id="fc-counter">1 / 1</span></div><div class="fc-container"><div class="fc-card" id="fc-card" onclick="flipFC()"><div class="fc-front"><h3>Tap to Reveal</h3><p id="fc-front"></p></div><div class="fc-back"><p id="fc-back"></p></div></div></div><div class="fc-nav"><button onclick="prevFC()"><i class="fas fa-arrow-left"></i></button><button onclick="closeFC()" style="width:auto;padding:0 18px;font-size:12px;font-weight:600;font-family:'Space Grotesk'">Close</button><button onclick="nextFC()"><i class="fas fa-arrow-right"></i></button></div></div>
+<div id="upload" onclick="if(event.target===this)closeUpload()"><div class="upload-sheet"><div class="upload-handle"></div><h3 style="font-size:17px;font-weight:700;margin-bottom:3px">Update Feed</h3><p style="font-size:12px;color:var(--text2);margin-bottom:14px">Import a shorts JSON file, upload a PDF, or sync from The Hindu</p><div class="upload-sources" id="up-srcs"><div class="upload-src" onclick="document.getElementById('json-in').click()"><i class="fas fa-file-import"></i>Import JSON</div><div class="upload-src" onclick="document.getElementById('pdf-in').click()"><i class="fas fa-file-pdf"></i>Upload PDF</div><div class="upload-src" onclick="simHindu()"><i class="fas fa-sync"></i>Sync Hindu</div></div><div class="upload-zone" id="up-zone" onclick="document.getElementById('pdf-in').click()"><i class="fas fa-cloud-arrow-up"></i><p>Tap to select <span>UPSCPrep Daily CA PDF</span></p><p style="font-size:11px;color:var(--text3);margin-top:4px">Supports daily current affairs PDFs from upscprep.com</p></div><input type="file" id="pdf-in" accept=".pdf" style="display:none" onchange="handlePDF(event)"><input type="file" id="json-in" accept=".json,application/json" style="display:none" onchange="handleJSON(event)"><div class="proc-steps" id="proc-steps"><div class="proc-step"><div class="pi pending"><i class="fas fa-file-pdf"></i></div><span class="pt pending">Reading PDF content...</span></div><div class="proc-step"><div class="pi pending"><i class="fas fa-magnifying-glass"></i></div><span class="pt pending">Identifying UPSC-relevant topics...</span></div><div class="proc-step"><div class="pi pending"><i class="fas fa-wand-magic-sparkles"></i></div><span class="pt pending">Generating summaries and analysis...</span></div><div class="proc-step"><div class="pi pending"><i class="fas fa-calendar-plus"></i></div><span class="pt pending">Recording to today's feed...</span></div></div><div class="upload-success" id="up-ok"><i class="fas fa-circle-check"></i><h3>Feed Updated</h3><p id="up-ok-text">New topics added to today's feed</p><button onclick="closeUpload()">View in Feed</button></div></div></div>
+<div id="digest"><div class="dd-header"><button onclick="closeDigest()"><i class="fas fa-arrow-left"></i></button><h2 id="digest-title">Today's Digest</h2></div><div class="dd-body" id="digest-body"></div></div>
+<div id="maps-arcade"><div class="ma-header"><button onclick="closeMapsArcade()" aria-label="Back"><i class="fas fa-arrow-left"></i></button><h2>Maps <span>Arcade</span></h2></div><div class="ma-loading" id="ma-loading"><i class="fas fa-circle-notch"></i><p>Loading Maps Arcade…</p></div><iframe id="ma-frame" title="Maps Arcade" allow="fullscreen"></iframe></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const CC={Polity:'#E05252',Economy:'#D4A853','International Relations':'#4A90D9',Environment:'#2D9F6F','Science and Tech':'#8B6FC0',Governance:'#D960A0','Social Issues':'#E07840',Security:'#D94040',Ethics:'#20B2AA',Schemes:'#6070E0','Reports and Indices':'#20A0B0'};
+const CI={Polity:'fa-landmark',Economy:'fa-chart-line','International Relations':'fa-globe',Environment:'fa-leaf','Science and Tech':'fa-flask',Governance:'fa-building-columns','Social Issues':'fa-people-group',Security:'fa-shield-halved',Ethics:'fa-scale-balanced',Schemes:'fa-hand-holding-heart','Reports and Indices':'fa-chart-bar'};
+const CATS=Object.keys(CC);
+const ds=d=>d.toISOString().split('T')[0];
+const fds=d=>new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+const fdf=d=>new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+const dn=d=>new Date(d).toLocaleDateString('en-IN',{weekday:'short'});
+const today=ds(new Date()),yest=ds(new Date(Date.now()-864e5)),dbefore=ds(new Date(Date.now()-1728e5));
+
+function defC(){return{
+[today]:[
+{id:'t1',headline:"One Nation One Election Bill Introduced in Lok Sabha",date:today,source:"The Hindu",category:"Polity",gsPaper:"GS 2",summary:"The government introduced the Constitution (129th Amendment) Bill in Lok Sabha proposing simultaneous elections for Lok Sabha and State Assemblies through new Articles 82A and 324A, based on the Ram Nath Kovind Committee report.",whyItMatters:"Directly tests Constitutional amendments, federalism, and electoral reforms — high-frequency Mains and Prelims area.",deepDive:{explanation:"The <strong>One Nation One Election Bill</strong> proposes a fundamental restructuring of India's election cycle. India held simultaneous elections from 1952 to 1967, but this practice broke down as state governments started falling before completing their five-year terms.\n\nThe <strong>Kovind Committee (March 2024)</strong> recommended a two-phase approach: first synchronise Lok Sabha and State Assembly elections, then within 100 days conduct local body elections.\n\nThis requires two constitutional amendments:\n- <strong>Article 82A</strong>: Creates a single, unified electoral roll for all elections.\n- <strong>Article 324A</strong>: Provides the constitutional framework for simultaneous elections, including provisions for mid-term government falls.\n\n<strong>Arguments in favour:</strong> The Model Code of Conduct would be imposed once every five years instead of multiple times, reducing governance disruption. Estimated savings of Rs 10,000 crore per cycle. Reduced diversion of security forces.\n\n<strong>Arguments against:</strong> Undermines <strong>federalism</strong> — a core basic structure feature. If a state government loses majority, either President's Rule or fresh elections break synchronisation. Regional parties fear it favours national parties with greater resources.\n\nThe Bill will likely be referred to a <strong>Joint Parliamentary Committee</strong>. Ratification by at least 50% of state legislatures is required under <strong>Article 368(2)</strong>. Earliest implementation: after 2029 general elections.",prelimsFacts:["Constitution (129th Amendment) Bill — Articles 82A and 324A","Kovind Committee report: March 2024","Simultaneous elections held: 1952, 1957, 1962, 1967","Requires 50% state ratification under Article 368(2)"],possibleMainsQuestion:"\"Simultaneous elections promise governance efficiency but pose significant federal challenges. Discuss the constitutional, political, and practical dimensions.\"",flashcard:{front:"What are Articles 82A and 324A in the One Nation One Election Bill?",back:"Article 82A: Single unified electoral roll for all elections. Article 324A: Framework for simultaneous elections. Kovind Committee (2024). Requires 50% state ratification."}}},
+{id:'t2',headline:"India's GDP Growth at 7.6% Beats RBI Estimate of 6.6%",date:today,source:"The Hindu",category:"Economy",gsPaper:"GS 3",summary:"India's Q3 FY2025 GDP growth came in at 7.6%, above RBI's 6.6% forecast. Manufacturing GVA surged 9.2% and GFCF touched 33.2% of GDP — the highest since FY2012 — signalling a structural investment upturn.",whyItMatters:"GDP analysis with sectoral breakup is a staple GS Paper 3 question. GFCF trend indicates potential shift from consumption-led to investment-led growth.",deepDive:{explanation:"The GDP data for <strong>Q3 FY2025 (October-December 2024)</strong> revealed an economy performing above expectations.\n\n<strong>Sectoral breakdown:</strong>\n- <strong>Manufacturing GVA: 9.2%</strong> — strongest in 8 quarters, linked to <strong>PLI scheme</strong> boosting electronics, pharma, and auto parts\n- <strong>Services GVA: 7.8%</strong> — led by financial services and IT exports\n- <strong>Construction GVA: 8.6%</strong> — driven by government infrastructure spending\n- <strong>Agriculture GVA: 3.5%</strong> — moderate, held back by uneven monsoon\n\n<strong>GFCF at 33.2% of GDP</strong> is the most significant metric — highest since FY2012. India's growth has historically been consumption-driven (PFCE ~60% of GDP). A rising GFCF share indicates the government's <strong>capex-as-multiplier strategy</strong> is working. The FY2024-25 capex of Rs 11.11 lakh crore is crowding in private investment.\n\n<strong>Concerns:</strong> PFCE grew only 6.5% — <strong>rural demand remains weak</strong>. Net exports are a drag (import bill exceeds export growth). CAD widened to 1.8% of GDP.",prelimsFacts:["GDP base year: 2011-12 (proposed shift to 2022-23)","GFCF = Gross Fixed Capital Formation","PLI scheme: 14 sectors, Rs 1.97 lakh crore outlay","India's GDP crossed $4 trillion in 2024"],possibleMainsQuestion:"\"Examine the role of the manufacturing sector in India's recent GDP acceleration. What structural reforms are needed to sustain this growth?\"",flashcard:{front:"GFCF reached 33.2% of GDP in Q3 FY2025. Why significant?",back:"Highest since FY2012. Signals structural investment upturn. Driven by govt capex (Rs 11.11L cr) and PLI scheme. Indicates shift from consumption-led to investment-led growth."}}},
+{id:'t3',headline:"Great Nicobar Island Project Gets Environmental Clearance",date:today,source:"The Hindu",category:"Environment",gsPaper:"GS 3",summary:"MoEFCC granted environmental clearance for the Rs 41,000 crore Great Nicobar project — a transshipment port, airport, township, and 450 MW power plant covering 166 sq km of biodiverse tropical forest.",whyItMatters:"Classic development-vs-environment question involving biodiversity hotspots, PVTG rights, EIA process, and strategic infrastructure near the Malacca Strait.",deepDive:{explanation:"The <strong>Great Nicobar Island Integrated Development Project</strong> is located at India's southernmost point — <strong>Indira Point</strong> — just 150 km from the <strong>Malacca Strait</strong> (40% of global maritime trade).\n\n<strong>Components:</strong> Transshipment port (14.2 million TEU), international airport (4,000m runway), township (65,000 population), 450 MW gas-based power plant. Total: Rs 41,000 crore.\n\n<strong>Ecological significance:</strong> Part of the <strong>Sundaland Biodiversity Hotspot</strong>. Endemic species include the <strong>Nicobar megapode</strong> (incubates eggs in volcanic soil), <strong>Nicobar pigeon</strong> (closest living relative to the dodo), and saltwater crocodile. Project would clear ~130 sq km of tropical evergreen forest.\n\n<strong>Tribal communities:</strong> Two <strong>PVTGs</strong> — the <strong>Shompen</strong> (~200-250 nomadic hunter-gatherers) and Nicobarese. Project overlaps Shompen habitat, raising concerns under the <strong>Andaman & Nicobar Islands (Protection of Aboriginal Tribes) Regulation, 1956</strong> and <strong>Forest Rights Act, 2006</strong>.\n\n<strong>Strategic rationale:</strong> Counters China's <strong>String of Pearls</strong> strategy. Gives India a counterweight near the Malacca Strait — primary route for Chinese energy imports.",prelimsFacts:["Great Nicobar — Indira Point, India's southernmost island","Sundaland Biodiversity Hotspot — one of 36 global hotspots","Two PVTGs: Shompen (~250) and Nicobarese","Seismic Zone V — highest earthquake risk"],possibleMainsQuestion:"\"The Great Nicobar project is India's strategic gateway to the Indo-Pacific. Evaluate ecological costs and suggest a framework for balancing strategic infrastructure with biodiversity conservation.\"",flashcard:{front:"Why is Great Nicobar ecologically significant?",back:"Sundaland Biodiversity Hotspot. Endemic: Nicobar megapode, Nicobar pigeon (closest to dodo), saltwater crocodile. Two PVTGs: Shompen (~250), Nicobarese. 130+ sq km tropical evergreen forest."}}},
+{id:'t4',headline:"Gaganyaan Abort Mission TV-D3 Validates Crew Escape System",date:today,source:"UPSCPrep",category:"Science and Tech",gsPaper:"GS 3",summary:"ISRO successfully conducted the Gaganyaan TV-D3 test, validating the Crew Escape System at Mach 1.2 supersonic speed. The crew module separated safely and was recovered from the Bay of Bengal by the Indian Navy.",whyItMatters:"Gaganyaan is India's first human spaceflight programme. Crew escape validation is a mandatory safety requirement before any crewed mission.",deepDive:{explanation:"The <strong>Gaganyaan programme</strong> aims to send Indian astronauts (<strong>Gaganauts</strong>) to low Earth orbit (400 km) for a 3-day mission, making India the <strong>fourth country</strong> to independently send humans to space. Cost: <strong>Rs 12,815 crore</strong>.\n\n<strong>Three abort tests completed:</strong>\n1. <strong>TV-D1:</strong> Low-altitude abort\n2. <strong>TV-D2:</strong> High-altitude abort (near-vacuum)\n3. <strong>TV-D3:</strong> Supersonic abort at <strong>Mach 1.2</strong> (~1,450 km/h) — most challenging due to maximum aerodynamic forces\n\nIn all three, the crew module separated, deployed parachutes, and was recovered by the Navy.\n\n<strong>Next milestones:</strong> <strong>G1 (2025):</strong> Uncrewed flight with <strong>Vyommitra</strong> humanoid robot. <strong>G2 (2025-26):</strong> Second uncrewed test. <strong>Crewed mission (2026):</strong> Three Gaganauts to orbit.\n\n<strong>Spin-off benefits:</strong> Human-rated rockets, life support systems, crew training infrastructure, space medicine — applications in healthcare and defense.",prelimsFacts:["Cost: Rs 12,815 crore","Launch vehicle: LVM3 (GSLV Mk III) — 640 tonnes","Crew module: 3.5 tonnes, 3 astronauts (Gaganauts)","Vyommitra — humanoid robot for uncrewed test"],possibleMainsQuestion:"\"Trace the evolution of India's human spaceflight programme. How does Gaganyaan differ from previous ISRO missions?\"",flashcard:{front:"What are the three Gaganyaan abort tests?",back:"TV-D1: Low-altitude. TV-D2: High-altitude (near-vacuum). TV-D3: Supersonic at Mach 1.2 (max aerodynamic forces). All validated Crew Escape System — recovered by Navy."}}},
+{id:'t5',headline:"Supreme Court Strikes Down Electoral Bonds Scheme Unanimously",date:today,source:"The Hindu",category:"Governance",gsPaper:"GS 2",summary:"A five-judge Constitution Bench led by CJI Chandrachud unanimously struck down the Electoral Bonds Scheme as unconstitutional, holding it violates Article 19(1)(a) right to information and Article 14 right to equality.",whyItMatters:"Landmark judgment linking Fundamental Rights, Money Bill route, and electoral reforms. Very high-frequency UPSC topic.",deepDive:{explanation:"The <strong>Supreme Court in Association for Democratic Reforms v. Union of India</strong> struck down the Electoral Bonds Scheme introduced via the <strong>Finance Act, 2017</strong> (passed as a Money Bill, bypassing Rajya Sabha).\n\n<strong>What changed:</strong>\n1. <strong>Section 29C of RPA:</strong> Removed requirement for parties to disclose bond donor identities\n2. <strong>Section 182 of Companies Act:</strong> Removed 7.5% profit cap on corporate donations and disclosure requirement\n\n<strong>Court's reasoning:</strong>\n- <strong>Article 19(1)(a):</strong> Right to know who funds parties is integral to free speech. Rejected the anonymity-protects-donors argument.\n- <strong>Article 14:</strong> Arbitrary classification — only ruling parties benefited, only wealthy donors could purchase bonds.\n- <strong>Money Bill question:</strong> Companies Act amendments may not qualify under Article 110.\n\n<strong>SBI data revealed:</strong> Rs 12,769 crore in bonds sold (2019-2024). BJP received ~55% (Rs 6,986 crore).",prelimsFacts:["Finance Act 2017 — passed as Money Bill","Total bonds sold 2019-2024: Rs 12,769 crore","BJP received ~55% of total bond value","SBI was sole authorised issuing bank"],possibleMainsQuestion:"\"The SC striking down Electoral Bonds reaffirms right to information in political funding. Discuss implications for electoral reforms.\"",flashcard:{front:"Which two fundamental rights did the SC hold Electoral Bonds violated?",back:"Article 19(1)(a) — right to info about political funding. Article 14 — right to equality (arbitrary classification). Unanimous 5-judge bench, CJI Chandrachud."}}}
+],
+[yest]:[
+{id:'y1',headline:"India-EU BTIA Reaches Final Stage After 17 Years",date:yest,source:"The Hindu",category:"International Relations",gsPaper:"GS 2",summary:"The 10th round of India-EU BTIA negotiations concluded with breakthroughs on automobile tariffs, dairy market access, and digital trade rules. Both sides target finalisation by March 2025.",whyItMatters:"India-EU FTA is a high-stakes geopolitical and economic negotiation testing understanding of trade diplomacy and WTO framework.",deepDive:{explanation:"The <strong>India-EU BTIA</strong> has been negotiated since <strong>2007</strong> — suspended in 2013, revived in 2022.\n\n<strong>Three breakthroughs:</strong>\n1. <strong>Auto tariffs:</strong> India's 60-100% duty vs EU's zero demand → <strong>phased reduction over 10-15 years</strong>\n2. <strong>Dairy:</strong> EU full access vs India protecting 80M farmers → <strong>limited specific products</strong>\n3. <strong>Digital trade:</strong> New chapter on data flows, India insisting on <strong>data localisation</strong>\n\n<strong>GIs:</strong> EU wants protection for 350+ products. India seeks GI for Basmati, Darjeeling tea, Alphonso mango in EU.\n\n<strong>Strategic context:</strong> Part of India's shift to build Western economic ties while maintaining strategic autonomy. Complements FTAs with Australia (2022) and UAE (2022). EU is India's <strong>third-largest trading partner</strong> (~$120 billion).",prelimsFacts:["Started 2007, suspended 2013, revived 2022","EU: India's 3rd largest trading partner (~$120B)","India auto tariff: 60-100%","FTA stack: UAE (done), Australia (done), EU (negotiating), UK (negotiating)"],possibleMainsQuestion:"\"Analyse the strategic significance of India-EU FTA and the challenges that delayed it for 17 years.\"",flashcard:{front:"Three sticking points in India-EU BTIA and compromises?",back:"(1) Auto tariffs: phased reduction over 10-15 yrs. (2) Dairy: limited specific products, protecting 80M farmers. (3) Digital trade: data flows, India insisting on data localisation."}}},
+{id:'y2',headline:"PM Vishwakarma Scheme Enrols 30 Lakh Artisans Across 18 Trades",date:yest,source:"UPSCPrep",category:"Schemes",gsPaper:"GS 2",summary:"The PM Vishwakarma Scheme has enrolled over 30 lakh traditional artisans across 18 trades including carpentry, pottery, weaving, and blacksmithing. It provides collateral-free loans up to Rs 3 lakh and Rs 15,000 toolkit incentive.",whyItMatters:"Government schemes are directly tested in Mains (GS 2) and as fact-based Prelims questions.",deepDive:{explanation:"Launched <strong>September 17, 2023</strong> (Vishwakarma Jayanti). Total outlay: <strong>Rs 13,000 crore</strong>. Ministry: MSME. Nodal agency: <strong>KVIC</strong>.\n\n<strong>Components:</strong>\n1. Collateral-free loan: Rs 1L + Rs 2L at <strong>5% interest</strong>\n2. Toolkit incentive: <strong>Rs 15,000</strong> per beneficiary\n3. Training: 5-7 days basic + 15 days advanced, <strong>Rs 500/day stipend</strong>\n4. Marketing: GeM, ONDC integration, exhibitions, brand certification\n\n<strong>Challenges:</strong> Many artisans lack documentation. 5-7 day training too short. Risk of loans becoming debt burden. Geographic concentration in few states.",prelimsFacts:["Launched: September 17, 2023","Outlay: Rs 13,000 crore","Ministry: MSME | Nodal: KVIC","Interest: 5% (3% govt subvention)"],possibleMainsQuestion:"\"Evaluate the PM Vishwakarma Scheme as a model for supporting India's traditional artisan economy.\"",flashcard:{front:"Four components of PM Vishwakarma Scheme?",back:"(1) Loan: Rs 1L+Rs 2L at 5%. (2) Toolkit: Rs 15,000. (3) Training: 5-7 days + 15 days advanced at Rs 500/day. (4) Marketing: GeM, ONDC, exhibitions, brand certification."}}}
+],
+[dbefore]:[
+{id:'d1',headline:"Extended Range BrahMos Missile Test-Fired from Su-30MKI",date:dbefore,source:"UPSCPrep",category:"Security",gsPaper:"GS 3",summary:"India test-fired the extended-range BrahMos from a Su-30MKI, achieving 500+ km range with an indigenous seeker. The supersonic cruise missile strengthens India's precision standoff strike capability.",whyItMatters:"Defense technology is core GS Paper 3. BrahMos is India's most successful joint defense development and flagship export product.",deepDive:{explanation:"<strong>BrahMos:</strong> Supersonic cruise missile (Mach 2.8-3.0), joint DRDO + Russia NPO Mashinostroyeniya. BrahMos Aerospace: <strong>51% India, 49% Russia</strong>.\n\n<strong>Extended range:</strong> Original 290 km (MTCR limit). After <strong>India joined MTCR in 2016</strong>, extended to <strong>500+ km</strong>. New version features <strong>DRDO indigenous seeker</strong> — reducing Russian dependency.\n\n<strong>Air-launched significance:</strong> Su-30MKI can strike 500+ km deep inside enemy territory without entering air defense envelope — <strong>standoff precision strike</strong>.\n\n<strong>Export:</strong> Philippines — first customer, <strong>$375 million</strong>. Indonesia, Vietnam negotiating. India's <strong>flagship defense export</strong>.\n\n<strong>Triad capability:</strong> Land-mobile (Army), ship-based (Navy), air-launched (Air Force).",prelimsFacts:["Speed: Mach 2.8-3.0","BrahMos Aerospace: 51% India, 49% Russia","MTCR joined 2016 → range 290→500+ km","Philippines: first export, $375M"],possibleMainsQuestion:"\"Evaluate the strategic significance of extended-range BrahMos for India's security architecture.\"",flashcard:{front:"Why could BrahMos range extend from 290 to 500+ km?",back:"India joined MTCR (Missile Technology Control Regime) in 2016, removing 300 km restriction. New version features DRDO indigenous seeker replacing Russian one."}}},
+{id:'d2',headline:"India Semiconductor Mission: $10 Billion Dholera Fab Approved",date:dbefore,source:"The Hindu",category:"Science and Tech",gsPaper:"GS 3",summary:"India Semiconductor Mission approved a $10 billion fab in Dholera SIR, Gujarat — a Tata Electronics and Taiwan PSMC joint venture producing 28nm chips for automotive, defence, and IoT. Production by 2027.",whyItMatters:"Semiconductor self-reliance is India's most critical technology priority. Largest single manufacturing investment in India's electronics sector.",deepDive:{explanation:"<strong>Dholera fab:</strong> Tata Electronics + Taiwan <strong>PSMC</strong> (Taiwan's 3rd largest chipmaker). ~<strong>$10 billion (Rs 83,000 crore)</strong>. Producing <strong>28nm chips</strong>.\n\n<strong>Why 28nm?</strong> 'Mature node' — not cutting-edge (global frontier: 3nm/2nm) but ideal for:\n- Automotive/EVs (engine control, ADAS, battery management)\n- Defense electronics (radar, comms, munitions)\n- IoT devices, industrial sensors, consumer electronics\n\nLower risk, higher yield, proven technology. Serves India's largest demand segments.\n\n<strong>Why Dholera?</strong> Part of <strong>Delhi-Mumbai Industrial Corridor</strong>. Large land, dedicated power (fabs need <strong><1 second outage/year</strong>), ultra-pure water supply, port proximity.\n\n<strong>Challenges:</strong> Talent pipeline (few semiconductor process engineers in India), power/water reliability, ancillary ecosystem (packaging, testing, chemicals), competing with established players.",prelimsFacts:["India Semiconductor Mission: Rs 76,000 crore (2021)","Dholera SIR — part of DMIC","Global market: ~$580 billion (2024)","India imports ~$30B semiconductors annually"],possibleMainsQuestion:"\"Analyse the strategic rationale, challenges, and implications of the Dholera semiconductor fab for technology self-reliance.\"",flashcard:{front:"Why 28nm for Dholera fab instead of cutting-edge 3nm?",back:"28nm is 'mature node' — lower risk, higher yield, proven tech. Serves automotive/EVs, defense, IoT — India's largest demand. These don't need miniaturisation but reliable chips at scale."}}}
+]
+}}
+
+let S={scr:'feed-screen',feed:[],selDate:today,bm:JSON.parse(localStorage.getItem('u4bm')||'[]'),theme:localStorage.getItem('u4th')||'dark',gs:JSON.parse(localStorage.getItem('u4gs')||'["GS1","GS2","GS3"]'),catFilter:null,fi:0,ff:false,sq:'',sf:'All',content:JSON.parse(localStorage.getItem('u4ct')||'null')||defC(),ddId:null};
+let fcD=[];
+function saveC(){localStorage.setItem('u4ct',JSON.stringify(S.content))}
+function allA(){return Object.values(S.content).flat()}
+function findA(id){return allA().find(a=>a.id===id)}
+
+function applyTh(){document.documentElement.classList.toggle('dark',S.theme==='dark');document.documentElement.classList.toggle('light',S.theme==='light');const i=document.getElementById('theme-icon');if(i)i.className=S.theme==='dark'?'fas fa-moon':'fas fa-sun';localStorage.setItem('u4th',S.theme)}
+function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';applyTh()}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+
+function showScr(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');S.scr=id;document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.nav===id));if(id==='bm-screen')renderBm();if(id==='revise-screen')renderRev();if(id==='cat-screen')renderCat();if(id==='search-screen'){document.getElementById('search-input').focus();renderSF();doSearch()}if(id==='profile-screen')renderProf()}
+function navTo(b){showScr(b.dataset.nav)}
+
+function renderDT(){const t=document.getElementById('date-tabs'),dates=Object.keys(S.content).sort().reverse();t.innerHTML=dates.map(d=>{const isT=d===today,label=isT?'Today':dn(d),n=(S.content[d]||[]).length;return`<button class="date-tab ${d===S.selDate?'active':''} ${n?'has-data':''}" onclick="selDate('${d}')">${label}<span class="dt-day">${fds(d)}${n?` · ${n}`:''}</span><span class="dt-dot"></span></button>`}).join('');setTimeout(()=>{const a=t.querySelector('.active');if(a)a.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'})},50)}
+function selDate(d){S.selDate=d;S.catFilter=null;document.getElementById('feed-back').classList.remove('show');renderDT();loadFeed(d)}
+function loadFeed(d){S.feed=S.content[d]||[];renderFeed();if(!S.feed.length)document.getElementById('feed-scroll').innerHTML=`<div class="empty-state" style="position:relative;height:50vh"><i class="fas fa-newspaper"></i><p>No articles for this date.<br>Upload a UPSCPrep PDF to add content.</p></div>`}
+
+function renderFeed(){const w=document.getElementById('feed-scroll');w.innerHTML=S.feed.map(c=>{const col=CC[c.category]||'#D4A853',bm=S.bm.includes(c.id);return`<div class="feed-card"><div class="card-accent" style="background:${col}"></div><div class="card-body"><div class="card-tags"><span class="tag tag-cat" style="color:${col};border-color:${col}30;background:${col}10">${c.category}</span><span class="tag tag-gs">${c.gsPaper}</span><span class="tag tag-src"><i class="fas fa-circle" style="font-size:4px;vertical-align:middle;margin-right:2px"></i>${c.source}</span></div><h2 class="card-headline">${c.headline}</h2><div class="card-meta"><i class="far fa-calendar"></i> ${fdf(c.date)}</div><p class="card-summary">${c.summary}</p><div class="card-why"><div class="card-why-label">Why it matters for UPSC</div><div class="card-why-text">${c.whyItMatters}</div></div><div class="card-actions"><button class="btn-bm ${bm?'bookmarked':''}" onclick="togBm('${c.id}')"><i class="${bm?'fas':'far'} fa-bookmark"></i></button><button onclick="shareById('${c.id}')"><i class="fas fa-share-alt"></i></button><button class="btn-deep" onclick="openDD('${c.id}')">Read Full <i class="fas fa-arrow-right"></i></button></div></div></div>`}).join('');w.scrollTop=0}
+
+function togBm(id){const i=S.bm.indexOf(id);if(i>-1){S.bm.splice(i,1);toast('Removed')}else{S.bm.push(id);toast('Bookmarked')}localStorage.setItem('u4bm',JSON.stringify(S.bm));renderFeed();if(S.scr==='bm-screen')renderBm();if(S.scr==='revise-screen')renderRev()}
+function renderBm(){const b=document.getElementById('bm-body');if(!S.bm.length){b.innerHTML=`<div class="empty-state"><i class="far fa-bookmark"></i><p>No bookmarks yet.<br>Tap the bookmark icon while reading.</p></div>`;return}b.innerHTML=S.bm.map(id=>findA(id)).filter(Boolean).map(c=>{const col=CC[c.category];return`<div class="bm-item" onclick="openDD('${c.id}')"><div class="bm-cat" style="background:${col}"></div><h4>${c.headline}</h4><div class="bm-meta"><span>${fdf(c.date)}</span><span style="color:var(--border)">|</span><span>${c.category}</span><span style="color:var(--border)">|</span><span style="color:var(--teal)">${c.source}</span></div><p>${c.summary}</p><div class="bm-actions"><button onclick="event.stopPropagation();togBm('${c.id}')"><i class="${S.bm.includes(c.id)?'fas':'far'} fa-bookmark"></i></button><button onclick="event.stopPropagation();openFCById('${c.id}')"><i class="fas fa-clone"></i></button><button class="btn-dive" onclick="event.stopPropagation();openDD('${c.id}')">Read Full</button></div></div>`}).join('')}
+function exportBm(){if(!S.bm.length){toast('No bookmarks');return}let t="UPSC Shorts — Bookmarks\n"+'='.repeat(40)+"\n\n";S.bm.map(id=>findA(id)).filter(Boolean).forEach(c=>{t+=`${c.headline}\n${fdf(c.date)} | ${c.category} | ${c.gsPaper} | ${c.source}\n\n${c.deepDive.explanation.replace(/<[^>]*>/g,'')}\n\nMains: ${c.deepDive.possibleMainsQuestion}\n\n${'-'.repeat(40)}\n\n`});const bl=new Blob([t],{type:'text/plain'});const a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='UPSC_Shorts_Bookmarks.txt';a.click();toast('Exported')}
+
+function openDD(id){const c=findA(id);if(!c)return;S.ddId=id;document.getElementById('dd-title').textContent=c.headline;const col=CC[c.category],d=c.deepDive;document.getElementById('dd-body').innerHTML=`<div style="display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;align-items:center"><span class="tag tag-cat" style="color:${col};border-color:${col}30;background:${col}10">${c.category}</span><span class="tag tag-gs">${c.gsPaper}</span><span class="tag tag-src"><i class="fas fa-circle" style="font-size:4px;vertical-align:middle;margin-right:2px"></i>${c.source}</span><span style="font-size:11px;color:var(--text3);margin-left:auto">${fdf(c.date)}</span></div><div class="dd-explain">${d.explanation.replace(/\n/g,'<br>')}</div><div class="dd-divider"></div><div style="margin-bottom:18px"><div class="dd-section-title"><i class="fas fa-bullseye"></i> Prelims Facts</div><div class="dd-fact-box"><ul style="padding-left:14px;margin:0">${d.prelimsFacts.map(f=>`<li>${f}</li>`).join('')}</ul></div></div><div><div class="dd-section-title"><i class="fas fa-pen-fancy"></i> Expected Mains Question</div><div class="dd-question">${d.possibleMainsQuestion}</div></div><button class="dd-flashcard-btn" onclick="openFCById('${c.id}')" style="margin-top:18px"><i class="fas fa-clone"></i> Quick Revision Flashcard</button><div style="height:20px"></div>`;document.getElementById('deep-dive').classList.add('active')}
+function closeDD(){document.getElementById('deep-dive').classList.remove('active')}
+
+function openFCById(id){const c=findA(id);if(!c)return;fcD=[c.deepDive.flashcard];S.fi=0;S.ff=false;renderFC();document.getElementById('flashcards').classList.add('active')}
+function renderFC(){if(!fcD.length)return;document.getElementById('fc-card').classList.toggle('flipped',S.ff);document.getElementById('fc-front').textContent=fcD[S.fi].front;document.getElementById('fc-back').textContent=fcD[S.fi].back;document.getElementById('fc-counter').textContent=`${S.fi+1} / ${fcD.length}`}
+function flipFC(){S.ff=!S.ff;document.getElementById('fc-card').classList.toggle('flipped',S.ff)}
+function nextFC(){if(S.fi<fcD.length-1){S.fi++;S.ff=false;renderFC()}}
+function prevFC(){if(S.fi>0){S.fi--;S.ff=false;renderFC()}}
+function closeFC(){document.getElementById('flashcards').classList.remove('active')}
+
+const ARCADE_CARD=`<div class="arcade-card" onclick="openMapsArcade()"><div class="ac-icon"><i class="fas fa-earth-asia"></i></div><div class="ac-info"><h3>Maps Arcade</h3><p>Practice world & India geography — locate and name places, rivers and more.</p></div><div class="ac-go"><i class="fas fa-arrow-right"></i></div></div>`;
+function renderRev(){const b=document.getElementById('revise-body'),all=allA(),byC={};CATS.forEach(c=>{const a=all.filter(x=>x.category===c);if(a.length)byC[c]=a});const keys=Object.keys(byC);if(!keys.length){b.innerHTML=ARCADE_CARD+`<div class="empty-state"><i class="fas fa-book-open"></i><p>No articles yet.</p></div>`;return}b.innerHTML=ARCADE_CARD+keys.map(cat=>{const col=CC[cat],arts=byC[cat];return`<div class="subject-card" id="sc-${cat.replace(/\s/g,'')}"><div class="subject-header" onclick="this.parentElement.classList.toggle('open')"><div class="subject-color" style="background:${col}"></div><div class="subject-icon" style="background:${col}12;color:${col}"><i class="fas ${CI[cat]}"></i></div><div class="subject-info"><h3>${cat}</h3><span>${arts.length} article${arts.length!==1?'s':''} · ${new Set(arts.map(a=>a.date)).size} days</span></div><div class="subject-expand"><i class="fas fa-chevron-down"></i></div></div><div class="subject-articles">${arts.sort((a,b)=>b.date.localeCompare(a.date)).map(a=>`<div class="subject-article" onclick="openDD('${a.id}')"><h4>${a.headline}</h4><div class="sa-meta"><span>${fds(a.date)}</span><span style="color:var(--border)">|</span><span>${a.gsPaper}</span><span style="color:var(--border)">|</span><span style="color:var(--teal)">${a.source}</span><button class="sa-bm ${S.bm.includes(a.id)?'bookmarked':''}" onclick="event.stopPropagation();togBm('${a.id}')"><i class="${S.bm.includes(a.id)?'fas':'far'} fa-bookmark"></i></button></div></div>`).join('')}</div></div>`}).join('')}
+
+function renderCat(){const all=allA(),b=document.getElementById('cat-body');b.innerHTML=`<div class="cat-grid">${CATS.map(c=>{const n=all.filter(x=>x.category===c).length;return`<div class="cat-card" onclick="filterCat('${c}')"><div class="cat-color" style="background:${CC[c]}"></div><i class="fas ${CI[c]}" style="color:${CC[c]}"></i><h3>${c}</h3><span>${n} article${n!==1?'s':''}</span></div>`}).join('')}</div>`}
+function filterCat(c){S.catFilter=c;S.feed=allA().filter(x=>x.category===c);document.getElementById('feed-back').classList.add('show');showScr('feed-screen');renderFeed();toast(`Showing: ${c}`)}
+function clearFilter(){S.catFilter=null;document.getElementById('feed-back').classList.remove('show');renderDT();loadFeed(S.selDate);toast('All topics')}
+
+function renderSF(){document.getElementById('search-filters').innerHTML=['All',...CATS].map(c=>`<div class="filter-chip ${c===S.sf?'active':''}" onclick="S.sf='${c}';renderSF();doSearch()">${c}</div>`).join('')}
+function doSearch(){const q=document.getElementById('search-input').value.toLowerCase().trim(),r=document.getElementById('search-results');if(!q){r.innerHTML=`<div class="empty-state" style="height:25%"><i class="fas fa-search"></i><p>Search across all dates</p></div>`;return}const all=allA(),f=all.filter(c=>{const m=c.headline.toLowerCase().includes(q)||c.summary.toLowerCase().includes(q)||c.deepDive.explanation.toLowerCase().includes(q)||c.deepDive.prelimsFacts.some(x=>x.toLowerCase().includes(q));return m&&(S.sf==='All'||c.category===S.sf)});if(!f.length){r.innerHTML=`<div class="empty-state" style="height:25%"><i class="fas fa-search"></i><p>No results for "${q}"</p></div>`;return}r.innerHTML=f.map(c=>{const col=CC[c.category];return`<div class="search-result" onclick="openDD('${c.id}')"><h4>${c.headline}</h4><p>${c.summary}</p><div class="sr-meta"><span class="tag tag-cat" style="color:${col};border-color:${col}30;background:${col}10;font-size:9px;padding:2px 6px">${c.category}</span><span style="font-size:10px;color:var(--text3)">${fds(c.date)}</span><span style="font-size:10px;color:var(--teal)">${c.source}</span></div></div>`}).join('')}
+
+function openUpload(){const u=document.getElementById('upload');u.classList.add('active');document.getElementById('up-zone').style.display='';document.getElementById('up-srcs').style.display='flex';document.getElementById('proc-steps').classList.remove('active');document.getElementById('up-ok').classList.remove('active');document.getElementById('pdf-in').value='';document.querySelectorAll('.proc-step').forEach(s=>{s.querySelector('.pi').className='pi pending';s.querySelector('.pt').className='pt pending'})}
+function closeUpload(){document.getElementById('upload').classList.remove('active');if(document.getElementById('up-ok').classList.contains('active')){renderDT();loadFeed(S.selDate)}}
+function simUpdate(){document.getElementById('update-banner').style.display='none';openUpload()}
+function runSteps(cb){const steps=document.getElementById('proc-steps');steps.classList.add('active');const se=steps.querySelectorAll('.proc-step');let s=0;const iv=setInterval(()=>{if(s>0){se[s-1].querySelector('.pi').className='pi done';se[s-1].querySelector('.pi').innerHTML='<i class="fas fa-check"></i>';se[s-1].querySelector('.pt').className='pt done'}if(s<4){se[s].querySelector('.pi').className='pi active';se[s].querySelector('.pt').className='pt active';s++}else{clearInterval(iv);cb()}},900)}
+function simHindu(){document.getElementById('up-zone').style.display='none';document.getElementById('up-srcs').style.display='none';runSteps(()=>{if(!S.content[today])S.content[today]=[];S.content[today].unshift({id:'h'+Date.now(),headline:"Union Budget 2025-26: Rs 15 Lakh Crore Capex Push",date:today,source:"The Hindu",category:"Economy",gsPaper:"GS 3",summary:"The Union Budget proposed a record Rs 15.01 lakh crore capital expenditure — a 10.4% increase — with no income tax up to Rs 12 lakh under the new regime. Focus on infrastructure, green energy, and inclusive growth.",whyItMatters:"Budget is the most important current affair for UPSC — tested across all GS papers and Essay.",deepDive:{explanation:"The <strong>Union Budget 2025-26</strong> continued the capex-led growth model with <strong>Rs 15.01 lakh crore</strong> — 10.4% increase.\n\n<strong>Income tax:</strong> No tax up to <strong>Rs 12 lakh</strong> under new regime (effectively Rs 12.75 lakh with Rs 75,000 standard deduction). Benefits ~1 crore taxpayers.\n\n<strong>Infrastructure:</strong> National highways, railway modernisation, port development.\n\n<strong>Green energy:</strong> New <strong>offshore wind energy</strong> scheme. Target: <strong>500 GW non-fossil</strong> by 2030.\n\n<strong>Fiscal deficit:</strong> <strong>4.4% of GDP</strong> (down from 4.8%). Consolidation path to 4.1% by FY2026-27.",prelimsFacts:["Capex: Rs 15.01 lakh crore (10.4% increase)","No tax up to Rs 12 lakh (new regime)","Fiscal deficit target: 4.4% of GDP","500 GW non-fossil target by 2030"],possibleMainsQuestion:"\"Analyse the Union Budget 2025-26 from the perspective of inclusive growth.\"",flashcard:{front:"Budget 2025-26 capex and fiscal deficit?",back:"Capex: Rs 15.01L cr (+10.4%). Fiscal deficit: 4.4% GDP. No tax up to Rs 12L. Offshore wind scheme. 500 GW non-fossil by 2030."}}});saveC();setTimeout(()=>{document.getElementById('proc-steps').classList.remove('active');document.getElementById('up-ok-text').textContent='1 new topic from The Hindu added';document.getElementById('up-ok').classList.add('active')},400)})}
+function handlePDF(e){const f=e.target.files[0];if(!f)return;if(!f.name.endsWith('.pdf')){toast('Select a PDF');return}document.getElementById('up-zone').style.display='none';document.getElementById('up-srcs').style.display='none';runSteps(()=>{const n=4+Math.floor(Math.random()*5);if(!S.content[today])S.content[today]=[];S.content[today].unshift({id:'p'+Date.now(),headline:`${f.name.replace('.pdf','')} — ${n} Topics Extracted`,date:today,source:"UPSCPrep PDF",category:"Governance",gsPaper:"GS 2",summary:`${n} UPSC-relevant topics extracted from the uploaded UPSCPrep Daily Current Affairs PDF. Each topic has been summarised, categorised, and mapped to GS papers. Tap 'Read Full' for detailed explanations.`,whyItMatters:"UPSCPrep Daily CA PDFs from upscprep.com/daily-current-affairs are the primary study material for most aspirants.",deepDive:{explanation:`Content extracted from <strong>${f.name}</strong> (UPSCPrep Daily Current Affairs PDF from upscprep.com/daily-current-affairs/).\n\n<strong>${n} topics</strong> identified and processed:\n\n1. <strong>Summarised</strong> into concise briefs\n2. <strong>Categorised</strong> by subject (Polity, Economy, Environment, etc.)\n3. <strong>Mapped</strong> to GS Papers (GS 1/2/3/4)\n4. <strong>Enriched</strong> with Prelims facts and Mains analysis\n5. <strong>Tagged</strong> for search and revision\n\nEach topic appears as a separate card in today's feed, searchable across dates and organised by subject in the Revise tab.\n\n<strong>Note:</strong> Production version uses PDF parsing + AI summarisation pipeline.`,prelimsFacts:[`Source: ${f.name} from upscprep.com`,`Topics extracted: ${n}`,'Stored locally, searchable, bookmarkable'],possibleMainsQuestion:"(Sample) Identify the most Mains-relevant issue from this UPSCPrep PDF and write a structured answer.",flashcard:{front:"How does UPSC Shorts process UPSCPrep Daily CA PDFs?",back:"Parse PDF → identify topics → summarise → categorise → map to GS paper → add Prelims facts → Mains analysis → store by date."}}});saveC();setTimeout(()=>{document.getElementById('proc-steps').classList.remove('active');document.getElementById('up-ok-text').textContent=`${n} topics from PDF added`;document.getElementById('up-ok').classList.add('active')},400)})}
+
+function handleJSON(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const data=JSON.parse(r.result);let arts=Array.isArray(data)?data:Object.values(data).flat();arts=arts.filter(a=>a&&a.id&&a.headline&&a.date&&a.summary&&a.deepDive);if(!arts.length){toast('No valid articles in file');return}const seen=new Set(allA().map(a=>a.id));let added=0,lastDate=null;arts.forEach(a=>{if(seen.has(a.id))return;seen.add(a.id);if(!S.content[a.date])S.content[a.date]=[];S.content[a.date].unshift(a);added++;lastDate=a.date});saveC();document.getElementById('up-zone').style.display='none';document.getElementById('up-srcs').style.display='none';document.getElementById('up-ok-text').textContent=added?`${added} article${added!==1?'s':''} imported to ${fdf(lastDate)}`:'All articles already in feed';document.getElementById('up-ok').classList.add('active');if(added)S.selDate=lastDate}catch(err){toast('Invalid JSON file')}};r.readAsText(f)}
+function exportContent(){const bl=new Blob([JSON.stringify(S.content,null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='upsc_shorts_backup.json';a.click();toast('Backup exported')}
+
+function openDigest(){document.getElementById('digest-title').textContent=`${fds(S.selDate)} — Top Stories`;const b=document.getElementById('digest-body'),arts=S.content[S.selDate]||[];b.innerHTML=arts.map((c,i)=>`<div class="digest-item" onclick="closeDigest();setTimeout(()=>openDD('${c.id}'),350)"><div class="digest-num">${i+1}</div><div class="digest-content"><h4>${c.headline}</h4><p>${c.summary}</p><div style="display:flex;gap:5px;margin-top:4px"><span style="font-size:9px;padding:2px 6px;border-radius:3px;background:${CC[c.category]}12;color:${CC[c.category]};font-weight:600">${c.category}</span><span style="font-size:9px;color:var(--teal)">${c.source}</span></div></div></div>`).join('');document.getElementById('digest').classList.add('active')}
+function closeDigest(){document.getElementById('digest').classList.remove('active')}
+
+function openMapsArcade(){const f=document.getElementById('ma-frame'),ld=document.getElementById('ma-loading');if(!f.getAttribute('src')){ld.classList.remove('hide');const hide=()=>ld.classList.add('hide');f.addEventListener('load',hide,{once:true});setTimeout(hide,6000);f.setAttribute('src','index-3.html')}else{ld.classList.add('hide')}document.getElementById('maps-arcade').classList.add('active')}
+function closeMapsArcade(){document.getElementById('maps-arcade').classList.remove('active')}
+function shareById(id){const c=findA(id);if(!c)return;const t=`${c.headline}\n\n${c.summary}\n\nSource: ${c.source} — UPSC Shorts`;if(navigator.share)navigator.share({title:c.headline,text:t}).catch(()=>{});else navigator.clipboard.writeText(t).then(()=>toast('Copied'))}
+
+function renderProf(){const all=allA(),dates=Object.keys(S.content).sort(),b=document.getElementById('profile-body');b.innerHTML=`<div class="profile-card"><div class="profile-avatar">U</div><h3>UPSC Aspirant</h3><p>Civil Services 2025</p><div class="profile-stats"><div class="profile-stat"><div class="ps-num">${all.length}</div><div class="ps-label">Articles</div></div><div class="profile-stat"><div class="ps-num">${dates.length}</div><div class="ps-label">Days</div></div><div class="profile-stat"><div class="ps-num">${S.bm.length}</div><div class="ps-label">Saved</div></div></div></div><div class="setting-group"><div class="setting-group-title">Preferences</div><div class="setting-item" onclick="toggleTheme();renderProf()"><div class="setting-left"><i class="fas ${S.theme==='dark'?'fa-moon':'fa-sun'}"></i><span>Dark Mode</span></div><button class="toggle ${S.theme==='dark'?'on':''}" onclick="event.stopPropagation()"></button></div></div><div class="setting-group"><div class="setting-group-title">Content</div><div class="setting-item" onclick="fcD=allA().map(c=>c.deepDive.flashcard);S.fi=0;S.ff=false;renderFC();document.getElementById('flashcards').classList.add('active')"><div class="setting-left"><i class="fas fa-clone"></i><span>All Flashcards</span></div><span style="font-size:12px;color:var(--text3)">${all.length}</span></div><div class="setting-item" onclick="exportBm()"><div class="setting-left"><i class="fas fa-download"></i><span>Export Bookmarks</span></div><span style="font-size:12px;color:var(--text3)">${S.bm.length}</span></div><div class="setting-item" onclick="exportContent()"><div class="setting-left"><i class="fas fa-file-export"></i><span>Backup All Content (JSON)</span></div><span style="font-size:12px;color:var(--text3)">${all.length}</span></div><div class="setting-item" onclick="if(confirm('Reset all content?')){localStorage.removeItem('u4ct');S.content=defC();saveC();renderProf();renderDT();loadFeed(S.selDate);toast('Reset')}"><div class="setting-left"><i class="fas fa-rotate" style="color:var(--accent)"></i><span>Reset Content</span></div><i class="fas fa-chevron-right" style="color:var(--text3);font-size:11px"></i></div></div><div class="setting-group"><div class="setting-group-title">Data</div><div class="setting-item" onclick="S.bm=[];localStorage.removeItem('u4bm');renderProf();toast('Cleared')"><div class="setting-left"><i class="fas fa-trash" style="color:#E05252"></i><span style="color:#E05252">Clear Bookmarks</span></div></div><div class="setting-item" onclick="localStorage.clear();location.reload()"><div class="setting-left"><i class="fas fa-arrow-rotate-left" style="color:#E05252"></i><span style="color:#E05252">Reset App</span></div></div></div><div style="text-align:center;padding:16px;color:var(--text3);font-size:11px">Built for UPSC aspirants<br><span style="color:var(--accent)">UPSC Shorts</span></div>`}
+
+let obS=0;
+function initSplash(){applyTh();setTimeout(()=>{document.getElementById('splash').classList.add('exit');setTimeout(()=>{document.getElementById('splash').style.display='none';if(localStorage.getItem('u4ob')){document.getElementById('app').classList.add('active');renderDT();loadFeed(S.selDate)}else{document.getElementById('onboarding').classList.add('active')}},600)},3200)}
+function nextObS(){if(obS<2){document.querySelectorAll('.ob-slide')[obS].classList.remove('active');document.querySelectorAll('.ob-slide')[obS].classList.add('left');obS++;const n=document.querySelectorAll('.ob-slide')[obS];n.classList.remove('right');n.classList.add('active');document.querySelectorAll('.ob-dot').forEach((d,i)=>d.classList.toggle('active',i===obS));if(obS===2)document.querySelector('.btn-next').textContent='Get Started'}else finishOb()}
+function finishOb(){const ch=document.querySelectorAll('.gs-chip.selected');S.gs=Array.from(ch).map(c=>c.dataset.gs);localStorage.setItem('u4gs',JSON.stringify(S.gs));localStorage.setItem('u4ob','true');document.getElementById('onboarding').classList.remove('active');document.getElementById('app').classList.add('active');renderDT();loadFeed(S.selDate)}
+document.querySelectorAll('.gs-chip').forEach(c=>{c.addEventListener('click',()=>c.classList.toggle('selected'))});
+
+document.addEventListener('keydown',e=>{if(document.getElementById('maps-arcade').classList.contains('active')){if(e.key==='Escape')closeMapsArcade();return}if(document.getElementById('deep-dive').classList.contains('active')){if(e.key==='Escape')closeDD();return}if(document.getElementById('flashcards').classList.contains('active')){if(e.key==='Escape')closeFC();if(e.key===' '){e.preventDefault();flipFC()}if(e.key==='ArrowRight')nextFC();if(e.key==='ArrowLeft')prevFC();return}if(document.getElementById('digest').classList.contains('active')){if(e.key==='Escape')closeDigest();return}if(document.getElementById('upload').classList.contains('active')){if(e.key==='Escape')closeUpload();return}});
+
+initSplash();
+</script>
+</body>
+</html>
