@@ -1,7 +1,7 @@
 {
-  "name": "michi — UPSC Current Affairs",
-  "short_name": "michi",
-  "description": "Daily UPSC current-affairs briefings, previous year questions, and a geography maps arcade.",
+  "name": "Penni — UPSC Prep",
+  "short_name": "Penni",
+  "description": "Daily UPSC briefings with article-based practice questions, Mains answer evaluation, PYQs and a geography arcade.",
   "id": "./",
   "start_url": "./index.html?source=pwa",
   "scope": "./",
