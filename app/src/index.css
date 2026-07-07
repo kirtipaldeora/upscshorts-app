@@ -145,7 +145,7 @@ html.dark {
 
 .feed-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:4px 16px calc(110px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch;position:relative;z-index:2}
 .feed-scroll.deck-mode{overflow:hidden;padding:0}
-.deck-stage{position:absolute;inset:0 0 calc(64px + env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:center;touch-action:pan-y}
+.deck-stage{position:absolute;inset:0 0 calc(130px + env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:center;touch-action:pan-y}
 .deck-card{position:absolute;width:min(76%,330px);height:min(78%,470px);border-radius:32px;transition:transform .5s cubic-bezier(.22,1,.36,1),opacity .5s,background .5s,box-shadow .5s;display:flex;flex-direction:column;align-items:center;padding:26px 22px 22px;text-align:center;cursor:pointer;will-change:transform;user-select:none;-webkit-user-select:none}
 .deck-card.is-center{background:var(--card);box-shadow:var(--shadow)}
 .deck-card.is-side{background:var(--panel);border:1px solid var(--panel-border);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
@@ -164,6 +164,16 @@ html.dark {
 .deck-card.is-side .dk-tags{display:none}
 .dk-tag{padding:5px 12px;border-radius:14px;font-size:9.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;background:var(--card2);color:var(--ink2)}
 .deck-cnt{position:absolute;bottom:calc(94px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:5;background:var(--panel2);border:1px solid var(--panel-border);backdrop-filter:blur(12px);color:var(--on2);font-size:11.5px;font-weight:800;padding:7px 16px;border-radius:18px;letter-spacing:.5px}
+
+@media(max-height:740px){
+  .deck-stage{inset:0 0 calc(116px + env(safe-area-inset-bottom))}
+  .deck-cnt{bottom:calc(82px + env(safe-area-inset-bottom))}
+  .deck-card{height:min(82%,390px);padding:18px 18px 16px;border-radius:24px}
+  .deck-card .dk-icon{width:76px;height:76px;font-size:30px}
+  .deck-card .dk-head{font-size:15px;margin-bottom:6px;-webkit-line-clamp:2}
+  .deck-card .dk-sub{font-size:11px;margin-bottom:8px}
+  .deck-card .dk-bm{top:12px;right:12px;width:32px;height:32px;font-size:12px}
+}
 
 .feed-card{background:var(--card);border:none;border-radius:26px;margin-bottom:12px;overflow:hidden;transition:transform .2s;box-shadow:var(--shadow-soft);animation:cardIn .5s cubic-bezier(.22,1,.36,1) both;color:var(--ink)}
 @keyframes cardIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
