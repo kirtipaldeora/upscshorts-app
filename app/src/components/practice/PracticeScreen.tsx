@@ -11,6 +11,7 @@ import {
 import { useAppStore } from '@/stores/useAppStore'
 import { usePracticeStore } from '@/stores/usePracticeStore'
 import { useBookmarkStore } from '@/stores/useBookmarkStore'
+import { useArticles } from '@/hooks/useArticles'
 import {
   articleQs,
   allQs,
@@ -38,6 +39,7 @@ export function PracticeScreen({ onShowToast, onOpenMapsArcade, onOpenPYQ, onOpe
   const { stats, settings, pyqData, pyqReady, setPyqData } = usePracticeStore()
   const { bookmarkedIds } = useBookmarkStore()
   const [activeQuiz, setActiveQuiz] = useState<ActiveQuiz>(null)
+  const { loading } = useArticles(selectedDate)
 
   // Load PYQ data once
   useEffect(() => {
@@ -49,8 +51,10 @@ export function PracticeScreen({ onShowToast, onOpenMapsArcade, onOpenPYQ, onOpe
     }
   }, [pyqReady, setPyqData])
 
+  const availableDates = Object.keys(articlesByDate).sort((a, b) => (a > b ? -1 : 1))
+  const practiceDate = articlesByDate[selectedDate]?.length ? selectedDate : (availableDates[0] ?? selectedDate)
   const allArticles = Object.values(articlesByDate).flat()
-  const todayArticles = (articlesByDate[selectedDate] ?? []).filter(a => (a.prelimsQs ?? []).length > 0)
+  const todayArticles = (articlesByDate[practiceDate] ?? []).filter(a => (a.prelimsQs ?? []).length > 0)
   const pool = allQs(allArticles, pyqData)
   const subs = subjectCounts(pool)
   const todayDay = stats.d[TODAY] ?? { n: 0, c: 0 }
@@ -85,7 +89,7 @@ export function PracticeScreen({ onShowToast, onOpenMapsArcade, onOpenPYQ, onOpe
       </div>
 
       {/* Body */}
-      <div className="screen-body" style={{ paddingBottom: 'calc(110px + env(safe-area-inset-bottom))' }}>
+      <div className="screen-body practice-body" style={{ paddingBottom: 'calc(110px + env(safe-area-inset-bottom))' }}>
 
         {/* Hero — streak + target */}
         <div className="pn-hero">
@@ -112,7 +116,7 @@ export function PracticeScreen({ onShowToast, onOpenMapsArcade, onOpenPYQ, onOpe
           <div className="pc-icon" style={{ color: '#B8860B' }}>🎯</div>
           <div className="pc-info">
             <h3>Daily Practice</h3>
-            <p>{settings.target} fresh questions for {fmtFull(TODAY)} — build your streak.</p>
+            <p>{settings.target} fresh questions picked for {fmtFull(TODAY)} — build your streak.</p>
           </div>
           <div className="pc-go"><FontAwesomeIcon icon={faPlay} /></div>
         </div>
@@ -121,7 +125,7 @@ export function PracticeScreen({ onShowToast, onOpenMapsArcade, onOpenPYQ, onOpe
           <div className="pc-icon" style={{ color: '#6C71C4' }}>✍️</div>
           <div className="pc-info">
             <h3>Mains Answer Writing</h3>
-            <p>Upload handwritten answers — AI evaluates &amp; annotates.</p>
+            <p>Upload up to 5 handwritten answers a day — AI evaluates &amp; annotates.</p>
           </div>
           <div className="pc-go" style={{ background: mainsLeft > 0 ? 'var(--yellow)' : 'var(--panel2)', color: mainsLeft > 0 ? 'var(--yellow-ink)' : 'var(--on3)' }}>
             {mainsLeft}
@@ -141,7 +145,7 @@ export function PracticeScreen({ onShowToast, onOpenMapsArcade, onOpenPYQ, onOpe
 
         {/* Article-wise */}
         <div className="pn-sec">
-          Article-wise <span>({fmtFull(selectedDate)})</span>
+          Article-wise <span>({fmtFull(practiceDate)})</span>
         </div>
 
         {todayArticles.length > 0 ? (
@@ -158,6 +162,8 @@ export function PracticeScreen({ onShowToast, onOpenMapsArcade, onOpenPYQ, onOpe
               </div>
             ))}
           </div>
+        ) : loading ? (
+          <p className="pn-empty">Loading article questions...</p>
         ) : (
           <p className="pn-empty">No article questions for this date.</p>
         )}

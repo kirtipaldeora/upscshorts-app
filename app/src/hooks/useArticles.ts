@@ -3,6 +3,7 @@ import { useAppStore } from '@/stores/useAppStore'
 import type { ArticlesByDate } from '@/types/article'
 
 const LS_KEY = 'u4ct' // original localStorage key for cached articles
+const BUNDLED_FALLBACK_DATE = '2026-07-07'
 
 function loadFromLS(): ArticlesByDate {
   try {
@@ -28,7 +29,7 @@ function saveToLS(data: ArticlesByDate) {
  * 3. Architecture is ready for remote fetch — just swap the URL.
  */
 export function useArticles(date: string) {
-  const { setArticlesByDate, mergeArticles, articlesByDate } = useAppStore()
+  const { setArticlesByDate, mergeArticles, articlesByDate, setSelectedDate } = useAppStore()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const hydrated = useRef(false)
@@ -47,22 +48,33 @@ export function useArticles(date: string) {
   // Step 2: Fetch the per-date JSON if not already in store
   useEffect(() => {
     if (!date) return
-    // Skip if we already have data for this date
-    if (articlesByDate[date]?.length) return
+    // Skip only when this date is already hydrated with practice questions.
+    // Older cached article payloads did not include prelimsQs/keyTerms.
+    if (articlesByDate[date]?.some((article) => (article.prelimsQs ?? []).length > 0)) return
 
     const controller = new AbortController()
     setLoading(true)
     setError(null)
 
-    fetch(`/data/articles/${date}.json`, { signal: controller.signal })
-      .then((r) => {
-        if (!r.ok) throw new Error(`No data for ${date}`)
-        return r.json() as Promise<ArticlesByDate>
+    const fetchArticles = (targetDate: string) =>
+      fetch(`/data/articles/${targetDate}.json`, { signal: controller.signal })
+        .then((r) => {
+          if (!r.ok) throw new Error(`No data for ${targetDate}`)
+          return r.json() as Promise<ArticlesByDate>
+        })
+
+    fetchArticles(date)
+      .catch((e: Error) => {
+        if (e.name === 'AbortError' || date === BUNDLED_FALLBACK_DATE) throw e
+        return fetchArticles(BUNDLED_FALLBACK_DATE).then((data) => {
+          setSelectedDate(BUNDLED_FALLBACK_DATE)
+          return data
+        })
       })
-      .then((data) => {
-        mergeArticles(data)
+      .then((r) => {
+        mergeArticles(r)
         // Persist merged state back to localStorage
-        const updated = { ...loadFromLS(), ...data }
+        const updated = { ...loadFromLS(), ...r }
         saveToLS(updated)
       })
       .catch((e: Error) => {
@@ -71,7 +83,7 @@ export function useArticles(date: string) {
       .finally(() => setLoading(false))
 
     return () => controller.abort()
-  }, [date, articlesByDate, mergeArticles])
+  }, [date, articlesByDate, mergeArticles, setSelectedDate])
 
   return { loading, error }
 }

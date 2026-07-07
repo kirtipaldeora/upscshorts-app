@@ -71,9 +71,11 @@ export const useAppStore = create<AppStore>()((set, get) => ({
       const merged = { ...s.articlesByDate }
       for (const [date, articles] of Object.entries(data)) {
         const existing = merged[date] ?? []
+        const incomingById = new Map(articles.map((a) => [a.id, a]))
+        const next = existing.map((article) => incomingById.get(article.id) ?? article)
         const existingIds = new Set(existing.map((a) => a.id))
         const newOnes = articles.filter((a) => !existingIds.has(a.id))
-        merged[date] = [...existing, ...newOnes]
+        merged[date] = [...next, ...newOnes]
       }
       return { articlesByDate: merged }
     }),

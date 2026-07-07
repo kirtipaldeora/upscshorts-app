@@ -23,7 +23,41 @@
           "front": "Under which laws is the Pahalgam attack chargesheet framed, and what notable strategy did the NIA use?",
           "back": "BNS 2023 + UAPA 1967, including 'waging war against India'. NIA charged LeT and TRF as legal entities to strengthen the international evidentiary case."
         }
-      }
+      },
+      "keyTerms": [
+        "NIA Act 2008",
+        "UAPA 1967",
+        "BNS 2023",
+        "Lashkar-e-Taiba",
+        "The Resistance Front",
+        "Waging war against the State"
+      ],
+      "prelimsQs": [
+        {
+          "q": "Consider the following statements: 1. The National Investigation Agency (NIA) was created by an Act of Parliament in 2008. 2. The UAPA, 1967 allows the government to designate individuals, and not just organisations, as terrorists. Which of the statements given above is/are correct?",
+          "options": [
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
+          ],
+          "answer": 2,
+          "explanation": "The NIA Act, 2008 was enacted after the 26/11 attacks, and the UAPA (post its 2019 amendment) permits designating individuals as terrorists.",
+          "ref": "Prelims facts: NIA Act 2008; UAPA designation power"
+        },
+        {
+          "q": "'The Resistance Front (TRF)', sometimes seen in the news, is best described as:",
+          "options": [
+            "A proxy/offshoot of Lashkar-e-Taiba",
+            "A Baloch separatist group",
+            "A Myanmar-based insurgent group",
+            "A cyber-mercenary collective"
+          ],
+          "answer": 0,
+          "explanation": "TRF is a proxy/offshoot of the Pakistan-based LeT, named in the Pahalgam attack chargesheet.",
+          "ref": "Article: TRF described as LeT proxy"
+        }
+      ]
     },
     {
       "id": "ca070726-02",
@@ -48,7 +82,41 @@
           "front": "Why is Census 2027 significant, and what is the 'open column' controversy?",
           "back": "First to count all castes in independent India (earlier only SC/ST). Open column (as in SECC 2011, which returned 46+ lakh caste names) risks unusable data vs a fixed list (Bihar 2022-23). PE in Feb 2027."
         }
-      }
+      },
+      "keyTerms": [
+        "Census Act 1948",
+        "Registrar General of India",
+        "Houselisting phase",
+        "Population Enumeration",
+        "SECC 2011",
+        "Caste enumeration"
+      ],
+      "prelimsQs": [
+        {
+          "q": "Consider the following statements about the Census in India: 1. It is conducted under the Census Act, 1948. 2. It is carried out in two phases — Houselisting and Population Enumeration. Which of the statements given above is/are correct?",
+          "options": [
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
+          ],
+          "answer": 2,
+          "explanation": "The Census is conducted by the RGI under the Census Act, 1948 in two phases.",
+          "ref": "Prelims facts: Census Act; two phases"
+        },
+        {
+          "q": "The last Census of India to enumerate all castes (beyond SCs/STs) was conducted in:",
+          "options": [
+            "1941",
+            "1931",
+            "1951",
+            "1971"
+          ],
+          "answer": 1,
+          "explanation": "The 1931 Census was the last full caste enumeration, recording 4,147 castes; since Independence only SCs and STs have been counted.",
+          "ref": "Prelims fact: 1931 Census recorded 4,147 castes"
+        }
+      ]
     },
     {
       "id": "ca070726-03",
@@ -73,7 +141,41 @@
           "front": "What makes Vikram-1 a milestone, and how does it differ from Vikram-S?",
           "back": "Vikram-1 is India's first private ORBITAL-class rocket (places payloads in orbit). Vikram-S (2022) was sub-orbital (Mission Prarambh). Regulated via IN-SPACe."
         }
-      }
+      },
+      "keyTerms": [
+        "Vikram-1",
+        "Skyroot Aerospace",
+        "IN-SPACe",
+        "Orbital-class rocket",
+        "Vikram-S",
+        "Space debris"
+      ],
+      "prelimsQs": [
+        {
+          "q": "Vikram-1, recently in the news, is:",
+          "options": [
+            "ISRO's heavy-lift launch vehicle",
+            "India's first privately developed orbital-class rocket",
+            "A lunar lander of Chandrayaan-4",
+            "A hypersonic missile demonstrator"
+          ],
+          "answer": 1,
+          "explanation": "Vikram-1 by Skyroot Aerospace is India's first private orbital-class rocket; Vikram-S (2022) was the earlier sub-orbital flight.",
+          "ref": "Article headline/summary"
+        },
+        {
+          "q": "IN-SPACe, often seen in the news with private space launches, functions under which of the following?",
+          "options": [
+            "Ministry of Defence",
+            "Department of Space",
+            "NITI Aayog",
+            "Department of Science & Technology"
+          ],
+          "answer": 1,
+          "explanation": "IN-SPACe is the single-window nodal agency under the Department of Space to promote and authorise private-sector space activity.",
+          "ref": "Prelims fact: IN-SPACe under DoS"
+        }
+      ]
     },
     {
       "id": "ca070726-04",
@@ -98,7 +200,41 @@
           "front": "Is voting a fundamental or statutory right in India?",
           "back": "Held STATUTORY (Ponnuswami 1952, Kuldip Nayar 2006), but SC has constitutionalised facets — right to know (ADR 2002), NOTA (2013). Art 326 = universal adult suffrage. Debate on elevating it, given elections are basic structure."
         }
-      }
+      },
+      "keyTerms": [
+        "Statutory right to vote",
+        "Article 326",
+        "N.P. Ponnuswami case",
+        "PUCL 2003",
+        "NOTA",
+        "Article 19(1)(a)"
+      ],
+      "prelimsQs": [
+        {
+          "q": "Under the Constitution of India, universal adult suffrage for elections is provided by:",
+          "options": [
+            "Article 324",
+            "Article 326",
+            "Article 329",
+            "Article 32"
+          ],
+          "answer": 1,
+          "explanation": "Article 326 provides that elections to the Lok Sabha and State Assemblies shall be on the basis of adult suffrage.",
+          "ref": "Prelims fact: Article 326"
+        },
+        {
+          "q": "Consider the following statements: 1. The Supreme Court has consistently treated the right to vote as a fundamental right. 2. The right of voters to know the antecedents of candidates has been read into Article 19(1)(a). Which of the statements given above is/are correct?",
+          "options": [
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
+          ],
+          "answer": 1,
+          "explanation": "The Court has long held voting to be a statutory right (Ponnuswami 1952; Kuldip Nayar 2006), while the right to know (ADR 2002, PUCL 2003) flows from Article 19(1)(a).",
+          "ref": "Prelims facts: statutory-right cases; ADR/PUCL"
+        }
+      ]
     },
     {
       "id": "ca070726-05",
@@ -122,7 +258,40 @@
           "front": "On what constitutional basis did the SC declare a 'Right to Walk' on footpaths?",
           "back": "Article 19(1)(d) — freedom of movement — and Article 21 — right to life (dignified life, per Maneka Gandhi 1978). Pedestrians get priority over motor traffic; obliges civic bodies to build walkable spaces."
         }
-      }
+      },
+      "keyTerms": [
+        "Article 19(1)(d)",
+        "Article 21",
+        "Right to Walk",
+        "Maneka Gandhi case",
+        "Urban mobility"
+      ],
+      "prelimsQs": [
+        {
+          "q": "The Supreme Court grounded the newly declared 'Right to Walk' on footpaths in which Articles of the Constitution?",
+          "options": [
+            "Articles 14 and 19(1)(g)",
+            "Articles 19(1)(d) and 21",
+            "Articles 21 and 32",
+            "Articles 15 and 21A"
+          ],
+          "answer": 1,
+          "explanation": "The Court located the right in Article 19(1)(d) (freedom of movement) read with Article 21 (right to life).",
+          "ref": "Article summary"
+        },
+        {
+          "q": "The expansive interpretation of Article 21 that underlies rulings like the 'Right to Walk' judgment traces back to which landmark case?",
+          "options": [
+            "A.K. Gopalan v. State of Madras",
+            "Maneka Gandhi v. Union of India",
+            "Minerva Mills v. Union of India",
+            "S.R. Bommai v. Union of India"
+          ],
+          "answer": 1,
+          "explanation": "Maneka Gandhi (1978) began the expansive reading of 'life and personal liberty' under Article 21.",
+          "ref": "Prelims fact: Maneka Gandhi 1978"
+        }
+      ]
     },
     {
       "id": "ca070726-06",
@@ -146,7 +315,40 @@
           "front": "What tension does the AI governance op-ed highlight for India?",
           "back": "India championed the Global South at its AI Impact Summit 2026 (focus on present harms/equity), but by joining Pax Silica (US semiconductor bloc) it risks trading Global-South solidarity and strategic autonomy for a 'middle power' role."
         }
-      }
+      },
+      "keyTerms": [
+        "India AI Impact Summit 2026",
+        "Global South",
+        "Pax Silica",
+        "Strategic autonomy",
+        "Global Digital Compact"
+      ],
+      "prelimsQs": [
+        {
+          "q": "Arrange the following global AI summits in the correct chronological order: 1. Seoul Summit 2. Bletchley Park Summit 3. Paris Summit 4. India AI Impact Summit",
+          "options": [
+            "2-1-3-4",
+            "1-2-3-4",
+            "2-3-1-4",
+            "1-3-2-4"
+          ],
+          "answer": 0,
+          "explanation": "Bletchley (2023) → Seoul (2024) → Paris (2025) → India AI Impact Summit (Feb 2026).",
+          "ref": "Prelims fact: summit sequence"
+        },
+        {
+          "q": "The term 'Pax Silica', recently seen in commentary on technology geopolitics, refers to:",
+          "options": [
+            "A UN treaty on semiconductor trade",
+            "A US-led alignment of the semiconductor supply chain",
+            "China's chip self-sufficiency programme",
+            "An EU digital-sovereignty law"
+          ],
+          "answer": 1,
+          "explanation": "'Pax Silica' denotes the US-led effort to align global semiconductor supply chains with trusted partners.",
+          "ref": "Prelims fact: Pax Silica"
+        }
+      ]
     },
     {
       "id": "ca070726-07",
@@ -171,7 +373,41 @@
           "front": "How could El Niño strain India's grid, per CREA?",
           "back": "Weak wind/hydro + high AC demand → ~17.7 TWh shortfall (to June 2027), likely filled by coal (~17 Mt CO2). Solution: BESS (batteries) + grid upgrades to avoid renewable curtailment (~2.1 TWh curtailed)."
         }
-      }
+      },
+      "keyTerms": [
+        "El Niño",
+        "CREA",
+        "Generation gap (TWh)",
+        "Non-fossil capacity",
+        "BESS",
+        "Coal dependence"
+      ],
+      "prelimsQs": [
+        {
+          "q": "With reference to India's electricity system, consider the following statements: 1. Non-fossil sources account for a little under one-third of actual electricity generation. 2. One terawatt-hour (TWh) equals one billion units (kWh) of electricity. Which of the statements given above is/are correct?",
+          "options": [
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
+          ],
+          "answer": 2,
+          "explanation": "Non-fossil sources contribute about 29.2% of generation, and 1 TWh = 1 billion kWh (units).",
+          "ref": "Prelims facts: 29.2%; 1 TWh = 1 billion units"
+        },
+        {
+          "q": "During an El Niño year, India's power system is stressed mainly because:",
+          "options": [
+            "Solar output collapses due to cloud cover",
+            "Wind and hydro generation weaken while cooling demand rises",
+            "Coal plants must legally reduce output",
+            "Transmission losses double in dry weather"
+          ],
+          "answer": 1,
+          "explanation": "El Niño weakens monsoon winds and inflows (hurting wind/hydro) while heat raises AC demand, widening the generation gap.",
+          "ref": "Article summary"
+        }
+      ]
     },
     {
       "id": "ca070726-08",
@@ -196,7 +432,40 @@
           "front": "Why is the NSE IPO significant?",
           "back": "At ~Rs 30,000 crore it would be India's largest-ever IPO, surpassing Hyundai India (Rs 27,870 cr, Oct 2024). NSE is home of Nifty 50; SEBI vets the disclosures."
         }
-      }
+      },
+      "keyTerms": [
+        "NSE",
+        "IPO",
+        "Nifty 50",
+        "SEBI Act 1992",
+        "Hyundai Motor India IPO"
+      ],
+      "prelimsQs": [
+        {
+          "q": "Which body vets the disclosures made by a company launching an Initial Public Offering (IPO) in India?",
+          "options": [
+            "RBI",
+            "SEBI",
+            "Ministry of Corporate Affairs",
+            "NSE itself"
+          ],
+          "answer": 1,
+          "explanation": "SEBI, under the SEBI Act 1992, regulates public issues and vets IPO disclosures.",
+          "ref": "Prelims fact: SEBI vets IPO disclosures"
+        },
+        {
+          "q": "Prior to the proposed NSE issue, India's largest IPO so far has been that of:",
+          "options": [
+            "LIC",
+            "Paytm",
+            "Hyundai Motor India",
+            "Coal India"
+          ],
+          "answer": 2,
+          "explanation": "Hyundai Motor India's Rs 27,870-crore IPO (October 2024) is the largest to date; NSE targets ~Rs 30,000 crore.",
+          "ref": "Prelims fact: Hyundai Oct 2024"
+        }
+      ]
     },
     {
       "id": "ca070726-09",
@@ -221,7 +490,41 @@
           "front": "Key facts on the Ministry of Cooperation's 5th anniversary announcements?",
           "back": "Cooperative life insurer announced; Tribhuvan Sahkari University at Anand (after Amul founder Tribhuvandas Patel); Bharat Taxi to 500 cities. Ministry created 2021; cooperation is a State subject (Entry 32)."
         }
-      }
+      },
+      "keyTerms": [
+        "Ministry of Cooperation",
+        "Sahkar se Samriddhi",
+        "Entry 32 State List",
+        "Tribhuvan Sahkari University",
+        "IFFCO",
+        "PACS"
+      ],
+      "prelimsQs": [
+        {
+          "q": "Consider the following statements: 1. 'Cooperation' is a subject in the State List of the Seventh Schedule. 2. The Union Ministry of Cooperation was carved out in 2021. Which of the statements given above is/are correct?",
+          "options": [
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
+          ],
+          "answer": 2,
+          "explanation": "Cooperative societies fall under Entry 32 of the State List, and the Ministry of Cooperation was created in July 2021.",
+          "ref": "Prelims facts: Entry 32; Ministry 2021"
+        },
+        {
+          "q": "India's first national cooperative university, 'Tribhuvan Sahkari University', is being established at:",
+          "options": [
+            "Ahmedabad",
+            "Anand, Gujarat",
+            "Nagpur",
+            "Karnal"
+          ],
+          "answer": 1,
+          "explanation": "It is coming up at Anand, Gujarat, named after Amul founder Tribhuvandas Patel.",
+          "ref": "Prelims fact: Anand, Gujarat"
+        }
+      ]
     },
     {
       "id": "ca070726-10",
@@ -246,7 +549,40 @@
           "front": "What has revived doubts about the Quad's future?",
           "back": "US renamed Indo-Pacific Command back to Pacific Command; Nov 2025 NSS barely mentioned the Quad. Cooperation grew to 37 areas but the $20bn Critical Minerals Initiative stays unfunded. Members = India, US, Japan, Australia (revived 2017)."
         }
-      }
+      },
+      "keyTerms": [
+        "Quad",
+        "QSD",
+        "Indo-Pacific",
+        "Critical Minerals Initiative",
+        "US Pacific Command"
+      ],
+      "prelimsQs": [
+        {
+          "q": "The 'Quad' grouping comprises which of the following countries?",
+          "options": [
+            "India, US, Japan, South Korea",
+            "India, US, Japan, Australia",
+            "India, US, UK, Australia",
+            "India, Japan, Australia, Indonesia"
+          ],
+          "answer": 1,
+          "explanation": "The Quadrilateral Security Dialogue includes India, the US, Japan and Australia.",
+          "ref": "Prelims fact: Quad members"
+        },
+        {
+          "q": "The Quadrilateral Security Dialogue traces its origin to cooperation among the four navies during:",
+          "options": [
+            "The 1999 East Timor crisis",
+            "The 2004 Indian Ocean tsunami relief",
+            "The 2008 Gulf of Aden anti-piracy patrols",
+            "The 2011 Fukushima disaster"
+          ],
+          "answer": 1,
+          "explanation": "Coordination for 2004 tsunami relief seeded the Quad idea, formalised in 2007 and revived in 2017.",
+          "ref": "Prelims fact: 2004 tsunami origin"
+        }
+      ]
     },
     {
       "id": "ca070726-11",
@@ -271,7 +607,41 @@
           "front": "Three ways a weak monsoon hurts India's economy, and by how much?",
           "back": "(1) Lower farm output, (2) weaker rural demand, (3) food inflation. Could cut GDP growth 20-65 bps and farm incomes up to 10%. Agriculture = ~1/5 of GVA but 46% of jobs. Fix: ex-ante risk reduction (irrigation, resilient seeds)."
         }
-      }
+      },
+      "keyTerms": [
+        "IMD forecast",
+        "Kharif crop",
+        "Super El Niño",
+        "GVA share of agriculture",
+        "Food inflation",
+        "Nutrient-Based Subsidy"
+      ],
+      "prelimsQs": [
+        {
+          "q": "Consider the following statements: 1. Agriculture contributes about one-fifth of India's GVA. 2. Agriculture employs less than one-fourth of India's workforce. Which of the statements given above is/are correct?",
+          "options": [
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
+          ],
+          "answer": 0,
+          "explanation": "Agriculture is ~1/5 of GVA but employs about 46% of the workforce, so statement 2 is wrong.",
+          "ref": "Prelims fact: 1/5 GVA, 46% workforce"
+        },
+        {
+          "q": "Which of the following years were El Niño-linked drought years in India? 1. 1972 2. 2009 3. 2015",
+          "options": [
+            "1 and 2 only",
+            "2 and 3 only",
+            "1 and 3 only",
+            "1, 2 and 3"
+          ],
+          "answer": 3,
+          "explanation": "1972, 1982, 2009 and 2015 were all El Niño drought years.",
+          "ref": "Prelims fact: drought years"
+        }
+      ]
     },
     {
       "id": "ca070726-12",
@@ -296,7 +666,41 @@
           "front": "Can a Bar Association collectively refuse to represent an accused?",
           "back": "No — illegal (A.S. Mohammed Rafi v. TN, 2010). Violates Art 22(1) right to counsel, Art 39A legal aid, and fair trial under Art 21. Refusal 'special circumstances' apply only to individual advocates (BCI Rules)."
         }
-      }
+      },
+      "keyTerms": [
+        "Right to counsel",
+        "Article 22(1)",
+        "Article 39A",
+        "A.S. Mohammed Rafi case",
+        "Bar Council of India",
+        "Fair trial"
+      ],
+      "prelimsQs": [
+        {
+          "q": "The right of an arrested person to consult and be defended by a legal practitioner of his choice is guaranteed under:",
+          "options": [
+            "Article 20(3)",
+            "Article 21A",
+            "Article 22(1)",
+            "Article 32"
+          ],
+          "answer": 2,
+          "explanation": "Article 22(1) guarantees the right to counsel of one's choice upon arrest.",
+          "ref": "Prelims fact: Article 22(1)"
+        },
+        {
+          "q": "Free legal aid to ensure justice is not denied due to economic disability is provided for in the Constitution under:",
+          "options": [
+            "Article 39A (DPSP)",
+            "Article 44 (DPSP)",
+            "Article 51A (Fundamental Duties)",
+            "Article 14"
+          ],
+          "answer": 0,
+          "explanation": "Article 39A, a Directive Principle inserted by the 42nd Amendment, mandates free legal aid.",
+          "ref": "Prelims fact: Article 39A"
+        }
+      ]
     },
     {
       "id": "ca070726-13",
@@ -321,7 +725,40 @@
           "front": "India's UNSC non-permanent seat bid (2028-29): key contest?",
           "back": "Campaign launches 13 July (Jaishankar). Rival = Tajikistan, backed by 57-member OIC. India backed by Fiji, US, Austria, Sri Lanka. UNSC = 5 permanent + 10 non-permanent (2-yr terms)."
         }
-      }
+      },
+      "keyTerms": [
+        "UNSC non-permanent seat",
+        "Asia-Pacific group",
+        "OIC",
+        "SCO",
+        "Veto power"
+      ],
+      "prelimsQs": [
+        {
+          "q": "Consider the following statements about the UN Security Council: 1. It has 10 non-permanent members elected for two-year terms. 2. Non-permanent members enjoy veto power on substantive resolutions. Which of the statements given above is/are correct?",
+          "options": [
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
+          ],
+          "answer": 0,
+          "explanation": "The UNSC has 5 permanent members (with veto) and 10 non-permanent members without veto.",
+          "ref": "Prelims fact: 5 permanent + 10 non-permanent"
+        },
+        {
+          "q": "India's rival for the Asia-Pacific non-permanent UNSC seat for 2028-29, backed by the OIC bloc, is:",
+          "options": [
+            "Kazakhstan",
+            "Tajikistan",
+            "Malaysia",
+            "Bangladesh"
+          ],
+          "answer": 1,
+          "explanation": "Tajikistan, supported by the 57-member OIC, is contesting against India for the seat.",
+          "ref": "Article summary"
+        }
+      ]
     },
     {
       "id": "ca070726-14",
@@ -346,7 +783,41 @@
           "front": "What are MAHASAGAR and Act East Policy?",
           "back": "MAHASAGAR = Mutual and Holistic Advancement for Security and Growth Across Regions (India's maritime vision, successor to SAGAR). Act East (2014) upgraded the 1990s Look East Policy to deepen SE/East Asia ties."
         }
-      }
+      },
+      "keyTerms": [
+        "Act East Policy",
+        "MAHASAGAR",
+        "SAGAR",
+        "ECTA",
+        "Comprehensive Strategic Partnership",
+        "Indo-Pacific"
+      ],
+      "prelimsQs": [
+        {
+          "q": "'MAHASAGAR', recently in the news, is best described as:",
+          "options": [
+            "An indigenous aircraft carrier",
+            "India's maritime vision succeeding SAGAR",
+            "A deep-sea mining mission",
+            "A naval exercise with ASEAN"
+          ],
+          "answer": 1,
+          "explanation": "MAHASAGAR is the successor formulation to the SAGAR (Security and Growth for All in the Region) maritime vision.",
+          "ref": "Prelims fact: MAHASAGAR successor to SAGAR"
+        },
+        {
+          "q": "'ECTA', an interim free trade agreement signed by India in 2022, is with which country?",
+          "options": [
+            "UAE",
+            "Australia",
+            "UK",
+            "Indonesia"
+          ],
+          "answer": 1,
+          "explanation": "The India-Australia Economic Cooperation and Trade Agreement (ECTA) came into force in 2022.",
+          "ref": "Prelims fact: ECTA 2022"
+        }
+      ]
     },
     {
       "id": "ca070726-15",
@@ -371,7 +842,40 @@
           "front": "Why does Mumbai flood, and what is the 'Sponge City' fix?",
           "back": "Reclaimed low-lying land + high tide blocks gravity drains; BRIMSTOWAD (post-2005) incomplete. Sponge City = absorb/store/reuse rain via permeable surfaces, wetlands, water retention (China's post-2012 model)."
         }
-      }
+      },
+      "keyTerms": [
+        "Cloudburst",
+        "Sponge City",
+        "BRIMSTOWAD",
+        "Disaster Management Act 2005",
+        "Urban flooding"
+      ],
+      "prelimsQs": [
+        {
+          "q": "The 'Sponge City' concept, often cited for urban flood management, was pioneered as policy in:",
+          "options": [
+            "Japan",
+            "China",
+            "Netherlands",
+            "Singapore"
+          ],
+          "answer": 1,
+          "explanation": "China adopted the Sponge City programme after the 2012 Beijing floods, emphasising absorptive urban design.",
+          "ref": "Prelims fact: Sponge City China"
+        },
+        {
+          "q": "A 'cloudburst' is conventionally characterised by rainfall of about:",
+          "options": [
+            "More than 100 mm per hour over a small area",
+            "More than 50 mm per day city-wide",
+            "More than 500 mm per week",
+            "Continuous drizzle for over 24 hours"
+          ],
+          "answer": 0,
+          "explanation": "Cloudbursts involve intense localised rain, typically exceeding 100 mm/hour.",
+          "ref": "Prelims fact: >100 mm/hour"
+        }
+      ]
     },
     {
       "id": "ca070726-16",
@@ -396,7 +900,13 @@
           "front": "Current state of the Russia-Ukraine war (per TH editorial)?",
           "back": "4+ years in, stalemate: Ukraine's drones hit Russian oil/Crimea ('long-range sanctions'); Russia controls 20%+ of Ukraine. No military path to victory → editorial urges ceasefire & negotiations. Crimea annexed 2014."
         }
-      }
+      },
+      "keyTerms": [
+        "Crimea annexation 2014",
+        "Drone warfare",
+        "Attritional conflict",
+        "NATO Article 5"
+      ]
     },
     {
       "id": "ca070726-17",
@@ -421,7 +931,41 @@
           "front": "How does the TVK defection wave sidestep the anti-defection law?",
           "back": "MLAs RESIGN their seats (avoiding Tenth Schedule disqualification) then recontest by-elections on the ruling party's ticket. Tenth Schedule = 52nd Amendment, 1985. A known loophole (also seen in Maharashtra)."
         }
-      }
+      },
+      "keyTerms": [
+        "Tenth Schedule",
+        "52nd Amendment",
+        "Anti-defection law",
+        "Whip",
+        "By-election",
+        "Resign-and-recontest loophole"
+      ],
+      "prelimsQs": [
+        {
+          "q": "The Anti-Defection Law was added to the Constitution by which amendment, and in which Schedule is it contained?",
+          "options": [
+            "44th Amendment; Ninth Schedule",
+            "52nd Amendment; Tenth Schedule",
+            "61st Amendment; Tenth Schedule",
+            "91st Amendment; Twelfth Schedule"
+          ],
+          "answer": 1,
+          "explanation": "The 52nd Amendment (1985) inserted the Tenth Schedule containing the anti-defection provisions.",
+          "ref": "Prelims fact: 52nd Amendment, Tenth Schedule"
+        },
+        {
+          "q": "Under the Tenth Schedule, a legislator does NOT face disqualification when he/she:",
+          "options": [
+            "Voluntarily gives up party membership",
+            "Votes against the party whip without condonation",
+            "Resigns the seat and contests a by-election on another party's ticket",
+            "Abstains contrary to party direction without condonation"
+          ],
+          "answer": 2,
+          "explanation": "Resigning and re-contesting is the well-known loophole — the law penalises defection while holding the seat, not resignation.",
+          "ref": "Prelims fact: resign-and-recontest loophole"
+        }
+      ]
     },
     {
       "id": "ca070726-18",
@@ -446,7 +990,40 @@
           "front": "What FCRA amendment did Meghalaya's CM oppose?",
           "back": "Proposed Section 16A(5) — lets a designated authority take over/dispose of assets (schools, hospitals, land) built with foreign funds when FCRA registration is cancelled. FCRA 2010 is administered by the MHA."
         }
-      }
+      },
+      "keyTerms": [
+        "FCRA 2010",
+        "MHA",
+        "Section 16A(5) proposal",
+        "Foreign contribution",
+        "NGO regulation"
+      ],
+      "prelimsQs": [
+        {
+          "q": "The Foreign Contribution (Regulation) Act, 2010 is administered by:",
+          "options": [
+            "Ministry of Finance",
+            "Ministry of External Affairs",
+            "Ministry of Home Affairs",
+            "NITI Aayog"
+          ],
+          "answer": 2,
+          "explanation": "FCRA registration, renewal and enforcement are handled by the MHA.",
+          "ref": "Prelims fact: FCRA under MHA"
+        },
+        {
+          "q": "Consider the following statements regarding FCRA, 2010: 1. Organisations need registration or prior permission to receive foreign contribution. 2. FCRA registration once granted is permanent and needs no renewal. Which of the statements given above is/are correct?",
+          "options": [
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
+          ],
+          "answer": 0,
+          "explanation": "FCRA requires registration/prior permission and periodic renewal — registration is not permanent.",
+          "ref": "Prelims fact: registration + renewal"
+        }
+      ]
     },
     {
       "id": "ca070726-19",
@@ -471,7 +1048,40 @@
           "front": "What do BPRD, NCRB and SVPNPA do?",
           "back": "BPRD (1970) — police modernisation/research/training. NCRB — national crime stats ('Crime in India'), runs CCTNS. SVPNPA (Hyderabad) — IPS training academy. Appointments cleared by the ACC (PM + HM)."
         }
-      }
+      },
+      "keyTerms": [
+        "Appointments Committee of the Cabinet",
+        "BPRD",
+        "NCRB",
+        "CCTNS",
+        "SVPNPA"
+      ],
+      "prelimsQs": [
+        {
+          "q": "The Appointments Committee of the Cabinet (ACC), which clears senior government appointments, consists of:",
+          "options": [
+            "PM, Home Minister and Defence Minister",
+            "PM and Home Minister",
+            "PM, Home Minister and the Cabinet Secretary",
+            "President and PM"
+          ],
+          "answer": 1,
+          "explanation": "The ACC comprises the Prime Minister and the Home Minister.",
+          "ref": "Prelims fact: ACC composition"
+        },
+        {
+          "q": "'Crime in India', the annual national crime statistics report, is published by:",
+          "options": [
+            "BPRD",
+            "NCRB",
+            "NHRC",
+            "MHA Directorate of Statistics"
+          ],
+          "answer": 1,
+          "explanation": "The National Crime Records Bureau publishes Crime in India and runs the CCTNS network.",
+          "ref": "Prelims fact: NCRB publications"
+        }
+      ]
     },
     {
       "id": "ca070726-20",
@@ -496,7 +1106,40 @@
           "front": "What NFSA change is TN opposing, and why?",
           "back": "Shift from 35 kg/HOUSEHOLD (AAY) to 7 kg/PERSON capped at 35 kg/household. TN (avg family 3.54) says it penalises small families & southern States that did family planning. Amends Section 3(1), NFSA 2013."
         }
-      }
+      },
+      "keyTerms": [
+        "NFSA 2013",
+        "Antyodaya Anna Yojana",
+        "Priority Households",
+        "PDS",
+        "Per-capita entitlement"
+      ],
+      "prelimsQs": [
+        {
+          "q": "Under the National Food Security Act, 2013, Antyodaya Anna Yojana (AAY) households are entitled to:",
+          "options": [
+            "5 kg foodgrain per person per month",
+            "35 kg foodgrain per household per month",
+            "10 kg foodgrain per person per month",
+            "50 kg foodgrain per household per month"
+          ],
+          "answer": 1,
+          "explanation": "AAY (poorest-of-poor) households get 35 kg/household/month; Priority Households get 5 kg/person.",
+          "ref": "Prelims fact: AAY 35 kg/household"
+        },
+        {
+          "q": "The National Food Security Act, 2013 covers approximately what share of India's population?",
+          "options": [
+            "One-third",
+            "Half",
+            "Two-thirds",
+            "Ninety per cent"
+          ],
+          "answer": 2,
+          "explanation": "NFSA legally entitles roughly two-thirds of the population to subsidised foodgrain via the PDS.",
+          "ref": "Prelims fact: ~2/3 coverage"
+        }
+      ]
     },
     {
       "id": "ca070726-21",
@@ -521,7 +1164,13 @@
           "front": "Yadav's three reasons the Opposition should NOT boycott elections?",
           "back": "(1) Ethical/communicative; (2) Strategic — boycotts rarely dent turnout, and elections give organising space; (3) Historical — mass upsurges (Hungary, 1977 India) can topple regimes. Uses Norris's 11 dimensions of electoral integrity."
         }
-      }
+      },
+      "keyTerms": [
+        "Electoral integrity",
+        "Special Intensive Revision",
+        "Delimitation",
+        "Basic structure"
+      ]
     },
     {
       "id": "ca070726-22",
@@ -546,7 +1195,40 @@
           "front": "Why does E20 petrol face consumer resistance?",
           "back": "(1) Lower fuel economy (ethanol has less energy/litre); (2) corrosion/part damage (ethanol is hygroscopic); (3) older E10-certified vehicles not designed for it. E20 = 20% ethanol, met ~5 yrs early."
         }
-      }
+      },
+      "keyTerms": [
+        "E20",
+        "Ethanol Blending Programme",
+        "Flex-fuel vehicles",
+        "Hygroscopic",
+        "Energy security"
+      ],
+      "prelimsQs": [
+        {
+          "q": "Consider the following statements about ethanol-blended petrol: 1. E20 denotes petrol blended with 20% ethanol. 2. Ethanol has a higher energy content than petrol, improving mileage. Which of the statements given above is/are correct?",
+          "options": [
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
+          ],
+          "answer": 0,
+          "explanation": "E20 is 20% ethanol; ethanol's LOWER energy content slightly reduces fuel economy.",
+          "ref": "Prelims facts: E20; lower energy content"
+        },
+        {
+          "q": "Older petrol vehicles face corrosion risk with high ethanol blends chiefly because ethanol is:",
+          "options": [
+            "Strongly acidic",
+            "Hygroscopic (absorbs water)",
+            "Highly viscous",
+            "Rich in sulphur"
+          ],
+          "answer": 1,
+          "explanation": "Ethanol absorbs moisture, which corrodes fuel-system components not designed for it.",
+          "ref": "Prelims fact: hygroscopic"
+        }
+      ]
     },
     {
       "id": "ca070726-23",
@@ -571,7 +1253,13 @@
           "front": "What is a 'connector economy' and why is India suited to be one?",
           "back": "An economy that intermediates trade/capital/tech between rival blocs via trust & neutrality. India's edge: democracy, China buffer, large market, cross-bloc goodwill — amid China+1 / friend-shoring supply-chain reshuffles."
         }
-      }
+      },
+      "keyTerms": [
+        "Connector economy",
+        "China+1",
+        "Friend-shoring",
+        "Global value chains"
+      ]
     },
     {
       "id": "ca070726-24",
@@ -596,7 +1284,41 @@
           "front": "Key facts on INS Mahendragiri?",
           "back": "6th Project 17A stealth frigate; designed by the Navy's Warship Design Bureau, built by MDL Mumbai; 75%+ indigenous; CODOG propulsion. Project 17A (follow-on to Shivalik/Project 17), built by MDL & GRSE."
         }
-      }
+      },
+      "keyTerms": [
+        "Project 17A",
+        "Stealth frigate",
+        "Warship Design Bureau",
+        "Mazagon Dock",
+        "CODOG propulsion",
+        "Mahendragiri"
+      ],
+      "prelimsQs": [
+        {
+          "q": "INS Mahendragiri, recently commissioned, is the sixth ship of which class?",
+          "options": [
+            "Project 15B destroyers",
+            "Project 17A stealth frigates",
+            "Project 75 submarines",
+            "Project 28 corvettes"
+          ],
+          "answer": 1,
+          "explanation": "Mahendragiri (F38) is the sixth Project 17A stealth frigate.",
+          "ref": "Article headline"
+        },
+        {
+          "q": "Project 17A frigates are being built at which of the following shipyards? 1. Mazagon Dock, Mumbai 2. GRSE, Kolkata 3. Cochin Shipyard",
+          "options": [
+            "1 only",
+            "1 and 2 only",
+            "2 and 3 only",
+            "1, 2 and 3"
+          ],
+          "answer": 1,
+          "explanation": "P-17A ships are split between MDL (Mumbai) and GRSE (Kolkata).",
+          "ref": "Prelims fact: MDL & GRSE"
+        }
+      ]
     },
     {
       "id": "ca070726-25",
@@ -621,7 +1343,40 @@
           "front": "What is VDPV and why does it matter post-2014?",
           "back": "Vaccine-Derived PolioVirus — the weakened OPV strain mutates & spreads where coverage is low. India is wild-polio-free (2014) but sewage (environmental) surveillance still detects VDPV, so immunisation must stay high. NCDC leads the response."
         }
-      }
+      },
+      "keyTerms": [
+        "Vaccine-derived poliovirus",
+        "OPV vs IPV",
+        "Environmental surveillance",
+        "Pulse Polio",
+        "NCDC"
+      ],
+      "prelimsQs": [
+        {
+          "q": "India was certified free of wild poliovirus in which year?",
+          "options": [
+            "2011",
+            "2014",
+            "2017",
+            "2020"
+          ],
+          "answer": 1,
+          "explanation": "India was declared wild-polio-free in 2014, with the last case in 2011.",
+          "ref": "Prelims fact: 2014"
+        },
+        {
+          "q": "'Vaccine-derived poliovirus (VDPV)', which triggered the Ghaziabad response, arises from:",
+          "options": [
+            "Mutation of the weakened strain in the Oral Polio Vaccine",
+            "Contamination of the injectable vaccine",
+            "A new wild strain from across the border",
+            "Zoonotic spillover from cattle"
+          ],
+          "answer": 0,
+          "explanation": "VDPV is a mutated form of the live attenuated virus used in OPV, detectable via sewage surveillance.",
+          "ref": "Prelims fact: VDPV from OPV"
+        }
+      ]
     },
     {
       "id": "ca070726-26",
@@ -646,7 +1401,40 @@
           "front": "NATO's new defence-spending target?",
           "back": "5% of GDP by 2035 (3.5% core military + 1.5% security-related), up from 2%. Trump-driven; strains UK/France/Italy budgets. NATO = 32 members, Article 5. Summit in Ankara; SG Mark Rutte."
         }
-      }
+      },
+      "keyTerms": [
+        "NATO",
+        "Article 5",
+        "Defence spending target",
+        "Burden sharing",
+        "Mark Rutte"
+      ],
+      "prelimsQs": [
+        {
+          "q": "Consider the following statements about NATO: 1. It currently has 32 member countries. 2. Article 5 of its treaty embodies collective defence. Which of the statements given above is/are correct?",
+          "options": [
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
+          ],
+          "answer": 2,
+          "explanation": "NATO has 32 members after Finland and Sweden joined, and Article 5 is the collective-defence clause.",
+          "ref": "Prelims facts: 32 members; Article 5"
+        },
+        {
+          "q": "NATO's newly adopted defence-spending goal for members by 2035 is:",
+          "options": [
+            "2% of GDP",
+            "3% of GDP",
+            "5% of GDP (3.5% core + 1.5% security-related)",
+            "10% of GDP"
+          ],
+          "answer": 2,
+          "explanation": "The 5%-by-2035 target splits into 3.5% core defence and 1.5% broader security spending, replacing the older 2% benchmark.",
+          "ref": "Prelims fact: 5% target split"
+        }
+      ]
     },
     {
       "id": "ca070726-27",
@@ -671,7 +1459,39 @@
           "front": "Why can e-rickshaw batteries be disabled over Bluetooth?",
           "back": "Imported Chinese BMS modules (e.g., Jiabaida) lack authentication — a flaw flagged 7 years ago. It's a supply-chain security gap, not 'sabotage'. Fix = vet suppliers, audit firmware, trace component origins (not app bans)."
         }
-      }
+      },
+      "keyTerms": [
+        "Battery Management System",
+        "Bluetooth authentication flaw",
+        "Supply-chain security",
+        "E-rickshaw ecosystem"
+      ],
+      "prelimsQs": [
+        {
+          "q": "In electric vehicles, the 'BMS', recently in news over Bluetooth vulnerabilities, stands for:",
+          "options": [
+            "Battery Management System",
+            "Brake Modulation System",
+            "Basic Motor Software",
+            "Bharat Mobility Standard"
+          ],
+          "answer": 0,
+          "explanation": "The BMS monitors cell voltage, temperature and charge; unauthenticated Bluetooth BMS modules were being switched off remotely.",
+          "ref": "Prelims fact: BMS definition"
+        },
+        {
+          "q": "The e-rickshaw battery 'shutdown' videos pointed primarily to which underlying problem?",
+          "options": [
+            "Deliberate state-sponsored sabotage",
+            "Absence of authentication in imported BMS modules",
+            "Overheating due to Indian summers",
+            "Grid voltage fluctuations"
+          ],
+          "answer": 1,
+          "explanation": "The flaw is a known security gap — imported BMS modules lack authentication, a supply-chain security issue rather than sabotage.",
+          "ref": "Article summary"
+        }
+      ]
     },
     {
       "id": "ca070726-28",
@@ -696,7 +1516,39 @@
           "front": "Key takeaways from Guterres's UN AI Dialogue warning?",
           "back": "AI outpaces oversight; needs global rules + an 'AI Child Safety Pledge'. Compute is concentrated: US 75%, China 15% of top-500 AI supercomputers. Dialogue in Geneva, mandated by the Global Digital Compact (2024)."
         }
-      }
+      },
+      "keyTerms": [
+        "UN Global Dialogue on AI",
+        "Global Digital Compact",
+        "AI supercomputing concentration",
+        "AI Child Safety Pledge"
+      ],
+      "prelimsQs": [
+        {
+          "q": "The first government-level 'UN Global Dialogue on AI Governance' was held in July 2026 at:",
+          "options": [
+            "New York",
+            "Geneva",
+            "Paris",
+            "Nairobi"
+          ],
+          "answer": 1,
+          "explanation": "The Dialogue, mandated by the Global Digital Compact (2024), met in Geneva on 6-7 July 2026.",
+          "ref": "Prelims fact: Geneva"
+        },
+        {
+          "q": "According to the UN expert panel cited at the Dialogue, the share of the world's top-500 AI supercomputing power held by the US is about:",
+          "options": [
+            "50%",
+            "60%",
+            "75%",
+            "90%"
+          ],
+          "answer": 2,
+          "explanation": "The US holds ~75% and China ~15% of top-500 AI supercomputing capacity.",
+          "ref": "Prelims fact: 75% US"
+        }
+      ]
     },
     {
       "id": "ca070726-29",
@@ -721,7 +1573,40 @@
           "front": "Significance of China's Pacific 'strategic' missile test?",
           "back": "Nuclear-sub launch with dummy warhead; follows 2023 ICBM near French Polynesia. Timed with Australia-Fiji defence treaty & China-Russia drills → great-power contest in South Pacific. Nuclear triad = ICBM (land) + SLBM (sea) + bombers (air)."
         }
-      }
+      },
+      "keyTerms": [
+        "ICBM",
+        "SLBM",
+        "Second-strike capability",
+        "Nuclear triad",
+        "PLA Rocket Force"
+      ],
+      "prelimsQs": [
+        {
+          "q": "An Intercontinental Ballistic Missile (ICBM) is conventionally defined by a range exceeding:",
+          "options": [
+            "1,000 km",
+            "3,000 km",
+            "5,500 km",
+            "10,000 km"
+          ],
+          "answer": 2,
+          "explanation": "ICBMs have ranges above 5,500 km and are typically nuclear-capable.",
+          "ref": "Prelims fact: >5,500 km"
+        },
+        {
+          "q": "The 'nuclear triad' refers to delivery of nuclear weapons via:",
+          "options": [
+            "Army, Navy and Air Force commands",
+            "Land-based missiles, submarine-launched missiles and strategic bombers",
+            "Fission, fusion and neutron weapons",
+            "Tactical, theatre and strategic warheads"
+          ],
+          "answer": 1,
+          "explanation": "The triad = land-based ICBMs + sea-based SLBMs + air-delivered weapons, ensuring second-strike capability.",
+          "ref": "Prelims fact: triad definition"
+        }
+      ]
     },
     {
       "id": "ca070726-30",
@@ -746,7 +1631,40 @@
           "front": "Why does MoSPI say to prioritise charging for e-3Ws?",
           "back": "e-3Ws draw 61% of EV electricity demand (2Ws dominate numbers but use less power). Total EV demand = 20.07 TWh/yr (~1.1% of generation), rising to 100-640 TWh by 2030 (NITI Aayog). Battery swapping suits 2W/3W fleets."
         }
-      }
+      },
+      "keyTerms": [
+        "EV charging infrastructure",
+        "Electric three-wheelers",
+        "MoSPI",
+        "Battery swapping",
+        "TWh demand"
+      ],
+      "prelimsQs": [
+        {
+          "q": "As per the MoSPI expert committee, which EV segment accounts for the largest share (~61%) of electricity demand from India's EV fleet?",
+          "options": [
+            "Electric cars",
+            "Electric two-wheelers",
+            "Electric three-wheelers",
+            "Electric buses"
+          ],
+          "answer": 2,
+          "explanation": "Commercial e-3Ws dominate electricity draw due to heavy daily usage, though 2Ws dominate fleet numbers.",
+          "ref": "Article summary"
+        },
+        {
+          "q": "Battery swapping as a charging model is considered best suited for:",
+          "options": [
+            "Heavy trucks",
+            "Two- and three-wheelers",
+            "Sedan taxis",
+            "Electric buses only"
+          ],
+          "answer": 1,
+          "explanation": "Small standardised batteries make swapping practical for 2W/3W fleets.",
+          "ref": "Prelims fact: swapping suits 2W/3W"
+        }
+      ]
     },
     {
       "id": "ca070726-31",
@@ -771,7 +1689,41 @@
           "front": "What is White Gut Disease and why does it matter?",
           "back": "A shrimp disease (Vibrio bacteria / EHP microsporidian / poor ponds) — white gut/faeces, stunted growth, loose shells. Outbreak in AP (India's top shrimp State) threatens export forex. Key bodies: CIBA, MPEDA."
         }
-      }
+      },
+      "keyTerms": [
+        "White Gut Disease",
+        "Vibrio",
+        "L. vannamei",
+        "MPEDA",
+        "CIBA",
+        "Brackishwater aquaculture"
+      ],
+      "prelimsQs": [
+        {
+          "q": "India's largest shrimp-producing State is:",
+          "options": [
+            "West Bengal",
+            "Odisha",
+            "Andhra Pradesh",
+            "Gujarat"
+          ],
+          "answer": 2,
+          "explanation": "Andhra Pradesh leads Indian shrimp production, centred on its coastal aquaculture belt.",
+          "ref": "Prelims fact: AP largest"
+        },
+        {
+          "q": "MPEDA, associated with India's seafood sector, is the:",
+          "options": [
+            "Marine Products Export Development Authority",
+            "Maritime Ports & Estuaries Development Agency",
+            "Marine Pollution & Environment Defence Authority",
+            "Mariculture Production & Extension Directorate"
+          ],
+          "answer": 0,
+          "explanation": "MPEDA under the Commerce Ministry promotes marine-product exports.",
+          "ref": "Prelims fact: MPEDA"
+        }
+      ]
     },
     {
       "id": "ca070726-32",
@@ -796,7 +1748,40 @@
           "front": "Why is the Dalai Lama's succession a geopolitical issue?",
           "back": "14th Dalai Lama (Tenzin Gyatso, Gelug school) has been in exile in India since 1959; CTA is based in Dharamshala. China claims a say in identifying his reincarnation — which the Dalai Lama & CTA reject."
         }
-      }
+      },
+      "keyTerms": [
+        "14th Dalai Lama",
+        "Central Tibetan Administration",
+        "Gelug school",
+        "Dharamshala",
+        "Succession dispute"
+      ],
+      "prelimsQs": [
+        {
+          "q": "The Central Tibetan Administration (Tibetan government-in-exile) is headquartered at:",
+          "options": [
+            "Leh",
+            "Dharamshala",
+            "Gangtok",
+            "Tawang"
+          ],
+          "answer": 1,
+          "explanation": "The CTA is based at McLeodganj, Dharamshala, Himachal Pradesh.",
+          "ref": "Prelims fact: Dharamshala"
+        },
+        {
+          "q": "The Dalai Lama belongs to which school of Tibetan Buddhism?",
+          "options": [
+            "Nyingma",
+            "Kagyu",
+            "Sakya",
+            "Gelug"
+          ],
+          "answer": 3,
+          "explanation": "The Dalai Lamas head the Gelug ('Yellow Hat') school.",
+          "ref": "Prelims fact: Gelug school"
+        }
+      ]
     },
     {
       "id": "ca070726-33",
@@ -821,7 +1806,40 @@
           "front": "White tiger — is it a separate species? And ex-situ vs in-situ?",
           "back": "No — a leucistic colour variant (recessive gene), not a species/subspecies (leucism ≠ albinism). Ex-situ = zoos/gene banks (outside habitat); in-situ = reserves/parks (within habitat). India has ~70% of wild tigers; Project Tiger (1973)."
         }
-      }
+      },
+      "keyTerms": [
+        "Panthera tigris tigris",
+        "Leucism",
+        "Project Tiger 1973",
+        "NTCA",
+        "IUCN Endangered"
+      ],
+      "prelimsQs": [
+        {
+          "q": "Consider the following statements about the white tiger: 1. It is a separate subspecies of tiger. 2. Its colouration results from leucism, a recessive genetic variant. Which of the statements given above is/are correct?",
+          "options": [
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
+          ],
+          "answer": 1,
+          "explanation": "The white tiger is merely a leucistic colour variant of the Bengal tiger, not a species or subspecies.",
+          "ref": "Prelims fact: leucistic variant"
+        },
+        {
+          "q": "India holds approximately what share of the world's wild tiger population?",
+          "options": [
+            "30%",
+            "50%",
+            "70%",
+            "90%"
+          ],
+          "answer": 2,
+          "explanation": "India harbours ~70% of wild tigers, conserved under Project Tiger (1973) and the NTCA.",
+          "ref": "Prelims fact: ~70%"
+        }
+      ]
     },
     {
       "id": "ca070726-34",
@@ -846,7 +1864,40 @@
           "front": "What does Bihar's CM Heli-Tourism Scheme 2026 do?",
           "back": "Subsidised helicopter/fixed-wing services (pilot from 15 July) linking Patna with Rajgir, Kaimur, Valmikinagar + Patna joyrides. Also cleared the Sindhu Darshan grant (up to Rs 20,000, 100 beneficiaries/yr)."
         }
-      }
+      },
+      "keyTerms": [
+        "Heli-tourism",
+        "Rajgir",
+        "Valmikinagar Tiger Reserve",
+        "Sindhu Darshan",
+        "Nalanda circuit"
+      ],
+      "prelimsQs": [
+        {
+          "q": "Valmikinagar, connected under Bihar's new heli-tourism scheme, is known for:",
+          "options": [
+            "An ancient Buddhist university",
+            "A tiger reserve on the Indo-Nepal border",
+            "A hydropower dam on the Ganga",
+            "A classical dance festival"
+          ],
+          "answer": 1,
+          "explanation": "Valmiki Tiger Reserve lies in West Champaran on the Indo-Nepal border.",
+          "ref": "Prelims fact: Valmikinagar tiger reserve"
+        },
+        {
+          "q": "Rajgir, part of the Nalanda heritage circuit, is associated with which religions' heritage?",
+          "options": [
+            "Buddhism and Jainism",
+            "Sikhism and Buddhism",
+            "Hinduism and Zoroastrianism",
+            "Jainism and Sufism"
+          ],
+          "answer": 0,
+          "explanation": "Rajgir carries major Buddhist and Jain heritage sites near ancient Nalanda.",
+          "ref": "Prelims fact: Rajgir heritage"
+        }
+      ]
     }
   ]
 }
