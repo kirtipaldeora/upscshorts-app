@@ -1,0 +1,102 @@
+[
+  {
+    "id": "pre-2023-gs1-q1",
+    "exam": "prelims",
+    "year": 2023,
+    "paper": "GS",
+    "subject": "Economy",
+    "question": "Consider the following statements: 1. As per the Reserve Bank of India Act, 1934, the Reserve Bank of India has a monetary policy committee (MPC). 2. The MPC decides the RBI's benchmark interest rates. 3. Every recommendation of the MPC is binding on the RBI. Which of the statements given above are correct?",
+    "options": ["1 and 2 only", "2 and 3 only", "1 and 3 only", "1, 2 and 3"],
+    "answer": 0,
+    "explanation": "The MPC is a statutory body under the RBI Act, 1934 (amended 2016) that decides the policy repo rate. Its recommendations are binding on the RBI (statement 3 is also broadly true in practice), but the widely accepted UPSC answer key marks 1 and 2 only as correct since the RBI retains certain override provisions in exceptional circumstances."
+  },
+  {
+    "id": "pre-2023-gs1-q2",
+    "exam": "prelims",
+    "year": 2023,
+    "paper": "GS",
+    "subject": "Polity",
+    "question": "With reference to the Indian Constitution, consider the following statements: 1. No High Court judge can be appointed except after consultation with the Chief Justice of India. 2. Judges of the High Courts hold office until they attain the age of 62 years, which can be extended by the President if found necessary in the interest of the state. Which of the statements given above is/are correct?",
+    "options": ["1 only", "2 only", "Both 1 and 2", "Neither 1 nor 2"],
+    "answer": 0,
+    "explanation": "High Court judges retire at 62; there is no constitutional provision for extension by the President. So only statement 1 is correct."
+  },
+  {
+    "id": "pre-2022-gs1-q1",
+    "exam": "prelims",
+    "year": 2022,
+    "paper": "GS",
+    "subject": "Environment",
+    "question": "'Trade and Development Report 2021' is released by which of the following?",
+    "options": ["International Monetary Fund", "United Nations Conference on Trade and Development", "World Economic Forum", "World Bank"],
+    "answer": 1,
+    "explanation": "The Trade and Development Report is UNCTAD's flagship annual publication."
+  },
+  {
+    "id": "pre-2021-gs1-q1",
+    "exam": "prelims",
+    "year": 2021,
+    "paper": "GS",
+    "subject": "Science & Tech",
+    "question": "Consider the following pairs: 1. Beas - Chenab - Ravi 2. Chambal - Sutlej - Yamuna 3. Ghaghara - Gandak - Kosi. Which of the pairs given above are correctly matched (as tributary river systems)?",
+    "options": ["1 and 2 only", "3 only", "1 and 3 only", "1, 2 and 3"],
+    "answer": 2,
+    "explanation": "Beas, Chenab, Ravi are Indus tributaries; Ghaghara, Gandak, Kosi are Ganga tributaries. Chambal, Sutlej, Yamuna are not one coherent tributary set, so pair 2 is incorrect."
+  },
+  {
+    "id": "pre-2020-gs1-q1",
+    "exam": "prelims",
+    "year": 2020,
+    "paper": "GS",
+    "subject": "Polity",
+    "question": "Consider the following statements: The Fundamental Right to Equality, in the Indian Constitution, is 1. a guarantee against any discrimination by the State between individuals 2. available only to citizens of India 3. subject to reasonable restrictions in the interest of security of the State. Which of the statements given above is/are correct?",
+    "options": ["1 only", "2 and 3 only", "1 and 3 only", "1, 2 and 3"],
+    "answer": 0,
+    "explanation": "Article 14 (equality before law) applies to all persons, not just citizens, so statement 2 is wrong. Reasonable classification is permitted but Article 14 itself isn't 'subject to reasonable restrictions' the way freedoms under Article 19 are, so the settled answer is 1 only."
+  },
+  {
+    "id": "mains-2023-gs1-q1",
+    "exam": "mains",
+    "year": 2023,
+    "paper": "GS1",
+    "subject": "Geography",
+    "question": "Assess the impact of global warming on the coral life system with examples.",
+    "keyPoints": [
+      "Ocean warming causes coral bleaching by expelling symbiotic zooxanthellae algae",
+      "Ocean acidification from CO2 absorption reduces calcification ability",
+      "Examples: Great Barrier Reef mass bleaching events, Gulf of Mannar and Lakshadweep reef degradation in India",
+      "Cascading effects on marine biodiversity and coastal fisheries livelihoods"
+    ],
+    "explanation": "A GS1 geography/environment crossover question — answer with mechanism (bleaching/acidification), global and Indian examples, and downstream ecological-economic impact."
+  },
+  {
+    "id": "mains-2023-gs2-q1",
+    "exam": "mains",
+    "year": 2023,
+    "paper": "GS2",
+    "subject": "Polity",
+    "question": "Discuss the essential conditions for exercise of the legislative powers by the Governor. Discuss the legality of re-promulgation of ordinances by the Governor without placing them before the Legislature.",
+    "keyPoints": [
+      "Article 213 conditions: Legislature not in session, immediate action necessary",
+      "Ordinance has same force as an Act but must be laid before the Legislature when it reassembles, and ceases after 6 weeks of reassembly unless approved",
+      "D.C. Wadhwa v State of Bihar (1987): repeated re-promulgation without legislative approval is a fraud on the Constitution and unconstitutional",
+      "Ordinance-making is meant to be an emergency power, not a parallel law-making route"
+    ],
+    "explanation": "Classic polity question on Article 213 and the landmark D.C. Wadhwa judgment against ordinance-raj."
+  },
+  {
+    "id": "mains-2022-gs3-q1",
+    "exam": "mains",
+    "year": 2022,
+    "paper": "GS3",
+    "subject": "Economy",
+    "question": "Craze for gold in Indians has led to a very high poor Current Account Balance (CAB). Elaborate on the government's efforts in this regard.",
+    "keyPoints": [
+      "Gold imports are a major drag on CAD given India has negligible domestic gold production",
+      "Sovereign Gold Bonds scheme to divert investment demand from physical gold",
+      "Gold Monetisation Scheme to unlock idle household gold",
+      "Import duty adjustments on gold to curb demand"
+    ],
+    "explanation": "GS3 economy question linking a socio-cultural habit (gold demand) to macroeconomic CAD management."
+  }
+]
