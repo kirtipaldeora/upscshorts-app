@@ -346,7 +346,7 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
   <div class="screen active" id="feed-screen">
     <div class="top-bar">
       <div class="left-area"><button class="back-btn" id="feed-back" onclick="clearFilter()"><i class="fas fa-arrow-left"></i></button><h1>UPSC <span>Shorts</span></h1></div>
-      <div class="top-actions"><button onclick="openMapsArcade()" aria-label="Maps Arcade" title="Maps Arcade"><i class="fas fa-earth-asia" style="color:var(--teal)"></i></button><button onclick="showScr('search-screen')" aria-label="Search"><i class="fas fa-search"></i></button><button onclick="showScr('cat-screen')" aria-label="Categories"><i class="fas fa-table-cells-large"></i></button><button onclick="openDigest()"><i class="fas fa-list-ol"></i></button><button onclick="toggleTheme()"><i class="fas fa-moon" id="theme-icon"></i></button></div>
+      <div class="top-actions"><button onclick="showScr('bm-screen')" aria-label="Bookmarks" title="Bookmarks"><i class="fas fa-bookmark" style="color:var(--teal)"></i></button><button onclick="showScr('search-screen')" aria-label="Search"><i class="fas fa-search"></i></button><button onclick="showScr('cat-screen')" aria-label="Categories"><i class="fas fa-table-cells-large"></i></button><button onclick="openDigest()"><i class="fas fa-list-ol"></i></button><button onclick="toggleTheme()"><i class="fas fa-moon" id="theme-icon"></i></button></div>
     </div>
     <div class="update-banner" id="update-banner" onclick="simUpdate()"><i class="fas fa-rotate"></i><div class="ub-text"><strong>Update available</strong><span>The Hindu & UPSCPrep — new topics ready</span></div><div class="ub-time">8:00 AM</div></div>
     <div class="date-tabs" id="date-tabs"></div>
@@ -361,7 +361,7 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
     <button class="nav-item active" data-nav="feed-screen" onclick="navTo(this)"><i class="fas fa-house"></i><span>Feed</span></button>
     <button class="nav-item" data-nav="revise-screen" onclick="navTo(this)"><i class="fas fa-book-open"></i><span>Revise</span></button>
     <button class="nav-upload" onclick="openUpload()" aria-label="Upload PDF"><i class="fas fa-plus"></i></button>
-    <button class="nav-item" data-nav="bm-screen" onclick="navTo(this)"><i class="fas fa-bookmark"></i><span>Saved</span></button>
+    <button class="nav-item" onclick="openMapsArcade()"><i class="fas fa-earth-asia"></i><span>Arcade</span></button>
     <button class="nav-item" data-nav="profile-screen" onclick="navTo(this)"><i class="fas fa-user"></i><span>Profile</span></button>
   </nav>
 </div>
