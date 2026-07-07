@@ -8,11 +8,9 @@
 <body>
 <x-dc>
 <helmet>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+<link href="assets/fonts/nunito.css" rel="stylesheet">
+<script src="assets/vendor/d3.v7.min.js"></script>
+<script src="assets/vendor/topojson-client.v3.min.js"></script>
 <style>
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;height:100%;overflow:hidden}
@@ -454,7 +452,7 @@ class Component extends DCLogic {
     this.W = 1000; this.H = 548;
     this.RIVER_BOUNDS = [65,5,98,38];
     this.RIVER_DEBUG = true;
-    this.WORLD = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
+    this.WORLD = 'assets/data/countries-110m.json';
     this.PALETTE = ['#F6D9A8','#CFE8C0','#BFE1E6','#E9CFE4','#F4CBC0','#D9D7F0'];
     this.ORDER = ['Africa','Europe','Asia','North America','South America','Oceania'];
     this.CONT_COLOR = {Africa:'#6C71C4',Europe:'#6C5CE7',Asia:'#E0563B','North America':'#2FA37A','South America':'#C9489B',Oceania:'#2C9AD6'};

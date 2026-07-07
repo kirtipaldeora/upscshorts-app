@@ -1,0 +1,19 @@
+{
+  "name": "michi — UPSC Current Affairs",
+  "short_name": "michi",
+  "description": "Daily UPSC current-affairs briefings, previous year questions, and a geography maps arcade.",
+  "id": "./",
+  "start_url": "./index.html?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#7A7FC9",
+  "theme_color": "#7A7FC9",
+  "lang": "en",
+  "categories": ["education", "news"],
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
