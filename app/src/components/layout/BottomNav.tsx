@@ -62,26 +62,33 @@ export function BottomNav({ onOpenMapsArcade, onOpenPYQ }: BottomNavProps) {
           <button
             key={item.label}
             onClick={() => handleTap(item)}
-            aria-label={item.label}
+            className={`nav-item ${isActive ? 'active' : ''}`}
             style={{
               width: 54,
               height: 54,
               borderRadius: 19,
               display: 'flex',
-              flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
               padding: 0,
-              transition: 'all 0.3s cubic-bezier(0.3,1.2,0.4,1)',
-              border: '1px solid var(--panel-border)',
-              background: isActive ? '#fff' : 'var(--panel)',
-              backdropFilter: 'blur(18px)',
-              WebkitBackdropFilter: 'blur(18px)',
-              color: isActive ? '#E9B93B' : 'var(--on)',
-              fontSize: 0,
+              transition: 'all 0.3s cubic-bezier(0.3, 1.2, 0.4, 1)',
+              position: 'relative',
+              overflow: 'hidden',
             }}
           >
+            {/* Premium liquid glass gloss highlight overlay */}
+            <span
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '50%',
+                background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 100%)',
+                pointerEvents: 'none',
+              }}
+            />
             <FontAwesomeIcon
               icon={item.icon}
               style={{

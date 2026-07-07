@@ -416,4 +416,43 @@ html.dark {
     border: 1px solid rgba(255, 255, 255, 0.25) !important;
     color: rgba(255, 255, 255, 0.9) !important;
   }
+
+  /* Custom contrast overrides for bottom navigation in light mode */
+  html:not(.dark) .nav-item {
+    color: #41447e !important;
+    background: rgba(255, 255, 255, 0.45) !important;
+    border-color: rgba(65, 68, 126, 0.25) !important;
+  }
+  html:not(.dark) .nav-item.active {
+    color: #E9B93B !important;
+    background: #FFFFFF !important;
+    border-color: transparent !important;
+    box-shadow: 0 8px 24px rgba(46, 48, 96, 0.2) !important;
+  }
+
+  /* Override liquid-glass-react rigid style restrictions */
+  .nav-item .glass {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .nav-item .glass > div {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: inherit !important;
+    text-shadow: none !important;
+    font-family: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    line-height: inherit !important;
+  }
 }
