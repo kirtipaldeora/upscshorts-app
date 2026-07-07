@@ -1,0 +1,335 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Nunito Font ──────────────────────────────────────────── */
+@font-face {
+  font-family: 'Nunito';
+  src: url('/fonts/nunito-0.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ─── Light Mode Design Tokens ─────────────────────────────── */
+:root {
+  --bg1: #8e93d9;
+  --bg2: #7a7fc9;
+  --bg3: #6c71bc;
+  --bg: #7a7fc9;
+  --panel: rgba(255, 255, 255, 0.2);
+  --panel2: rgba(255, 255, 255, 0.13);
+  --panel-border: rgba(255, 255, 255, 0.35);
+  --card: #ffffff;
+  --card2: rgba(65, 68, 126, 0.06);
+  --ink: #41447e;
+  --ink2: #8285b5;
+  --ink3: #abadd1;
+  --on: #ffffff;
+  --on2: rgba(255, 255, 255, 0.75);
+  --on3: rgba(255, 255, 255, 0.5);
+  --yellow: #f6d66b;
+  --yellow-deep: #efc94c;
+  --yellow-ink: #6b5a1e;
+  --acc: #6c71c4;
+  --accent: #6c71c4;
+  --teal: #5fa995;
+  --good: #4caf82;
+  --bad: #e36d6d;
+  --overlay: rgba(46, 48, 96, 0.5);
+  --shadow: 0 20px 44px rgba(46, 48, 96, 0.3);
+  --shadow-soft: 0 10px 26px rgba(46, 48, 96, 0.2);
+  --border: rgba(65, 68, 126, 0.1);
+  --text: #41447e;
+  --text2: #8285b5;
+  --text3: #abadd1;
+  --glass: rgba(255, 255, 255, 0.2);
+  --glass-border: rgba(255, 255, 255, 0.35);
+}
+
+/* ─── Dark Mode Design Tokens ──────────────────────────────── */
+html.dark {
+  --bg1: #262850;
+  --bg2: #1e2042;
+  --bg3: #181a38;
+  --bg: #1e2042;
+  --panel: rgba(255, 255, 255, 0.09);
+  --panel2: rgba(255, 255, 255, 0.06);
+  --panel-border: rgba(255, 255, 255, 0.16);
+  --card: #2e3160;
+  --card2: rgba(255, 255, 255, 0.07);
+  --ink: #edefff;
+  --ink2: #a9acd6;
+  --ink3: #7b7eb0;
+  --on: #ffffff;
+  --on2: rgba(255, 255, 255, 0.72);
+  --on3: rgba(255, 255, 255, 0.45);
+  --yellow: #f6d66b;
+  --yellow-deep: #efc94c;
+  --yellow-ink: #6b5a1e;
+  --acc: #9da2f2;
+  --accent: #9da2f2;
+  --teal: #6fbfab;
+  --good: #5bbe8d;
+  --bad: #e77676;
+  --overlay: rgba(8, 9, 24, 0.6);
+  --shadow: 0 20px 48px rgba(0, 0, 0, 0.5);
+  --shadow-soft: 0 10px 28px rgba(0, 0, 0, 0.35);
+  --border: rgba(255, 255, 255, 0.1);
+  --text: #edefff;
+  --text2: #a9acd6;
+  --text3: #7b7eb0;
+  --glass: rgba(255, 255, 255, 0.09);
+  --glass-border: rgba(255, 255, 255, 0.16);
+}
+
+/* ─── Global Resets ─────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  height: 100dvh;
+  width: 100vw;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 55%, var(--bg3) 100%);
+  color: var(--on);
+}
+
+h1, h2, h3, h4, h5, h6, button {
+  font-family: 'Nunito', sans-serif;
+}
+
+button:active {
+  transform: scale(0.94);
+}
+
+/* Hide scrollbars globally */
+* {
+  scrollbar-width: none;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+::selection {
+  background: var(--yellow);
+  color: #41447e;
+}
+
+/* ─── Splash Screen ─────────────────────────────────────────── */
+#splash {
+  position: fixed;
+  inset: 0;
+  padding-top: env(safe-area-inset-top);
+  z-index: 1000;
+  background: linear-gradient(180deg, var(--bg1), var(--bg3));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#splash::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(420px 320px at 50% 30%, rgba(255, 255, 255, 0.16), transparent 65%);
+  pointer-events: none;
+  animation: sg 3s ease-in-out infinite alternate;
+}
+
+#splash.exit {
+  animation: se 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.slw {
+  position: relative;
+  width: 86px;
+  height: 86px;
+  margin-bottom: 22px;
+  opacity: 0;
+  transform: scale(0.6);
+  animation: sli 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards;
+}
+
+.sl {
+  width: 86px;
+  height: 86px;
+  border-radius: 28px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42px;
+  color: #5B5FA8;
+  font-weight: 900;
+  position: relative;
+  z-index: 2;
+  box-shadow: var(--shadow);
+}
+
+.st {
+  font-size: 42px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  color: #fff;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: sti 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.55s forwards;
+}
+
+.st span {
+  color: var(--yellow);
+  opacity: 0;
+  animation: sai 0.5s ease 0.95s forwards;
+}
+
+/* ─── Keyframes ─────────────────────────────────────────────── */
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes scrIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes sli {
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes sti {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes sai {
+  to { opacity: 1; }
+}
+
+@keyframes se {
+  to { opacity: 0; transform: scale(1.04); filter: blur(6px); }
+}
+
+@keyframes sg {
+  0%   { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes qzpulse {
+  0%, 100% { stroke-width: 1.4; filter: drop-shadow(0 0 0 rgba(246, 214, 107, 0)); }
+  50%       { stroke-width: 2.6; filter: drop-shadow(0 0 7px rgba(246, 214, 107, 0.85)); }
+}
+
+@keyframes qzrpulse {
+  0%, 100% { stroke-width: 5; filter: drop-shadow(0 0 0 rgba(246, 214, 107, 0)); }
+  50%       { stroke-width: 7; filter: drop-shadow(0 0 9px rgba(246, 214, 107, 0.9)); }
+}
+
+@keyframes qzpop {
+  0%   { transform: scale(0.7); opacity: 0; }
+  60%  { transform: scale(1.06); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes qzfade {
+  0%   { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Component Layer Utilities ─────────────────────────────── */
+@layer components {
+  /* Glass panel */
+  .glass-panel {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .glass-panel-soft {
+    background: var(--panel2);
+    border: 1px solid var(--panel-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Icon button (42×42, rounded-[15px]) */
+  .icon-btn {
+    @apply flex items-center justify-center w-[42px] h-[42px] rounded-[15px] cursor-pointer transition-all duration-200;
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    backdrop-filter: blur(16px);
+    color: var(--on);
+    font-size: 14px;
+  }
+
+  .icon-btn:hover {
+    background: var(--panel-border);
+  }
+
+  /* White pill button (active nav, filter chip) */
+  .pill-active {
+    background: #fff;
+    color: #4a4e8c;
+    border-color: transparent;
+    box-shadow: var(--shadow-soft);
+  }
+
+  /* Tag */
+  .tag {
+    @apply inline-flex items-center px-3 py-[5px] rounded-[14px] text-[9.5px] font-extrabold tracking-[0.4px] uppercase;
+  }
+
+  /* Card base */
+  .feed-card-base {
+    @apply rounded-[26px] overflow-hidden transition-transform duration-200;
+    background: var(--card);
+    box-shadow: var(--shadow-soft);
+    color: var(--ink);
+  }
+
+  /* Screen transitions */
+  .screen-enter {
+    animation: scrIn 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .slide-in-right {
+    transform: translateX(0) !important;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .slide-out-right {
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* ─── Reduced Motion ─────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
