@@ -3,42 +3,30 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faGear,
   faChevronRight,
-  faFileImport,
-  faClone,
-  faDownload,
   faFilePen,
   faArrowLeft,
 } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
 import { useBookmarkStore } from '@/stores/useBookmarkStore'
-import { usePracticeStore, BADGES } from '@/stores/usePracticeStore'
+import { usePracticeStore } from '@/stores/usePracticeStore'
 import { idbAll } from '@/hooks/useMainsDB'
 import type { MainsRecord } from '@/hooks/useMainsDB'
 import { useHaptic } from '@/hooks/useHaptic'
 
 interface ProfileScreenProps {
-  onOpenUpload: () => void
-  onShowToast: (msg: string) => void
   onOpenSettings: () => void
   onOpenMainsRecord: (rec: MainsRecord) => void
 }
 
-export function ProfileScreen({ onOpenUpload, onShowToast, onOpenSettings, onOpenMainsRecord }: ProfileScreenProps) {
+export function ProfileScreen({ onOpenSettings, onOpenMainsRecord }: ProfileScreenProps) {
   const {
     setScreen,
-    articlesByDate,
-    setOverlay,
-    setFlashcardQueue,
-    setFlashcardIndex,
-    setActiveArticle,
   } = useAppStore()
   const { bookmarkedIds } = useBookmarkStore()
   const { stats, settings } = usePracticeStore()
   const haptic = useHaptic()
   const [mainsRecs, setMainsRecs] = useState<MainsRecord[]>([])
 
-  const allArticles = Object.values(articlesByDate).flat()
-  const totalArticles = allArticles.length
   const totalBookmarks = bookmarkedIds.length
 
   // Practice stats
@@ -66,36 +54,6 @@ export function ProfileScreen({ onOpenUpload, onShowToast, onOpenSettings, onOpe
 
   async function handleBack() {
     await haptic(); setScreen('feed')
-  }
-
-  async function handleAllFlashcards() {
-    await haptic()
-    const cards = allArticles.map(a => a.deepDive.flashcard).filter(Boolean)
-    if (cards.length) {
-      setActiveArticle(null)
-      setFlashcardQueue(cards)
-      setFlashcardIndex(0)
-      setOverlay('flashcards')
-    } else {
-      onShowToast('No flashcards available')
-    }
-  }
-
-  async function handleExportBookmarks() {
-    await haptic()
-    const bookmarkedArticles = allArticles.filter(a => bookmarkedIds.includes(a.id))
-    if (!bookmarkedArticles.length) { onShowToast('No bookmarks'); return }
-    let t = 'Penni — Bookmarks\n' + '='.repeat(40) + '\n\n'
-    bookmarkedArticles.forEach(c => {
-      const date = new Date(c.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-      t += `${c.headline}\n${date} | ${c.category} | ${c.gsPaper} | ${c.source}\n\n${c.deepDive.explanation.replace(/<[^>]*>/g, '')}\n\nMains: ${c.deepDive.possibleMainsQuestion}\n\n${'-'.repeat(40)}\n\n`
-    })
-    const blob = new Blob([t], { type: 'text/plain' })
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = 'penni_bookmarks.txt'
-    a.click()
-    onShowToast('Exported')
   }
 
   return (
@@ -138,23 +96,6 @@ export function ProfileScreen({ onOpenUpload, onShowToast, onOpenSettings, onOpe
           </div>
         </div>
 
-        {/* Badges */}
-        <div className="setting-group">
-          <div className="setting-group-title">Badges</div>
-          <div className="pn-badges">
-            {BADGES.map(bd => (
-              <div
-                key={bd.id}
-                className={`pn-badge ${stats.badges.includes(bd.id) ? '' : 'locked'}`}
-                title={bd.desc}
-              >
-                <span>{bd.icon}</span>
-                <b>{bd.name}</b>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* Subject-wise accuracy */}
         {subRows.length > 0 && (
           <div className="setting-group">
@@ -194,32 +135,6 @@ export function ProfileScreen({ onOpenUpload, onShowToast, onOpenSettings, onOpe
               </div>
             ))
           )}
-        </div>
-
-        {/* Content group */}
-        <div className="setting-group">
-          <div className="setting-group-title">Content</div>
-          <div className="setting-item" onClick={() => { haptic(); onOpenUpload() }}>
-            <div className="setting-left">
-              <FontAwesomeIcon icon={faFileImport} style={{ width: 14 }} />
-              <span>Import JSON</span>
-            </div>
-            <FontAwesomeIcon icon={faChevronRight} style={{ color: 'var(--ink3)', fontSize: 11 }} />
-          </div>
-          <div className="setting-item" onClick={handleAllFlashcards}>
-            <div className="setting-left">
-              <FontAwesomeIcon icon={faClone} style={{ width: 14 }} />
-              <span>All Flashcards</span>
-            </div>
-            <span style={{ fontSize: 12, color: 'var(--ink3)', fontWeight: 700 }}>{totalArticles}</span>
-          </div>
-          <div className="setting-item" onClick={handleExportBookmarks}>
-            <div className="setting-left">
-              <FontAwesomeIcon icon={faDownload} style={{ width: 14 }} />
-              <span>Export Bookmarks</span>
-            </div>
-            <span style={{ fontSize: 12, color: 'var(--ink3)', fontWeight: 700 }}>{totalBookmarks}</span>
-          </div>
         </div>
 
         {/* App settings link */}

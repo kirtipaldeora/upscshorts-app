@@ -23,9 +23,11 @@ interface MainsDetailProps {
   onOpenSettings: () => void
 }
 
-interface UploadedImage {
+interface UploadedAnswer {
   url: string // base64 data URL
   type: string
+  name: string
+  kind: 'image' | 'pdf'
 }
 
 const EVAL_SCHEMA = {
@@ -140,18 +142,38 @@ function EvalReport({ ev, rec }: { ev: MainsEval; rec: MainsRecord }) {
 
 export function MainsDetail({ question, onClose, onShowToast, onOpenSettings }: MainsDetailProps) {
   const { settings, mainsQuota, incrementMainsQuota } = usePracticeStore()
-  const [images, setImages] = useState<UploadedImage[]>([])
+  const [uploads, setUploads] = useState<UploadedAnswer[]>([])
   const [busy, setBusy] = useState(false)
   const [evalResult, setEvalResult] = useState<{ ev: MainsEval; rec: MainsRecord } | null>(null)
   const [errorMsg, setErrorMsg] = useState('')
 
   const left = 5 - (mainsQuota[TODAY] ?? 0)
 
-  function addImages(files: FileList | null) {
+  function addUploads(files: FileList | null) {
     if (!files) return
-    const remaining = 4 - images.length
+    const remaining = 4 - uploads.length
     const toProcess = Array.from(files).slice(0, remaining)
     toProcess.forEach(f => {
+      if (f.type === 'application/pdf') {
+        const rd = new FileReader()
+        rd.onload = () => {
+          setUploads(prev => [...prev, {
+            url: rd.result as string,
+            type: 'application/pdf',
+            name: f.name,
+            kind: 'pdf',
+          }])
+        }
+        rd.onerror = () => onShowToast('Could not read that PDF')
+        rd.readAsDataURL(f)
+        return
+      }
+
+      if (!f.type.startsWith('image/')) {
+        onShowToast('Use image files or PDF')
+        return
+      }
+
       const rd = new FileReader()
       rd.onload = () => {
         const im = new Image()
@@ -162,7 +184,12 @@ export function MainsDetail({ question, onClose, onShowToast, onOpenSettings }: 
           cv.width = Math.round(im.width * sc)
           cv.height = Math.round(im.height * sc)
           cv.getContext('2d')!.drawImage(im, 0, 0, cv.width, cv.height)
-          setImages(prev => [...prev, { url: cv.toDataURL('image/jpeg', 0.85), type: 'image/jpeg' }])
+          setUploads(prev => [...prev, {
+            url: cv.toDataURL('image/jpeg', 0.85),
+            type: 'image/jpeg',
+            name: f.name,
+            kind: 'image',
+          }])
         }
         im.onerror = () => onShowToast('Could not read that image')
         im.src = rd.result as string
@@ -171,20 +198,28 @@ export function MainsDetail({ question, onClose, onShowToast, onOpenSettings }: 
     })
   }
 
-  function removeImage(i: number) {
-    setImages(prev => prev.filter((_, idx) => idx !== i))
+  function removeUpload(i: number) {
+    setUploads(prev => prev.filter((_, idx) => idx !== i))
   }
 
   async function evaluate() {
-    if (!settings.key || !images.length || left <= 0) return
+    if (!settings.key || !uploads.length || left <= 0) return
     setBusy(true); setErrorMsg('')
-    const content: any[] = [{
+    const uploadBlocks = uploads.map(u => (
+      u.kind === 'pdf'
+        ? {
+            type: 'document',
+            source: { type: 'base64', media_type: 'application/pdf', data: u.url.split(',')[1] },
+          }
+        : {
+            type: 'image',
+            source: { type: 'base64', media_type: u.type, data: u.url.split(',')[1] },
+          }
+    ))
+    const content: any[] = [...uploadBlocks, {
       type: 'text',
-      text: `You are a strict but constructive UPSC Mains examiner. Evaluate the handwritten answer in the attached page images against this question (15 marks, GS standard):\n\n"${question.q}"\n\n${question.keyPoints ? 'Key points a good answer covers: ' + question.keyPoints.join('; ') : ''}\n\nRead the handwriting carefully. Score out of 15. Give specific, actionable feedback grounded in what is actually written. page_comments must have one entry per page image (page numbers starting at 1) with 2-4 margin-style remarks tied to that page's content.`,
-    }, ...images.map(u => ({
-      type: 'image',
-      source: { type: 'base64', media_type: u.type, data: u.url.split(',')[1] },
-    }))]
+      text: `You are a strict but constructive UPSC Mains examiner. Evaluate the uploaded handwritten or typed answer against this question (15 marks, GS standard):\n\n"${question.q}"\n\n${question.keyPoints ? 'Key points a good answer covers: ' + question.keyPoints.join('; ') : ''}\n\nRead the uploaded answer carefully, whether it is provided as page images or a PDF document. Score out of 15. Give specific, actionable feedback grounded in what is actually written. page_comments must have one entry per visible page or uploaded file section you can inspect, with 2-4 margin-style remarks tied to that content.`,
+    }]
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -210,7 +245,13 @@ export function MainsDetail({ question, onClose, onShowToast, onOpenSettings }: 
       const txt = (data.content?.find((b: any) => b.type === 'text') ?? {}).text ?? '{}'
       const ev: MainsEval = JSON.parse(txt)
       incrementMainsQuota()
-      const rec: MainsRecord = { ts: Date.now(), qid: question.id, qtext: question.q, images: images.map(u => u.url), eval: ev }
+      const rec: MainsRecord = {
+        ts: Date.now(),
+        qid: question.id,
+        qtext: question.q,
+        images: uploads.filter(u => u.kind === 'image').map(u => u.url),
+        eval: ev,
+      }
       await idbPut(rec)
       setEvalResult({ ev, rec })
       onShowToast('Evaluation saved to your profile')
@@ -221,7 +262,7 @@ export function MainsDetail({ question, onClose, onShowToast, onOpenSettings }: 
     }
   }
 
-  const canEval = !!settings.key && images.length > 0 && left > 0 && !busy
+  const canEval = !!settings.key && uploads.length > 0 && left > 0 && !busy
 
   return (
     <div className="quiz-overlay">
@@ -262,24 +303,31 @@ export function MainsDetail({ question, onClose, onShowToast, onOpenSettings }: 
 
         {/* Upload area */}
         <div className="pn-sec" style={{ marginTop: 16 }}>
-          Your answer <span>(photos of handwritten pages, up to 4)</span>
+          Your answer <span>(photos or PDF, up to 4 files)</span>
         </div>
         <div className="pn-ups">
-          {images.map((u, i) => (
-            <div className="pn-up" key={i}>
-              <img src={u.url} alt={`Page ${i + 1}`} />
-              <button onClick={() => removeImage(i)} aria-label="Remove">×</button>
+          {uploads.map((u, i) => (
+            <div className={`pn-up ${u.kind === 'pdf' ? 'pdf' : ''}`} key={`${u.name}-${i}`}>
+              {u.kind === 'pdf' ? (
+                <div className="pn-pdf-tile">
+                  <FontAwesomeIcon icon={faFilePdf} />
+                  <span>{u.name}</span>
+                </div>
+              ) : (
+                <img src={u.url} alt={`Page ${i + 1}`} />
+              )}
+              <button onClick={() => removeUpload(i)} aria-label="Remove">×</button>
             </div>
           ))}
-          {images.length < 4 && (
+          {uploads.length < 4 && (
             <label className="pn-add">
               <FontAwesomeIcon icon={faPlus} />
               <input
                 type="file"
-                accept="image/*"
+                accept="image/*,application/pdf"
                 multiple
                 style={{ display: 'none' }}
-                onChange={e => addImages(e.target.files)}
+                onChange={e => addUploads(e.target.files)}
               />
             </label>
           )}
@@ -298,7 +346,7 @@ export function MainsDetail({ question, onClose, onShowToast, onOpenSettings }: 
               Evaluate my answer ({left} left today)
             </button>
             {!settings.key && <p className="pn-note">Add your API key in Settings first.</p>}
-            {!images.length && <p className="pn-note">Add at least one page photo.</p>}
+            {!uploads.length && <p className="pn-note">Add at least one page photo or PDF.</p>}
           </>
         )}
 

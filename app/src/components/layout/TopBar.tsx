@@ -32,6 +32,7 @@ export function TopBar({ showBack, onBack, onOpenUpload }: TopBarProps) {
 
   return (
     <div
+      className="top-bar"
       style={{
         height: 58,
         display: 'flex',
@@ -49,6 +50,7 @@ export function TopBar({ showBack, onBack, onOpenUpload }: TopBarProps) {
         {isBackVisible && (
           <button
             onClick={handleBack}
+            className="glass-icon-btn"
             style={{
               width: 42,
               height: 42,
@@ -79,6 +81,7 @@ export function TopBar({ showBack, onBack, onOpenUpload }: TopBarProps) {
           <button
             onClick={onOpenUpload}
             aria-label="Import content"
+            className="glass-icon-btn"
             style={{
               width: 42,
               height: 42,
@@ -101,6 +104,7 @@ export function TopBar({ showBack, onBack, onOpenUpload }: TopBarProps) {
         <button
           onClick={() => setScreen('bookmarks')}
           aria-label="Bookmarks"
+          className="glass-icon-btn"
           style={{
             width: 42,
             height: 42,
@@ -122,6 +126,7 @@ export function TopBar({ showBack, onBack, onOpenUpload }: TopBarProps) {
         <button
           onClick={() => setScreen('search')}
           aria-label="Search"
+          className="glass-icon-btn"
           style={{
             width: 42,
             height: 42,
@@ -143,6 +148,7 @@ export function TopBar({ showBack, onBack, onOpenUpload }: TopBarProps) {
         <button
           onClick={toggle}
           aria-label="Toggle theme"
+          className="glass-icon-btn"
           style={{
             width: 42,
             height: 42,

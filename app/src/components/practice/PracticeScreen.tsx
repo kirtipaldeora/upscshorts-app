@@ -2,10 +2,7 @@ import { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faPlay,
-  faDumbbell,
   faScroll,
-  faEarthAsia,
-  faPenNib,
   faArrowLeft,
 } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
@@ -27,18 +24,18 @@ import { TODAY, fmtFull } from '@/constants/categories'
 
 interface PracticeScreenProps {
   onShowToast: (msg: string) => void
-  onOpenMapsArcade: () => void
   onOpenPYQ: () => void
   onOpenMains: () => void
 }
 
 type ActiveQuiz = { title: string; questions: Question[] } | null
 
-export function PracticeScreen({ onShowToast, onOpenMapsArcade, onOpenPYQ, onOpenMains }: PracticeScreenProps) {
+export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: PracticeScreenProps) {
   const { articlesByDate, selectedDate, setScreen } = useAppStore()
   const { stats, settings, pyqData, pyqReady, setPyqData } = usePracticeStore()
   const { bookmarkedIds } = useBookmarkStore()
   const [activeQuiz, setActiveQuiz] = useState<ActiveQuiz>(null)
+  const [showAllArticles, setShowAllArticles] = useState(false)
   const { loading } = useArticles(selectedDate)
 
   // Load PYQ data once
@@ -55,6 +52,14 @@ export function PracticeScreen({ onShowToast, onOpenMapsArcade, onOpenPYQ, onOpe
   const practiceDate = articlesByDate[selectedDate]?.length ? selectedDate : (availableDates[0] ?? selectedDate)
   const allArticles = Object.values(articlesByDate).flat()
   const todayArticles = (articlesByDate[practiceDate] ?? []).filter(a => (a.prelimsQs ?? []).length > 0)
+  const todayArticleIds = new Set(todayArticles.map(a => a.id))
+  const todayArticleQuestions = articleQs(allArticles).filter(q => todayArticleIds.has(q.aid ?? ''))
+  const visibleArticles = showAllArticles ? todayArticles : todayArticles.slice(0, 3)
+  const hiddenArticleCount = Math.max(0, todayArticles.length - visibleArticles.length)
+  const articleCategoryCounts = todayArticles.reduce<Record<string, number>>((acc, article) => {
+    acc[article.category] = (acc[article.category] ?? 0) + (article.prelimsQs ?? []).length
+    return acc
+  }, {})
   const pool = allQs(allArticles, pyqData)
   const subs = subjectCounts(pool)
   const todayDay = stats.d[TODAY] ?? { n: 0, c: 0 }
@@ -145,22 +150,51 @@ export function PracticeScreen({ onShowToast, onOpenMapsArcade, onOpenPYQ, onOpe
 
         {/* Article-wise */}
         <div className="pn-sec">
-          Article-wise <span>({fmtFull(practiceDate)})</span>
+          Article Drills <span>({fmtFull(practiceDate)})</span>
         </div>
 
         {todayArticles.length > 0 ? (
-          <div>
-            {todayArticles.map(a => (
-              <div
-                key={a.id}
-                className="pn-row"
-                onClick={() => startQuiz(a.category, articleQs(allArticles).filter(q => q.aid === a.id))}
-              >
-                <div className="pn-dot" style={{ background: CATEGORY_COLORS[a.category] }} />
-                <div className="pn-row-t">{a.headline}</div>
-                <span className="pn-row-n">{(a.prelimsQs ?? []).length} Qs</span>
+          <div className="article-drill-card">
+            <div className="adc-top">
+              <div>
+                <b>{todayArticleQuestions.length} questions</b>
+                <span>{todayArticles.length} articles with practice today</span>
               </div>
-            ))}
+              <button onClick={() => startQuiz('Today Article Drills', todayArticleQuestions)}>
+                <FontAwesomeIcon icon={faPlay} />
+              </button>
+            </div>
+
+            <div className="adc-chips">
+              {Object.entries(articleCategoryCounts).map(([category, count]) => (
+                <button
+                  key={category}
+                  onClick={() => startQuiz(category, todayArticleQuestions.filter(q => q.subject === category))}
+                  style={{ borderColor: `${CATEGORY_COLORS[category as keyof typeof CATEGORY_COLORS]}55` }}
+                >
+                  {category}<span>{count}</span>
+                </button>
+              ))}
+            </div>
+
+            <div className="adc-preview">
+              {visibleArticles.map(a => (
+                <button
+                  key={a.id}
+                  onClick={() => startQuiz(a.category, articleQs(allArticles).filter(q => q.aid === a.id))}
+                >
+                  <i style={{ background: CATEGORY_COLORS[a.category] }} />
+                  <span>{a.headline}</span>
+                  <b>{(a.prelimsQs ?? []).length}</b>
+                </button>
+              ))}
+            </div>
+
+            {todayArticles.length > 3 && (
+              <button className="adc-toggle" onClick={() => setShowAllArticles(v => !v)}>
+                {showAllArticles ? 'Show fewer articles' : `Show ${hiddenArticleCount} more articles`}
+              </button>
+            )}
           </div>
         ) : loading ? (
           <p className="pn-empty">Loading article questions...</p>
@@ -191,13 +225,6 @@ export function PracticeScreen({ onShowToast, onOpenMapsArcade, onOpenPYQ, onOpe
             </div>
             <h4>PYQ Vault</h4>
             <span>Previous year papers</span>
-          </div>
-          <div className="quick-tile" onClick={onOpenMapsArcade}>
-            <div className="qt-ic" style={{ color: '#4CAF82' }}>
-              <FontAwesomeIcon icon={faEarthAsia} />
-            </div>
-            <h4>Maps Arcade</h4>
-            <span>Geography games</span>
           </div>
         </div>
 

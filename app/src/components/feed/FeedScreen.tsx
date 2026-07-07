@@ -33,7 +33,7 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
       <TopBar />
 
       {/* Hero header */}
-      <div style={{ padding: '4px 20px 12px', position: 'relative', zIndex: 2, flexShrink: 0, textAlign: 'center' }}>
+      <div className="hero-head" style={{ padding: '4px 20px 12px', position: 'relative', zIndex: 2, flexShrink: 0, textAlign: 'center' }}>
         <p style={{ fontSize: 12.5, color: 'var(--on2)', fontWeight: 700, marginBottom: 3 }}>Hello, aspirant 👋</p>
         <h2 style={{ fontSize: 27, fontWeight: 900, letterSpacing: -0.4, lineHeight: 1.08, color: 'var(--on)' }}>
           Daily Briefing
@@ -49,6 +49,7 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
       {/* Feed content */}
       {viewMode === 'list' ? (
         <div
+          className="feed-scroll"
           style={{
             flex: 1,
             overflowY: 'auto',

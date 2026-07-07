@@ -12,6 +12,7 @@ export function ViewToggle() {
         key={mode}
         onClick={() => setViewMode(mode)}
         aria-label={label}
+        className={active ? 'active' : ''}
         style={{
           width: 40,
           height: 34,
@@ -36,6 +37,7 @@ export function ViewToggle() {
 
   return (
     <div
+      className="view-toggle"
       style={{
         display: 'flex',
         gap: 6,

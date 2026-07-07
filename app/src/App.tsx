@@ -11,7 +11,6 @@ import { PracticeScreen } from '@/components/practice/PracticeScreen'
 import { MainsScreen } from '@/components/practice/MainsScreen'
 import { SettingsScreen } from '@/components/settings/SettingsScreen'
 import { DeepDive } from '@/components/deep-dive/DeepDive'
-import { Flashcards } from '@/components/flashcards/Flashcards'
 import { ImportSheet } from '@/components/upload/ImportSheet'
 import { MapsArcade } from '@/components/maps-arcade/MapsArcade'
 import { PYQVault } from '@/components/pyq-vault/PYQVault'
@@ -65,17 +64,17 @@ export default function App() {
         style={{
           position: 'fixed',
           inset: 0,
-          background: 'linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 55%, var(--bg3) 100%)',
+          background: 'var(--app-bg)',
           zIndex: 0,
         }}
       />
 
-      {/* Radial glow overlay */}
+      {/* Ambient glass sheen */}
       <div
         style={{
           position: 'fixed',
           inset: 0,
-          background: 'radial-gradient(500px 360px at 50% -8%, rgba(255,255,255,.12), transparent 60%)',
+          background: 'var(--app-sheen)',
           pointerEvents: 'none',
           zIndex: 1,
         }}
@@ -106,15 +105,12 @@ export default function App() {
           {activeScreen === 'practice' && (
             <PracticeScreen
               onShowToast={showToast}
-              onOpenMapsArcade={() => setOverlay('maps-arcade')}
               onOpenPYQ={() => setOverlay('pyq-vault')}
               onOpenMains={() => setOverlay('mains')}
             />
           )}
           {activeScreen === 'profile' && (
             <ProfileScreen
-              onOpenUpload={() => setUploadVisible(true)}
-              onShowToast={showToast}
               onOpenSettings={() => setScreen('settings')}
               onOpenMainsRecord={(rec) => setMainsRecordOpen(rec)}
             />
@@ -137,9 +133,6 @@ export default function App() {
 
       {/* Deep Dive */}
       <DeepDive onShowToast={showToast} />
-
-      {/* Flashcards */}
-      <Flashcards />
 
       {/* Daily Digest */}
       <Digest />

@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft, faShareAlt, faClone, faBullseye, faPenFancy, faCircle, faDumbbell, faTags, faPlay } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faShareAlt, faBullseye, faPenFancy, faCircle, faDumbbell, faPlay, faCloudArrowUp } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
 import { useHaptic } from '@/hooks/useHaptic'
 import { CATEGORY_COLORS } from '@/constants/categories'
 import { articleQs } from '@/utils/practiceUtils'
-import type { Question } from '@/utils/practiceUtils'
+import type { MainsQuestion, Question } from '@/utils/practiceUtils'
 import { QuizPlayer } from '@/components/practice/QuizPlayer'
+import { MainsDetail } from '@/components/practice/MainsDetail'
 
 interface DeepDiveProps {
   onShowToast: (msg: string) => void
@@ -14,16 +15,45 @@ interface DeepDiveProps {
 
 type ActiveQuiz = { title: string; questions: Question[] } | null
 
+function splitPrelimsStem(stem: string) {
+  const whichMatch = stem.match(/\bWhich of\b/i)
+  const questionStart = whichMatch?.index ?? -1
+  const setup = questionStart >= 0 ? stem.slice(0, questionStart).trim() : stem.trim()
+  const ask = questionStart >= 0 ? stem.slice(questionStart).trim() : ''
+  const firstStatement = setup.search(/\b1\.\s+/)
+
+  if (firstStatement < 0) {
+    return { lead: setup, statements: [] as string[], ask }
+  }
+
+  const lead = setup.slice(0, firstStatement).trim()
+  const statementText = setup.slice(firstStatement).trim()
+  const statements = Array.from(statementText.matchAll(/\d+\.\s+(.+?)(?=\s+\d+\.\s+|$)/g), m => m[1].trim())
+
+  return { lead, statements, ask }
+}
+
 export function DeepDive({ onShowToast }: DeepDiveProps) {
-  const { activeArticle, setOverlay, overlayScreen, setFlashcardQueue, setFlashcardIndex, articlesByDate } = useAppStore()
+  const { activeArticle, setOverlay, overlayScreen, articlesByDate, setScreen } = useAppStore()
   const haptic = useHaptic()
   const [activeQuiz, setActiveQuiz] = useState<ActiveQuiz>(null)
+  const [mainsOpen, setMainsOpen] = useState(false)
 
   const visible = overlayScreen === 'deep-dive'
   const a = activeArticle
+  const prelimQuestions = a?.prelimsQs ?? []
+  const previewPrelims = prelimQuestions[0]
+  const previewStem = previewPrelims ? splitPrelimsStem(previewPrelims.q) : null
+  const articleMainsQuestion: MainsQuestion | null = a?.deepDive.possibleMainsQuestion ? {
+    id: `ma-${a.id}`,
+    q: a.deepDive.possibleMainsQuestion,
+    subject: a.category,
+    srcLabel: a.headline,
+  } : null
 
   async function handleClose() {
     await haptic()
+    setMainsOpen(false)
     setOverlay(null)
   }
 
@@ -44,14 +74,6 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
     }
   }
 
-  function openFlashcards() {
-    if (a?.deepDive.flashcard) {
-      setFlashcardQueue([a.deepDive.flashcard])
-      setFlashcardIndex(0)
-      setOverlay('flashcards')
-    }
-  }
-
   const col = a ? CATEGORY_COLORS[a.category] : '#9DBCE8'
 
   const fdf = (d: string) => {
@@ -60,6 +82,13 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
       month: 'short',
       year: 'numeric',
     })
+  }
+
+  function startPrelimsPractice() {
+    if (!a) return
+    const allArticles = Object.values(articlesByDate).flat()
+    const qs = articleQs(allArticles).filter(q => q.aid === a.id)
+    if (qs.length) setActiveQuiz({ title: 'Article Practice', questions: qs })
   }
 
   return (
@@ -133,45 +162,56 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
               Expected Mains Question
             </div>
             <div className="dd-question">{a.deepDive.possibleMainsQuestion}</div>
+            {articleMainsQuestion && (
+              <button
+                className="pn-btn dd-mains-eval-btn"
+                onClick={() => setMainsOpen(true)}
+              >
+                <FontAwesomeIcon icon={faCloudArrowUp} style={{ marginRight: 8 }} />
+                Upload answer for evaluation
+              </button>
+            )}
           </div>
 
-          {/* Flashcard Practice trigger */}
-          <button className="dd-flashcard-btn" onClick={openFlashcards} style={{ marginTop: 18 }}>
-            <FontAwesomeIcon icon={faClone} />
-            Quick Revision Flashcard
-          </button>
-
-          {/* Penni: Key Terms */}
-          {a.keyTerms && a.keyTerms.length > 0 && (
-            <div style={{ marginTop: 20 }}>
-              <div className="dd-section-title">
-                <FontAwesomeIcon icon={faTags} style={{ marginRight: 6 }} />
-                Key Terms
-              </div>
-              <div className="pn-terms">
-                {a.keyTerms.map((t, i) => <span key={i}>{t}</span>)}
-              </div>
-            </div>
-          )}
-
-          {/* Penni: Prelims Practice button */}
-          {a.prelimsQs && a.prelimsQs.length > 0 && (
+          {/* Prelims Practice */}
+          {previewPrelims && previewStem && (
             <div style={{ marginTop: 20 }}>
               <div className="dd-section-title">
                 <FontAwesomeIcon icon={faDumbbell} style={{ marginRight: 6 }} />
-                Practice {a.prelimsQs.length} Prelims Questions
+                Prelims Practice
+              </div>
+              <div className="dd-prelims-card">
+                <div className="dd-prelims-top">
+                  <span>Question 1</span>
+                  <b>{prelimQuestions.length} total</b>
+                </div>
+                <div className="dd-prelims-stem">
+                  {previewStem.lead && <p>{previewStem.lead}</p>}
+                  {previewStem.statements.length > 0 && (
+                    <ol>
+                      {previewStem.statements.map((statement, i) => (
+                        <li key={i}>{statement}</li>
+                      ))}
+                    </ol>
+                  )}
+                  {previewStem.ask && <p className="dd-prelims-ask">{previewStem.ask}</p>}
+                </div>
+                <div className="dd-prelims-options">
+                  {previewPrelims.options.map((option, i) => (
+                    <div key={`${i}-${option}`} className="dd-prelims-option">
+                      <span>{String.fromCharCode(65 + i)}</span>
+                      <b>{option}</b>
+                    </div>
+                  ))}
+                </div>
               </div>
               <button
                 className="pn-btn"
-                style={{ marginTop: 8 }}
-                onClick={() => {
-                  const allArticles = Object.values(articlesByDate).flat()
-                  const qs = articleQs(allArticles).filter(q => q.aid === a.id)
-                  if (qs.length) setActiveQuiz({ title: 'Article Practice', questions: qs })
-                }}
+                style={{ marginTop: 12 }}
+                onClick={startPrelimsPractice}
               >
                 <FontAwesomeIcon icon={faPlay} style={{ marginRight: 8 }} />
-                Start — based only on this article
+                Start all {prelimQuestions.length}
               </button>
             </div>
           )}
@@ -185,6 +225,18 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
               questions={activeQuiz.questions}
               onClose={() => setActiveQuiz(null)}
               onShowToast={onShowToast}
+            />
+          )}
+          {mainsOpen && articleMainsQuestion && (
+            <MainsDetail
+              question={articleMainsQuestion}
+              onClose={() => setMainsOpen(false)}
+              onShowToast={onShowToast}
+              onOpenSettings={() => {
+                setMainsOpen(false)
+                setOverlay(null)
+                setScreen('settings')
+              }}
             />
           )}
         </div>

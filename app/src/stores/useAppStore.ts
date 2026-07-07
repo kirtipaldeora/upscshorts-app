@@ -16,7 +16,6 @@ export type ViewMode = 'deck' | 'list'
 export type OverlayScreen =
   | null
   | 'deep-dive'
-  | 'flashcards'
   | 'maps-arcade'
   | 'pyq-vault'
   | 'upload'
@@ -50,12 +49,6 @@ interface AppStore {
   // ─── Deep dive ───────────────────────────────────────────────
   activeArticle: Article | null
   setActiveArticle: (a: Article | null) => void
-
-  // ─── Flashcard Queue ──────────────────────────────────────────
-  flashcardQueue: { front: string; back: string }[]
-  setFlashcardQueue: (q: { front: string; back: string }[]) => void
-  flashcardIndex: number
-  setFlashcardIndex: (idx: number) => void
 
   // ─── Helpers ─────────────────────────────────────────────────
   getArticlesForDate: (date: string) => Article[]
@@ -106,12 +99,6 @@ export const useAppStore = create<AppStore>()((set, get) => ({
   // Deep dive
   activeArticle: null,
   setActiveArticle: (a) => set({ activeArticle: a }),
-
-  // Flashcard Queue
-  flashcardQueue: [],
-  setFlashcardQueue: (q) => set({ flashcardQueue: q }),
-  flashcardIndex: 0,
-  setFlashcardIndex: (idx) => set({ flashcardIndex: idx }),
 
   // Helpers
   getArticlesForDate: (date) => {

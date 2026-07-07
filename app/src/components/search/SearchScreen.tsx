@@ -54,7 +54,7 @@ export function SearchScreen() {
       {/* Body */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '8px 16px calc(110px + env(safe-area-inset-bottom))', position: 'relative', zIndex: 2 }}>
         {/* Search box */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--panel)', border: '1px solid var(--panel-border)', backdropFilter: 'blur(16px)', borderRadius: 20, padding: '13px 17px', marginBottom: 13 }}>
+        <div className="search-box" style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--panel)', border: '1px solid var(--panel-border)', backdropFilter: 'blur(16px)', borderRadius: 20, padding: '13px 17px', marginBottom: 13 }}>
           <FontAwesomeIcon icon={faMagnifyingGlass} style={{ color: 'var(--on2)', fontSize: 14 }} />
           <input
             type="text"
@@ -72,6 +72,7 @@ export function SearchScreen() {
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
+              className={`filter-chip ${activeCategory === cat ? 'active' : ''}`}
               style={{
                 padding: '8px 15px',
                 borderRadius: 18,
@@ -103,6 +104,7 @@ export function SearchScreen() {
           results.map((a) => (
             <div
               key={a.id}
+              className="search-result"
               onClick={() => openArticle(a)}
               style={{
                 background: 'var(--card)',

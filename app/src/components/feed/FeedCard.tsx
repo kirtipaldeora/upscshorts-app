@@ -48,6 +48,7 @@ export function FeedCard({ article, animationDelay = 0, onShowToast }: FeedCardP
 
   return (
     <div
+      className="feed-card"
       onClick={openDeepDive}
       style={{
         background: 'var(--card)',
@@ -61,10 +62,11 @@ export function FeedCard({ article, animationDelay = 0, onShowToast }: FeedCardP
         animation: `cardIn 0.5s cubic-bezier(0.22,1,0.36,1) ${animationDelay}ms both`,
       }}
     >
-      <div style={{ padding: 20 }}>
+      <div className="card-body" style={{ padding: 20 }}>
         {/* Tags */}
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 11 }}>
+        <div className="card-tags" style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 11 }}>
           <span
+            className="tag tag-cat"
             style={{
               padding: '5px 12px',
               borderRadius: 14,
@@ -80,6 +82,7 @@ export function FeedCard({ article, animationDelay = 0, onShowToast }: FeedCardP
             {article.category}
           </span>
           <span
+            className="tag tag-gs"
             style={{
               padding: '5px 12px',
               borderRadius: 14,
@@ -94,6 +97,7 @@ export function FeedCard({ article, animationDelay = 0, onShowToast }: FeedCardP
             {article.gsPaper}
           </span>
           <span
+            className="tag tag-src"
             style={{
               padding: '5px 12px',
               borderRadius: 14,
@@ -109,34 +113,35 @@ export function FeedCard({ article, animationDelay = 0, onShowToast }: FeedCardP
         </div>
 
         {/* Headline */}
-        <h2 style={{ fontSize: 19, fontWeight: 800, lineHeight: 1.25, marginBottom: 7, letterSpacing: -0.2, color: 'var(--ink)' }}>
+        <h2 className="card-headline" style={{ fontSize: 19, fontWeight: 800, lineHeight: 1.25, marginBottom: 7, letterSpacing: -0.2, color: 'var(--ink)' }}>
           {article.headline}
         </h2>
 
         {/* Meta */}
-        <p style={{ fontSize: 11.5, color: 'var(--ink3)', marginBottom: 11, display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700 }}>
+        <p className="card-meta" style={{ fontSize: 11.5, color: 'var(--ink3)', marginBottom: 11, display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700 }}>
           {fmtShort(article.date)}
         </p>
 
         {/* Summary */}
-        <p style={{ fontSize: 13.5, lineHeight: 1.7, color: 'var(--ink2)', marginBottom: 13, fontWeight: 600 }}>
+        <p className="card-summary" style={{ fontSize: 13.5, lineHeight: 1.7, color: 'var(--ink2)', marginBottom: 13, fontWeight: 600 }}>
           {article.summary}
         </p>
 
         {/* Why it matters */}
-        <div style={{ background: 'var(--card2)', borderRadius: 18, padding: 13, marginBottom: 13 }}>
-          <p style={{ fontSize: 9.5, fontWeight: 900, color: 'var(--acc)', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 4 }}>
+        <div className="card-why" style={{ background: 'var(--card2)', borderRadius: 18, padding: 13, marginBottom: 13 }}>
+          <p className="card-why-label" style={{ fontSize: 9.5, fontWeight: 900, color: 'var(--acc)', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 4 }}>
             Why it matters
           </p>
-          <p style={{ fontSize: 12, lineHeight: 1.6, color: 'var(--ink2)', fontWeight: 600 }}>
+          <p className="card-why-text" style={{ fontSize: 12, lineHeight: 1.6, color: 'var(--ink2)', fontWeight: 600 }}>
             {article.whyItMatters}
           </p>
         </div>
 
         {/* Actions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
+        <div className="card-actions" style={{ display: 'flex', alignItems: 'center', gap: 8, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
           <button
             onClick={handleBookmark}
+            className={`btn-bm ${bookmarked ? 'bookmarked' : ''}`}
             style={{
               height: 40,
               width: 40,
@@ -157,6 +162,7 @@ export function FeedCard({ article, animationDelay = 0, onShowToast }: FeedCardP
 
           <button
             onClick={handleShare}
+            className="btn-share"
             style={{
               height: 40,
               width: 40,
@@ -177,6 +183,7 @@ export function FeedCard({ article, animationDelay = 0, onShowToast }: FeedCardP
 
           <button
             onClick={openDeepDive}
+            className="btn-deep"
             style={{
               marginLeft: 'auto',
               height: 40,
