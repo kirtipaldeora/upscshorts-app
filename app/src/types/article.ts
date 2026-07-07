@@ -4,6 +4,15 @@ export interface Flashcard {
   back: string
 }
 
+// ─── Prelims Question ─────────────────────────────────────────
+export interface PrelimQuestion {
+  q: string
+  options: string[]
+  answer: number  // 0-indexed correct option
+  explanation: string
+  ref?: string
+}
+
 // ─── DeepDive ────────────────────────────────────────────────
 export interface DeepDive {
   explanation: string          // HTML string (contains <strong> tags)
@@ -38,6 +47,8 @@ export interface Article {
   summary: string
   whyItMatters: string
   deepDive: DeepDive
+  prelimsQs?: PrelimQuestion[]   // Penni: article-level MCQ practice questions
+  keyTerms?: string[]            // Penni: glossary chips shown in deep dive
 }
 
 // ─── Data shape returned by per-date JSON files ───────────────

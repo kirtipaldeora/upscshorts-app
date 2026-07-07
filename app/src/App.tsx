@@ -7,6 +7,9 @@ import { ReviseScreen } from '@/components/revise/ReviseScreen'
 import { SearchScreen } from '@/components/search/SearchScreen'
 import { BookmarksScreen } from '@/components/bookmarks/BookmarksScreen'
 import { ProfileScreen } from '@/components/profile/ProfileScreen'
+import { PracticeScreen } from '@/components/practice/PracticeScreen'
+import { MainsScreen } from '@/components/practice/MainsScreen'
+import { SettingsScreen } from '@/components/settings/SettingsScreen'
 import { DeepDive } from '@/components/deep-dive/DeepDive'
 import { Flashcards } from '@/components/flashcards/Flashcards'
 import { ImportSheet } from '@/components/upload/ImportSheet'
@@ -15,6 +18,7 @@ import { PYQVault } from '@/components/pyq-vault/PYQVault'
 import { Digest } from '@/components/feed/Digest'
 import { Toast, useToast } from '@/components/ui/Toast'
 import { useAppStore } from '@/stores/useAppStore'
+import type { MainsRecord } from '@/hooks/useMainsDB'
 
 type AppPhase = 'splash' | 'onboarding' | 'main'
 
@@ -25,6 +29,7 @@ function getInitialPhase(): AppPhase {
 export default function App() {
   const [phase, setPhase] = useState<AppPhase>(getInitialPhase)
   const [uploadVisible, setUploadVisible] = useState(false)
+  const [mainsRecordOpen, setMainsRecordOpen] = useState<MainsRecord | null>(null)
   const { activeScreen, overlayScreen, setOverlay } = useAppStore()
   const { message: toastMsg, show: showToast, clear: clearToast } = useToast()
 
@@ -97,18 +102,27 @@ export default function App() {
           )}
           {activeScreen === 'revise' && <ReviseScreen />}
           {activeScreen === 'search' && <SearchScreen />}
-          {activeScreen === 'bookmarks' && <BookmarksScreen />}
+          {activeScreen === 'bookmarks' && <BookmarksScreen onShowToast={showToast} />}
+          {activeScreen === 'practice' && (
+            <PracticeScreen
+              onShowToast={showToast}
+              onOpenMapsArcade={() => setOverlay('maps-arcade')}
+              onOpenPYQ={() => setOverlay('pyq-vault')}
+              onOpenMains={() => setOverlay('mains')}
+            />
+          )}
           {activeScreen === 'profile' && (
             <ProfileScreen
               onOpenUpload={() => setUploadVisible(true)}
               onShowToast={showToast}
+              onOpenSettings={() => setOverlay('settings')}
+              onOpenMainsRecord={(rec) => setMainsRecordOpen(rec)}
             />
           )}
         </div>
 
         {/* Bottom navigation */}
         <BottomNav
-          onOpenMapsArcade={() => setOverlay('maps-arcade')}
           onOpenPYQ={() => setOverlay('pyq-vault')}
         />
       </div>
@@ -129,6 +143,27 @@ export default function App() {
 
       {/* PYQ Vault */}
       {overlayScreen === 'pyq-vault' && <PYQVault />}
+
+      {/* Mains Screen */}
+      {overlayScreen === 'mains' && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 500 }}>
+          <MainsScreen
+            onClose={() => setOverlay(null)}
+            onShowToast={showToast}
+            onOpenSettings={() => setOverlay('settings')}
+          />
+        </div>
+      )}
+
+      {/* Settings Screen */}
+      {overlayScreen === 'settings' && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 500 }}>
+          <SettingsScreen
+            onClose={() => setOverlay(null)}
+            onShowToast={showToast}
+          />
+        </div>
+      )}
 
       {/* Import sheet */}
       <ImportSheet

@@ -8,6 +8,7 @@ export type Screen =
   | 'search'
   | 'bookmarks'
   | 'profile'
+  | 'practice'
 
 export type ViewMode = 'deck' | 'list'
 
@@ -19,6 +20,8 @@ export type OverlayScreen =
   | 'pyq-vault'
   | 'upload'
   | 'digest'
+  | 'mains'
+  | 'settings'
 
 interface AppStore {
   // ─── Articles ───────────────────────────────────────────────

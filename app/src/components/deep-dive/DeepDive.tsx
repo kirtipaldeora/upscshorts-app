@@ -1,16 +1,23 @@
+import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft, faShareAlt, faClone, faBullseye, faPenFancy, faCircle } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faShareAlt, faClone, faBullseye, faPenFancy, faCircle, faDumbbell, faTags, faPlay } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
 import { useHaptic } from '@/hooks/useHaptic'
 import { CATEGORY_COLORS } from '@/constants/categories'
+import { articleQs } from '@/utils/practiceUtils'
+import type { Question } from '@/utils/practiceUtils'
+import { QuizPlayer } from '@/components/practice/QuizPlayer'
 
 interface DeepDiveProps {
   onShowToast: (msg: string) => void
 }
 
+type ActiveQuiz = { title: string; questions: Question[] } | null
+
 export function DeepDive({ onShowToast }: DeepDiveProps) {
-  const { activeArticle, setOverlay, overlayScreen, setFlashcardQueue, setFlashcardIndex } = useAppStore()
+  const { activeArticle, setOverlay, overlayScreen, setFlashcardQueue, setFlashcardIndex, articlesByDate } = useAppStore()
   const haptic = useHaptic()
+  const [activeQuiz, setActiveQuiz] = useState<ActiveQuiz>(null)
 
   const visible = overlayScreen === 'deep-dive'
   const a = activeArticle
@@ -133,8 +140,53 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
             <FontAwesomeIcon icon={faClone} />
             Quick Revision Flashcard
           </button>
-          
+
+          {/* Penni: Key Terms */}
+          {a.keyTerms && a.keyTerms.length > 0 && (
+            <div style={{ marginTop: 20 }}>
+              <div className="dd-section-title">
+                <FontAwesomeIcon icon={faTags} style={{ marginRight: 6 }} />
+                Key Terms
+              </div>
+              <div className="pn-terms">
+                {a.keyTerms.map((t, i) => <span key={i}>{t}</span>)}
+              </div>
+            </div>
+          )}
+
+          {/* Penni: Prelims Practice button */}
+          {a.prelimsQs && a.prelimsQs.length > 0 && (
+            <div style={{ marginTop: 20 }}>
+              <div className="dd-section-title">
+                <FontAwesomeIcon icon={faDumbbell} style={{ marginRight: 6 }} />
+                Practice {a.prelimsQs.length} Prelims Questions
+              </div>
+              <button
+                className="pn-btn"
+                style={{ marginTop: 8 }}
+                onClick={() => {
+                  const allArticles = Object.values(articlesByDate).flat()
+                  const qs = articleQs(allArticles).filter(q => q.aid === a.id)
+                  if (qs.length) setActiveQuiz({ title: 'Article Practice', questions: qs })
+                }}
+              >
+                <FontAwesomeIcon icon={faPlay} style={{ marginRight: 8 }} />
+                Start — based only on this article
+              </button>
+            </div>
+          )}
+
           <div style={{ height: 20 }}></div>
+
+          {/* Quiz Player inline overlay */}
+          {activeQuiz && (
+            <QuizPlayer
+              title={activeQuiz.title}
+              questions={activeQuiz.questions}
+              onClose={() => setActiveQuiz(null)}
+              onShowToast={onShowToast}
+            />
+          )}
         </div>
       )}
     </div>
