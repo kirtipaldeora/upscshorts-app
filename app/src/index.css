@@ -163,7 +163,7 @@ html.dark {
 .deck-card .dk-tags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
 .deck-card.is-side .dk-tags{display:none}
 .dk-tag{padding:5px 12px;border-radius:14px;font-size:9.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;background:var(--card2);color:var(--ink2)}
-.deck-cnt{position:absolute;bottom:calc(92px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:5;background:var(--panel2);border:1px solid var(--panel-border);backdrop-filter:blur(12px);color:var(--on2);font-size:11.5px;font-weight:800;padding:7px 16px;border-radius:18px;letter-spacing:.5px}
+.deck-cnt{position:absolute;bottom:calc(94px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:5;background:var(--panel2);border:1px solid var(--panel-border);backdrop-filter:blur(12px);color:var(--on2);font-size:11.5px;font-weight:800;padding:7px 16px;border-radius:18px;letter-spacing:.5px}
 
 .feed-card{background:var(--card);border:none;border-radius:26px;margin-bottom:12px;overflow:hidden;transition:transform .2s;box-shadow:var(--shadow-soft);animation:cardIn .5s cubic-bezier(.22,1,.36,1) both;color:var(--ink)}
 @keyframes cardIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
@@ -405,4 +405,15 @@ html.dark {
 
 @media(min-width:480px){.cat-grid{grid-template-columns:repeat(3,1fr)}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+  /* High contrast tag overrides inside deep-dive on purple background */
+  #deep-dive .tag-gs {
+    background: rgba(255, 255, 255, 0.14) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+  #deep-dive .tag-src {
+    background: rgba(255, 255, 255, 0.07) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
 }

@@ -1,7 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft, faShareAlt, faBookmark, faLayerGroup, faLightbulb, faListCheck, faPenToSquare } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faShareAlt, faClone, faBullseye, faPenFancy, faCircle } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
-import { useBookmarkStore } from '@/stores/useBookmarkStore'
 import { useHaptic } from '@/hooks/useHaptic'
 import { CATEGORY_COLORS } from '@/constants/categories'
 
@@ -11,7 +10,6 @@ interface DeepDiveProps {
 
 export function DeepDive({ onShowToast }: DeepDiveProps) {
   const { activeArticle, setOverlay, overlayScreen } = useAppStore()
-  const { toggle, isBookmarked } = useBookmarkStore()
   const haptic = useHaptic()
 
   const visible = overlayScreen === 'deep-dive'
@@ -22,18 +20,15 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
     setOverlay(null)
   }
 
-  async function handleBookmark() {
-    if (!a) return
-    await haptic()
-    toggle(a.id)
-    onShowToast(isBookmarked(a.id) ? 'Bookmark removed' : 'Bookmarked!')
-  }
-
   async function handleShare() {
     if (!a) return
     await haptic()
     try {
-      await navigator.share({ title: a.headline, text: a.summary })
+      if (navigator.share) {
+        await navigator.share({ title: a.headline, text: a.summary })
+      } else {
+        throw new Error('Share API not supported')
+      }
     } catch {
       try {
         await navigator.clipboard.writeText(a.headline)
@@ -46,129 +41,96 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
     setOverlay('flashcards')
   }
 
-  const catColor = a ? CATEGORY_COLORS[a.category] : '#9DBCE8'
+  const col = a ? CATEGORY_COLORS[a.category] : '#9DBCE8'
+
+  const fdf = (d: string) => {
+    return new Date(d).toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    })
+  }
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        paddingTop: 'env(safe-area-inset-top)',
-        zIndex: 200,
-        background: 'linear-gradient(180deg, var(--bg1), var(--bg3))',
-        display: 'flex',
-        flexDirection: 'column',
-        transform: visible ? 'translateX(0)' : 'translateX(100%)',
-        transition: 'transform 0.35s cubic-bezier(0.4,0,0.2,1)',
-      }}
-    >
+    <div id="deep-dive" className={visible ? 'active' : ''}>
       {/* Header */}
-      <div style={{ height: 58, display: 'flex', alignItems: 'center', gap: 12, padding: '0 18px', flexShrink: 0, position: 'relative', zIndex: 2 }}>
-        <button onClick={handleClose} className="icon-btn">
+      <div className="dd-header">
+        <button onClick={handleClose} aria-label="Back">
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
-        <h2 style={{ fontSize: 15, fontWeight: 800, flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--on)' }}>
-          {a?.headline ?? ''}
-        </h2>
-        <button onClick={handleShare} className="icon-btn">
+        <h2>{a?.headline ?? ''}</h2>
+        <button onClick={handleShare} aria-label="Share">
           <FontAwesomeIcon icon={faShareAlt} />
         </button>
       </div>
 
       {/* Body */}
       {a && (
-        <div style={{ flex: 1, overflowY: 'auto', padding: '14px 18px 48px', position: 'relative', zIndex: 2 }}>
-
-          {/* Category accent tag */}
-          <div style={{ marginBottom: 12 }}>
-            <span style={{ padding: '5px 14px', borderRadius: 14, fontSize: 9.5, fontWeight: 900, letterSpacing: 0.5, textTransform: 'uppercase', border: `1px solid ${catColor}`, color: catColor }}>
+        <div className="dd-body">
+          {/* Metadata tags */}
+          <div style={{ display: 'flex', gap: 6, marginBottom: 18, flexWrap: 'wrap', alignItems: 'center' }}>
+            <span
+              className="tag tag-cat"
+              style={{
+                color: col,
+                borderColor: col + '30',
+                background: col + '10',
+              }}
+            >
               {a.category}
             </span>
-            {' '}
-            <span style={{ padding: '5px 12px', borderRadius: 14, fontSize: 9.5, fontWeight: 800, background: 'var(--card2)', color: 'var(--ink2)', textTransform: 'uppercase', letterSpacing: 0.4 }}>
-              {a.gsPaper}
+            <span className="tag tag-gs">{a.gsPaper}</span>
+            <span className="tag tag-src">
+              <FontAwesomeIcon
+                icon={faCircle}
+                style={{ fontSize: 4, verticalAlign: 'middle', marginRight: 4, opacity: 0.6 }}
+              />
+              {a.source}
+            </span>
+            <span style={{ fontSize: 11, color: 'var(--text3)', marginLeft: 'auto', fontWeight: 700 }}>
+              {fdf(a.date)}
             </span>
           </div>
 
           {/* Explanation */}
           <div
-            style={{ fontSize: 14.5, lineHeight: 1.85, color: 'var(--ink)', marginBottom: 20, background: 'var(--card)', borderRadius: 24, padding: 20, boxShadow: 'var(--shadow-soft)', fontWeight: 600 }}
-            dangerouslySetInnerHTML={{ __html: a.deepDive.explanation }}
+            className="dd-explain"
+            dangerouslySetInnerHTML={{ __html: a.deepDive.explanation.replace(/\n/g, '<br>') }}
           />
 
+          <div className="dd-divider"></div>
+
           {/* Prelims Facts */}
-          <p style={{ fontSize: 10, fontWeight: 900, color: 'var(--on)', textTransform: 'uppercase', letterSpacing: 1.2, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6, opacity: 0.85 }}>
-            <FontAwesomeIcon icon={faListCheck} style={{ fontSize: 10 }} />
-            Prelims Facts
-          </p>
-          <div style={{ background: 'var(--card)', borderRadius: 22, padding: '16px 18px', marginBottom: 16, boxShadow: 'var(--shadow-soft)' }}>
-            <ul style={{ listStyleType: 'disc', paddingLeft: 18 }}>
-              {a.deepDive.prelimsFacts.map((f, i) => (
-                <li key={i} style={{ fontSize: 13, lineHeight: 1.7, color: 'var(--ink2)', marginBottom: 7, fontWeight: 600 }}>{f}</li>
-              ))}
-            </ul>
+          <div style={{ marginBottom: 18 }}>
+            <div className="dd-section-title">
+              <FontAwesomeIcon icon={faBullseye} style={{ marginRight: 6 }} />
+              Prelims Facts
+            </div>
+            <div className="dd-fact-box">
+              <ul style={{ paddingLeft: 14, margin: 0 }}>
+                {a.deepDive.prelimsFacts.map((f, i) => (
+                  <li key={i}>{f}</li>
+                ))}
+              </ul>
+            </div>
           </div>
 
-          {/* Possible Mains Question */}
-          <p style={{ fontSize: 10, fontWeight: 900, color: 'var(--on)', textTransform: 'uppercase', letterSpacing: 1.2, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6, opacity: 0.85 }}>
-            <FontAwesomeIcon icon={faPenToSquare} style={{ fontSize: 10 }} />
-            Possible Mains Question
-          </p>
-          <div style={{ background: 'var(--panel)', border: '1px solid var(--panel-border)', backdropFilter: 'blur(14px)', borderRadius: 22, padding: 16, fontSize: 13.5, lineHeight: 1.75, color: 'var(--on)', fontStyle: 'italic', marginBottom: 16, fontWeight: 600 }}>
-            {a.deepDive.possibleMainsQuestion}
+          {/* Expected Mains Question */}
+          <div>
+            <div className="dd-section-title">
+              <FontAwesomeIcon icon={faPenFancy} style={{ marginRight: 6 }} />
+              Expected Mains Question
+            </div>
+            <div className="dd-question">{a.deepDive.possibleMainsQuestion}</div>
           </div>
 
-          {/* Flashcards button */}
-          <button
-            onClick={openFlashcards}
-            style={{
-              width: '100%',
-              padding: 16,
-              borderRadius: 22,
-              background: 'var(--yellow)',
-              color: 'var(--yellow-ink)',
-              fontSize: 14,
-              fontWeight: 900,
-              border: 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              transition: 'all 0.2s',
-              marginTop: 8,
-              boxShadow: 'var(--shadow-soft)',
-            }}
-          >
-            <FontAwesomeIcon icon={faLayerGroup} />
-            Practice Flashcard
+          {/* Flashcard Practice trigger */}
+          <button className="dd-flashcard-btn" onClick={openFlashcards} style={{ marginTop: 18 }}>
+            <FontAwesomeIcon icon={faClone} />
+            Quick Revision Flashcard
           </button>
-
-          {/* Bookmark button */}
-          <button
-            onClick={handleBookmark}
-            style={{
-              width: '100%',
-              padding: 14,
-              borderRadius: 22,
-              background: isBookmarked(a.id) ? 'var(--yellow)' : 'var(--panel)',
-              border: '1px solid var(--panel-border)',
-              backdropFilter: 'blur(16px)',
-              color: isBookmarked(a.id) ? 'var(--yellow-ink)' : 'var(--on)',
-              fontSize: 13,
-              fontWeight: 800,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              transition: 'all 0.2s',
-              marginTop: 10,
-            }}
-          >
-            <FontAwesomeIcon icon={faBookmark} />
-            {isBookmarked(a.id) ? 'Bookmarked' : 'Save Article'}
-          </button>
+          
+          <div style={{ height: 20 }}></div>
         </div>
       )}
     </div>

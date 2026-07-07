@@ -22,13 +22,15 @@ export function DeckView({ articles, onShowToast }: DeckViewProps) {
   const { setActiveArticle, setOverlay } = useAppStore()
   const haptic = useHaptic()
 
+  const articlesKey = articles.map((a) => a.id).join(',')
+
   useEffect(() => {
-    // Reset active index if list of articles changes
+    // Reset active index if list of articles actually changes
     setCenterIdx(0)
     setMounted(false)
     const t = setTimeout(() => setMounted(true), 50)
     return () => clearTimeout(t)
-  }, [articles])
+  }, [articlesKey])
 
   if (!articles.length) return null
 
