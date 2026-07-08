@@ -122,6 +122,7 @@ export default function App() {
             <SettingsScreen
               onClose={() => setScreen('profile')}
               onShowToast={showToast}
+              onOpenImport={() => setUploadVisible(true)}
             />
           )}
         </div>

@@ -8,6 +8,7 @@ import {
   faBullseye,
   faBell,
   faKey,
+  faFileImport,
   faFileExport,
   faTrash,
   faRotate,
@@ -23,9 +24,10 @@ import { useBookmarkStore } from '@/stores/useBookmarkStore'
 interface SettingsScreenProps {
   onClose: () => void
   onShowToast: (msg: string) => void
+  onOpenImport?: () => void
 }
 
-export function SettingsScreen({ onClose, onShowToast }: SettingsScreenProps) {
+export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsScreenProps) {
   const { settings, saveSettings } = usePracticeStore()
   const { theme, toggle } = useThemeStore()
   const { articlesByDate, setArticlesByDate } = useAppStore()
@@ -200,6 +202,15 @@ export function SettingsScreen({ onClose, onShowToast }: SettingsScreenProps) {
         {/* Data & privacy */}
         <div className="setting-group">
           <div className="setting-group-title">Data &amp; privacy</div>
+          {onOpenImport && (
+            <div className="setting-item" onClick={onOpenImport}>
+              <div className="setting-left">
+                <FontAwesomeIcon icon={faFileImport} style={{ width: 14 }} />
+                <span>Import content JSON</span>
+              </div>
+              <FontAwesomeIcon icon={faChevronRight} style={{ color: 'var(--ink3)', fontSize: 11 }} />
+            </div>
+          )}
           <div className="setting-item" onClick={handleBackupContent}>
             <div className="setting-left">
               <FontAwesomeIcon icon={faFileExport} style={{ width: 14 }} />

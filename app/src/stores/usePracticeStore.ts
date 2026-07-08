@@ -99,12 +99,21 @@ export const usePracticeStore = create<PracticeStore>()((set, get) => ({
 
   recordAnswer: (qid, correct, subject, target, toast) => {
     const s = { ...get().stats }
+    const previous = s.a[qid]
+    const wasCorrect = previous?.[0] === 1
+    const previousDate = previous ? new Date(previous[1]).toISOString().split('T')[0] : null
+    const isFirstAttempt = !previous
     s.a = { ...s.a, [qid]: [correct ? 1 : 0, Date.now(), subject] }
     const d = { ...(s.d[TODAY] ?? { n: 0, c: 0 }) }
-    d.n++; if (correct) d.c++
+    if (isFirstAttempt) {
+      d.n++
+      if (correct) d.c++
+    } else if (previousDate === TODAY && wasCorrect !== correct) {
+      d.c = Math.max(0, Math.min(d.n, d.c + (correct ? 1 : -1)))
+    }
     s.d = { ...s.d, [TODAY]: d }
     const st = { ...s.streak }
-    if (st.last !== TODAY) {
+    if (isFirstAttempt && st.last !== TODAY) {
       const yesterday = new Date(Date.now() - 864e5).toISOString().split('T')[0]
       st.count = st.last === yesterday ? st.count + 1 : 1
       st.last = TODAY
@@ -122,7 +131,7 @@ export const usePracticeStore = create<PracticeStore>()((set, get) => ({
     const newStats = s
     localStorage.setItem('u4stats', JSON.stringify(newStats))
     set({ stats: newStats })
-    if (d.n === target) {
+    if (isFirstAttempt && d.n === target) {
       toast(`🎯 Daily target hit! Streak: ${st.count} 🔥`)
     }
   },
