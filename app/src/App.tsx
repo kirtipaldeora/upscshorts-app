@@ -155,6 +155,9 @@ export default function App() {
       {/* PYQ Vault */}
       {overlayScreen === 'pyq-vault' && <PYQVault />}
 
+      {/* Maps Arcade overlay entry, used from Revise and other cards */}
+      {overlayScreen === 'maps-arcade' && <MapsArcade />}
+
       {/* Mains Screen */}
       {overlayScreen === 'mains' && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 500 }}>
