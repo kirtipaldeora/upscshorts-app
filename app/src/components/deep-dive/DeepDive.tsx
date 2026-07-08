@@ -1,11 +1,12 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft, faShareAlt, faPenFancy, faCircle, faDumbbell, faPlay, faCloudArrowUp } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faShareAlt, faPenFancy, faCircle, faDumbbell, faPlay, faCloudArrowUp, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
 import { useHaptic } from '@/hooks/useHaptic'
 import { CATEGORY_COLORS } from '@/constants/categories'
 import { articleQs } from '@/utils/practiceUtils'
 import type { MainsQuestion, Question } from '@/utils/practiceUtils'
+import type { Article } from '@/types/article'
 import { QuizPlayer } from '@/components/practice/QuizPlayer'
 import { MainsDetail } from '@/components/practice/MainsDetail'
 
@@ -34,13 +35,37 @@ function splitPrelimsStem(stem: string) {
 }
 
 export function DeepDive({ onShowToast }: DeepDiveProps) {
-  const { activeArticle, setOverlay, overlayScreen, articlesByDate, setScreen } = useAppStore()
+  const { activeArticle, setActiveArticle, setOverlay, overlayScreen, articlesByDate, getArticlesForDate, setScreen } = useAppStore()
   const haptic = useHaptic()
   const [activeQuiz, setActiveQuiz] = useState<ActiveQuiz>(null)
   const [mainsOpen, setMainsOpen] = useState(false)
+  const bodyRef = useRef<HTMLDivElement>(null)
 
   const visible = overlayScreen === 'deep-dive'
   const a = activeArticle
+
+  // Sibling articles for prev/next navigation — follow the same list the feed
+  // shows for this article's day (respects active filters); fall back to the
+  // full day if the article was opened from a filtered/other context.
+  const filteredSiblings = a ? getArticlesForDate(a.date) : []
+  const siblings = a
+    ? (filteredSiblings.some(s => s.id === a.id) ? filteredSiblings : (articlesByDate[a.date] ?? []))
+    : []
+  const idx = a ? siblings.findIndex(s => s.id === a.id) : -1
+  const prevArticle = idx > 0 ? siblings[idx - 1] : null
+  const nextArticle = idx >= 0 && idx < siblings.length - 1 ? siblings[idx + 1] : null
+
+  // Reset scroll to top whenever the shown article changes
+  useEffect(() => {
+    bodyRef.current?.scrollTo({ top: 0 })
+  }, [a?.id])
+
+  async function goToArticle(article: Article) {
+    await haptic()
+    setMainsOpen(false)
+    setActiveQuiz(null)
+    setActiveArticle(article)
+  }
   const prelimQuestions = a?.prelimsQs ?? []
   const previewPrelims = prelimQuestions[0]
   const previewStem = previewPrelims ? splitPrelimsStem(previewPrelims.q) : null
@@ -106,7 +131,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
 
       {/* Body */}
       {a && (
-        <div className="dd-body">
+        <div className="dd-body" ref={bodyRef}>
           {/* Metadata tags */}
           <div style={{ display: 'flex', gap: 6, marginBottom: 18, flexWrap: 'wrap', alignItems: 'center' }}>
             <span
@@ -224,6 +249,36 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
               }}
             />
           )}
+        </div>
+      )}
+
+      {/* Prev / Next article navigation */}
+      {a && (prevArticle || nextArticle) && (
+        <div className="dd-navbar">
+          <button
+            className="dd-nav-btn"
+            disabled={!prevArticle}
+            onClick={() => prevArticle && goToArticle(prevArticle)}
+            aria-label="Previous article"
+          >
+            <FontAwesomeIcon icon={faChevronLeft} />
+            <span className="dd-nav-lbl">
+              <em>Previous</em>
+              <b>{prevArticle?.headline ?? 'Start of day'}</b>
+            </span>
+          </button>
+          <button
+            className="dd-nav-btn dd-nav-next"
+            disabled={!nextArticle}
+            onClick={() => nextArticle && goToArticle(nextArticle)}
+            aria-label="Next article"
+          >
+            <span className="dd-nav-lbl">
+              <em>Next</em>
+              <b>{nextArticle?.headline ?? 'End of day'}</b>
+            </span>
+            <FontAwesomeIcon icon={faChevronRight} />
+          </button>
         </div>
       )}
     </div>

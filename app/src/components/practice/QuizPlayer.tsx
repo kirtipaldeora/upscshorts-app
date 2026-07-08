@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import type { CSSProperties } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faXmark, faBookmark as faBookmarkSolid } from '@fortawesome/free-solid-svg-icons'
+import { faXmark, faCheck, faArrowRight, faBookmark as faBookmarkSolid } from '@fortawesome/free-solid-svg-icons'
 import { faBookmark as faBookmarkReg } from '@fortawesome/free-regular-svg-icons'
 import { usePracticeStore } from '@/stores/usePracticeStore'
 import type { Question } from '@/utils/practiceUtils'
@@ -15,7 +16,7 @@ interface QuizPlayerProps {
 type AnsweredState = { picked: number; correct: boolean } | null
 
 export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlayerProps) {
-  const { stats, settings, recordAnswer, toggleQbm, questionBookmarks } = usePracticeStore()
+  const { settings, recordAnswer, toggleQbm, questionBookmarks } = usePracticeStore()
   const [idx, setIdx] = useState(0)
   const [score, setScore] = useState(0)
   const [answered, setAnswered] = useState<AnsweredState>(null)
@@ -48,16 +49,27 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
     return (
       <div className="quiz-overlay">
         <div className="quiz-header">
-          <span className="qz-title">{title}</span>
-          <button className="icon-btn" onClick={onClose}>
+          <button className="icon-btn" onClick={onClose} aria-label="Close">
             <FontAwesomeIcon icon={faXmark} />
           </button>
+          <span className="qz-title">{title}</span>
+          <span style={{ width: 38 }} />
         </div>
-        <div className="quiz-body" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
-          <div className="qz-end">
-            <div className="qz-score">{score}<span>/{total}</span></div>
-            <p>{pct >= 80 ? 'Outstanding! 🏆' : pct >= 50 ? 'Solid effort — review the misses. 💪' : 'Keep at it — revision wins. 📚'}</p>
-            <button className="pn-btn" onClick={retry}>Retry</button>
+        <div className="quiz-body qz-result">
+          <div className="qz-ring" style={{ '--p': pct } as CSSProperties}>
+            <div className="qz-ring-inner">
+              <b>{pct}<i>%</i></b>
+              <span>{score} / {total}</span>
+            </div>
+          </div>
+          <h3 className="qz-result-title">
+            {pct >= 80 ? 'Outstanding! 🏆' : pct >= 50 ? 'Solid effort 💪' : 'Keep at it 📚'}
+          </h3>
+          <p className="qz-result-sub">
+            {pct >= 80 ? 'You have a strong grip on this set.' : pct >= 50 ? 'Review the ones you missed and go again.' : 'Revision wins — retry to lock it in.'}
+          </p>
+          <div className="qz-result-actions">
+            <button className="pn-btn" onClick={retry}>Retry test</button>
             <button className="pn-btn ghost" onClick={onClose}>Done</button>
           </div>
         </div>
@@ -66,17 +78,21 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
   }
 
   const bm = questionBookmarks.includes(q.id)
+  const progress = Math.round(((idx + (answered ? 1 : 0)) / total) * 100)
 
   return (
     <div className="quiz-overlay">
       {/* Header */}
       <div className="quiz-header">
-        <span className="qz-title">{title}</span>
-        <span className="qz-cnt">{idx + 1} / {total}</span>
-        <button className="icon-btn" onClick={onClose}>
+        <button className="icon-btn" onClick={onClose} aria-label="Close test">
           <FontAwesomeIcon icon={faXmark} />
         </button>
+        <span className="qz-title">{title}</span>
+        <span className="qz-cnt">{idx + 1}<i>/{total}</i></span>
       </div>
+
+      {/* Progress bar */}
+      <div className="qz-progress"><span style={{ width: `${progress}%` }} /></div>
 
       {/* Body */}
       <div className="quiz-body">
@@ -100,36 +116,49 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
         <div className="qz-opts">
           {q.options.map((opt, i) => {
             let cls = 'pv-opt'
+            let mark: 'ok' | 'no' | null = null
             if (answered) {
-              if (i === q.answer) cls += ' correct'
-              else if (i === answered.picked) cls += ' wrong'
+              if (i === q.answer) { cls += ' correct'; mark = 'ok' }
+              else if (i === answered.picked) { cls += ' wrong'; mark = 'no' }
+              else cls += ' dim'
             }
             return (
-              <div
+              <button
                 key={i}
                 className={cls}
                 onClick={() => pickAnswer(i)}
-                style={{ cursor: answered ? 'default' : 'pointer' }}
+                disabled={!!answered}
               >
-                <div className="ol">{String.fromCharCode(65 + i)}</div>
-                <div>{opt}</div>
-              </div>
+                <span className="ol">{String.fromCharCode(65 + i)}</span>
+                <span className="pv-opt-text">{opt}</span>
+                {mark && (
+                  <span className={`pv-opt-mark ${mark}`}>
+                    <FontAwesomeIcon icon={mark === 'ok' ? faCheck : faXmark} />
+                  </span>
+                )}
+              </button>
             )
           })}
         </div>
 
         {/* Explanation */}
         {answered && (
-          <div className="qz-exp show">
-            <b>Explanation:</b> {q.explanation}{q.ref ? ` (${q.ref})` : ''}
+          <div className={`qz-exp show ${answered.correct ? 'ok' : 'no'}`}>
+            <b>{answered.correct ? 'Correct' : 'Not quite'}</b>
+            <p>{q.explanation}{q.ref ? ` (${q.ref})` : ''}</p>
           </div>
         )}
+      </div>
 
-        {/* Next button */}
-        {answered && (
-          <button className="pn-btn" onClick={next} style={{ marginTop: 8 }}>
-            {idx + 1 === total ? 'Finish' : 'Next question'}
+      {/* Sticky footer */}
+      <div className="qz-footer">
+        {answered ? (
+          <button className="pn-btn qz-next" onClick={next}>
+            {idx + 1 === total ? 'Finish test' : 'Next question'}
+            <FontAwesomeIcon icon={faArrowRight} style={{ marginLeft: 8 }} />
           </button>
+        ) : (
+          <div className="qz-hint">Tap an option to answer</div>
         )}
       </div>
     </div>

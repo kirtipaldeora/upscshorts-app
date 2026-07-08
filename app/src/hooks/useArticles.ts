@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useAppStore } from '@/stores/useAppStore'
 import type { ArticlesByDate } from '@/types/article'
+import { asset } from '@/utils/asset'
 
 const LS_KEY = 'u4ct' // original localStorage key for cached articles
 const BUNDLED_FALLBACK_DATE = '2026-07-07'
@@ -57,7 +58,7 @@ export function useArticles(date: string) {
     setError(null)
 
     const fetchArticles = (targetDate: string) =>
-      fetch(`/data/articles/${targetDate}.json`, { signal: controller.signal })
+      fetch(asset(`data/articles/${targetDate}.json`), { signal: controller.signal })
         .then((r) => {
           if (!r.ok) throw new Error(`No data for ${targetDate}`)
           return r.json() as Promise<ArticlesByDate>

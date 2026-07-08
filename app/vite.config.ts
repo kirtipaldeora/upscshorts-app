@@ -4,6 +4,8 @@ import { VitePWA } from 'vite-plugin-pwa'
 import { resolve } from 'path'
 
 export default defineConfig({
+  // Relative base so the same build works from '/' (Vercel) and the '/penni/'
+  // subpath (GitHub Pages). Runtime data fetches go through asset() (BASE_URL).
   base: "./",
   plugins: [
     react(),
@@ -11,8 +13,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['fonts/**', 'icons/**', 'data/**'],
       manifest: {
-        name: 'michi — UPSC Current Affairs',
-        short_name: 'michi',
+        name: 'Penni — UPSC Current Affairs',
+        short_name: 'Penni',
         description:
           'Daily UPSC current-affairs briefings, previous year questions, and a geography maps arcade.',
         theme_color: '#7A7FC9',

@@ -4,11 +4,13 @@ import {
   faPlay,
   faScroll,
   faArrowLeft,
+  faDice,
 } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
 import { usePracticeStore } from '@/stores/usePracticeStore'
 import { useBookmarkStore } from '@/stores/useBookmarkStore'
 import { useArticles } from '@/hooks/useArticles'
+import { useAllArticles } from '@/hooks/useAllArticles'
 import {
   articleQs,
   allQs,
@@ -20,7 +22,7 @@ import {
 import type { Question } from '@/utils/practiceUtils'
 import { QuizPlayer } from './QuizPlayer'
 import { CATEGORY_COLORS } from '@/constants/categories'
-import { TODAY, fmtFull } from '@/constants/categories'
+import { TODAY, YESTERDAY, fmtFull, fmtShort } from '@/constants/categories'
 
 interface PracticeScreenProps {
   onShowToast: (msg: string) => void
@@ -30,13 +32,16 @@ interface PracticeScreenProps {
 
 type ActiveQuiz = { title: string; questions: Question[] } | null
 
+const TEST_SIZES = [10, 20, 30]
+
 export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: PracticeScreenProps) {
   const { articlesByDate, selectedDate, setScreen } = useAppStore()
   const { stats, settings, pyqData, pyqReady, setPyqData } = usePracticeStore()
   const { bookmarkedIds } = useBookmarkStore()
   const [activeQuiz, setActiveQuiz] = useState<ActiveQuiz>(null)
-  const [showAllArticles, setShowAllArticles] = useState(false)
+  const [drillDate, setDrillDate] = useState('')
   const { loading } = useArticles(selectedDate)
+  useAllArticles() // pull in every available day so all questions are practiceable
 
   // Load PYQ data once
   useEffect(() => {
@@ -48,20 +53,27 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
     }
   }, [pyqReady, setPyqData])
 
-  const availableDates = Object.keys(articlesByDate).sort((a, b) => (a > b ? -1 : 1))
-  const practiceDate = articlesByDate[selectedDate]?.length ? selectedDate : (availableDates[0] ?? selectedDate)
+  const availableDates = Object.keys(articlesByDate)
+    .filter(d => (articlesByDate[d] ?? []).some(a => (a.prelimsQs ?? []).length > 0))
+    .sort((a, b) => (a > b ? -1 : 1))
+
   const allArticles = Object.values(articlesByDate).flat()
-  const todayArticles = (articlesByDate[practiceDate] ?? []).filter(a => (a.prelimsQs ?? []).length > 0)
-  const todayArticleIds = new Set(todayArticles.map(a => a.id))
-  const todayArticleQuestions = articleQs(allArticles).filter(q => todayArticleIds.has(q.aid ?? ''))
-  const visibleArticles = showAllArticles ? todayArticles : todayArticles.slice(0, 3)
-  const hiddenArticleCount = Math.max(0, todayArticles.length - visibleArticles.length)
-  const articleCategoryCounts = todayArticles.reduce<Record<string, number>>((acc, article) => {
+  const allArticleQuestions = articleQs(allArticles)
+  const pool = allQs(allArticles, pyqData)
+  const subs = subjectCounts(pool)
+
+  // ─── Practice-by-day drills ───────────────────────────────────
+  const activeDrillDate = (drillDate && articlesByDate[drillDate]?.length) ? drillDate : (availableDates[0] ?? selectedDate)
+  const drillArticles = (articlesByDate[activeDrillDate] ?? []).filter(a => (a.prelimsQs ?? []).length > 0)
+  const drillArticleIds = new Set(drillArticles.map(a => a.id))
+  const drillQuestions = allArticleQuestions.filter(q => drillArticleIds.has(q.aid ?? ''))
+  const drillCategoryCounts = drillArticles.reduce<Record<string, number>>((acc, article) => {
     acc[article.category] = (acc[article.category] ?? 0) + (article.prelimsQs ?? []).length
     return acc
   }, {})
-  const pool = allQs(allArticles, pyqData)
-  const subs = subjectCounts(pool)
+  const dateQCount = (d: string) => (articlesByDate[d] ?? []).reduce((n, a) => n + (a.prelimsQs?.length ?? 0), 0)
+  const dateLabel = (d: string) => (d === TODAY ? 'Today' : d === YESTERDAY ? 'Yesterday' : fmtShort(d))
+
   const todayDay = stats.d[TODAY] ?? { n: 0, c: 0 }
   const pct = Math.min(100, Math.round(todayDay.n / settings.target * 100))
   const bmQs = bookmarkPracticeSet(allArticles, bookmarkedIds, usePracticeStore.getState().questionBookmarks, pyqData)
@@ -70,6 +82,11 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
   function startQuiz(title: string, qs: Question[]) {
     if (!qs.length) { onShowToast('No questions here yet'); return }
     setActiveQuiz({ title, questions: qs })
+  }
+
+  function startRandom(n: number) {
+    const qs = seededPick(pool, Math.min(n, pool.length), `rand-${Date.now()}`)
+    startQuiz(`Random Test · ${qs.length} Q`, qs)
   }
 
   if (activeQuiz) {
@@ -114,27 +131,36 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
           </div>
         </div>
 
-        {/* Practice cards */}
-        <div className="pn-sec">Practice</div>
+        {/* Test yourself */}
+        <div className="pn-sec">Test yourself</div>
+
+        <div className="pn-random">
+          <div className="pn-random-top">
+            <div className="pc-icon" style={{ color: '#6C71C4' }}><FontAwesomeIcon icon={faDice} /></div>
+            <div className="pc-info">
+              <h3>Random Test</h3>
+              <p>{pool.length} questions from every day &amp; PYQs — shuffled fresh.</p>
+            </div>
+          </div>
+          <div className="pn-testsizes">
+            {TEST_SIZES.map(n => (
+              <button key={n} onClick={() => startRandom(n)} disabled={pool.length === 0}>
+                {n} <span>Q</span>
+              </button>
+            ))}
+            <button className="all" onClick={() => startRandom(pool.length)} disabled={pool.length === 0}>
+              All {pool.length}
+            </button>
+          </div>
+        </div>
 
         <div className="pyq-card" onClick={() => startQuiz('Daily Practice', dailySet(allArticles, pyqData, settings.target, TODAY))}>
           <div className="pc-icon" style={{ color: '#B8860B' }}>🎯</div>
           <div className="pc-info">
             <h3>Daily Practice</h3>
-            <p>{settings.target} fresh questions picked for {fmtFull(TODAY)} — build your streak.</p>
+            <p>{settings.target} fresh questions for {fmtFull(TODAY)} — build your streak.</p>
           </div>
           <div className="pc-go"><FontAwesomeIcon icon={faPlay} /></div>
-        </div>
-
-        <div className="pyq-card" onClick={onOpenMains}>
-          <div className="pc-icon" style={{ color: '#6C71C4' }}>✍️</div>
-          <div className="pc-info">
-            <h3>Mains Answer Writing</h3>
-            <p>Upload up to 5 handwritten answers a day — AI evaluates &amp; annotates.</p>
-          </div>
-          <div className="pc-go" style={{ background: mainsLeft > 0 ? 'var(--yellow)' : 'var(--panel2)', color: mainsLeft > 0 ? 'var(--yellow-ink)' : 'var(--on3)' }}>
-            {mainsLeft}
-          </div>
         </div>
 
         {bmQs.length > 0 && (
@@ -148,62 +174,69 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
           </div>
         )}
 
-        {/* Article-wise */}
-        <div className="pn-sec">
-          Article Drills <span>({fmtFull(practiceDate)})</span>
-        </div>
+        {/* Practice by day */}
+        <div className="pn-sec">Practice by day</div>
 
-        {todayArticles.length > 0 ? (
-          <div className="article-drill-card">
-            <div className="adc-top">
-              <div>
-                <b>{todayArticleQuestions.length} questions</b>
-                <span>{todayArticles.length} articles with practice today</span>
+        {availableDates.length > 0 ? (
+          <>
+            <div className="pn-datechips">
+              {availableDates.map(d => (
+                <button
+                  key={d}
+                  className={`pn-datechip ${d === activeDrillDate ? 'on' : ''}`}
+                  onClick={() => setDrillDate(d)}
+                >
+                  <b>{dateLabel(d)}</b>
+                  <span>{dateQCount(d)} Q</span>
+                </button>
+              ))}
+            </div>
+
+            <div className="article-drill-card">
+              <div className="adc-top">
+                <div>
+                  <b>{drillQuestions.length} questions</b>
+                  <span>{drillArticles.length} articles · {fmtFull(activeDrillDate)}</span>
+                </div>
+                <button onClick={() => startQuiz(`${dateLabel(activeDrillDate)} Drills`, drillQuestions)} aria-label="Start day drills">
+                  <FontAwesomeIcon icon={faPlay} />
+                </button>
               </div>
-              <button onClick={() => startQuiz('Today Article Drills', todayArticleQuestions)}>
-                <FontAwesomeIcon icon={faPlay} />
-              </button>
-            </div>
 
-            <div className="adc-chips">
-              {Object.entries(articleCategoryCounts).map(([category, count]) => (
-                <button
-                  key={category}
-                  onClick={() => startQuiz(category, todayArticleQuestions.filter(q => q.subject === category))}
-                  style={{ borderColor: `${CATEGORY_COLORS[category as keyof typeof CATEGORY_COLORS]}55` }}
-                >
-                  {category}<span>{count}</span>
-                </button>
-              ))}
-            </div>
+              <div className="adc-chips">
+                {Object.entries(drillCategoryCounts).map(([category, count]) => (
+                  <button
+                    key={category}
+                    onClick={() => startQuiz(category, drillQuestions.filter(q => q.subject === category))}
+                    style={{ borderColor: `${CATEGORY_COLORS[category as keyof typeof CATEGORY_COLORS]}55` }}
+                  >
+                    {category}<span>{count}</span>
+                  </button>
+                ))}
+              </div>
 
-            <div className="adc-preview">
-              {visibleArticles.map(a => (
-                <button
-                  key={a.id}
-                  onClick={() => startQuiz(a.category, articleQs(allArticles).filter(q => q.aid === a.id))}
-                >
-                  <i style={{ background: CATEGORY_COLORS[a.category] }} />
-                  <span>{a.headline}</span>
-                  <b>{(a.prelimsQs ?? []).length}</b>
-                </button>
-              ))}
+              <div className="adc-preview">
+                {drillArticles.map(a => (
+                  <button
+                    key={a.id}
+                    onClick={() => startQuiz(a.category, allArticleQuestions.filter(q => q.aid === a.id))}
+                  >
+                    <i style={{ background: CATEGORY_COLORS[a.category] }} />
+                    <span>{a.headline}</span>
+                    <b>{(a.prelimsQs ?? []).length}</b>
+                  </button>
+                ))}
+              </div>
             </div>
-
-            {todayArticles.length > 3 && (
-              <button className="adc-toggle" onClick={() => setShowAllArticles(v => !v)}>
-                {showAllArticles ? 'Show fewer articles' : `Show ${hiddenArticleCount} more articles`}
-              </button>
-            )}
-          </div>
+          </>
         ) : loading ? (
-          <p className="pn-empty">Loading article questions...</p>
+          <p className="pn-empty">Loading questions…</p>
         ) : (
-          <p className="pn-empty">No article questions for this date.</p>
+          <p className="pn-empty">No article questions yet.</p>
         )}
 
         {/* Subject-wise */}
-        <div className="pn-sec">Subject-wise</div>
+        <div className="pn-sec">By subject</div>
         <div className="pn-subs">
           {Object.keys(subs).sort().map(s => (
             <button
@@ -216,8 +249,19 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
           ))}
         </div>
 
-        {/* More */}
-        <div className="pn-sec">More</div>
+        {/* Mains & more */}
+        <div className="pn-sec">Mains &amp; more</div>
+        <div className="pyq-card" onClick={onOpenMains}>
+          <div className="pc-icon" style={{ color: '#6C71C4' }}>✍️</div>
+          <div className="pc-info">
+            <h3>Mains Answer Writing</h3>
+            <p>Upload up to 5 handwritten answers a day — AI evaluates &amp; annotates.</p>
+          </div>
+          <div className="pc-go" style={{ background: mainsLeft > 0 ? 'var(--yellow)' : 'var(--panel2)', color: mainsLeft > 0 ? 'var(--yellow-ink)' : 'var(--on3)' }}>
+            {mainsLeft}
+          </div>
+        </div>
+
         <div className="quick-row">
           <div className="quick-tile" onClick={onOpenPYQ}>
             <div className="qt-ic" style={{ color: '#6C71C4' }}>
