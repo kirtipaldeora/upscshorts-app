@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli'
 
 const config: CapacitorConfig = {
-  appId: 'com.michi.app',
-  appName: 'michi',
+  appId: 'com.deora.test.upsc',
+  appName: 'Penni',
   webDir: 'dist',
   server: {
     androidScheme: 'https',
