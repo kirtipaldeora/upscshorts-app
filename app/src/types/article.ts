@@ -41,6 +41,14 @@ export interface Article {
   deepDive: DeepDive
   prelimsQs?: PrelimQuestion[]   // Penni: article-level MCQ practice questions
   keyTerms?: string[]            // Optional glossary metadata from article imports
+  location?: GeoLocation         // For the news globe: where the story is happening
+}
+
+// ─── Geo location for the news globe ─────────────────────────
+export interface GeoLocation {
+  lat: number
+  lon: number
+  place: string
 }
 
 // ─── Data shape returned by per-date JSON files ───────────────

@@ -12,7 +12,7 @@ interface FeedScreenProps {
 }
 
 export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
-  const { selectedDate, viewMode, getArticlesForDate, getAvailableDates } = useAppStore()
+  const { selectedDate, viewMode, getArticlesForDate, getAvailableDates, setOverlay } = useAppStore()
   const { loading } = useArticles(selectedDate)
 
   const dates = getAvailableDates()
@@ -38,6 +38,9 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
         <h2 style={{ fontSize: 27, fontWeight: 900, letterSpacing: -0.4, lineHeight: 1.08, color: 'var(--on)' }}>
           Daily Briefing
         </h2>
+        <button className="news-globe-fab" onClick={() => setOverlay('news-globe')} aria-label="Open News Globe">
+          <i className="fas fa-map-location-dot" />
+        </button>
       </div>
 
       {/* Date tabs */}

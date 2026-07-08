@@ -44,7 +44,12 @@
           "answer": 1,
           "explanation": "Both were created under the Disaster Management Act, 2005; the NDMA is chaired by the Prime Minister."
         }
-      ]
+      ],
+      "location": {
+        "lat": 11.6,
+        "lon": 76.13,
+        "place": "Wayanad, Kerala"
+      }
     },
     {
       "id": "ca080726-02",
@@ -78,7 +83,12 @@
           "answer": 0,
           "explanation": "The Strait of Hormuz lies between Iran and Oman/UAE and carries about 20% of the world's oil trade."
         }
-      ]
+      ],
+      "location": {
+        "lat": 26.57,
+        "lon": 56.25,
+        "place": "Strait of Hormuz"
+      }
     },
     {
       "id": "ca080726-03",
@@ -112,7 +122,12 @@
           "answer": 1,
           "explanation": "It made forming cooperatives a fundamental right under Article 19(1)(c) and inserted Article 43B (DPSP) and Part IX-B."
         }
-      ]
+      ],
+      "location": {
+        "lat": 22.55,
+        "lon": 72.96,
+        "place": "Anand, Gujarat"
+      }
     },
     {
       "id": "ca080726-04",
@@ -146,7 +161,12 @@
           "answer": 1,
           "explanation": "The India-Australia Economic Cooperation and Trade Agreement (ECTA) came into force in 2022."
         }
-      ]
+      ],
+      "location": {
+        "lat": -35.28,
+        "lon": 149.13,
+        "place": "Canberra, Australia"
+      }
     },
     {
       "id": "ca080726-05",
@@ -191,7 +211,12 @@
           "answer": 1,
           "explanation": "MTCR norms capped the range at 290 km; after India joined the MTCR in 2016, longer-range variants became possible."
         }
-      ]
+      ],
+      "location": {
+        "lat": -6.21,
+        "lon": 106.85,
+        "place": "Jakarta, Indonesia"
+      }
     },
     {
       "id": "ca080726-06",
@@ -372,7 +397,12 @@
           "answer": 0,
           "explanation": "The Narmada rises at Amarkantak in Madhya Pradesh and flows west into the Arabian Sea through a rift valley."
         }
-      ]
+      ],
+      "location": {
+        "lat": 21.83,
+        "lon": 73.75,
+        "place": "Sardar Sarovar, Gujarat"
+      }
     },
     {
       "id": "ca080726-11",
@@ -406,7 +436,12 @@
           "answer": 1,
           "explanation": "Section 2(h) covers bodies established by the Constitution/law/notification or substantially financed by the government."
         }
-      ]
+      ],
+      "location": {
+        "lat": 26.79,
+        "lon": 82.19,
+        "place": "Ayodhya, UP"
+      }
     },
     {
       "id": "ca080726-12",
@@ -440,7 +475,12 @@
           "answer": 1,
           "explanation": "The PCMA sets 21 for men and 18 for women; a child marriage is voidable at the option of a party who was a minor."
         }
-      ]
+      ],
+      "location": {
+        "lat": 25.44,
+        "lon": 81.85,
+        "place": "Prayagraj, UP"
+      }
     },
     {
       "id": "ca080726-13",
@@ -610,7 +650,12 @@
           "answer": 1,
           "explanation": "'G2' denotes a US-China condominium managing global and Asian affairs — an outcome India seeks to avoid."
         }
-      ]
+      ],
+      "location": {
+        "lat": 28.61,
+        "lon": 77.21,
+        "place": "New Delhi"
+      }
     },
     {
       "id": "ca080726-18",
@@ -644,7 +689,12 @@
           "answer": 1,
           "explanation": "SAR is an active microwave sensor that images day and night and through clouds, unlike EO sensors that need daylight and clear skies."
         }
-      ]
+      ],
+      "location": {
+        "lat": 12.97,
+        "lon": 77.59,
+        "place": "Bengaluru"
+      }
     },
     {
       "id": "ca080726-19",
@@ -712,7 +762,12 @@
           "answer": 1,
           "explanation": "The Delhi Ridge is the tail end of the Aravallis, acting as the city's green lung and a barrier against desert dust."
         }
-      ]
+      ],
+      "location": {
+        "lat": 28.65,
+        "lon": 77.22,
+        "place": "Delhi Ridge"
+      }
     },
     {
       "id": "ca080726-21",
@@ -780,7 +835,12 @@
           "answer": 1,
           "explanation": "The NDB is headquartered in Shanghai; BRICS also operates a Contingent Reserve Arrangement."
         }
-      ]
+      ],
+      "location": {
+        "lat": 26.14,
+        "lon": 91.74,
+        "place": "Guwahati, Assam"
+      }
     },
     {
       "id": "ca080726-23",
@@ -848,7 +908,12 @@
           "answer": 1,
           "explanation": "In a Protected Forest, activities are allowed unless prohibited; in a Reserved Forest they are banned unless expressly permitted."
         }
-      ]
+      ],
+      "location": {
+        "lat": 26.2,
+        "lon": 92.94,
+        "place": "Assam"
+      }
     },
     {
       "id": "ca080726-25",
@@ -882,7 +947,12 @@
           "answer": 1,
           "explanation": "Article 5 is NATO's collective-defence clause: an armed attack on one member is treated as an attack on all members."
         }
-      ]
+      ],
+      "location": {
+        "lat": 39.93,
+        "lon": 32.85,
+        "place": "Ankara, Turkey"
+      }
     },
     {
       "id": "ca080726-26",
@@ -916,7 +986,12 @@
           "answer": 1,
           "explanation": "The CBI has no dedicated statute of its own; it functions under the Delhi Special Police Establishment Act, 1946."
         }
-      ]
+      ],
+      "location": {
+        "lat": 10.96,
+        "lon": 78.08,
+        "place": "Karur, Tamil Nadu"
+      }
     }
   ]
 }

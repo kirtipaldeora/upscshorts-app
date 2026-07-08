@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, lazy, Suspense } from 'react'
 import { SplashScreen } from '@/components/layout/SplashScreen'
 import { Onboarding } from '@/components/layout/Onboarding'
 import { BottomNav } from '@/components/layout/BottomNav'
@@ -18,6 +18,9 @@ import { Digest } from '@/components/feed/Digest'
 import { Toast, useToast } from '@/components/ui/Toast'
 import { useAppStore } from '@/stores/useAppStore'
 import type { MainsRecord } from '@/hooks/useMainsDB'
+
+// Heavy / seldom-used screens are code-split so they never bloat first load.
+const NewsGlobe = lazy(() => import('@/components/news-globe/NewsGlobe'))
 
 type AppPhase = 'splash' | 'onboarding' | 'main'
 
@@ -139,6 +142,13 @@ export default function App() {
 
       {/* Maps Arcade */}
       {overlayScreen === 'maps-arcade' && <MapsArcade />}
+
+      {/* News Globe (3D world) */}
+      {overlayScreen === 'news-globe' && (
+        <Suspense fallback={<div className="globe-screen"><div className="globe-empty">Loading globe…</div></div>}>
+          <NewsGlobe />
+        </Suspense>
+      )}
 
       {/* PYQ Vault */}
       {overlayScreen === 'pyq-vault' && <PYQVault />}

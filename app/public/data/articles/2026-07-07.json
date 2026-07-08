@@ -46,7 +46,12 @@
           "explanation": "TRF is a proxy/offshoot of the Pakistan-based LeT, named in the Pahalgam attack chargesheet.",
           "ref": "Article: TRF described as LeT proxy"
         }
-      ]
+      ],
+      "location": {
+        "lat": 34.01,
+        "lon": 75.33,
+        "place": "Pahalgam, J&K"
+      }
     },
     {
       "id": "ca070726-02",
@@ -142,7 +147,12 @@
           "explanation": "IN-SPACe is the single-window nodal agency under the Department of Space to promote and authorise private-sector space activity.",
           "ref": "Prelims fact: IN-SPACe under DoS"
         }
-      ]
+      ],
+      "location": {
+        "lat": 13.72,
+        "lon": 80.19,
+        "place": "Sriharikota"
+      }
     },
     {
       "id": "ca070726-04",
@@ -332,7 +342,12 @@
           "explanation": "El Niño weakens monsoon winds and inflows (hurting wind/hydro) while heat raises AC demand, widening the generation gap.",
           "ref": "Article summary"
         }
-      ]
+      ],
+      "location": {
+        "lat": 28.61,
+        "lon": 77.21,
+        "place": "New Delhi"
+      }
     },
     {
       "id": "ca070726-08",
@@ -427,7 +442,12 @@
           "explanation": "It is coming up at Anand, Gujarat, named after Amul founder Tribhuvandas Patel.",
           "ref": "Prelims fact: Anand, Gujarat"
         }
-      ]
+      ],
+      "location": {
+        "lat": 22.55,
+        "lon": 72.96,
+        "place": "Anand, Gujarat"
+      }
     },
     {
       "id": "ca070726-10",
@@ -474,7 +494,12 @@
           "explanation": "Coordination for 2004 tsunami relief seeded the Quad idea, formalised in 2007 and revived in 2017.",
           "ref": "Prelims fact: 2004 tsunami origin"
         }
-      ]
+      ],
+      "location": {
+        "lat": 38.9,
+        "lon": -77.04,
+        "place": "Washington DC"
+      }
     },
     {
       "id": "ca070726-11",
@@ -522,7 +547,12 @@
           "explanation": "1972, 1982, 2009 and 2015 were all El Niño drought years.",
           "ref": "Prelims fact: drought years"
         }
-      ]
+      ],
+      "location": {
+        "lat": 28.61,
+        "lon": 77.21,
+        "place": "New Delhi"
+      }
     },
     {
       "id": "ca070726-12",
@@ -617,7 +647,12 @@
           "explanation": "Tajikistan, supported by the 57-member OIC, is contesting against India for the seat.",
           "ref": "Article summary"
         }
-      ]
+      ],
+      "location": {
+        "lat": 40.75,
+        "lon": -73.97,
+        "place": "New York"
+      }
     },
     {
       "id": "ca070726-14",

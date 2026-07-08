@@ -21,6 +21,7 @@ export type OverlayScreen =
   | 'upload'
   | 'digest'
   | 'mains'
+  | 'news-globe'
 
 interface AppStore {
   // ─── Articles ───────────────────────────────────────────────

@@ -317,6 +317,29 @@ html.dark {
 .dd-nav-arrow:disabled{opacity:.32;cursor:default}
 .dd-nav-count{font-size:13px;font-weight:800;color:var(--on);min-width:74px;text-align:center}
 .dd-nav-count i{font-style:normal;font-weight:700;color:var(--on3);margin:0 2px}
+/* ── News Globe (3D world screen) ─────────────────────────── */
+.globe-screen{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;background:radial-gradient(120% 90% at 50% -5%,#1a1d3f 0%,#0a0b1e 58%,#06070f 100%);padding-top:env(safe-area-inset-top)}
+.globe-header{height:52px;flex:none;display:flex;align-items:center;gap:12px;padding:0 14px;position:relative;z-index:2}
+.globe-header button{width:40px;height:40px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);backdrop-filter:blur(16px);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.globe-header h2{font-size:16px;font-weight:800;color:#fff}
+.globe-header h2 span{color:#9da2f2}
+.globe-canvas{position:absolute;inset:0;z-index:0}
+.globe-canvas canvas{display:block}
+.globe-empty{position:absolute;top:50%;left:0;right:0;text-align:center;color:rgba(255,255,255,.6);font-weight:700;font-size:13px;z-index:1}
+.globe-card{position:absolute;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:3;background:rgba(18,20,44,.82);border:1px solid rgba(255,255,255,.12);border-radius:22px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:14px 16px;box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+.globe-card-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.globe-card-nav button{width:34px;height:34px;border-radius:11px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center}
+.globe-card-nav span{font-size:12px;font-weight:800;color:rgba(255,255,255,.85)}
+.globe-card-nav i{font-style:normal;color:rgba(255,255,255,.45);margin:0 2px}
+.globe-card-body{display:block;width:100%;text-align:left;background:transparent;border:none;cursor:pointer;padding:0}
+.globe-card-place{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:rgba(255,255,255,.7);margin-bottom:8px}
+.globe-card-headline{font-size:17px;font-weight:800;color:#fff;line-height:1.32;margin-bottom:12px;letter-spacing:-.2px}
+.globe-card-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.globe-card-meta .tag-src{color:rgba(255,255,255,.72) !important;border-color:rgba(255,255,255,.14) !important;background:rgba(255,255,255,.05) !important}
+.globe-card-cta{margin-left:auto;font-size:12.5px;font-weight:800;color:#9da2f2}
+/* ── News Globe feed shortcut ─────────────────────────────── */
+.news-globe-fab{position:absolute;top:2px;right:18px;width:42px;height:42px;border-radius:15px;border:1px solid var(--panel-border);background:var(--panel);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:var(--on);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow-soft);font-size:16px;transition:transform .12s ease,background .12s ease}
+.news-globe-fab:active{transform:scale(.94)}
 .dd-mains-eval-btn{margin-top:12px;width:100%}
 .dd-prelims-card{background:var(--card);border-radius:22px;padding:16px;box-shadow:var(--shadow-soft);color:var(--ink)}
 .dd-prelims-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
