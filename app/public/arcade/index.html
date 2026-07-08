@@ -57,6 +57,24 @@
     .atlas-header button[title="Home"] span:first-child{font-size:20px !important}
     .atlas-score,.atlas-streak{padding:5px 9px !important}
   }
+  /* ── Penni app integration overrides ─────────────────────── */
+  /* Match Penni's purple gradient so the arcade reads as part of the app. */
+  html, body { background: transparent !important; }
+  .atlas-shell {
+    background: linear-gradient(180deg, #8e93d9 0%, #6c71bc 100%) !important;
+    padding-top: 8px !important;
+  }
+  @media (prefers-color-scheme: dark) {
+    .atlas-shell { background: linear-gradient(180deg, #262850 0%, #181a38 100%) !important; }
+  }
+  /* Hide the standalone "Atlas Arcade" brand — Penni provides its own header. */
+  .atlas-header > button[title="Home"] { display: none !important; }
+  .atlas-header { color: #fff !important; }
+  /* Loose header text (question counter) reads on the purple shell. */
+  .atlas-header > sc-if span,
+  .atlas-header > div > span { color: #fff !important; }
+  /* Clean, app-like white pickers instead of the cream overlay. */
+  .atlas-panel-overlay { background: rgba(255,255,255,0.96) !important; }
 </style>
 </helmet>
 <div data-screen-label="Atlas Arcade" class="atlas-shell" style="min-height:100vh;width:100%;display:flex;flex-direction:column;align-items:center;font-family:Nunito,sans-serif;color:#2B2620;background:radial-gradient(1200px 600px at 80% -10%,#FFF3E0 0%,rgba(255,243,224,0) 60%),linear-gradient(165deg,#FFF4E6 0%,#FFE7CF 55%,#FFDDC1 100%);padding:clamp(12px,3vw,22px) clamp(10px,3vw,26px) 32px">

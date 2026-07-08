@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft, faShareAlt, faPenFancy, faCircle, faDumbbell, faPlay, faCloudArrowUp, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faArrowRight, faShareAlt, faPenFancy, faCircle, faDumbbell, faPlay, faCloudArrowUp, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
 import { useHaptic } from '@/hooks/useHaptic'
 import { CATEGORY_COLORS } from '@/constants/categories'
@@ -226,6 +226,30 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
             </div>
           )}
 
+          {/* Up Next card */}
+          {nextArticle && (
+            <button className="dd-upnext" onClick={() => goToArticle(nextArticle)}>
+              <div className="dd-upnext-head">
+                <span>Up Next · {idx + 2} of {siblings.length}</span>
+                <FontAwesomeIcon icon={faArrowRight} />
+              </div>
+              <div className="dd-upnext-title">{nextArticle.headline}</div>
+              <div className="dd-upnext-meta">
+                <span
+                  className="tag tag-cat"
+                  style={{
+                    color: CATEGORY_COLORS[nextArticle.category],
+                    borderColor: CATEGORY_COLORS[nextArticle.category] + '30',
+                    background: CATEGORY_COLORS[nextArticle.category] + '10',
+                  }}
+                >
+                  {nextArticle.category}
+                </span>
+                <span className="tag tag-gs">{nextArticle.gsPaper}</span>
+              </div>
+            </button>
+          )}
+
           <div style={{ height: 20 }}></div>
 
           {/* Quiz Player inline overlay */}
@@ -252,31 +276,24 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
         </div>
       )}
 
-      {/* Prev / Next article navigation */}
-      {a && (prevArticle || nextArticle) && (
+      {/* Prev / Next article navigation — compact arrows + position */}
+      {a && siblings.length > 1 && (
         <div className="dd-navbar">
           <button
-            className="dd-nav-btn"
+            className="dd-nav-arrow"
             disabled={!prevArticle}
             onClick={() => prevArticle && goToArticle(prevArticle)}
             aria-label="Previous article"
           >
             <FontAwesomeIcon icon={faChevronLeft} />
-            <span className="dd-nav-lbl">
-              <em>Previous</em>
-              <b>{prevArticle?.headline ?? 'Start of day'}</b>
-            </span>
           </button>
+          <span className="dd-nav-count">{idx + 1} <i>of</i> {siblings.length}</span>
           <button
-            className="dd-nav-btn dd-nav-next"
+            className="dd-nav-arrow"
             disabled={!nextArticle}
             onClick={() => nextArticle && goToArticle(nextArticle)}
             aria-label="Next article"
           >
-            <span className="dd-nav-lbl">
-              <em>Next</em>
-              <b>{nextArticle?.headline ?? 'End of day'}</b>
-            </span>
             <FontAwesomeIcon icon={faChevronRight} />
           </button>
         </div>
