@@ -35,7 +35,7 @@ function splitPrelimsStem(stem: string) {
 }
 
 export function DeepDive({ onShowToast }: DeepDiveProps) {
-  const { activeArticle, setActiveArticle, setOverlay, overlayScreen, articlesByDate, getArticlesForDate, setScreen } = useAppStore()
+  const { activeArticle, setActiveArticle, setDeepDiveReturnOverlay, setOverlay, overlayScreen, deepDiveReturnOverlay, articlesByDate, getArticlesForDate, setScreen } = useAppStore()
   const haptic = useHaptic()
   const [activeQuiz, setActiveQuiz] = useState<ActiveQuiz>(null)
   const [mainsOpen, setMainsOpen] = useState(false)
@@ -79,7 +79,12 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
   async function handleClose() {
     await haptic()
     setMainsOpen(false)
-    setOverlay(null)
+    if (deepDiveReturnOverlay) {
+      setOverlay(deepDiveReturnOverlay)
+      setDeepDiveReturnOverlay(null)
+    } else {
+      setOverlay(null)
+    }
   }
 
   async function handleShare() {

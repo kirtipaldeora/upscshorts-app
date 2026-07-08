@@ -50,6 +50,8 @@ interface AppStore {
   // ─── Deep dive ───────────────────────────────────────────────
   activeArticle: Article | null
   setActiveArticle: (a: Article | null) => void
+  deepDiveReturnOverlay: OverlayScreen
+  setDeepDiveReturnOverlay: (s: OverlayScreen) => void
 
   // ─── Helpers ─────────────────────────────────────────────────
   getArticlesForDate: (date: string) => Article[]
@@ -100,6 +102,8 @@ export const useAppStore = create<AppStore>()((set, get) => ({
   // Deep dive
   activeArticle: null,
   setActiveArticle: (a) => set({ activeArticle: a }),
+  deepDiveReturnOverlay: null,
+  setDeepDiveReturnOverlay: (s) => set({ deepDiveReturnOverlay: s }),
 
   // Helpers
   getArticlesForDate: (date) => {

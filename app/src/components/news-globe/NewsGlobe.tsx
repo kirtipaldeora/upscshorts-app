@@ -32,7 +32,7 @@ type GlobeWithHtml = GlobeInstance & {
  * (no satellite texture) so it stays fast; the whole component is lazy-loaded.
  */
 export default function NewsGlobe() {
-  const { articlesByDate, setActiveArticle, setOverlay } = useAppStore()
+  const { articlesByDate, setActiveArticle, setDeepDiveReturnOverlay, setOverlay } = useAppStore()
   useAllArticles()
   const containerRef = useRef<HTMLDivElement>(null)
   const globeRef = useRef<GlobeInstance | null>(null)
@@ -137,6 +137,7 @@ export default function NewsGlobe() {
         el.style.setProperty('--snippet-color', CATEGORY_COLORS[story.category] ?? '#9da2f2')
         el.onclick = () => {
           setActiveArticle(story)
+          setDeepDiveReturnOverlay('news-globe')
           setOverlay('deep-dive')
         }
 
@@ -191,6 +192,7 @@ export default function NewsGlobe() {
   const openStory = () => {
     if (!cur) return
     setActiveArticle(cur)
+    setDeepDiveReturnOverlay('news-globe')
     setOverlay('deep-dive')
   }
 
