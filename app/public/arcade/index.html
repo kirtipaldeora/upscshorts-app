@@ -1,0 +1,2135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;height:100%;overflow:hidden}
+  body{overscroll-behavior:none}
+  @keyframes qzpulse{0%,100%{stroke-width:1.4;filter:drop-shadow(0 0 0 rgba(255,159,28,0))}50%{stroke-width:2.6;filter:drop-shadow(0 0 7px rgba(255,159,28,.85))}}
+  @keyframes qzrpulse{0%,100%{stroke-width:5;filter:drop-shadow(0 0 0 rgba(255,159,28,0))}50%{stroke-width:7;filter:drop-shadow(0 0 9px rgba(255,159,28,.9))}}
+  @keyframes qzspin{to{transform:rotate(360deg)}}
+  @keyframes qzpop{0%{transform:scale(.7);opacity:0}60%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
+  @keyframes qzfade{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:translateY(0)}}
+  .qz-target{animation:qzpulse 1.1s ease-in-out infinite}
+  .qz-rtarget{animation:qzrpulse 1.1s ease-in-out infinite}
+  .qz-ov::-webkit-scrollbar{width:8px;height:8px}
+  .qz-ov::-webkit-scrollbar-thumb{background:#E7D8C6;border-radius:8px}
+  .park-learn-strip button{white-space:nowrap}
+  .atlas-shell{height:100dvh;min-height:0 !important;overflow:hidden;padding:clamp(8px,2vw,16px) clamp(8px,2vw,18px) !important}
+  .atlas-header{flex:none;margin-bottom:10px !important}
+  .atlas-frame{flex:1 1 auto;min-height:0;max-height:100%;display:flex;flex-direction:column;border-radius:22px !important}
+  .atlas-header-actions{flex:none}
+  .atlas-map{aspect-ratio:auto;flex:1 1 auto;min-height:0}
+  .atlas-shell > p{display:none}
+  .atlas-panel-overlay{overflow:auto;-webkit-overflow-scrolling:touch;align-items:stretch !important}
+  .atlas-panel-overlay > div{margin:auto 0}
+  @media (max-width:760px){
+    .atlas-shell{padding:6px !important}
+    .atlas-header{gap:8px !important;margin-bottom:7px !important;flex-wrap:nowrap !important;position:relative;padding-right:42px}
+    .atlas-header-actions{position:absolute;right:0;top:0;z-index:10}
+    .atlas-frame{border-radius:18px !important}
+    .atlas-map{height:auto;min-height:0}
+    .atlas-panel-overlay{padding:12px !important}
+    .atlas-score,.atlas-streak{display:none !important}
+    .atlas-score span:last-child,.atlas-streak span:last-child{font-size:19px !important}
+    .atlas-header button[title="Home"]{gap:8px !important;min-width:0;flex:1 1 auto}
+    .atlas-header button[title="Home"] > div:last-child{min-width:0}
+    .atlas-header button[title="Home"] > div:first-child{width:38px !important;height:38px !important}
+    .atlas-header button[title="Home"] span:first-child{font-size:18px !important;overflow:hidden;text-overflow:ellipsis;max-width:210px}
+    .atlas-header button[title="Home"] span:last-child{font-size:10px !important;letter-spacing:1px !important}
+    .atlas-sound{width:34px !important;height:34px !important;position:fixed !important;right:8px;top:8px;z-index:30}
+    .atlas-zoom button{width:36px !important;height:36px !important}
+  }
+  @media (max-height:650px){
+    .atlas-header button[title="Home"] > div:first-child{width:38px !important;height:38px !important}
+    .atlas-header button[title="Home"] span:first-child{font-size:20px !important}
+    .atlas-score,.atlas-streak{padding:5px 9px !important}
+  }
+</style>
+</helmet>
+<div data-screen-label="Atlas Arcade" class="atlas-shell" style="min-height:100vh;width:100%;display:flex;flex-direction:column;align-items:center;font-family:Nunito,sans-serif;color:#2B2620;background:radial-gradient(1200px 600px at 80% -10%,#FFF3E0 0%,rgba(255,243,224,0) 60%),linear-gradient(165deg,#FFF4E6 0%,#FFE7CF 55%,#FFDDC1 100%);padding:clamp(12px,3vw,22px) clamp(10px,3vw,26px) 32px">
+
+  <header class="atlas-header" style="width:100%;max-width:1180px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px">
+    <button onClick="{{ onHome }}" title="Home" style="display:flex;align-items:center;gap:13px;border:none;background:transparent;cursor:pointer;padding:0">
+      <div style="width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 18px -6px rgba(255,122,77,.7);background:{{ accent }}">
+        <svg width="26" height="26" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="#fff" stroke-width="2"></circle><ellipse cx="12" cy="12" rx="4.4" ry="10" fill="none" stroke="#fff" stroke-width="2"></ellipse><line x1="2" y1="12" x2="22" y2="12" stroke="#fff" stroke-width="2"></line></svg>
+      </div>
+      <div style="display:flex;flex-direction:column;line-height:1;text-align:left">
+        <span style="font-family:Fredoka,sans-serif;font-weight:700;font-size:23px;letter-spacing:.5px;color:#2B2620;white-space:nowrap">ATLAS ARCADE</span>
+        <span style="font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#C7A98F;margin-top:3px">{{ tagline }}</span>
+      </div>
+    </button>
+
+    <sc-if value="{{ screenPlay }}">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:16px;color:#fff;background:{{ contColor }};padding:7px 16px;border-radius:11px;box-shadow:0 6px 14px -7px rgba(0,0,0,.5)">{{ topicLabel }}</span>
+        <span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:15px;color:#B79A82">Question {{ qNum }} / {{ qTotal }}</span>
+      </div>
+    </sc-if>
+
+    <div class="atlas-header-actions" style="display:flex;align-items:center;gap:9px">
+      <sc-if value="{{ screenPlay }}">
+        <div style="display:flex;flex-direction:column;align-items:flex-start;background:#FFFFFF;border:1.5px solid #F0E4D6;border-radius:14px;padding:8px 14px;min-width:88px;box-shadow:0 6px 16px -10px rgba(120,70,30,.4)" class="atlas-score">
+          <span style="font-size:11px;font-weight:800;letter-spacing:1px;color:#C7A98F;text-transform:uppercase">Score</span>
+          <span style="font-family:Fredoka,sans-serif;font-weight:700;font-size:22px;color:#2B2620;line-height:1.1">{{ score }}</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-start;background:#FFFFFF;border:1.5px solid #FBE6C2;border-radius:14px;padding:8px 14px;min-width:88px;box-shadow:0 6px 16px -10px rgba(255,176,32,.55)" class="atlas-streak">
+          <span style="font-size:11px;font-weight:800;letter-spacing:1px;color:#E0A94B;text-transform:uppercase">Streak</span>
+          <span style="font-family:Fredoka,sans-serif;font-weight:700;font-size:22px;color:#E8920E;line-height:1.1">{{ streak }}</span>
+        </div>
+      </sc-if>
+      <button onClick="{{ onToggleSound }}" title="{{ soundTitle }}" style="{{ soundBtnStyle }}" class="atlas-sound">
+        <span style="font-size:18px;line-height:1">{{ soundIcon }}</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="atlas-frame" style="width:100%;max-width:1180px;background:#FFFFFF;border-radius:26px;box-shadow:0 24px 60px -26px rgba(80,50,20,.45);border:1px solid #fff;overflow:hidden;position:relative">
+
+    <sc-if value="{{ screenPlay }}">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding:clamp(12px,3vw,20px) clamp(14px,4vw,26px) clamp(10px,2.5vw,16px);border-bottom:1px solid #F5ECE0">
+        <div style="display:flex;flex-direction:column;gap:5px;flex:1 1 220px;min-width:0">
+          <span style="font-size:12px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:#C7A98F">{{ promptLabel }}</span>
+          <sc-if value="{{ modeLocate }}">
+            <span style="font-family:Fredoka,sans-serif;font-weight:700;font-size:clamp(26px,5.5vw,40px);line-height:1.05;color:#2B2620;overflow-wrap:anywhere">{{ promptName }}</span>
+          </sc-if>
+          <sc-if value="{{ modeName }}">
+            <span style="font-family:Fredoka,sans-serif;font-weight:700;font-size:clamp(22px,5vw,32px);line-height:1.05;color:#2B2620">{{ nameModePrompt }}</span>
+          </sc-if>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex:1 1 240px;min-width:200px;max-width:300px">
+          <div style="display:flex;align-items:center;gap:5px;background:#FFF8F0;border:1.5px solid #F4E2D0;border-radius:11px;padding:4px;position:relative">
+            <sc-if value="{{ modeLocate }}"><div style="position:absolute;top:4px;left:4px;width:84px;height:28px;background:#fff;border-radius:8px;box-shadow:0 3px 8px -3px rgba(120,70,30,.4);border:1px solid #F0DCC8"></div></sc-if>
+            <sc-if value="{{ modeName }}"><div style="position:absolute;top:4px;left:92px;width:84px;height:28px;background:#fff;border-radius:8px;box-shadow:0 3px 8px -3px rgba(120,70,30,.4);border:1px solid #F0DCC8"></div></sc-if>
+            <button onClick="{{ onPlayModeLocate }}" style="position:relative;width:84px;height:28px;border:none;background:transparent;cursor:pointer;font-family:Fredoka,sans-serif;font-weight:600;font-size:13px;color:#5A4A3C;border-radius:8px">Find it</button>
+            <button onClick="{{ onPlayModeName }}" style="position:relative;width:84px;height:28px;border:none;background:transparent;cursor:pointer;font-family:Fredoka,sans-serif;font-weight:600;font-size:13px;color:#5A4A3C;border-radius:8px">Name it</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;width:100%">
+            <span style="font-size:11px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:#C7A98F">Combo</span>
+            <span style="font-family:Fredoka,sans-serif;font-weight:700;font-size:15px;color:#E8920E">{{ multLabel }}</span>
+            <div style="flex:1;height:8px;border-radius:6px;background:#FBEFDD;overflow:hidden"><div style="{{ comboFillStyle }}"></div></div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <div class="atlas-map" style="position:relative;width:100%;background:linear-gradient(180deg,#EAF6FB 0%,#F4FAFC 100%)">
+      <div ref="{{ mapRef }}" style="position:absolute;inset:0"></div>
+
+      <sc-if value="{{ loading }}">
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#F4FAFC;z-index:8">
+          <div style="width:42px;height:42px;border-radius:50%;border:4px solid #DCEBF2;border-top-color:#7FB4D6;animation:qzspin 1s linear infinite"></div>
+          <span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:16px;color:#8FB0C2">Unrolling the map…</span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showChoices }}">
+        <div style="position:absolute;left:0;right:0;bottom:14px;display:flex;justify-content:center;flex-wrap:wrap;gap:10px;padding:0 12px;pointer-events:none">
+          <sc-for list="{{ choices }}" as="choice" hint-placeholder-count="3">
+            <button onClick="{{ choice.onClick }}" style="{{ choice.style }}">{{ choice.name }}</button>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ screenPlay }}">
+        <div style="position:absolute;right:16px;bottom:16px;display:flex;flex-direction:column;gap:8px;z-index:7" class="atlas-zoom">
+          <button onClick="{{ onZoomIn }}" title="Zoom in" style="width:42px;height:42px;border-radius:12px;border:1.5px solid #E7DDCF;background:#fff;color:#5A4A3C;font-family:Fredoka,sans-serif;font-weight:600;font-size:22px;line-height:1;cursor:pointer;box-shadow:0 6px 16px -8px rgba(80,50,20,.5)" style-hover="background:#F6EFE6">+</button>
+          <button onClick="{{ onZoomOut }}" title="Zoom out" style="width:42px;height:42px;border-radius:12px;border:1.5px solid #E7DDCF;background:#fff;color:#5A4A3C;font-family:Fredoka,sans-serif;font-weight:600;font-size:24px;line-height:1;cursor:pointer;box-shadow:0 6px 16px -8px rgba(80,50,20,.5)" style-hover="background:#F6EFE6">&minus;</button>
+          <button onClick="{{ onZoomReset }}" title="Reset view" style="width:42px;height:42px;border-radius:12px;border:1.5px solid #E7DDCF;background:#fff;color:#8A7563;font-family:Fredoka,sans-serif;font-weight:600;font-size:16px;line-height:1;cursor:pointer;box-shadow:0 6px 16px -8px rgba(80,50,20,.5)" style-hover="background:#F6EFE6">&#8862;</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showSource }}">
+        <div style="position:absolute;top:16px;left:16px;z-index:9;max-width:62%;display:flex;align-items:center;gap:11px;background:#FFFFFF;border:1.5px solid #EFE2D2;border-radius:14px;padding:11px 15px;box-shadow:0 12px 28px -12px rgba(40,20,0,.4);animation:qzfade .3s ease both">
+          <span style="{{ sourceDotStyle }}"></span>
+          <span style="display:flex;flex-direction:column;line-height:1.25;text-align:left">
+            <span style="font-size:10.5px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;color:#C7A98F">Source &middot; {{ sourceTypeLabel }}</span>
+            <span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:16px;color:#2B2620">{{ sourceName }}</span>
+            <span style="font-size:12.5px;font-weight:600;color:#9C8A78">{{ sourcePlace }}</span>
+          </span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showToast }}">
+        <div style="position:absolute;top:18px;left:50%;transform:translateX(-50%);z-index:9;animation:qzpop .35s ease both">
+          <div style="{{ toastStyle }}">{{ toastText }}</div>
+        </div>
+      </sc-if>
+
+      <!-- HOME -->
+      <sc-if value="{{ screenHome }}">
+        <div class="atlas-panel-overlay qz-ov" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,250,244,.92);backdrop-filter:blur(3px);z-index:6;animation:qzfade .3s ease both;padding:24px">
+          <div style="width:min(880px,100%);text-align:center">
+            <h1 style="font-family:Fredoka,sans-serif;font-weight:700;font-size:clamp(28px,5.5vw,42px);margin:0 0 6px;color:#2B2620;line-height:1.1">Atlas Arcade</h1>
+            <p style="margin:0 0 26px;font-size:15px;font-weight:600;color:#9C8A78">Pick a map collection to practice.</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px">
+              <button onClick="{{ onPickWorld }}" style="display:flex;align-items:stretch;text-align:left;background:#fff;border:1.5px solid #F0E4D6;border-radius:18px;overflow:hidden;cursor:pointer;box-shadow:0 12px 28px -16px rgba(80,50,20,.5);transition:transform .15s, box-shadow .15s;padding:0" style-hover="transform:translateY(-3px);box-shadow:0 18px 36px -18px rgba(80,50,20,.6)">
+                <div style="width:8px;background:linear-gradient(180deg,#2FA37A,#2C9AD6);flex:none"></div>
+                <div style="display:flex;flex-direction:column;gap:6px;padding:20px 22px;flex:1">
+                  <span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:22px;color:#2B2620">World Mapping</span>
+                  <span style="font-size:14px;font-weight:600;color:#8A7563">6 continents · 169 countries</span>
+                  <span style="display:inline-flex;align-self:flex-start;background:#F0F8F3;color:#2FA37A;border:1.5px solid #C8E8D7;border-radius:8px;padding:3px 10px;font-size:11.5px;font-weight:800;letter-spacing:.6px;margin-top:6px">FIND IT · NAME IT</span>
+                </div>
+              </button>
+              <button onClick="{{ onPickIndia }}" style="display:flex;align-items:stretch;text-align:left;background:#fff;border:1.5px solid #F0E4D6;border-radius:18px;overflow:hidden;cursor:pointer;box-shadow:0 12px 28px -16px rgba(80,50,20,.5);transition:transform .15s, box-shadow .15s;padding:0" style-hover="transform:translateY(-3px);box-shadow:0 18px 36px -18px rgba(80,50,20,.6)">
+                <div style="width:8px;background:linear-gradient(180deg,#E8920E,#2C6FBF);flex:none"></div>
+                <div style="display:flex;flex-direction:column;gap:6px;padding:20px 22px;flex:1">
+                  <span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:22px;color:#2B2620">India Mapping</span>
+                  <span style="font-size:14px;font-weight:600;color:#8A7563">Rivers · National Parks</span>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- WORLD MENU -->
+      <sc-if value="{{ screenWorldMenu }}">
+        <div class="atlas-panel-overlay qz-ov" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,250,244,.86);backdrop-filter:blur(3px);z-index:6;animation:qzfade .3s ease both;padding:20px">
+          <div style="width:min(820px,100%);text-align:center">
+            <button onClick="{{ onHome }}" style="border:none;background:transparent;color:#B79A82;font-family:Fredoka,sans-serif;font-weight:600;font-size:14px;cursor:pointer;padding:0;margin-bottom:6px">&larr; Home</button>
+            <h2 style="font-family:Fredoka,sans-serif;font-weight:700;font-size:clamp(24px,5vw,34px);margin:0 0 4px;color:#2B2620">Choose a continent</h2>
+            <p style="margin:0 0 20px;font-size:15px;font-weight:600;color:#B79A82">Pick a region to drill — the map will zoom right in.</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+              <sc-for list="{{ continents }}" as="cont" hint-placeholder-count="6">
+                <button onClick="{{ cont.onClick }}" style="{{ cont.style }}" style-hover="transform:translateY(-3px);box-shadow:0 16px 30px -14px rgba(80,50,20,.5)">
+                  <span style="width:14px;height:14px;border-radius:50%;flex:none;background:{{ cont.color }}"></span>
+                  <span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.15">
+                    <span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:19px;color:#2B2620">{{ cont.name }}</span>
+                    <span style="font-size:13px;font-weight:700;color:#B79A82">{{ cont.count }} countries</span>
+                  </span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- INDIA MENU -->
+      <sc-if value="{{ screenIndiaMenu }}">
+        <div class="atlas-panel-overlay qz-ov" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,250,244,.86);backdrop-filter:blur(3px);z-index:6;animation:qzfade .3s ease both;padding:20px">
+          <div style="width:min(720px,100%);text-align:center">
+            <button onClick="{{ onHome }}" style="border:none;background:transparent;color:#B79A82;font-family:Fredoka,sans-serif;font-weight:600;font-size:14px;cursor:pointer;padding:0;margin-bottom:6px">&larr; Home</button>
+            <h2 style="font-family:Fredoka,sans-serif;font-weight:700;font-size:clamp(24px,5vw,34px);margin:0 0 4px;color:#2B2620">India Mapping</h2>
+            <p style="margin:0 0 20px;font-size:15px;font-weight:600;color:#B79A82">Pick a topic to practice.</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+              <sc-for list="{{ indiaCategories }}" as="cat" hint-placeholder-count="2">
+                <button onClick="{{ cat.onClick }}" style="{{ cat.style }}" style-hover="transform:translateY(-3px);box-shadow:0 16px 30px -14px rgba(80,50,20,.5)">
+                  <span style="width:14px;height:14px;border-radius:50%;flex:none;background:{{ cat.color }}"></span>
+                  <span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.15">
+                    <span style="display:flex;align-items:center;gap:8px"><span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:19px;color:#2B2620">{{ cat.name }}</span></span>
+                    <span style="font-size:13px;font-weight:700;color:#B79A82">{{ cat.subtitle }}</span>
+                  </span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- RIVER SYSTEMS MENU -->
+      <sc-if value="{{ screenRiverSystems }}">
+        <div class="atlas-panel-overlay qz-ov" style="position:absolute;inset:0;display:flex;align-items:stretch;justify-content:center;background:rgba(255,250,244,.86);backdrop-filter:blur(3px);z-index:6;animation:qzfade .3s ease both;padding:20px;overflow:auto">
+          <div style="width:min(900px,100%);text-align:center;margin:auto 0;padding:8px 0">
+            <button onClick="{{ onBackToIndiaMenu }}" style="border:none;background:transparent;color:#B79A82;font-family:Fredoka,sans-serif;font-weight:600;font-size:14px;cursor:pointer;padding:0;margin-bottom:6px">&larr; India topics</button>
+            <h2 style="font-family:Fredoka,sans-serif;font-weight:700;font-size:clamp(24px,5vw,34px);margin:0 0 4px;color:#2B2620">River systems</h2>
+            <p style="margin:0 0 20px;font-size:15px;font-weight:600;color:#B79A82">Practice one system at a time — the map zooms to its region.</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;padding-bottom:10px">
+              <sc-for list="{{ riverSystems }}" as="sys" hint-placeholder-count="1">
+                <button onClick="{{ sys.onClick }}" style="{{ sys.style }}" style-hover="transform:translateY(-3px);box-shadow:0 16px 30px -14px rgba(80,50,20,.5)">
+                  <span style="width:16px;height:16px;border-radius:50%;flex:none;background:{{ sys.color }}"></span>
+                  <span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.2">
+                    <span style="display:flex;align-items:center;gap:8px"><span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:19px;color:#2B2620">{{ sys.name }}</span></span>
+                    <span style="font-size:13px;font-weight:600;color:#9C8A78">{{ sys.blurb }}</span>
+                  </span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- NATIONAL PARKS MENU -->
+      <sc-if value="{{ screenParkRegions }}">
+        <div class="atlas-panel-overlay qz-ov" style="position:absolute;inset:0;display:flex;align-items:stretch;justify-content:center;background:rgba(255,250,244,.86);backdrop-filter:blur(3px);z-index:6;animation:qzfade .3s ease both;padding:20px;overflow:auto">
+          <div style="width:min(940px,100%);text-align:center;margin:auto 0;padding:8px 0">
+            <button onClick="{{ onBackToIndiaMenu }}" style="border:none;background:transparent;color:#B79A82;font-family:Fredoka,sans-serif;font-weight:600;font-size:14px;cursor:pointer;padding:0;margin-bottom:6px">&larr; India topics</button>
+            <div style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap">
+              <span style="width:46px;height:46px;border-radius:16px;background:linear-gradient(145deg,#2FA37A,#135F3E);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 12px 22px -12px rgba(20,90,55,.75)">
+                <svg width="29" height="29" viewBox="0 0 32 32" aria-hidden="true">
+                  <path d="M16 3 C10 8 7 13 7 18 C7 23 11 27 16 27 C21 27 25 23 25 18 C25 13 22 8 16 3Z" fill="#DFF7C6"></path>
+                  <path d="M16 8 V27 M11 17 L16 21 L21 16" fill="none" stroke="#137047" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </span>
+              <h2 style="font-family:Fredoka,sans-serif;font-weight:700;font-size:clamp(24px,5vw,34px);margin:0;color:#2B2620">National Parks</h2>
+            </div>
+            <p style="margin:8px 0 18px;font-size:15px;font-weight:600;color:#B79A82">Learn park locations first, then practice by broad UPSC regions.</p>
+            <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+              <button onClick="{{ onPracticeAllParks }}" style="border:2px solid #B9DCC8;background:#F0FAF4;color:#15784E;font-family:Fredoka,sans-serif;font-weight:600;font-size:15px;padding:11px 18px;border-radius:13px;cursor:pointer">Practice all</button>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;padding-bottom:8px">
+              <sc-for list="{{ parkRegions }}" as="reg" hint-placeholder-count="5">
+                <div style="{{ reg.style }}">
+                  <span style="width:16px;height:16px;border-radius:50%;flex:none;background:{{ reg.color }}"></span>
+                  <span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.2;flex:1;min-width:0">
+                    <span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:17px;color:#2B2620">{{ reg.name }}</span><span style="font-size:12px;font-weight:800;color:#B79A82">{{ reg.count }}</span></span>
+                    <span style="font-size:12.5px;font-weight:600;color:#9C8A78">{{ reg.blurb }}</span>
+                    <span style="display:flex;gap:8px;margin-top:9px;flex-wrap:wrap">
+                      <button onClick="{{ reg.onLearn }}" style="{{ reg.learnStyle }}">Learn</button>
+                      <button onClick="{{ reg.onPractice }}" style="{{ reg.practiceStyle }}">Practice</button>
+                    </span>
+                  </span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- NATIONAL PARKS LEARN -->
+      <sc-if value="{{ screenParkLearn }}">
+        <div style="position:absolute;left:12px;right:12px;bottom:12px;z-index:6;pointer-events:none">
+          <div style="width:min(1040px,100%);margin:0 auto;background:rgba(255,255,255,.92);border:1.5px solid #DCEBDE;border-radius:17px;box-shadow:0 18px 38px -24px rgba(20,70,45,.55);padding:9px 10px;pointer-events:auto;backdrop-filter:blur(7px)" class="park-learn-strip">
+            <div style="display:flex;align-items:center;gap:9px;min-width:0">
+              <button onClick="{{ onBackToParkRegions }}" title="Park regions" style="width:34px;height:34px;border:1.5px solid #D7EBD7;background:#fff;color:#15784E;border-radius:11px;font-family:Fredoka,sans-serif;font-weight:700;font-size:18px;cursor:pointer;flex:none">&larr;</button>
+              <span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.08;min-width:138px;max-width:245px;flex:none">
+                <span style="font-family:Fredoka,sans-serif;font-weight:700;font-size:17px;color:#203A2B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">{{ parkLearnTitle }}</span>
+                <span style="font-size:12px;font-weight:700;color:#6E8874;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">{{ parkLearnSubtitle }}</span>
+              </span>
+              <div style="display:flex;gap:7px;overflow-x:auto;overflow-y:hidden;flex:1;min-width:150px;padding:2px 2px 4px" class="qz-ov">
+              <sc-for list="{{ parkLearnStateOptions }}" as="opt" hint-placeholder-count="5">
+                <button onClick="{{ opt.onClick }}" style="{{ opt.style }}">{{ opt.label }}</button>
+              </sc-for>
+              </div>
+              <button onClick="{{ onPracticeLearnRegion }}" style="border:2px solid #B9DCC8;background:#F0FAF4;color:#15784E;font-family:Fredoka,sans-serif;font-weight:700;font-size:13px;padding:8px 12px;border-radius:11px;cursor:pointer;flex:none">Practice region</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- SETUP -->
+      <sc-if value="{{ screenSetup }}">
+        <div class="atlas-panel-overlay qz-ov" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,250,244,.84);backdrop-filter:blur(3px);z-index:6;animation:qzfade .3s ease both;padding:16px">
+          <div style="width:min(560px,100%);background:#fff;border-radius:22px;padding:clamp(20px,4vw,30px) clamp(20px,4vw,32px);box-shadow:0 30px 70px -24px rgba(80,50,20,.55);border:1px solid #F5ECE0;max-height:96%;overflow:auto" class="qz-ov">
+            <button onClick="{{ onBack }}" style="border:none;background:transparent;color:#B79A82;font-family:Fredoka,sans-serif;font-weight:600;font-size:14px;cursor:pointer;padding:0;margin-bottom:10px">{{ setupBackLabel }}</button>
+            <div style="display:flex;align-items:center;gap:11px;margin-bottom:22px;flex-wrap:wrap">
+              <span style="width:18px;height:18px;border-radius:50%;background:{{ contColor }}"></span>
+              <h2 style="font-family:Fredoka,sans-serif;font-weight:700;font-size:clamp(22px,5vw,30px);margin:0;color:#2B2620">{{ setupTitle }}</h2>
+              <span style="font-size:14px;font-weight:700;color:#B79A82">{{ setupCountLabel }}</span>
+            </div>
+
+            <p style="margin:0 0 10px;font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#C7A98F">How many to practice?</p>
+            <div style="display:flex;flex-wrap:wrap;gap:9px;margin-bottom:24px">
+              <sc-for list="{{ countOptions }}" as="opt" hint-placeholder-count="4">
+                <button onClick="{{ opt.onClick }}" style="{{ opt.style }}">{{ opt.label }}</button>
+              </sc-for>
+            </div>
+
+            <p style="margin:0 0 10px;font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#C7A98F">Quiz style</p>
+            <div style="display:flex;gap:11px;margin-bottom:28px;flex-wrap:wrap">
+              <button onClick="{{ onModeLocate }}" style="{{ setupLocateStyle }}">
+                <span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:16px">Find it</span>
+                <span style="font-size:12.5px;font-weight:600;color:#9C8A78">{{ findItHelp }}</span>
+              </button>
+              <button onClick="{{ onModeName }}" style="{{ setupNameStyle }}">
+                <span style="font-family:Fredoka,sans-serif;font-weight:600;font-size:16px">Name it</span>
+                <span style="font-size:12.5px;font-weight:600;color:#9C8A78">Pick from 3 options</span>
+              </button>
+            </div>
+
+            <button onClick="{{ onStart }}" style="width:100%;border:none;color:#fff;font-family:Fredoka,sans-serif;font-weight:600;font-size:19px;padding:15px;border-radius:15px;cursor:pointer;background:{{ accent }};box-shadow:0 12px 26px -10px rgba(255,122,77,.8)" style-hover="filter:brightness(1.05)">Start quiz &rarr;</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- RESULTS -->
+      <sc-if value="{{ screenResults }}">
+        <div class="atlas-panel-overlay qz-ov" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,250,244,.86);backdrop-filter:blur(3px);z-index:6;animation:qzfade .3s ease both;padding:16px">
+          <div style="width:min(600px,100%);background:#fff;border-radius:22px;padding:clamp(20px,4vw,30px) clamp(20px,4vw,34px);box-shadow:0 30px 70px -24px rgba(80,50,20,.55);border:1px solid #F5ECE0;max-height:96%;overflow:auto" class="qz-ov">
+            <h2 style="font-family:Fredoka,sans-serif;font-weight:700;font-size:clamp(24px,5.5vw,32px);margin:0 0 4px;color:#2B2620">{{ resultTitle }}</h2>
+            <p style="margin:0 0 22px;font-size:15px;font-weight:600;color:#B79A82">{{ topicLabel }} &middot; {{ resultMode }}</p>
+
+            <div style="display:flex;gap:14px;margin-bottom:24px;flex-wrap:wrap">
+              <div style="flex:1 1 130px;background:#F4FAF6;border:1.5px solid #D6EEE0;border-radius:16px;padding:16px;text-align:center">
+                <div style="font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#7CB79A">Correct</div>
+                <div style="font-family:Fredoka,sans-serif;font-weight:700;font-size:30px;color:#15784E">{{ resultCorrect }}/{{ qTotal }}</div>
+              </div>
+              <div style="flex:1 1 130px;background:#F6F4FE;border:1.5px solid #DCD3F7;border-radius:16px;padding:16px;text-align:center">
+                <div style="font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#9B8CD8">Accuracy</div>
+                <div style="font-family:Fredoka,sans-serif;font-weight:700;font-size:30px;color:#5B45D6">{{ resultAccuracy }}%</div>
+              </div>
+              <div style="flex:1 1 130px;background:#FFF8EC;border:1.5px solid #FBE6C2;border-radius:16px;padding:16px;text-align:center">
+                <div style="font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#E0A94B">Score</div>
+                <div style="font-family:Fredoka,sans-serif;font-weight:700;font-size:30px;color:#E8920E">{{ score }}</div>
+              </div>
+            </div>
+
+            <sc-if value="{{ hasMissed }}">
+              <div style="margin-bottom:24px">
+                <p style="margin:0 0 10px;font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#C7A98F">{{ reviewLabel }} ({{ missedCount }})</p>
+                <div style="display:flex;flex-wrap:wrap;gap:8px">
+                  <sc-for list="{{ missedList }}" as="m" hint-placeholder-count="4">
+                    <span style="background:#FFECEC;color:#C13238;border:1.5px solid #FFC9CB;border-radius:10px;padding:6px 12px;font-weight:700;font-size:14px">{{ m.name }}</span>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+            <div style="display:flex;flex-direction:column;gap:11px">
+              <sc-if value="{{ hasMissed }}">
+                <button onClick="{{ onPracticeWrong }}" style="width:100%;border:none;color:#fff;font-family:Fredoka,sans-serif;font-weight:600;font-size:18px;padding:15px;border-radius:15px;cursor:pointer;background:{{ accent }};box-shadow:0 12px 26px -10px rgba(255,122,77,.8)" style-hover="filter:brightness(1.05)">Practice the {{ missedCount }} I missed &rarr;</button>
+              </sc-if>
+              <div style="display:flex;gap:11px;flex-wrap:wrap">
+                <button onClick="{{ onRestart }}" style="flex:1 1 180px;border:1.5px solid #EADFD2;background:#fff;color:#5A4A3C;font-family:Fredoka,sans-serif;font-weight:600;font-size:16px;padding:13px;border-radius:14px;cursor:pointer" style-hover="background:#F6EFE6">{{ restartLabel }}</button>
+                <button onClick="{{ onMenu }}" style="flex:1 1 180px;border:1.5px solid #EADFD2;background:#fff;color:#5A4A3C;font-family:Fredoka,sans-serif;font-weight:600;font-size:16px;padding:13px;border-radius:14px;cursor:pointer" style-hover="background:#F6EFE6">{{ menuLabel }}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+
+    <sc-if value="{{ screenPlay }}">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:clamp(10px,3vw,16px) clamp(12px,4vw,26px);border-top:1px solid #F5ECE0;background:#FFFDFA">
+        <div style="display:flex;align-items:center;gap:11px;flex-wrap:wrap">
+          <button onClick="{{ onMenu }}" title="Quit" style="display:flex;align-items:center;gap:7px;border:1.5px solid #EADFD2;background:#fff;color:#8A7563;font-family:Fredoka,sans-serif;font-weight:600;font-size:15px;padding:11px 16px;border-radius:13px;cursor:pointer" style-hover="background:#F6EFE6">&larr; Quit</button>
+          <button onClick="{{ onHint }}" style="display:flex;align-items:center;gap:9px;border:1.5px solid #FBE0C4;background:#FFF6EC;color:#D9760B;font-family:Fredoka,sans-serif;font-weight:600;font-size:15px;padding:11px 18px;border-radius:13px;cursor:pointer" style-hover="background:#FFEED8">
+            <span style="display:inline-flex;width:22px;height:22px;border-radius:50%;background:#FFD89B;color:#A85F08;align-items:center;justify-content:center;font-weight:800;font-size:13px">?</span>
+            Hint
+            <span style="font-size:13px;font-weight:800;color:#C99A5B;background:#FCEBD4;border-radius:8px;padding:2px 8px">{{ hintsLeft }} left</span>
+          </button>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;max-width:480px">
+          <sc-for list="{{ dots }}" as="d" hint-placeholder-count="10">
+            <span style="{{ d.style }}"></span>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+          <button onClick="{{ onPrevious }}" style="{{ previousBtnStyle }}" style-hover="background:#F6EFE6">&larr; Previous</button>
+          <button onClick="{{ onSkip }}" style="border:1.5px solid #EADFD2;background:#fff;color:#8A7563;font-family:Fredoka,sans-serif;font-weight:600;font-size:15px;padding:11px 22px;border-radius:13px;cursor:pointer" style-hover="background:#F6EFE6">{{ skipLabel }}</button>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+
+  <p style="max-width:1180px;width:100%;margin:16px 2px 0;font-size:13.5px;font-weight:600;color:#B79A82;line-height:1.5">Tip: build streaks of 3+ to unlock combo multipliers. Tap the logo to return home anytime.</p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;},&quot;primaryColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#FF7A4D&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;oceanColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#AFDCEC&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.mapRef = React.createRef();
+    this.pathById = {};
+    this.featById = {};
+    this.nameById = {};
+    this.centroidById = {};
+    this.idToCont = {};
+    this.riverById = {};
+    this.riverLabelById = {};
+    this.parkById = {};
+    this.statePathByName = {};
+    this.frozen = false;
+    this.activeContinent = null;
+    this.audio = null;
+    this.GREEN = '#22A36A';
+    this.RED = '#FF5A5F';
+    this.AMBER = '#FFB020';
+    this.GREY = '#E3DDD1';
+    this.RIVER_COLOR = '#2C6FBF';
+    this.PARK_COLOR = '#168A55';
+    this.W = 1000; this.H = 548;
+    this.RIVER_BOUNDS = [65,5,98,38];
+    this.RIVER_DEBUG = true;
+    this.WORLD = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
+    this.PALETTE = ['#F6D9A8','#CFE8C0','#BFE1E6','#E9CFE4','#F4CBC0','#D9D7F0'];
+    this.ORDER = ['Africa','Europe','Asia','North America','South America','Oceania'];
+    this.CONT_COLOR = {Africa:'#E8920E',Europe:'#6C5CE7',Asia:'#E0563B','North America':'#2FA37A','South America':'#C9489B',Oceania:'#2C9AD6'};
+    this.CONT_DATA = {
+      'Europe':[[250,'France'],[276,'Germany'],[826,'United Kingdom'],[380,'Italy'],[724,'Spain'],[620,'Portugal'],[372,'Ireland'],[528,'Netherlands'],[56,'Belgium'],[756,'Switzerland'],[40,'Austria'],[616,'Poland'],[203,'Czechia'],[703,'Slovakia'],[348,'Hungary'],[642,'Romania'],[100,'Bulgaria'],[300,'Greece'],[752,'Sweden'],[578,'Norway'],[246,'Finland'],[208,'Denmark'],[352,'Iceland'],[804,'Ukraine'],[112,'Belarus'],[688,'Serbia'],[191,'Croatia'],[70,'Bosnia & Herzegovina'],[8,'Albania'],[440,'Lithuania'],[428,'Latvia'],[233,'Estonia'],[498,'Moldova'],[705,'Slovenia'],[807,'North Macedonia'],[499,'Montenegro'],[442,'Luxembourg'],[470,'Malta'],[196,'Cyprus'],[20,'Andorra'],[438,'Liechtenstein'],[492,'Monaco'],[674,'San Marino']],
+      'Asia':[[156,'China'],[356,'India'],[392,'Japan'],[410,'South Korea'],[408,'North Korea'],[496,'Mongolia'],[643,'Russia'],[398,'Kazakhstan'],[860,'Uzbekistan'],[795,'Turkmenistan'],[417,'Kyrgyzstan'],[762,'Tajikistan'],[4,'Afghanistan'],[586,'Pakistan'],[364,'Iran'],[368,'Iraq'],[682,'Saudi Arabia'],[887,'Yemen'],[512,'Oman'],[784,'United Arab Emirates'],[760,'Syria'],[400,'Jordan'],[376,'Israel'],[422,'Lebanon'],[792,'Turkey'],[764,'Thailand'],[704,'Vietnam'],[116,'Cambodia'],[418,'Laos'],[104,'Myanmar'],[458,'Malaysia'],[360,'Indonesia'],[608,'Philippines'],[50,'Bangladesh'],[524,'Nepal'],[144,'Sri Lanka'],[64,'Bhutan'],[268,'Georgia'],[51,'Armenia'],[31,'Azerbaijan'],[634,'Qatar'],[414,'Kuwait'],[48,'Bahrain'],[702,'Singapore'],[96,'Brunei'],[158,'Taiwan'],[462,'Maldives'],[626,'Timor-Leste'],[275,'Palestine']],
+      'Africa':[[818,'Egypt'],[504,'Morocco'],[12,'Algeria'],[788,'Tunisia'],[434,'Libya'],[729,'Sudan'],[728,'South Sudan'],[231,'Ethiopia'],[232,'Eritrea'],[404,'Kenya'],[834,'Tanzania'],[800,'Uganda'],[646,'Rwanda'],[108,'Burundi'],[566,'Nigeria'],[288,'Ghana'],[384,"Côte d'Ivoire"],[686,'Senegal'],[466,'Mali'],[562,'Niger'],[148,'Chad'],[120,'Cameroon'],[180,'DR Congo'],[178,'Congo'],[24,'Angola'],[894,'Zambia'],[716,'Zimbabwe'],[710,'South Africa'],[516,'Namibia'],[72,'Botswana'],[508,'Mozambique'],[450,'Madagascar'],[706,'Somalia'],[478,'Mauritania'],[266,'Gabon'],[324,'Guinea'],[854,'Burkina Faso'],[454,'Malawi'],[430,'Liberia'],[694,'Sierra Leone'],[140,'Central African Rep.'],[204,'Benin'],[768,'Togo'],[426,'Lesotho'],[748,'Eswatini'],[262,'Djibouti'],[226,'Equatorial Guinea'],[270,'Gambia'],[624,'Guinea-Bissau'],[174,'Comoros'],[132,'Cape Verde'],[678,'São Tomé & Príncipe'],[480,'Mauritius'],[690,'Seychelles'],[732,'Western Sahara']],
+      'North America':[[840,'United States'],[124,'Canada'],[484,'Mexico'],[320,'Guatemala'],[84,'Belize'],[340,'Honduras'],[222,'El Salvador'],[558,'Nicaragua'],[188,'Costa Rica'],[591,'Panama'],[192,'Cuba'],[214,'Dominican Republic'],[332,'Haiti'],[388,'Jamaica'],[780,'Trinidad & Tobago'],[44,'Bahamas'],[304,'Greenland'],[52,'Barbados'],[28,'Antigua & Barbuda'],[308,'Grenada'],[212,'Dominica'],[662,'Saint Lucia'],[670,'Saint Vincent & Grenadines'],[659,'Saint Kitts & Nevis']],
+      'South America':[[76,'Brazil'],[32,'Argentina'],[152,'Chile'],[604,'Peru'],[170,'Colombia'],[862,'Venezuela'],[218,'Ecuador'],[68,'Bolivia'],[600,'Paraguay'],[858,'Uruguay'],[328,'Guyana'],[740,'Suriname']],
+      'Oceania':[[36,'Australia'],[554,'New Zealand'],[598,'Papua New Guinea'],[242,'Fiji'],[90,'Solomon Islands'],[548,'Vanuatu'],[882,'Samoa'],[776,'Tonga'],[296,'Kiribati'],[583,'Micronesia'],[584,'Marshall Islands'],[585,'Palau'],[520,'Nauru'],[798,'Tuvalu']]
+    };
+    this.RIVER_SYSTEMS = [
+      {key:'indus', name:'Indus System', color:'#2C9AD6', bounds:[[69.5,28],[81,36.8]], blurb:'Indus and northwest tributaries'},
+      {key:'ganga', name:'Ganga System', color:'#2C6FBF', bounds:[[73.5,21],[90.6,31.5]], blurb:'Ganga and its direct tributaries'},
+      {key:'yamuna', name:'Yamuna System', color:'#3E8FB8', bounds:[[74,22],[82.6,31.5]], blurb:'Yamuna and its plateau tributaries'},
+      {key:'brahmaputra', name:'Brahmaputra System', color:'#6C5CE7', bounds:[[88,24.5],[97.7,29]], blurb:"The northeast's mighty river"},
+      {key:'mahanadi', name:'Mahanadi System', color:'#188F70', bounds:[[80.5,19],[87.4,22.2]], blurb:'Chhattisgarh and Odisha drainage'},
+      {key:'godavari', name:'Godavari System', color:'#1F8A5B', bounds:[[72.8,16.3],[83.2,22.6]], blurb:'Dakshin Ganga and tributaries'},
+      {key:'krishna', name:'Krishna System', color:'#4E9F3D', bounds:[[72.8,13.0],[81.4,19.7]], blurb:'Krishna, Bhima and Tungabhadra'},
+      {key:'kaveri', name:'Kaveri System', color:'#0E9AA7', bounds:[[75,9.5],[80.8,13.8]], blurb:'Kaveri and southern tributaries'},
+      {key:'west', name:'West-Flowing & Inland', color:'#8A6F3D', bounds:[[69.5,20.5],[82.3,27.2]], blurb:'Narmada, Tapi, Mahi, Sabarmati and Luni'},
+      {key:'eastcoast', name:'Other East-Flowing', color:'#C9489B', bounds:[[76.5,8.5],[88,24]], blurb:'Pennar, Subarnarekha, Brahmani and coastal rivers'},
+      {key:'kerala', name:'Kerala & West Coast', color:'#E8920E', bounds:[[73,8],[77.6,16.2]], blurb:'Periyar, Pamba and Mahadayi/Mandovi'},
+      {key:'barak', name:'Barak System', color:'#9B59B6', bounds:[[91,22],[94.8,26]], blurb:'Manipur, Mizoram, Assam and Surma-Barak'}
+    ];
+    this.RIVERS = [
+      // Indus system (Himalayan)
+      {id:5101, name:'Indus', sys:'indus', region:'Ladakh', major:true, src:{type:'lake',name:'Glacier near Mansarovar',place:'Tibet'}, points:[[80.0,32.5],[79.5,32.8],[79.0,33.0],[78.5,33.5],[77.7,34.1],[77.2,34.4],[76.5,34.5],[75.5,34.4],[74.5,34.2],[73.7,33.8]]},
+      {id:5102, name:'Jhelum', sys:'indus', region:'Kashmir', major:false, src:{type:'spring',name:'Verinag Spring',place:'Pir Panjal, J&K'}, points:[[75.1,33.6],[74.85,33.8],[74.85,34.0],[74.5,34.1],[74.4,34.3]]},
+      {id:5103, name:'Chenab', sys:'indus', region:'Jammu & Kashmir', major:false, src:{type:'glacier',name:'Bara Lacha Pass',place:'Himachal Pradesh'}, points:[[76.5,33.2],[75.9,33.0],[75.3,32.9],[74.6,32.9],[74.0,32.7]]},
+      {id:5104, name:'Ravi', sys:'indus', region:'Himachal & Punjab', major:false, src:{type:'mountain',name:'Bara Bhangal',place:'Himachal Pradesh'}, points:[[76.5,32.4],[75.9,32.3],[75.3,32.1],[74.8,31.9],[74.4,31.7],[74.3,31.4]]},
+      {id:5105, name:'Beas', sys:'indus', region:'Himachal & Punjab', major:false, src:{type:'glacier',name:'Beas Kund, Rohtang',place:'Himachal Pradesh'}, points:[[77.5,32.4],[77.0,32.0],[76.5,31.8],[76.0,31.6],[75.4,31.3],[75.0,30.95]]},
+      {id:5106, name:'Satluj', sys:'indus', region:'Punjab', major:true, src:{type:'lake',name:'Rakshastal Lake',place:'Tibet'}, points:[[78.5,31.5],[77.7,31.45],[76.7,31.4],[76.0,31.2],[75.5,31.05],[75.0,30.85],[74.6,30.75]]},
+      {id:5142, name:'Shyok', sys:'indus', region:'Ladakh', major:false, src:{type:'glacier',name:'Rimo Glacier',place:'Karakoram Range'}, points:[[77.8,35.1],[77.0,35.0],[76.3,34.8],[75.7,34.7],[75.0,34.6],[74.6,34.4]]},
+      {id:5143, name:'Zanskar', sys:'indus', region:'Ladakh', major:false, src:{type:'glacier',name:'Zanskar Range',place:'Ladakh'}, points:[[77.8,33.4],[77.4,33.7],[77.0,33.9],[76.7,34.0],[76.4,34.1]]},
+      {id:5144, name:'Dras', sys:'indus', region:'Ladakh', major:false, src:{type:'glacier',name:'Zoji La area',place:'Ladakh'}, points:[[75.8,34.5],[75.4,34.5],[75.0,34.5],[74.7,34.4]]},
+      // Ganga + Himalayan tributaries
+      {id:5107, name:'Ganga', sys:'ganga', region:'North India plains', major:true, src:{type:'glacier',name:'Gangotri Glacier (Gaumukh)',place:'Uttarakhand'}, points:[[78.94,30.99],[78.3,29.95],[78.0,29.4],[79.0,28.7],[79.6,28.0],[80.34,26.46],[81.0,25.9],[81.85,25.43],[82.5,25.35],[83.0,25.31],[83.6,25.4],[84.6,25.59],[85.13,25.59],[86.0,25.3],[86.5,25.0],[87.0,24.9],[87.85,24.79],[88.2,24.0],[88.36,23.55],[88.2,22.7],[88.04,22.04]]},
+      {id:5145, name:'Bhagirathi', sys:'ganga', region:'Uttarakhand', major:false, src:{type:'glacier',name:'Gangotri Glacier (Gaumukh)',place:'Uttarakhand'}, points:[[78.94,30.99],[78.75,30.75],[78.55,30.5],[78.45,30.25],[78.55,30.05]]},
+      {id:5146, name:'Alaknanda', sys:'ganga', region:'Uttarakhand', major:false, src:{type:'glacier',name:'Satopanth Glacier',place:'Uttarakhand'}, points:[[79.3,30.7],[79.1,30.5],[78.9,30.25],[78.75,30.05],[78.55,30.05]]},
+      {id:5147, name:'Mandakini', sys:'ganga', region:'Uttarakhand', major:false, src:{type:'glacier',name:'Chorabari Glacier',place:'Uttarakhand'}, points:[[79.05,30.75],[78.95,30.5],[78.85,30.3],[78.8,30.15]]},
+      {id:5108, name:'Yamuna', sys:'yamuna', region:'North India plains', major:true, src:{type:'glacier',name:'Yamunotri Glacier',place:'Uttarakhand'}, points:[[78.45,30.99],[77.85,30.27],[77.21,28.61],[77.5,27.9],[78.0,27.18],[78.5,26.5],[79.0,26.1],[80.0,25.8],[81.0,25.6],[81.85,25.43]]},
+      {id:5109, name:'Chambal', sys:'yamuna', region:'Madhya Pradesh & Rajasthan', major:false, src:{type:'hills',name:'Janapav Hills',place:'Vindhya Range, MP'}, points:[[75.5,22.5],[75.7,23.1],[76.0,23.7],[76.5,24.2],[77.0,24.8],[77.5,25.2],[78.5,25.7],[79.0,26.1],[79.3,26.5]]},
+      {id:5110, name:'Betwa', sys:'yamuna', region:'Madhya Pradesh', major:false, src:{type:'hills',name:'Vindhya Range',place:'Madhya Pradesh'}, points:[[77.7,23.2],[78.0,23.8],[78.5,24.4],[79.0,24.9],[79.5,25.5],[80.0,25.9]]},
+      {id:5111, name:'Ken', sys:'yamuna', region:'Madhya Pradesh', major:false, src:{type:'hills',name:'Kaimur Range',place:'Madhya Pradesh'}, points:[[80.0,23.5],[80.2,24.2],[80.4,24.8],[80.6,25.4],[80.8,25.9]]},
+      {id:5112, name:'Son', sys:'ganga', region:'Madhya Pradesh & Bihar', major:false, src:{type:'hills',name:'Amarkantak Plateau',place:'Madhya Pradesh'}, points:[[81.8,22.7],[82.5,23.5],[83.3,24.2],[83.9,24.7],[84.7,25.5]]},
+      {id:5113, name:'Ghaghra', sys:'ganga', region:'Uttar Pradesh & Bihar', major:false, src:{type:'glacier',name:'Mapchachungo Glacier',place:'Tibet / Himalaya'}, points:[[81.5,29.5],[81.8,28.8],[82.0,28.1],[82.2,27.2],[82.7,26.5],[83.4,26.0],[84.5,25.6]]},
+      {id:5114, name:'Gandak', sys:'ganga', region:'Bihar', major:false, src:{type:'glacier',name:'Nhubine Himal Glacier',place:'Nepal'}, points:[[84.4,28.0],[84.6,27.3],[84.7,26.5],[84.85,25.95],[85.13,25.59]]},
+      {id:5115, name:'Kosi', sys:'ganga', region:'Bihar', major:false, src:{type:'mountain',name:'Himalayas (near Everest)',place:'Tibet / Nepal'}, points:[[86.5,28.0],[86.8,27.0],[87.0,26.5],[87.2,26.0],[87.85,24.79]]},
+      {id:5116, name:'Damodar', sys:'ganga', region:'Jharkhand & West Bengal', major:false, src:{type:'hills',name:'Chotanagpur Plateau',place:'Jharkhand'}, points:[[84.5,23.7],[85.3,23.6],[86.0,23.7],[86.8,23.6],[87.4,23.4],[88.0,22.8]]},
+      {id:5148, name:'Ramganga', sys:'ganga', region:'Uttarakhand & Uttar Pradesh', major:false, src:{type:'hills',name:'Garhwal Hills near Gairsain',place:'Uttarakhand'}, points:[[79.2,30.1],[79.0,29.8],[78.7,29.4],[78.7,28.9],[79.2,28.5],[79.8,28.0],[80.1,27.3],[80.2,26.9]]},
+      {id:5149, name:'Gomati', sys:'ganga', region:'Uttar Pradesh', major:false, src:{type:'hills',name:'Gomat Taal area',place:'Uttar Pradesh'}, points:[[80.1,28.6],[80.4,27.9],[80.8,27.3],[81.1,26.8],[81.4,26.3],[82.0,25.8],[82.9,25.5]]},
+      {id:5150, name:'Sarda', sys:'ganga', region:'Uttarakhand & Uttar Pradesh', major:false, src:{type:'glacier',name:'Milam Glacier',place:'Kumaon Himalaya'}, points:[[80.2,30.4],[80.4,29.8],[80.6,29.2],[80.8,28.6],[81.0,28.0],[81.4,27.6]]},
+      {id:5151, name:'Mahananda', sys:'ganga', region:'Bihar & West Bengal', major:false, src:{type:'hills',name:'Darjeeling Hills',place:'West Bengal'}, points:[[88.2,26.8],[88.1,26.2],[88.1,25.6],[88.0,25.0],[87.9,24.6]]},
+      // Brahmaputra system
+      {id:5117, name:'Brahmaputra', sys:'brahmaputra', region:'Northeast India', major:true, src:{type:'glacier',name:'Angsi Glacier (Chemayungdung)',place:'Tibet'}, points:[[95.32,28.07],[95.0,27.7],[94.5,27.5],[93.8,27.2],[93.0,26.9],[92.3,26.6],[91.7,26.2],[91.0,26.0],[90.5,26.05],[89.93,25.95]]},
+      {id:5118, name:'Tista', sys:'brahmaputra', region:'Sikkim & North Bengal', major:false, src:{type:'lake',name:'Tso Lhamo Lake',place:'Sikkim'}, points:[[88.6,27.7],[88.7,27.2],[88.5,26.7],[88.7,26.3],[88.8,25.85]]},
+      {id:5119, name:'Subansiri', sys:'brahmaputra', region:'Arunachal Pradesh', major:false, src:{type:'mountain',name:'Himalayas',place:'Tibet'}, points:[[93.6,28.5],[93.85,28.0],[94.0,27.5],[94.05,27.3]]},
+      {id:5120, name:'Manas', sys:'brahmaputra', region:'Assam', major:false, src:{type:'mountain',name:'Himalayas',place:'Bhutan / Tibet'}, points:[[91.0,27.0],[91.0,26.5],[90.95,26.2],[90.9,26.0]]},
+      {id:5133, name:'Lohit', sys:'brahmaputra', region:'Arunachal Pradesh & Assam', major:false, src:{type:'mountain',name:'Eastern Himalayas',place:'Tibet / Arunachal Pradesh'}, points:[[97.2,28.1],[96.6,27.8],[96.1,27.6],[95.7,27.5],[95.3,27.6],[94.9,27.5]]},
+      {id:5152, name:'Dibang', sys:'brahmaputra', region:'Arunachal Pradesh', major:false, src:{type:'mountain',name:'Mishmi Hills',place:'Arunachal Pradesh'}, points:[[95.9,28.6],[95.6,28.1],[95.3,27.8],[95.1,27.6]]},
+      {id:5153, name:'Kameng', sys:'brahmaputra', region:'Arunachal Pradesh & Assam', major:false, src:{type:'mountain',name:'Eastern Himalayas',place:'Arunachal Pradesh'}, points:[[92.6,27.9],[92.5,27.4],[92.3,27.0],[92.1,26.7]]},
+      {id:5154, name:'Sankosh', sys:'brahmaputra', region:'Bhutan & Assam', major:false, src:{type:'mountain',name:'Bhutan Himalaya',place:'Bhutan'}, points:[[90.2,27.6],[90.1,27.0],[90.0,26.5],[89.9,26.1]]},
+      {id:5155, name:'Burhi Dihing', sys:'brahmaputra', region:'Assam', major:false, src:{type:'hills',name:'Patkai Hills',place:'Arunachal Pradesh'}, points:[[95.4,27.3],[95.1,27.1],[94.7,27.0],[94.3,27.0],[94.0,27.1]]},
+      {id:5156, name:'Dhansari', sys:'brahmaputra', region:'Assam', major:false, src:{type:'hills',name:'Naga Hills',place:'Nagaland'}, points:[[94.0,25.8],[93.7,26.0],[93.4,26.2],[93.1,26.4]]},
+      // Peninsular east-flowing
+      {id:5121, name:'Mahanadi', sys:'mahanadi', region:'Chhattisgarh & Odisha', major:true, src:{type:'hills',name:'Sihawa Hills',place:'Chhattisgarh'}, points:[[82.04,20.42],[81.7,20.9],[81.6,21.25],[82.0,21.45],[83.0,21.5],[84.0,21.45],[84.7,21.3],[85.2,21.0],[85.7,20.7],[85.88,20.46],[86.4,20.3],[86.7,20.3]]},
+      {id:5157, name:'Tel', sys:'mahanadi', region:'Chhattisgarh & Odisha', major:false, src:{type:'hills',name:'Eastern Ghats',place:'Odisha'}, points:[[82.8,19.5],[83.0,19.9],[83.2,20.2],[83.5,20.5],[83.9,20.7]]},
+      {id:5122, name:'Godavari', sys:'godavari', region:'Maharashtra to Andhra Pradesh', major:true, src:{type:'mountain',name:'Trimbak, Western Ghats',place:'Maharashtra'}, points:[[73.55,19.92],[74.0,20.0],[74.5,19.95],[75.32,19.88],[76.0,19.5],[77.3,19.15],[78.0,18.9],[79.0,18.5],[80.0,18.0],[80.9,17.66],[81.5,17.2],[81.78,17.0],[82.0,16.95],[82.3,16.95]]},
+      {id:5158, name:'Penganga', sys:'godavari', region:'Maharashtra & Telangana', major:false, src:{type:'hills',name:'Ajanta Range',place:'Maharashtra'}, points:[[76.3,20.4],[77.0,20.1],[77.7,19.8],[78.3,19.5],[78.8,19.3]]},
+      {id:5159, name:'Pranhita', sys:'godavari', region:'Maharashtra & Telangana', major:false, src:{type:'hills',name:'Wardha-Wainganga confluence',place:'Maharashtra'}, points:[[79.8,20.2],[79.9,19.7],[79.9,19.2],[79.8,18.7],[79.7,18.4]]},
+      {id:5160, name:'Manjra', sys:'godavari', region:'Maharashtra, Karnataka & Telangana', major:false, src:{type:'hills',name:'Balaghat Range',place:'Maharashtra'}, points:[[76.5,18.9],[76.9,18.5],[77.4,18.2],[78.0,18.1],[78.5,18.1]]},
+      {id:5123, name:'Krishna', sys:'krishna', region:'Maharashtra to Andhra Pradesh', major:true, src:{type:'mountain',name:'Mahabaleshwar, Western Ghats',place:'Maharashtra'}, points:[[73.66,17.93],[74.0,17.5],[74.5,17.0],[75.0,16.9],[76.0,16.7],[77.0,16.6],[78.0,16.5],[79.0,16.5],[80.0,16.5],[80.6,16.5],[80.92,15.72]]},
+      {id:5161, name:'Koyna', sys:'krishna', region:'Maharashtra', major:false, src:{type:'mountain',name:'Mahabaleshwar',place:'Maharashtra'}, points:[[73.75,17.9],[73.85,17.6],[74.0,17.3],[74.2,17.1]]},
+      {id:5124, name:'Kaveri', sys:'kaveri', region:'Karnataka to Tamil Nadu', major:true, src:{type:'mountain',name:'Talakaveri, Brahmagiri Hills',place:'Karnataka'}, points:[[75.5,12.4],[76.0,12.5],[76.5,12.5],[76.7,12.42],[77.0,12.2],[77.5,12.0],[78.0,11.5],[78.7,10.8],[79.4,10.85],[79.85,11.13]]},
+      {id:5162, name:'Kabini', sys:'kaveri', region:'Kerala & Karnataka', major:false, src:{type:'mountain',name:'Wayanad Hills',place:'Kerala'}, points:[[76.0,11.8],[76.2,11.9],[76.5,12.0],[76.7,12.1]]},
+      {id:5163, name:'Bhavani', sys:'kaveri', region:'Kerala & Tamil Nadu', major:false, src:{type:'mountain',name:'Nilgiri Hills',place:'Tamil Nadu'}, points:[[76.7,11.5],[77.0,11.4],[77.3,11.3],[77.7,11.3]]},
+      {id:5164, name:'Amravati', sys:'kaveri', region:'Tamil Nadu', major:false, src:{type:'mountain',name:'Anaimalai Hills',place:'Tamil Nadu'}, points:[[77.0,10.4],[77.3,10.6],[77.6,10.8],[78.0,11.0]]},
+      {id:5125, name:'Penna', sys:'eastcoast', region:'Karnataka & Andhra Pradesh', major:false, src:{type:'hills',name:'Nandi Hills',place:'Karnataka'}, points:[[77.5,14.0],[78.0,14.3],[78.5,14.5],[79.0,14.6],[79.5,14.5],[80.1,14.4]]},
+      {id:5126, name:'Subarnarekha', sys:'eastcoast', region:'Jharkhand & Odisha', major:false, src:{type:'hills',name:'Chotanagpur Plateau',place:'Jharkhand'}, points:[[85.5,23.3],[85.85,23.0],[86.0,22.6],[86.4,22.3],[86.8,22.0],[87.2,21.7]]},
+      {id:5127, name:'Vaigai', sys:'eastcoast', region:'Tamil Nadu', major:false, src:{type:'hills',name:'Varushanad Hills',place:'Tamil Nadu'}, points:[[77.5,9.5],[77.9,9.7],[78.3,9.8],[78.7,9.9],[79.0,9.85]]},
+      {id:5134, name:'Tungabhadra', sys:'krishna', region:'Karnataka & Andhra Pradesh', major:false, src:{type:'mountain',name:'Western Ghats',place:'Karnataka'}, points:[[75.0,13.4],[75.7,14.0],[76.3,14.6],[77.0,15.0],[77.7,15.2],[78.1,15.4],[78.3,15.8]]},
+      {id:5135, name:'Bhima', sys:'krishna', region:'Maharashtra & Karnataka', major:false, src:{type:'mountain',name:'Bhimashankar, Western Ghats',place:'Maharashtra'}, points:[[73.55,19.1],[74.1,18.8],[74.8,18.4],[75.5,18.0],[76.1,17.6],[76.8,17.2],[77.4,16.8]]},
+      {id:5136, name:'Indravati', sys:'godavari', region:'Odisha & Chhattisgarh', major:false, src:{type:'hills',name:'Eastern Ghats',place:'Odisha'}, points:[[82.7,19.2],[82.1,19.4],[81.4,19.3],[80.8,19.1],[80.3,18.9],[79.8,18.7]]},
+      {id:5137, name:'Wainganga', sys:'godavari', region:'Madhya Pradesh & Maharashtra', major:false, src:{type:'hills',name:'Satpura Range',place:'Madhya Pradesh'}, points:[[80.0,22.1],[79.9,21.6],[79.9,21.1],[79.9,20.5],[79.9,20.0],[79.8,19.5]]},
+      {id:5138, name:'Brahmani', sys:'eastcoast', region:'Jharkhand & Odisha', major:false, src:{type:'hills',name:'Chotanagpur Plateau',place:'Jharkhand'}, points:[[84.9,22.7],[85.3,22.3],[85.7,21.9],[86.0,21.4],[86.5,20.9],[86.8,20.4]]},
+      {id:5139, name:'Palar', sys:'eastcoast', region:'Karnataka, Andhra Pradesh & Tamil Nadu', major:false, src:{type:'hills',name:'Nandi Hills',place:'Karnataka'}, points:[[77.7,13.2],[78.0,13.1],[78.5,12.9],[79.0,12.8],[79.5,12.7],[80.1,12.7]]},
+      // Peninsular west-flowing
+      {id:5128, name:'Narmada', sys:'west', region:'Central India (west-flowing)', major:true, src:{type:'hills',name:'Amarkantak Plateau',place:'Madhya Pradesh'}, points:[[81.75,22.67],[81.0,22.8],[80.5,22.9],[80.0,23.0],[79.0,22.95],[78.5,22.85],[77.7,22.74],[76.5,22.6],[75.8,22.45],[75.0,22.3],[74.0,21.95],[73.5,21.8],[72.95,21.7]]},
+      {id:5129, name:'Tapti', sys:'west', region:'Central India (west-flowing)', major:true, src:{type:'mountain',name:'Satpura Range, Multai',place:'Madhya Pradesh'}, points:[[78.19,21.78],[77.5,21.5],[77.0,21.4],[76.5,21.35],[76.0,21.3],[75.0,21.15],[74.0,21.1],[73.5,21.15],[72.83,21.18]]},
+      {id:5130, name:'Sabarmati', sys:'west', region:'Gujarat', major:false, src:{type:'mountain',name:'Aravalli Range',place:'Rajasthan'}, points:[[73.5,24.0],[73.0,23.5],[72.7,23.0],[72.6,22.6],[72.55,22.2],[72.4,21.8]]},
+      {id:5131, name:'Mahi', sys:'west', region:'Gujarat', major:false, src:{type:'hills',name:'Vindhya Range',place:'Madhya Pradesh'}, points:[[74.0,23.0],[73.5,22.7],[73.0,22.4],[72.6,22.2],[72.55,21.95],[72.5,21.6]]},
+      {id:5132, name:'Luni', sys:'west', region:'Rajasthan', major:false, src:{type:'mountain',name:'Aravalli Range (Pushkar)',place:'Rajasthan'}, points:[[73.0,26.5],[72.5,26.0],[72.0,25.5],[71.5,25.0],[71.0,24.5],[70.5,24.2]]},
+      {id:5140, name:'Banas', sys:'yamuna', region:'Rajasthan', major:false, src:{type:'mountain',name:'Aravalli Range',place:'Rajasthan'}, points:[[74.5,25.2],[75.0,25.1],[75.6,25.0],[76.0,25.2],[76.5,25.5],[77.0,25.7]]},
+      {id:5141, name:'Parbati', sys:'yamuna', region:'Madhya Pradesh & Rajasthan', major:false, src:{type:'hills',name:'Vindhya Range',place:'Madhya Pradesh'}, points:[[77.2,23.5],[76.9,24.0],[76.7,24.5],[76.8,25.0],[77.2,25.4],[77.6,25.7]]},
+      // Additional PDF reference rivers and tributaries
+      {id:5165, name:'Tamsa', sys:'ganga', region:'Madhya Pradesh & Uttar Pradesh', major:false, src:{type:'hills',name:'Kaimur Range',place:'Madhya Pradesh'}, points:[[80.4,24.2],[80.9,24.6],[81.4,25.0],[82.0,25.2]]},
+      {id:5166, name:'Burhi Gandak', sys:'ganga', region:'Bihar', major:false, src:{type:'hills',name:'Someshwar Hills',place:'Bihar'}, points:[[84.5,27.2],[84.8,26.6],[85.1,26.0],[85.5,25.5],[86.0,25.3]]},
+      {id:5167, name:'Hooghly', sys:'ganga', region:'West Bengal', major:false, src:{type:'hills',name:'Ganga distributary',place:'West Bengal'}, points:[[88.1,24.0],[88.2,23.5],[88.3,23.0],[88.3,22.5],[88.2,22.0]]},
+      {id:5168, name:'Padma', sys:'ganga', region:'West Bengal & Bangladesh', major:false, src:{type:'hills',name:'Ganga distributary',place:'Farakka region'}, points:[[88.2,24.0],[88.7,23.8],[89.2,23.6],[89.7,23.4],[90.2,23.3]]},
+      {id:5169, name:'Tons', sys:'yamuna', region:'Uttarakhand & Himachal Pradesh', major:false, src:{type:'glacier',name:'Bandarpunch range',place:'Western Himalaya'}, points:[[78.1,31.0],[77.8,30.7],[77.6,30.4],[77.7,30.1]]},
+      {id:5170, name:'Hindan', sys:'yamuna', region:'Uttar Pradesh', major:false, src:{type:'hills',name:'Shiwalik foothills',place:'Uttar Pradesh'}, points:[[77.6,30.1],[77.5,29.5],[77.4,29.0],[77.4,28.5]]},
+      {id:5171, name:'Rind', sys:'yamuna', region:'Uttar Pradesh', major:false, src:{type:'hills',name:'Central Uttar Pradesh',place:'Uttar Pradesh'}, points:[[80.5,26.7],[80.2,26.3],[80.0,25.9],[79.8,25.6]]},
+      {id:5172, name:'Sengar', sys:'yamuna', region:'Uttar Pradesh', major:false, src:{type:'hills',name:'Central Uttar Pradesh',place:'Uttar Pradesh'}, points:[[79.5,26.4],[79.3,26.0],[79.2,25.7],[79.1,25.4]]},
+      {id:5173, name:'Varuna', sys:'yamuna', region:'Uttar Pradesh', major:false, src:{type:'hills',name:'Ganga plain',place:'Uttar Pradesh'}, points:[[82.2,25.9],[82.5,25.7],[82.8,25.5],[83.0,25.3]]},
+      {id:5174, name:'Sindh', sys:'yamuna', region:'Madhya Pradesh & Uttar Pradesh', major:false, src:{type:'hills',name:'Malwa Plateau',place:'Madhya Pradesh'}, points:[[76.8,24.3],[77.2,24.8],[77.5,25.3],[78.0,25.8],[78.4,26.2]]},
+      {id:5175, name:'Mej', sys:'yamuna', region:'Rajasthan', major:false, src:{type:'hills',name:'Mewar region',place:'Rajasthan'}, points:[[75.0,25.3],[75.4,25.2],[75.8,25.1],[76.1,25.0]]},
+      {id:5176, name:'Kali Sindh', sys:'yamuna', region:'Madhya Pradesh & Rajasthan', major:false, src:{type:'hills',name:'Malwa Plateau',place:'Madhya Pradesh'}, points:[[76.0,23.5],[76.2,24.0],[76.4,24.5],[76.5,25.0]]},
+      {id:5177, name:'Shipra', sys:'yamuna', region:'Madhya Pradesh', major:false, src:{type:'hills',name:'Vindhya Range',place:'Madhya Pradesh'}, points:[[75.8,23.2],[75.9,23.5],[76.0,23.8],[76.1,24.1]]},
+      {id:5178, name:'Kwari', sys:'yamuna', region:'Madhya Pradesh & Uttar Pradesh', major:false, src:{type:'hills',name:'Central India',place:'Madhya Pradesh'}, points:[[77.4,25.0],[77.7,25.4],[78.0,25.8],[78.3,26.2]]},
+      {id:5179, name:'Pahuj', sys:'yamuna', region:'Madhya Pradesh & Uttar Pradesh', major:false, src:{type:'hills',name:'Central India',place:'Madhya Pradesh'}, points:[[78.6,25.0],[78.7,25.4],[78.9,25.8],[79.1,26.1]]},
+      {id:5180, name:'Bina', sys:'yamuna', region:'Madhya Pradesh', major:false, src:{type:'hills',name:'Vindhya Range',place:'Madhya Pradesh'}, points:[[78.0,24.0],[78.2,24.4],[78.5,24.8],[78.8,25.2]]},
+      {id:5181, name:'Dhasan', sys:'yamuna', region:'Madhya Pradesh & Uttar Pradesh', major:false, src:{type:'hills',name:'Vindhya Range',place:'Madhya Pradesh'}, points:[[78.8,24.0],[79.0,24.5],[79.2,25.0],[79.5,25.4]]},
+      {id:5182, name:'Sonar', sys:'yamuna', region:'Madhya Pradesh', major:false, src:{type:'hills',name:'Kaimur Range',place:'Madhya Pradesh'}, points:[[79.5,23.7],[79.8,24.1],[80.0,24.5],[80.3,24.9]]},
+      {id:5183, name:'Suru', sys:'indus', region:'Ladakh', major:false, src:{type:'glacier',name:'Panzella Glacier',place:'Ladakh'}, points:[[76.1,34.1],[75.9,34.0],[75.7,34.0],[75.5,34.1]]},
+      {id:5184, name:'Soan', sys:'indus', region:'Punjab region', major:false, src:{type:'hills',name:'Pothohar Plateau',place:'Punjab region'}, points:[[73.8,33.2],[73.4,33.0],[73.0,32.8],[72.7,32.6]]},
+      {id:5185, name:'Ghaggar', sys:'indus', region:'Haryana & Rajasthan', major:false, src:{type:'hills',name:'Shiwalik Hills',place:'Himachal Pradesh'}, points:[[77.0,30.5],[76.3,29.9],[75.7,29.2],[75.0,28.5],[74.2,27.8]]},
+      {id:5186, name:'Hunza', sys:'indus', region:'Karakoram', major:false, src:{type:'glacier',name:'Karakoram glaciers',place:'Gilgit-Baltistan'}, points:[[75.2,36.5],[74.8,36.1],[74.5,35.8],[74.2,35.5]]},
+      {id:5187, name:'Gilgit', sys:'indus', region:'Karakoram', major:false, src:{type:'glacier',name:'Hindu Kush',place:'Gilgit region'}, points:[[74.0,36.2],[74.0,35.8],[74.1,35.5],[74.3,35.2]]},
+      {id:5188, name:'Kabul', sys:'indus', region:'Afghanistan & Pakistan', major:false, src:{type:'mountain',name:'Hindu Kush',place:'Afghanistan'}, points:[[70.5,34.6],[71.0,34.3],[71.5,34.1],[72.0,33.9]]},
+      {id:5189, name:'Kurram', sys:'indus', region:'Afghanistan & Pakistan', major:false, src:{type:'mountain',name:'Sulaiman ranges',place:'Afghanistan'}, points:[[69.8,33.7],[70.5,33.4],[71.0,33.2],[71.4,33.0]]},
+      {id:5190, name:'Swat', sys:'indus', region:'Hindu Kush', major:false, src:{type:'mountain',name:'Hindu Kush',place:'Pakistan'}, points:[[72.2,35.6],[72.1,35.1],[72.0,34.7],[71.8,34.3]]},
+      {id:5191, name:'Kunar', sys:'indus', region:'Hindu Kush', major:false, src:{type:'mountain',name:'Hindu Kush',place:'Afghanistan'}, points:[[71.2,35.4],[71.3,35.0],[71.4,34.6],[71.5,34.2]]}
+      ,{id:5192, name:'Shakkar', sys:'west', region:'Madhya Pradesh', major:false, src:{type:'hills',name:'Satpura Range',place:'Madhya Pradesh'}, points:[[79.6,22.7],[79.2,22.8],[78.8,22.8],[78.4,22.8]]},
+      {id:5193, name:'Dudhi', sys:'west', region:'Madhya Pradesh', major:false, src:{type:'hills',name:'Satpura Range',place:'Madhya Pradesh'}, points:[[78.6,22.4],[78.3,22.5],[78.0,22.6],[77.7,22.7]]},
+      {id:5194, name:'Tawa', sys:'west', region:'Madhya Pradesh', major:false, src:{type:'hills',name:'Satpura Range',place:'Madhya Pradesh'}, points:[[78.0,21.9],[77.8,22.2],[77.7,22.5],[77.7,22.7]]},
+      {id:5195, name:'Ganjal', sys:'west', region:'Madhya Pradesh', major:false, src:{type:'hills',name:'Satpura Range',place:'Madhya Pradesh'}, points:[[76.9,22.0],[76.8,22.2],[76.7,22.5],[76.6,22.7]]},
+      {id:5196, name:'Hiran', sys:'west', region:'Madhya Pradesh', major:false, src:{type:'hills',name:'Vindhya Range',place:'Madhya Pradesh'}, points:[[79.8,23.5],[79.6,23.2],[79.3,22.9],[79.0,22.8]]},
+      {id:5197, name:'Barna', sys:'west', region:'Madhya Pradesh', major:false, src:{type:'hills',name:'Vindhya Range',place:'Madhya Pradesh'}, points:[[77.8,23.3],[77.6,23.0],[77.5,22.8],[77.4,22.6]]},
+      {id:5198, name:'Choral', sys:'west', region:'Madhya Pradesh', major:false, src:{type:'hills',name:'Vindhya Range',place:'Madhya Pradesh'}, points:[[75.8,22.8],[75.5,22.6],[75.2,22.4],[74.9,22.3]]},
+      {id:5199, name:'Karam', sys:'west', region:'Madhya Pradesh', major:false, src:{type:'hills',name:'Vindhya Range',place:'Madhya Pradesh'}, points:[[75.5,22.6],[75.3,22.5],[75.0,22.4],[74.7,22.3]]},
+      {id:5200, name:'Lohar', sys:'west', region:'Madhya Pradesh', major:false, src:{type:'hills',name:'Central India',place:'Madhya Pradesh'}, points:[[78.2,22.2],[78.0,22.4],[77.8,22.6],[77.5,22.7]]},
+      {id:5201, name:'Girna', sys:'west', region:'Maharashtra', major:false, src:{type:'hills',name:'Western Ghats',place:'Maharashtra'}, points:[[74.0,20.3],[74.4,20.5],[74.8,20.7],[75.2,20.9]]},
+      {id:5202, name:'Purna (Tapi)', sys:'west', region:'Maharashtra', major:false, src:{type:'hills',name:'Satpura Range',place:'Maharashtra'}, points:[[77.0,21.3],[76.6,21.2],[76.1,21.1],[75.6,21.0]]},
+      {id:5203, name:'Panzara', sys:'west', region:'Maharashtra', major:false, src:{type:'hills',name:'Western Ghats',place:'Maharashtra'}, points:[[74.0,21.0],[74.4,21.0],[74.8,21.0],[75.2,21.0]]},
+      {id:5204, name:'Bori', sys:'west', region:'Maharashtra', major:false, src:{type:'hills',name:'Satpura Range',place:'Maharashtra'}, points:[[75.8,21.6],[75.4,21.5],[75.0,21.4],[74.6,21.3]]},
+      {id:5205, name:'Waghur', sys:'west', region:'Maharashtra', major:false, src:{type:'hills',name:'Ajanta Range',place:'Maharashtra'}, points:[[75.9,20.8],[75.7,21.0],[75.4,21.1],[75.0,21.1]]},
+      {id:5206, name:'Aner', sys:'west', region:'Maharashtra', major:false, src:{type:'hills',name:'Satpura Range',place:'Maharashtra'}, points:[[75.0,21.8],[74.8,21.6],[74.6,21.4],[74.3,21.2]]},
+      {id:5207, name:'Seonath', sys:'mahanadi', region:'Chhattisgarh', major:false, src:{type:'hills',name:'Chhattisgarh Plain',place:'Chhattisgarh'}, points:[[81.0,21.7],[81.5,21.6],[82.0,21.5],[82.4,21.5]]},
+      {id:5208, name:'Jonk', sys:'mahanadi', region:'Chhattisgarh & Odisha', major:false, src:{type:'hills',name:'Eastern Ghats',place:'Chhattisgarh'}, points:[[82.8,20.6],[83.1,20.8],[83.4,21.0],[83.8,21.1]]},
+      {id:5209, name:'Mand', sys:'mahanadi', region:'Chhattisgarh', major:false, src:{type:'hills',name:'Chhattisgarh highlands',place:'Chhattisgarh'}, points:[[83.0,22.4],[83.2,22.1],[83.5,21.8],[83.8,21.5]]},
+      {id:5210, name:'Ib', sys:'mahanadi', region:'Chhattisgarh & Odisha', major:false, src:{type:'hills',name:'Northern Odisha hills',place:'Odisha'}, points:[[83.8,22.4],[83.9,22.0],[84.0,21.7],[84.2,21.4]]},
+      {id:5211, name:'Ong', sys:'mahanadi', region:'Odisha', major:false, src:{type:'hills',name:'Western Odisha',place:'Odisha'}, points:[[83.0,20.8],[83.4,20.8],[83.8,20.9],[84.1,21.0]]},
+      {id:5212, name:'Kharkai', sys:'eastcoast', region:'Jharkhand & Odisha', major:false, src:{type:'hills',name:'Chota Nagpur Plateau',place:'Jharkhand'}, points:[[85.9,22.8],[86.0,22.6],[86.1,22.4],[86.2,22.2]]},
+      {id:5213, name:'Roro', sys:'eastcoast', region:'Jharkhand', major:false, src:{type:'hills',name:'Chota Nagpur Plateau',place:'Jharkhand'}, points:[[85.6,23.0],[85.8,22.8],[86.0,22.6],[86.2,22.4]]},
+      {id:5214, name:'Kanchi', sys:'eastcoast', region:'Jharkhand', major:false, src:{type:'hills',name:'Chota Nagpur Plateau',place:'Jharkhand'}, points:[[85.5,23.2],[85.6,23.0],[85.8,22.8],[86.0,22.6]]},
+      {id:5215, name:'Harmu Nadi', sys:'eastcoast', region:'Jharkhand', major:false, src:{type:'hills',name:'Ranchi area',place:'Jharkhand'}, points:[[85.3,23.4],[85.5,23.2],[85.7,23.0],[85.9,22.8]]},
+      {id:5216, name:'Baitarni', sys:'eastcoast', region:'Odisha', major:false, src:{type:'hills',name:'Keonjhar hills',place:'Odisha'}, points:[[85.7,21.9],[86.0,21.5],[86.4,21.0],[86.8,20.6]]},
+      {id:5217, name:'Sankh', sys:'eastcoast', region:'Jharkhand & Odisha', major:false, src:{type:'hills',name:'Chota Nagpur Plateau',place:'Jharkhand'}, points:[[84.5,22.7],[84.8,22.5],[85.1,22.3],[85.3,22.1]]},
+      {id:5218, name:'South Koel', sys:'eastcoast', region:'Jharkhand & Odisha', major:false, src:{type:'hills',name:'Chota Nagpur Plateau',place:'Jharkhand'}, points:[[84.3,23.0],[84.6,22.7],[85.0,22.4],[85.3,22.1]]},
+      {id:5219, name:'Rushikulya', sys:'eastcoast', region:'Odisha', major:false, src:{type:'hills',name:'Daringbadi Hills',place:'Odisha'}, points:[[84.1,19.9],[84.4,19.7],[84.8,19.5],[85.1,19.4]]},
+      {id:5220, name:'Barakar', sys:'ganga', region:'Jharkhand & West Bengal', major:false, src:{type:'hills',name:'Chota Nagpur Plateau',place:'Jharkhand'}, points:[[85.7,24.0],[86.0,23.8],[86.3,23.6],[86.6,23.5]]},
+      {id:5221, name:'Konar', sys:'ganga', region:'Jharkhand', major:false, src:{type:'hills',name:'Chota Nagpur Plateau',place:'Jharkhand'}, points:[[85.5,23.9],[85.7,23.7],[86.0,23.6],[86.3,23.5]]},
+      {id:5222, name:'Tenughat', sys:'ganga', region:'Jharkhand', major:false, src:{type:'hills',name:'Chota Nagpur Plateau',place:'Jharkhand'}, points:[[85.6,23.8],[85.9,23.6],[86.2,23.5],[86.5,23.5]]},
+      {id:5223, name:'Banganga', sys:'godavari', region:'Maharashtra', major:false, src:{type:'hills',name:'Western Ghats',place:'Maharashtra'}, points:[[74.3,20.3],[74.8,20.2],[75.2,20.1],[75.6,20.0]]},
+      {id:5224, name:'Kadva', sys:'godavari', region:'Maharashtra', major:false, src:{type:'hills',name:'Western Ghats',place:'Maharashtra'}, points:[[73.9,20.1],[74.3,20.0],[74.7,19.9],[75.1,19.9]]},
+      {id:5225, name:'Shivna', sys:'godavari', region:'Maharashtra', major:false, src:{type:'hills',name:'Ajanta Range',place:'Maharashtra'}, points:[[75.3,20.1],[75.7,19.9],[76.1,19.7],[76.5,19.5]]},
+      {id:5226, name:'Purna (Godavari)', sys:'godavari', region:'Maharashtra', major:false, src:{type:'hills',name:'Ajanta Range',place:'Maharashtra'}, points:[[76.0,20.2],[76.6,20.0],[77.2,19.8],[77.8,19.5]]},
+      {id:5227, name:'Sabari', sys:'godavari', region:'Chhattisgarh, Odisha & Andhra Pradesh', major:false, src:{type:'hills',name:'Eastern Ghats',place:'Odisha'}, points:[[82.0,19.0],[81.8,18.5],[81.7,18.0],[81.6,17.6]]},
+      {id:5228, name:'Kadam', sys:'godavari', region:'Telangana', major:false, src:{type:'hills',name:'Deccan Plateau',place:'Telangana'}, points:[[78.6,19.4],[78.8,19.1],[79.0,18.8],[79.2,18.5]]},
+      {id:5229, name:'Taliperu', sys:'godavari', region:'Chhattisgarh & Telangana', major:false, src:{type:'hills',name:'Eastern Ghats',place:'Chhattisgarh'}, points:[[81.2,18.4],[81.0,18.1],[80.8,17.8],[80.6,17.5]]},
+      {id:5230, name:'Nasardi', sys:'godavari', region:'Maharashtra', major:false, src:{type:'hills',name:'Trimbak area',place:'Maharashtra'}, points:[[73.8,19.9],[74.0,19.9],[74.2,19.9],[74.4,19.9]]},
+      {id:5231, name:'Darna', sys:'godavari', region:'Maharashtra', major:false, src:{type:'hills',name:'Western Ghats',place:'Maharashtra'}, points:[[73.8,19.7],[74.1,19.8],[74.4,19.9],[74.7,19.9]]},
+      {id:5232, name:'Sindphana', sys:'godavari', region:'Maharashtra', major:false, src:{type:'hills',name:'Balaghat Range',place:'Maharashtra'}, points:[[75.8,19.0],[76.2,18.9],[76.7,18.8],[77.1,18.7]]},
+      {id:5233, name:'Kinnerasani', sys:'godavari', region:'Telangana', major:false, src:{type:'hills',name:'Eastern Ghats',place:'Telangana'}, points:[[80.7,17.8],[80.9,17.6],[81.1,17.4],[81.3,17.2]]},
+      {id:5234, name:'Pravara', sys:'godavari', region:'Maharashtra', major:false, src:{type:'hills',name:'Western Ghats',place:'Maharashtra'}, points:[[73.8,19.5],[74.3,19.5],[74.8,19.5],[75.3,19.5]]},
+      {id:5235, name:'Manair', sys:'godavari', region:'Telangana', major:false, src:{type:'hills',name:'Deccan Plateau',place:'Telangana'}, points:[[79.0,18.7],[79.3,18.5],[79.6,18.3],[79.9,18.0]]},
+      {id:5236, name:'Malaprabha', sys:'krishna', region:'Karnataka', major:false, src:{type:'mountain',name:'Western Ghats',place:'Karnataka'}, points:[[74.5,15.8],[75.0,15.9],[75.5,16.0],[76.0,16.1]]},
+      {id:5237, name:'Ghataprabha', sys:'krishna', region:'Karnataka', major:false, src:{type:'mountain',name:'Western Ghats',place:'Karnataka'}, points:[[74.3,16.0],[74.8,16.1],[75.3,16.2],[75.8,16.3]]},
+      {id:5238, name:'Musi', sys:'krishna', region:'Telangana', major:false, src:{type:'hills',name:'Anantagiri Hills',place:'Telangana'}, points:[[77.9,17.4],[78.4,17.4],[78.9,17.2],[79.4,17.0]]},
+      {id:5239, name:'Muneri', sys:'krishna', region:'Telangana & Andhra Pradesh', major:false, src:{type:'hills',name:'Deccan Plateau',place:'Telangana'}, points:[[79.6,17.4],[79.8,17.1],[80.0,16.8],[80.2,16.5]]},
+      {id:5240, name:'Harangi', sys:'kaveri', region:'Karnataka', major:false, src:{type:'mountain',name:'Western Ghats',place:'Karnataka'}, points:[[75.8,12.7],[76.0,12.6],[76.2,12.5],[76.4,12.4]]},
+      {id:5241, name:'Hemavati', sys:'kaveri', region:'Karnataka', major:false, src:{type:'mountain',name:'Western Ghats',place:'Karnataka'}, points:[[75.8,13.0],[76.2,12.8],[76.6,12.6],[77.0,12.4]]},
+      {id:5242, name:'Shimsha', sys:'kaveri', region:'Karnataka', major:false, src:{type:'hills',name:'Deccan Plateau',place:'Karnataka'}, points:[[77.0,13.0],[77.1,12.7],[77.2,12.4],[77.3,12.1]]},
+      {id:5243, name:'Arkavathy', sys:'kaveri', region:'Karnataka', major:false, src:{type:'hills',name:'Nandi Hills',place:'Karnataka'}, points:[[77.7,13.3],[77.5,13.0],[77.4,12.7],[77.3,12.4]]},
+      {id:5244, name:'Lakshmana Tirtha', sys:'kaveri', region:'Karnataka', major:false, src:{type:'mountain',name:'Brahmagiri Hills',place:'Karnataka'}, points:[[75.8,12.0],[76.1,12.1],[76.4,12.2],[76.7,12.3]]},
+      {id:5245, name:'Noyyal', sys:'kaveri', region:'Tamil Nadu', major:false, src:{type:'mountain',name:'Western Ghats',place:'Tamil Nadu'}, points:[[76.9,11.1],[77.3,11.1],[77.7,11.1],[78.1,11.1]]},
+      {id:5246, name:'Moyar', sys:'kaveri', region:'Tamil Nadu & Karnataka', major:false, src:{type:'mountain',name:'Nilgiri Hills',place:'Tamil Nadu'}, points:[[76.6,11.7],[76.9,11.8],[77.2,11.9],[77.5,12.0]]},
+      {id:5247, name:'Periyar', sys:'kerala', region:'Kerala', major:true, src:{type:'mountain',name:'Sivagiri Hills',place:'Western Ghats'}, points:[[77.2,9.6],[77.0,9.8],[76.8,10.0],[76.6,10.1],[76.3,10.1]]},
+      {id:5248, name:'Pamba', sys:'kerala', region:'Kerala', major:false, src:{type:'mountain',name:'Pulachimalai Hills',place:'Western Ghats'}, points:[[77.1,9.4],[76.9,9.3],[76.7,9.3],[76.5,9.4]]},
+      {id:5249, name:'Mahadayi', sys:'kerala', region:'Karnataka & Goa', major:false, src:{type:'mountain',name:'Western Ghats',place:'Karnataka'}, points:[[74.2,15.6],[74.0,15.5],[73.8,15.5],[73.7,15.5]]},
+      {id:5250, name:'Mandovi', sys:'kerala', region:'Goa', major:false, src:{type:'mountain',name:'Western Ghats',place:'Karnataka'}, points:[[74.1,15.6],[73.9,15.5],[73.8,15.5],[73.7,15.5]]},
+      {id:5251, name:'Barak', sys:'barak', region:'Manipur, Mizoram & Assam', major:true, src:{type:'hills',name:'Manipur hills',place:'Manipur'}, points:[[93.4,24.8],[93.0,24.7],[92.7,24.6],[92.5,24.7],[92.3,24.9]]},
+      {id:5252, name:'Jiri', sys:'barak', region:'Manipur & Assam', major:false, src:{type:'hills',name:'Manipur hills',place:'Manipur'}, points:[[93.2,25.0],[92.9,24.9],[92.6,24.8],[92.4,24.8]]},
+      {id:5253, name:'Dhaleshwari', sys:'barak', region:'Mizoram & Assam', major:false, src:{type:'hills',name:'Mizo Hills',place:'Mizoram'}, points:[[92.8,23.8],[92.6,24.1],[92.5,24.4],[92.4,24.7]]},
+      {id:5254, name:'Longai', sys:'barak', region:'Assam', major:false, src:{type:'hills',name:'Tripura-Mizoram hills',place:'Northeast India'}, points:[[92.2,24.0],[92.2,24.3],[92.3,24.6],[92.4,24.8]]},
+      {id:5255, name:'Madhura', sys:'barak', region:'Assam', major:false, src:{type:'hills',name:'Cachar hills',place:'Assam'}, points:[[92.6,24.2],[92.5,24.4],[92.4,24.6],[92.3,24.8]]},
+      {id:5256, name:'Sonai', sys:'barak', region:'Mizoram & Assam', major:false, src:{type:'hills',name:'Mizo Hills',place:'Mizoram'}, points:[[92.9,23.6],[92.7,24.0],[92.5,24.4],[92.4,24.7]]}
+    ];
+    // Runtime quiz model: reference-style UPSC/NCERT systems. The current river
+    // practice intentionally uses clean schematic traces instead of noisy GIS data.
+    this.RIVER_SYSTEMS = [
+      {key:'ganga_ref', name:'Ganga River System', color:'#2C6FBF', bounds:[[75.0,21.6],[89.2,31.4]], blurb:'Ganga, Yamuna and key NCERT/UPSC tributaries'},
+      {key:'indus_ref', name:'Indus River System', color:'#2C9AD6', bounds:[[72.2,30.4],[81.2,35.0]], blurb:'Indus and northwest Himalayan tributaries'},
+      {key:'western_ref', name:'Western River System', color:'#4E9F3D', bounds:[[72.8,10.0],[87.4,22.8]], blurb:'Kaveri, Krishna, Godavari, Mahanadi and tributaries'},
+      {key:'vindhya_ref', name:'Vindhya and Satpura', color:'#8A6F3D', bounds:[[72.2,20.4],[82.2,23.6]], blurb:'Narmada, Tapti and Satpura tributaries'}
+    ];
+    this.RIVERS = [
+      {id:6101, name:'Ganga', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:true, points:[[0,0]]},
+      {id:6102, name:'Yamuna', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:true, points:[[0,0]]},
+      {id:6103, name:'Brahmaputra', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:true, points:[[0,0]]},
+      {id:6104, name:'Ramganga', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:false, points:[[0,0]]},
+      {id:6105, name:'Gomti', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:false, points:[[0,0]]},
+      {id:6106, name:'Ghaghara', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:false, points:[[0,0]]},
+      {id:6107, name:'Gandak', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:false, points:[[0,0]]},
+      {id:6108, name:'Koshi', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:false, points:[[0,0]]},
+      {id:6109, name:'Mahananda', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:false, points:[[0,0]]},
+      {id:6110, name:'Tamsa', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:false, points:[[0,0]]},
+      {id:6111, name:'Son', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:false, points:[[0,0]]},
+      {id:6112, name:'Punpun', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:false, points:[[0,0]]},
+      {id:6113, name:'Dibang', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:false, points:[[0,0]]},
+      {id:6114, name:'Lohit', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:false, points:[[0,0]]},
+      {id:6115, name:'Dhansiri', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:false, points:[[0,0]]},
+      {id:6116, name:'Teesta', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:false, points:[[0,0]]},
+      {id:6117, name:'Subansiri', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:false, points:[[0,0]]},
+      {id:6118, name:'Hindon', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:false, points:[[0,0]]},
+      {id:6119, name:'Sharda', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:false, points:[[0,0]]},
+      {id:6120, name:'Tons', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:false, points:[[0,0]]},
+      {id:6121, name:'Chambal', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:false, points:[[0,0]]},
+      {id:6122, name:'Betwa', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:false, points:[[0,0]]},
+      {id:6123, name:'Ken', sys:'ganga_ref', region:'Ganga-Brahmaputra-Yamuna system', major:false, points:[[0,0]]},
+      {id:6124, name:'Banas', sys:'ganga_ref', region:'Chambal sub-system', major:false, points:[[0,0]]},
+      {id:6125, name:'Sindh', sys:'ganga_ref', region:'Yamuna tributary', major:false, points:[[0,0]]},
+      {id:6126, name:'Kali Sindh', sys:'ganga_ref', region:'Chambal sub-system', major:false, points:[[0,0]]},
+      {id:6127, name:'Parbati', sys:'ganga_ref', region:'Chambal sub-system', major:false, points:[[0,0]]},
+      {id:6128, name:'Dhasan', sys:'ganga_ref', region:'Betwa sub-system', major:false, points:[[0,0]]},
+      {id:6129, name:'Rihand', sys:'ganga_ref', region:'Son sub-system', major:false, points:[[0,0]]},
+      {id:6130, name:'Koel', sys:'ganga_ref', region:'Son sub-system', major:false, points:[[0,0]]},
+      {id:6131, name:'Damodar', sys:'ganga_ref', region:'Lower Ganga system', major:false, points:[[0,0]]},
+      {id:6132, name:'Hooghly', sys:'ganga_ref', region:'Lower Ganga distributary', major:false, points:[[0,0]]},
+      {id:6133, name:'Padma River', sys:'ganga_ref', region:'Lower Ganga distributary', major:false, points:[[0,0]]},
+      {id:6134, name:'Burhi Gandak', sys:'ganga_ref', region:'Ganga plain tributary', major:false, points:[[0,0]]},
+      {id:6201, name:'Indus', sys:'indus_ref', region:'Indus system', major:true, points:[[0,0]]},
+      {id:6202, name:'Jhelum', sys:'indus_ref', region:'Indus system', major:false, points:[[0,0]]},
+      {id:6203, name:'Chenab', sys:'indus_ref', region:'Indus system', major:false, points:[[0,0]]},
+      {id:6204, name:'Ravi', sys:'indus_ref', region:'Indus system', major:false, points:[[0,0]]},
+      {id:6205, name:'Beas', sys:'indus_ref', region:'Indus system', major:false, points:[[0,0]]},
+      {id:6206, name:'Sutlej', sys:'indus_ref', region:'Indus system', major:false, points:[[0,0]]},
+      {id:6301, name:'Kaveri', sys:'western_ref', region:'Peninsular river systems', major:true, points:[[0,0]]},
+      {id:6302, name:'Hemavati', sys:'western_ref', region:'Peninsular river systems', major:false, points:[[0,0]]},
+      {id:6303, name:'Shimsha', sys:'western_ref', region:'Peninsular river systems', major:false, points:[[0,0]]},
+      {id:6304, name:'Kabini', sys:'western_ref', region:'Peninsular river systems', major:false, points:[[0,0]]},
+      {id:6305, name:'Bhavani', sys:'western_ref', region:'Peninsular river systems', major:false, points:[[0,0]]},
+      {id:6306, name:'Noyyal', sys:'western_ref', region:'Peninsular river systems', major:false, points:[[0,0]]},
+      {id:6307, name:'Krishna', sys:'western_ref', region:'Peninsular river systems', major:true, points:[[0,0]]},
+      {id:6308, name:'Bhima', sys:'western_ref', region:'Peninsular river systems', major:false, points:[[0,0]]},
+      {id:6309, name:'Musi', sys:'western_ref', region:'Peninsular river systems', major:false, points:[[0,0]]},
+      {id:6310, name:'Malaprabha', sys:'western_ref', region:'Peninsular river systems', major:false, points:[[0,0]]},
+      {id:6311, name:'Tungabhadra', sys:'western_ref', region:'Peninsular river systems', major:false, points:[[0,0]]},
+      {id:6312, name:'Godavari', sys:'western_ref', region:'Peninsular river systems', major:true, points:[[0,0]]},
+      {id:6313, name:'Wainganga', sys:'western_ref', region:'Peninsular river systems', major:false, points:[[0,0]]},
+      {id:6314, name:'Penganga', sys:'western_ref', region:'Peninsular river systems', major:false, points:[[0,0]]},
+      {id:6315, name:'Purna', sys:'western_ref', region:'Peninsular river systems', major:false, points:[[0,0]]},
+      {id:6316, name:'Pranahita', sys:'western_ref', region:'Peninsular river systems', major:false, points:[[0,0]]},
+      {id:6317, name:'Indravati', sys:'western_ref', region:'Peninsular river systems', major:false, points:[[0,0]]},
+      {id:6318, name:'Sabari', sys:'western_ref', region:'Peninsular river systems', major:false, points:[[0,0]]},
+      {id:6319, name:'Pravara', sys:'western_ref', region:'Peninsular river systems', major:false, points:[[0,0]]},
+      {id:6320, name:'Mahanadi', sys:'western_ref', region:'Peninsular river systems', major:true, points:[[0,0]]},
+      {id:6401, name:'Narmada', sys:'vindhya_ref', region:'Vindhya and Satpura', major:true, points:[[0,0]]},
+      {id:6402, name:'Tapti', sys:'vindhya_ref', region:'Vindhya and Satpura', major:true, points:[[0,0]]},
+      {id:6403, name:'Halon', sys:'vindhya_ref', region:'Vindhya and Satpura', major:false, points:[[0,0]]},
+      {id:6404, name:'Banjar', sys:'vindhya_ref', region:'Vindhya and Satpura', major:false, points:[[0,0]]},
+      {id:6405, name:'Barna', sys:'vindhya_ref', region:'Vindhya and Satpura', major:false, points:[[0,0]]},
+      {id:6406, name:'Tawa', sys:'vindhya_ref', region:'Vindhya and Satpura', major:false, points:[[0,0]]}
+    ];
+    // Keep the river module focused on the core Ganga system for now while the
+    // river artwork is redesigned into a clean reference-map schematic layer.
+    const gangaPracticeNames = new Set(['Ganga','Yamuna','Ramganga','Gomti','Ghaghara','Gandak','Burhi Gandak','Koshi','Mahananda','Son','Punpun','Hindon','Sharda','Tons','Chambal','Banas','Sindh','Kali Sindh','Parbati','Betwa','Dhasan','Ken','Rihand','Koel','Damodar','Hooghly','Padma River']);
+    this.RIVER_SYSTEMS = this.RIVER_SYSTEMS.filter(sys=>sys.key==='ganga_ref');
+    this.RIVERS = this.RIVERS.filter(r=>r.sys==='ganga_ref' && gangaPracticeNames.has(r.name));
+    this.applyGangaSchematicRivers();
+    this.PARK_REGIONS = [];
+    this.PARKS = [];
+    this.continents = {};
+    this.state = {
+      loaded:false, app:null, screen:'home', sound:true, category:null,
+      mode:'locate', continent:null, riverSystem:null, parkRegion:null, parkLearnState:null, sourceInfo:null,
+      setupTotal:0, setupCount:10, setupMode:'locate',
+      queue:[], qIndex:0, target:null, choices:[], chosenId:null,
+      score:0, streak:0, best:0, correctCount:0, wrongList:[], answerHistory:[],
+      hintsLeft:3, hintUsedThisRound:false, hintRemovedId:null,
+      answeredThisRound:false, toast:null
+    };
+  }
+
+  get accent(){ return this.props.primaryColor || '#FF7A4D'; }
+  get ocean(){ return this.props.oceanColor || '#AFDCEC'; }
+
+  componentDidMount(){
+    this.loadDeps().then(()=>this.initMap()).then(()=>this.setState({loaded:true}))
+      .catch(()=>this.setState({toast:{kind:'wrong',text:'Could not load the map — check your connection.'}}));
+  }
+  componentWillUnmount(){ clearTimeout(this.t); clearTimeout(this.ht); if(this._rh) window.removeEventListener('resize', this._rh); }
+  componentDidUpdate(prev){
+    if(this.oceanRect && this.props.oceanColor!==prev.oceanColor){ this.oceanRect.setAttribute('fill', this.ocean); }
+    if(this.svgSel) this.measureAndFit();
+  }
+
+  loadDeps(){ return new Promise(res=>{ const t=()=>{ if(window.d3&&window.topojson) res(); else setTimeout(t,60); }; t(); }); }
+
+  // ---- SOUND ----
+  ensureAudio(){
+    if(this.audio) return;
+    try { this.audio = new (window.AudioContext||window.webkitAudioContext)(); } catch(e){ this.audio=null; }
+  }
+  playSound(kind){
+    if(!this.state.sound) return;
+    this.ensureAudio();
+    if(!this.audio) return;
+    try {
+      if(this.audio.state==='suspended') this.audio.resume();
+      const ctx=this.audio, now=ctx.currentTime;
+      const tones={
+        correct:[[660,0,0.09,'sine'],[990,0.07,0.13,'sine']],
+        wrong:[[200,0,0.18,'sawtooth']],
+        hint:[[700,0,0.12,'triangle']],
+        click:[[520,0,0.05,'sine']],
+        level:[[523,0,0.09,'sine'],[659,0.09,0.09,'sine'],[784,0.18,0.16,'sine']]
+      };
+      const seq=tones[kind]||tones.click;
+      seq.forEach(([f,t,dur,type])=>{
+        const o=ctx.createOscillator(), g=ctx.createGain();
+        o.type=type||'sine'; o.frequency.value=f;
+        const start=now+t;
+        g.gain.setValueAtTime(0,start);
+        g.gain.linearRampToValueAtTime(0.16,start+0.01);
+        g.gain.exponentialRampToValueAtTime(0.001,start+dur);
+        o.connect(g).connect(ctx.destination);
+        o.start(start); o.stop(start+dur+0.02);
+      });
+    } catch(e) {}
+  }
+
+  // ---- INIT ----
+  async initMap(){
+    const res = await fetch(this.WORLD);
+    const topo = await res.json();
+    const feats = topojson.feature(topo, topo.objects.countries).features.filter(f=> String(f.id)!=='010');
+    const self=this, W=this.W, H=this.H;
+    const fc = {type:'FeatureCollection',features:feats};
+    this.proj = d3.geoNaturalEarth1().fitExtent([[14,10],[W-14,H-10]], fc);
+    this.pathGen = d3.geoPath(this.proj);
+    const svg = d3.create('svg').attr('viewBox',`0 0 ${W} ${H}`).attr('preserveAspectRatio','xMidYMid meet')
+      .style('width','100%').style('height','100%').style('display','block').style('cursor','grab');
+    this.riverClipId = `india-river-clip-${Math.floor(Math.random()*1e9)}`;
+    this.riverClipPath = svg.append('defs').append('clipPath').attr('id', this.riverClipId).append('path');
+    const g = svg.append('g');
+    this.oceanRect = g.append('rect').attr('x',-3000).attr('y',-3000).attr('width',W+6000).attr('height',H+6000).attr('fill',this.ocean).node();
+    feats.forEach(f=>{ const id=+f.id; this.featById[id]=f; this.nameById[id]=(f.properties&&f.properties.name)||null; this.centroidById[id]=d3.geoCentroid(f); });
+    this.gCountries = g.selectAll('path').data(feats).join('path')
+      .attr('d', this.pathGen).attr('fill', d=>this.baseFillFor(+d.id))
+      .attr('stroke','#ffffff').attr('stroke-width',0.7).attr('stroke-linejoin','round')
+      .style('transition','fill .12s')
+      .each(function(d){ self.pathById[+d.id]=this; })
+      .on('mouseover', function(){ const id=+d3.select(this).datum().id; if(!self.isAnswerable()) return; if(this.__feedback||self.idToCont[id]!==self.activeContinent) return; d3.select(this).attr('fill','#FFD27A'); })
+      .on('mouseout', function(){ if(this.__feedback) return; const id=+d3.select(this).datum().id; d3.select(this).attr('fill', self.baseFillFor(id)); })
+      .on('click', function(){ const id=+d3.select(this).datum().id; if(self.isAnswerable()) self.answer(id); });
+    this.gSel = g;
+    this.svgSel = svg;
+    this.zoom = d3.zoom().scaleExtent([1,12]).translateExtent([[0,0],[W,H]]).extent([[0,0],[W,H]]).on('zoom',(e)=>{ g.attr('transform', e.transform); });
+    svg.call(this.zoom).on('dblclick.zoom', null);
+    // continents (only ids present)
+    Object.keys(this.CONT_DATA).forEach(cont=>{
+      this.continents[cont] = this.CONT_DATA[cont].filter(([id])=>this.pathById[id]).map(([id,name])=>{
+        this.idToCont[id]=cont; return {id, name: this.nameById[id]||name, continent:cont};
+      });
+    });
+    // India states
+    this.gIndia = g.append('g').attr('id','india-states').style('display','none');
+    this.loadIndiaStates();
+    // rivers
+    this.gRivers = g.append('g').attr('id','rivers').attr('clip-path',`url(#${this.riverClipId})`).style('display','none');
+    this.RIVERS.forEach(r=>{
+      const dStr=this.riverPath(r);
+      const isMajor = r.major !== false;
+      const hit=this.gRivers.append('path').attr('d',dStr).attr('fill','none').attr('stroke','rgba(0,0,0,0)').attr('stroke-width',14).attr('stroke-linecap','round').style('cursor','pointer');
+      const vis=this.gRivers.append('path').attr('d',dStr).attr('fill','none').attr('stroke',this.RIVER_COLOR).attr('stroke-width', isMajor?3.2:2).attr('stroke-linecap','round').attr('stroke-linejoin','round').attr('opacity', isMajor?1:0.82).style('pointer-events','none');
+      hit.datum(r); vis.datum(r);
+      hit.on('click', (event)=>{ self.handleRiverClick(event, r.id); });
+      this.riverById[r.id]={hit:hit.node(), vis:vis.node(), data:r, major:isMajor};
+      this.centroidById[r.id]=r.points[Math.floor(r.points.length/2)];
+    });
+    this.gRiverLabels = g.append('g').attr('id','river-labels').attr('clip-path',`url(#${this.riverClipId})`).style('display','none').style('pointer-events','none');
+    this.RIVERS.forEach(r=>{
+      const label=this.gRiverLabels.append('text')
+        .attr('font-family','Fredoka, sans-serif')
+        .attr('font-weight',700)
+        .attr('font-size',10.5)
+        .attr('fill','#24435F')
+        .attr('paint-order','stroke')
+        .attr('stroke','#FFF8E8')
+        .attr('stroke-width',3.2)
+        .attr('stroke-linejoin','round')
+        .attr('text-anchor','middle')
+        .text(r.labelName || r.name.toUpperCase());
+      this.riverLabelById[r.id]=label.node();
+    });
+    // source physical-feature markers (drawn on top, after answering)
+    this.gSources = g.append('g').attr('id','sources').style('pointer-events','none');
+    this.gParks = g.append('g').attr('id','national-parks').style('display','none');
+    this.gParkFeedback = g.append('g').attr('id','national-park-feedback').style('display','none').style('pointer-events','none');
+    // fetch traced OSM river geometry before the quiz becomes playable
+    await this.fetchNERivers();
+    await this.fetchNationalParks();
+    this.renderParkMarkers();
+    this.mapRef.current.appendChild(svg.node());
+    // Make viewport size-responsive: viewBox & projection follow the container
+    this.measureAndFit();
+    this._rh = ()=>this.measureAndFit();
+    window.addEventListener('resize', this._rh);
+  }
+
+  measureAndFit(){
+    if(!this.mapRef.current || !this.svgSel) return;
+    const rect = this.mapRef.current.getBoundingClientRect();
+    const w = Math.max(280, Math.round(rect.width));
+    const h = Math.max(280, Math.round(rect.height));
+    if(w === this.W && h === this.H) return;
+    this.W = w; this.H = h;
+    this.svgSel.attr('viewBox', `0 0 ${w} ${h}`);
+    if(this.zoom){ this.zoom.translateExtent([[0,0],[w,h]]).extent([[0,0],[w,h]]); }
+    if(this.oceanRect){ this.oceanRect.setAttribute('width', w+6000); this.oceanRect.setAttribute('height', h+6000); }
+    // Re-fit current view
+    if(this._view==='india-system') this.fitIndiaSystem(this.state.riverSystem);
+    else if(this._view==='india-parks') this.fitIndiaParks(this.state.parkRegion);
+    else if(this._view==='india') this.fitIndia();
+    else if(this._view==='continent' && this.activeContinent) this.fitContinent(this.activeContinent);
+    else this.fitWorld();
+    // keep the source marker aligned after a re-fit
+    if(this.state.answeredThisRound && this.state.app==='india' && this.state.target && this.state.target.src) this.drawSource(this.state.target);
+  }
+
+  // ---- COLORS / VISIBILITY ----
+  baseFillFor(id){
+    if(this.activeContinent && this.idToCont[id]!==this.activeContinent) return this.GREY;
+    if(!Number.isFinite(id)) return this.PALETTE[1];
+    return this.PALETTE[ Math.abs(Math.round(id)*7) % this.PALETTE.length ];
+  }
+  setVisibility(name){ Object.keys(this.pathById).forEach(k=>{ const el=this.pathById[k]; el.style.display = (!name || this.idToCont[+k]===name) ? '' : 'none'; }); }
+  setIndiaVisibility(){ Object.keys(this.pathById).forEach(k=>{ const el=this.pathById[k]; el.style.display='none'; }); }
+  async loadIndiaStates(){
+    const SOURCES = [
+      'https://cdn.jsdelivr.net/gh/geohacker/india@master/state/india_telengana.geojson',
+      'https://raw.githubusercontent.com/geohacker/india/master/state/india_telengana.geojson'
+    ];
+    for(const url of SOURCES){
+      try {
+        const res = await fetch(url); if(!res.ok) continue;
+        const gj = await res.json();
+        const feats = (gj.features||[]).filter(f=>f && f.geometry);
+        if(!feats.length) continue;
+        this.indiaFeats = feats;
+        const self=this;
+        this.gIndia.selectAll('path').data(feats).join('path')
+          .attr('d', this.pathGen)
+          .attr('fill', '#FFEFD8')
+          .attr('stroke', '#9E7A4E')
+          .attr('stroke-width', 0.55)
+          .attr('stroke-linejoin','round')
+          .style('cursor','default')
+          .style('pointer-events','none')
+          .each(function(d){
+            const name=(d.properties && (d.properties.NAME_1 || d.properties.name || d.properties.ST_NM)) || '';
+            d.__stateName = name;
+            this.__stateName = name;
+            self.statePathByName[self.normStateName(name)] = this;
+          })
+          .on('click', function(event,d){ if(self.isParkAnswerable()) self.answer(self.normStateName(d.__stateName)); });
+        if(this.state.app==='india' && this.state.loaded){
+          this.gIndia.style('display','');
+          this.fitIndia();
+        }
+        return;
+      } catch(e){}
+    }
+  }
+  showIndiaStates(on){ if(this.gIndia) this.gIndia.style('display', on?'':'none'); }
+  normStateName(name){
+    const aliases={
+      'andamanandnicobarislands':'andamannicobarislands',
+      'andamanandnicobar':'andamannicobarislands',
+      'andamannicobarisland':'andamannicobarislands',
+      'jammuandkashmir':'jammukashmir',
+      'jammu&kashmir':'jammukashmir',
+      'ladakh':'jammukashmir',
+      'nctofdelhi':'delhi',
+      'delhinct':'delhi',
+      'odisha':'orissa',
+      'uttaranchal':'uttarakhand',
+      'pondicherry':'puducherry'
+    };
+    const key=String(name||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,'and').replace(/[^a-z]/g,'');
+    return aliases[key] || key;
+  }
+  updateIndiaStateInteractivity(){
+    if(!this.gIndia) return;
+    const active=this.isParkAnswerable();
+    this.gIndia.selectAll('path')
+      .style('pointer-events', active?'auto':'none')
+      .style('cursor', active?'pointer':'default');
+  }
+  applyGangaSchematicRivers(){
+    const traces={
+      Ganga:[[78.65,30.15],[78.35,29.75],[78.25,29.15],[78.75,28.35],[79.6,27.4],[80.4,26.65],[81.25,25.9],[81.85,25.43],[82.8,25.35],[83.8,25.42],[85.13,25.59],[86.0,25.28],[87.05,24.98],[87.85,24.79],[88.15,24.1]],
+      Yamuna:[[78.45,30.95],[77.9,30.25],[77.38,29.35],[77.22,28.62],[77.7,27.65],[78.1,27.18],[78.55,26.55],[79.2,26.1],[80.2,25.75],[81.1,25.55],[81.85,25.43]],
+      Brahmaputra:[[95.35,28.05],[95.05,27.72],[94.45,27.45],[93.7,27.15],[92.85,26.78],[92.1,26.45],[91.35,26.15],[90.55,26.02],[89.95,25.92]],
+      Ramganga:[[79.2,30.05],[79.05,29.55],[79.18,28.95],[79.55,28.25],[80.0,27.52],[80.25,26.95],[80.55,26.5]],
+      Gomti:[[80.1,28.55],[80.42,27.95],[80.88,27.25],[81.25,26.65],[81.78,26.1],[82.35,25.78],[83.0,25.55]],
+      Ghaghara:[[81.25,29.55],[81.65,28.85],[81.95,28.05],[82.25,27.15],[82.75,26.45],[83.45,25.95],[84.45,25.62]],
+      Gandak:[[84.35,28.05],[84.55,27.25],[84.72,26.45],[84.88,25.95],[85.13,25.59]],
+      'Burhi Gandak':[[85.35,27.0],[85.45,26.45],[85.58,25.95],[85.9,25.62]],
+      Koshi:[[86.55,27.6],[87.05,27.55],[87.45,27.15],[87.55,26.45],[87.28,25.85],[87.85,24.79]],
+      Mahananda:[[88.2,26.85],[88.15,26.3],[88.05,25.75],[87.95,25.15],[87.9,24.62]],
+      Tamsa:[[80.35,24.15],[80.85,24.55],[81.35,24.95],[82.0,25.2]],
+      Son:[[81.75,22.75],[82.35,23.25],[83.1,23.75],[83.85,24.2],[84.55,24.72],[85.0,25.2]],
+      Punpun:[[84.0,24.15],[84.45,24.55],[84.8,25.0],[85.05,25.5]],
+      Dibang:[[95.9,28.55],[95.65,28.15],[95.4,27.85],[95.12,27.62]],
+      Lohit:[[97.15,28.1],[96.55,27.85],[96.0,27.65],[95.55,27.55],[95.05,27.5]],
+      Dhansiri:[[94.0,25.8],[93.75,26.05],[93.45,26.25],[93.15,26.42]],
+      Teesta:[[88.6,27.7],[88.65,27.15],[88.55,26.65],[88.7,26.25],[88.85,25.85]],
+      Subansiri:[[93.55,28.45],[93.8,27.95],[94.0,27.5],[94.05,27.25]],
+      Hindon:[[77.55,30.1],[77.45,29.55],[77.38,29.0],[77.38,28.5],[77.45,28.25]],
+      Sharda:[[80.2,30.4],[80.35,29.8],[80.55,29.15],[80.8,28.55],[81.05,28.0],[81.35,27.6]],
+      Tons:[[78.1,31.0],[77.85,30.65],[77.65,30.35],[77.72,30.05]],
+      Chambal:[[75.55,22.55],[75.35,23.2],[75.55,24.0],[76.15,24.55],[76.9,25.02],[77.7,25.52],[78.55,26.02],[79.25,26.45]],
+      Banas:[[74.1,25.25],[74.65,25.05],[75.15,24.75],[75.55,24.55]],
+      Sindh:[[77.65,23.75],[77.78,24.38],[77.92,25.1],[78.28,25.72],[78.7,26.18]],
+      'Kali Sindh':[[76.0,22.6],[76.28,23.28],[76.45,24.0],[76.68,24.68],[77.05,25.1]],
+      Parbati:[[76.72,22.95],[76.82,23.52],[76.92,24.15],[77.12,24.75]],
+      Betwa:[[77.7,23.2],[78.05,23.85],[78.45,24.45],[79.0,24.95],[79.55,25.45],[80.0,25.9]],
+      Dhasan:[[78.65,23.45],[78.82,24.05],[79.05,24.62],[79.45,25.12],[79.78,25.55]],
+      Ken:[[80.0,23.55],[80.2,24.15],[80.4,24.75],[80.62,25.35],[80.85,25.85]],
+      Rihand:[[82.7,23.45],[82.58,24.0],[82.82,24.5],[83.25,24.86]],
+      Koel:[[84.15,23.0],[84.55,23.42],[84.82,24.0],[85.0,24.52]],
+      Damodar:[[85.15,23.72],[85.95,23.62],[86.75,23.52],[87.42,23.4],[88.18,23.18]],
+      Hooghly:[[88.15,24.1],[88.22,23.45],[88.28,22.85],[88.35,22.35],[88.36,21.75]],
+      'Padma River':[[88.15,24.1],[88.95,23.88],[89.65,23.55],[90.22,23.22],[90.75,22.92]]
+    };
+    const sources={
+      Ganga:['glacier','Gangotri Glacier (Gaumukh)','Uttarakhand'],
+      Yamuna:['glacier','Yamunotri Glacier','Uttarakhand'],
+      Brahmaputra:['glacier','Angsi Glacier / Tsangpo headwaters','Tibet'],
+      Ramganga:['hills','Garhwal Hills','Uttarakhand'],
+      Gomti:['lake','Gomat Taal area','Uttar Pradesh'],
+      Ghaghara:['glacier','Mapchachungo Glacier / Karnali headwaters','Himalaya'],
+      Gandak:['glacier','Nepal Himalaya','Nepal'],
+      Koshi:['mountain','Himalayas near Everest','Nepal / Tibet'],
+      Mahananda:['hills','Darjeeling Hills','West Bengal'],
+      Son:['hills','Amarkantak Plateau','Madhya Pradesh'],
+      Chambal:['hills','Janapav Hills','Madhya Pradesh'],
+      Betwa:['hills','Vindhya Range','Madhya Pradesh'],
+      Ken:['hills','Kaimur Range','Madhya Pradesh'],
+      Teesta:['lake','Tso Lhamo Lake','Sikkim'],
+      Lohit:['mountain','Eastern Himalayas','Arunachal Pradesh / Tibet'],
+      Dibang:['mountain','Mishmi Hills','Arunachal Pradesh'],
+      Subansiri:['mountain','Himalayas','Arunachal Pradesh'],
+      Sharda:['glacier','Milam Glacier / Kali headwaters','Kumaon Himalaya'],
+      Tons:['glacier','Bandarpunch range','Western Himalaya'],
+      Banas:['hills','Aravalli Range','Rajasthan'],
+      Sindh:['hills','Malwa Plateau','Madhya Pradesh'],
+      'Kali Sindh':['hills','Vindhya Range','Madhya Pradesh'],
+      Parbati:['hills','Vindhya Range','Madhya Pradesh'],
+      Dhasan:['hills','Bundelkhand uplands','Madhya Pradesh'],
+      Rihand:['hills','Chota Nagpur Plateau','Chhattisgarh'],
+      Koel:['hills','Chota Nagpur Plateau','Jharkhand'],
+      Damodar:['hills','Chota Nagpur Plateau','Jharkhand'],
+      Hooghly:['river','Lower Ganga distributary','West Bengal'],
+      'Padma River':['river','Lower Ganga distributary','Bangladesh']
+    };
+    const labels={
+      Ganga:{point:[82.35,25.25], angle:22, size:12.5},
+      Yamuna:{point:[78.05,27.1], angle:73},
+      Hindon:{point:[77.32,29.25], angle:82},
+      Tons:{point:[77.85,30.45], angle:-23},
+      Ramganga:{point:[79.65,28.25], angle:75},
+      Gomti:{point:[81.55,26.4], angle:72},
+      Ghaghara:{point:[82.45,27.05], angle:80},
+      Gandak:{point:[84.78,26.5], angle:83},
+      'Burhi Gandak':{point:[85.65,26.1], angle:78, name:'BURHI GANDAK', size:9},
+      Koshi:{point:[87.45,26.65], angle:74},
+      Mahananda:{point:[88.05,25.75], angle:80},
+      Son:{point:[83.7,24.05], angle:10},
+      Punpun:{point:[84.65,24.9], angle:65},
+      Chambal:{point:[76.95,25.35], angle:25},
+      Banas:{point:[74.7,25.0], angle:-25},
+      Sindh:{point:[78.05,25.25], angle:73},
+      'Kali Sindh':{point:[76.45,23.55], angle:82, name:'KALI SINDH', size:9.5},
+      Parbati:{point:[76.85,23.85], angle:83},
+      Betwa:{point:[78.7,24.7], angle:73},
+      Dhasan:{point:[79.1,24.35], angle:82},
+      Ken:{point:[80.45,24.7], angle:76},
+      Rihand:{point:[82.85,24.25], angle:82},
+      Koel:{point:[84.65,23.85], angle:35},
+      Damodar:{point:[86.8,23.7], angle:-8},
+      Hooghly:{point:[88.32,22.65], angle:84},
+      'Padma River':{point:[89.65,23.35], angle:18, name:'PADMA RIVER', size:9.5}
+    };
+    this.RIVERS.forEach(r=>{
+      const pts=traces[r.name];
+      if(!pts) return;
+      r.points=pts;
+      r.geo={type:'LineString', coordinates:pts};
+      r.geoSource='UPSC schematic trace from reference-map style';
+      r.label=labels[r.name] || null;
+      if(r.label && r.label.name) r.labelName=r.label.name;
+      if(sources[r.name]){
+        const [type,name,place]=sources[r.name];
+        r.src={type,name,place};
+      }
+      this.centroidById[r.id]=pts[Math.floor(pts.length/2)];
+    });
+  }
+  resetZoom(animate){ if(!this.svgSel||!this.zoom) return; const sel = animate ? this.svgSel.transition().duration(300) : this.svgSel; sel.call(this.zoom.transform, d3.zoomIdentity); }
+
+  // Optional traced GeoJSON fallback. The Ganga study layer already has
+  // schematic coordinates, so it should not be replaced by noisy raw GIS paths.
+  fetchNERivers(){
+    if(this.RIVERS.length && this.RIVERS.every(r=>r.geo && r.geoSource==='UPSC schematic trace from reference-map style')){
+      if(this.RIVER_DEBUG && console && console.info) console.info(`[Atlas Arcade] using schematic river traces: ${this.RIVERS.length}/${this.RIVERS.length}`);
+      return Promise.resolve();
+    }
+    const sources=[
+      {url:'data/india-rivers-osm.geojson', label:'OpenStreetMap traced river LineStrings'}
+    ];
+    return sources.reduce((p,src)=>p.then(()=>fetch(src.url)
+      .then(r=>r.ok?r.json():Promise.reject())
+      .then(d=>{ this.processNERivers(d, src.label); })
+      .catch(()=>{ if(this.RIVER_DEBUG && console && console.warn) console.warn(`[Atlas Arcade] Could not load ${src.url}`); })
+    ), Promise.resolve());
+  }
+  processNERivers(data, sourceLabel){
+    const norm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z]/g,'');
+    const aliases={
+      'Ganga':['ganges','ganga'],'Yamuna':['yamuna','jumna'],'Satluj':['sutlej','satluj','satlaj'],
+      'Kaveri':['cauvery','kaveri'],'Tapti':['tapi','tapti'],'Kosi':['kosi','koshi'],
+      'Ghaghra':['ghaghara','gogra','ghaghra','karnali'],'Tista':['tista','teesta'],
+      'Penna':['pennar','penna','penneru'],'Chenab':['chenab','chandrabhaga'],
+      'Beas':['beas','bias'],'Gandak':['gandak','gandaki','narayani'],
+      'Manas':['manas'],'Subansiri':['subansiri'],'Luni':['luni','loni'],
+      'Sabarmati':['sabarmati'],'Mahi':['mahi'],'Chambal':['chambal'],
+      'Betwa':['betwa'],'Ken':['ken'],'Son':['son','sone'],'Damodar':['damodar'],
+      'Subarnarekha':['subarnarekha'],'Vaigai':['vaigai'],
+      'Indus':['indus'],'Jhelum':['jhelum','jehlum','jhelam','vitasta'],'Ravi':['ravi'],
+      'Brahmaputra':['brahmaputra','tsangpo','yarlung','yarlungtsangpo','dihang'],
+      'Mahanadi':['mahanadi','mahananadi','mahanandi'],'Godavari':['godavari','godaveri'],
+      'Krishna':['krishna','kistna'],'Narmada':['narmada','narbada'],
+      'Shyok':['shyok'],'Zanskar':['zanskar','zaskar'],'Dras':['dras'],
+      'Bhagirathi':['bhagirathi'],'Alaknanda':['alaknanda'],'Mandakini':['mandakini'],
+      'Ramganga':['ramganga'],'Gomati':['gomati','gomti'],'Sarda':['sarda','saryu','kali','kaliganga'],'Mahananda':['mahananda'],
+      'Lohit':['lohit','luhit'],'Dibang':['dibang','sikang'],'Kameng':['kameng'],'Sankosh':['sankosh','sunkosh'],
+      'Burhi Dihing':['burhidihing','dihing'],'Dhansari':['dhansari','dhansiri'],'Tel':['tel'],
+      'Penganga':['penganga','painganga'],'Pranhita':['pranhita'],'Manjra':['manjra','manjira'],'Koyna':['koyna'],
+      'Kabini':['kabini'],'Bhavani':['bhavani'],'Amravati':['amravati','amaravati'],
+      'Tungabhadra':['tungabhadra'],'Bhima':['bhima'],
+      'Indravati':['indravati'],'Wainganga':['wainganga'],'Brahmani':['brahmani'],
+      'Palar':['palar'],'Banas':['banas'],'Parbati':['parbati','parvati']
+    };
+    const lookup={};
+    this.RIVERS.forEach(r=>{
+      lookup[norm(r.name)]=r;
+      const alts=aliases[r.name];
+      if(alts) alts.forEach(a=>{lookup[norm(a)]=r;});
+    });
+    const matches={};
+    const addGeom=(river, geom)=>{
+      if(!river || !geom) return;
+      if(!matches[river.id]) matches[river.id]={river, lines:[]};
+      this.geoLines(geom).forEach(line=>{ if(line && line.length>1) matches[river.id].lines.push(line); });
+    };
+    const propValues=(p)=>{
+      const vals=[];
+      ['name','name_en','name_alt','note'].forEach(k=>{
+        const v=p && p[k];
+        if(typeof v==='string') vals.push(...v.split(/[,;\/()]/).map(x=>x.trim()).filter(Boolean));
+      });
+      return vals;
+    };
+    (data.features||[]).forEach(f=>{
+      if(!f.geometry) return;
+      const props=f.properties||{};
+      if(props.featurecla && !/river/i.test(String(props.featurecla))) return;
+      const geom=this.normalizeRiverGeometry(f.geometry, this.RIVER_BOUNDS);
+      if(!geom) return;
+      const tryMatch=s=>{const k=norm(s);return lookup[k];};
+      const match=propValues(props).reduce((found,v)=>found||tryMatch(v),null);
+      addGeom(match, geom);
+    });
+    const debugRows=[];
+    Object.keys(matches).forEach(id=>{
+      const m=matches[id];
+      if(m.river.geo) return;
+      const geom=this.geometryFromLines(this.mergeRiverLines(m.lines));
+      if(!geom) return;
+      m.river.geo = geom;
+      m.river.geoSource = sourceLabel || 'GeoJSON river source';
+      const coords=this.geoLines(geom).flat();
+      if(coords.length){
+        m.river.points = coords;
+        this.centroidById[m.river.id] = coords[Math.floor(coords.length/2)];
+      }
+      debugRows.push(this.riverDebugRow(m.river));
+    });
+    if(Object.keys(matches).length>0) this.rerenderRivers();
+    if(this.RIVER_DEBUG && console && console.info){
+      console.info(`[Atlas Arcade] loaded GeoJSON river geometries: ${debugRows.length}/${this.RIVERS.length}`);
+      if(console.table) console.table(debugRows);
+    }
+  }
+  geoLines(geom){
+    if(!geom) return [];
+    if(geom.type==='LineString') return [geom.coordinates||[]];
+    if(geom.type==='MultiLineString') return geom.coordinates||[];
+    if(geom.type==='Feature') return this.geoLines(geom.geometry);
+    return [];
+  }
+  normalizeRiverGeometry(geom, bounds){
+    const lines=[];
+    this.geoLines(geom).forEach(line=>{
+      const clipped=this.clipLineToBounds(line.map(c=>this.normalizeLonLat(c)).filter(Boolean), bounds);
+      clipped.forEach(seg=>{ if(seg.length>1) lines.push(seg); });
+    });
+    return this.geometryFromLines(lines);
+  }
+  normalizeLonLat(c){
+    if(!Array.isArray(c) || c.length<2) return null;
+    let x=Number(c[0]), y=Number(c[1]);
+    if(!Number.isFinite(x) || !Number.isFinite(y)) return null;
+    // GeoJSON is [longitude, latitude]. If a source accidentally provides [lat, lon],
+    // India-like values often show up as [6..38, 65..98]; swap those safely.
+    if(x>=5 && x<=38 && y>=65 && y<=98){ const t=x; x=y; y=t; }
+    if(x<-180 || x>180 || y<-90 || y>90) return null;
+    return [+x.toFixed(6), +y.toFixed(6)];
+  }
+  clipLineToBounds(line, bounds){
+    const [minX,minY,maxX,maxY]=bounds;
+    const out=[]; let seg=[];
+    const inside=c=>c[0]>=minX && c[0]<=maxX && c[1]>=minY && c[1]<=maxY;
+    line.forEach(c=>{
+      if(inside(c)) seg.push(c);
+      else { if(seg.length>1) out.push(seg); seg=[]; }
+    });
+    if(seg.length>1) out.push(seg);
+    return out;
+  }
+  mergeRiverLines(lines){
+    return lines.filter(line=>Array.isArray(line) && line.length>1);
+  }
+  geometryFromLines(lines){
+    if(!lines || !lines.length) return null;
+    return lines.length===1 ? {type:'LineString',coordinates:lines[0]} : {type:'MultiLineString',coordinates:lines};
+  }
+  rerenderRivers(){
+    if(!this.gRivers) return;
+    Object.keys(this.riverById).forEach(rid=>{
+      const r=this.riverById[rid];
+      const newD=this.riverPath(r.data);
+      if(newD){ r.vis.setAttribute('d',newD); r.hit.setAttribute('d',newD); }
+    });
+    this.updateRiverLabels();
+  }
+  riverGeometry(r){
+    if(r.geo) return r.geo;
+    return null;
+  }
+  riverPath(r){ const geom=this.riverGeometry(r); return geom ? (this.pathGen(geom)||'') : ''; }
+  reprojectRivers(){ if(!this.gRivers) return; this.gRivers.selectAll('path').attr('d', d=> this.riverPath(d)); this.updateRiverLabels(); }
+  riverDebugRow(r){
+    const geom=this.riverGeometry(r);
+    const lines=this.geoLines(geom);
+    const coords=lines.flat();
+    const xs=coords.map(c=>c[0]), ys=coords.map(c=>c[1]);
+    return {
+      river:r.name,
+      source:r.geoSource || 'no GeoJSON loaded',
+      geometry:geom ? geom.type : 'none',
+      lines:lines.length,
+      points:coords.length,
+      bbox:coords.length ? `${Math.min(...xs).toFixed(3)}, ${Math.min(...ys).toFixed(3)}, ${Math.max(...xs).toFixed(3)}, ${Math.max(...ys).toFixed(3)}` : 'empty'
+    };
+  }
+  updateIndiaRiverClip(){
+    if(!this.riverClipPath || !this.featById[356] || !this.pathGen) return;
+    this.riverClipPath.datum(this.featById[356]).attr('d', this.pathGen);
+  }
+  fetchNationalParks(){
+    return fetch('data/india-national-parks.json')
+      .then(r=>r.ok?r.json():Promise.reject())
+      .then(d=>{
+        this.PARK_REGIONS = d.regions || [];
+        this.PARKS = (d.parks || []).map(p=>({...p, points:[[p.lon,p.lat]]}));
+        this.PARKS.forEach(p=>{ this.centroidById[p.id]=[p.lon,p.lat]; });
+        if(this.RIVER_DEBUG && console && console.info) console.info(`[Atlas Arcade] loaded national parks: ${this.PARKS.length}`);
+      })
+      .catch(()=>{ if(this.RIVER_DEBUG && console && console.warn) console.warn('[Atlas Arcade] Could not load data/india-national-parks.json'); });
+  }
+  parkStatesForRegion(regionKey){
+    const parks=regionKey ? this.PARKS.filter(p=>p.region===regionKey) : this.PARKS;
+    return [...new Set(parks.map(p=>p.state))].sort((a,b)=>a.localeCompare(b));
+  }
+  activeLearnParks(){
+    let parks=this.state.parkRegion ? this.PARKS.filter(p=>p.region===this.state.parkRegion) : this.PARKS.slice();
+    if(this.state.parkLearnState) parks=parks.filter(p=>p.state===this.state.parkLearnState);
+    return parks;
+  }
+  activeLearnRegionParks(){
+    return this.state.parkRegion ? this.PARKS.filter(p=>p.region===this.state.parkRegion) : this.PARKS.slice();
+  }
+  parkBoundsForParks(parks, fallbackBounds){
+    if(!parks || !parks.length) return fallbackBounds;
+    let minLon=Infinity, minLat=Infinity, maxLon=-Infinity, maxLat=-Infinity;
+    parks.forEach(p=>{
+      minLon=Math.min(minLon,p.lon); maxLon=Math.max(maxLon,p.lon);
+      minLat=Math.min(minLat,p.lat); maxLat=Math.max(maxLat,p.lat);
+    });
+    const cx=(minLon+maxLon)/2, cy=(minLat+maxLat)/2;
+    const density=Math.sqrt(Math.max(1, parks.length));
+    const minLonSpan=Math.max(3.6, Math.min(9, density*1.85));
+    const minLatSpan=Math.max(3.0, Math.min(7, density*1.45));
+    const lonSpan=Math.max(maxLon-minLon+1.1, minLonSpan);
+    const latSpan=Math.max(maxLat-minLat+1.0, minLatSpan);
+    minLon=cx-lonSpan/2; maxLon=cx+lonSpan/2;
+    minLat=cy-latSpan/2; maxLat=cy+latSpan/2;
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+    minLon=clamp(minLon,66.5,98.2); maxLon=clamp(maxLon,66.8,98.5);
+    minLat=clamp(minLat,5.5,37.3); maxLat=clamp(maxLat,5.8,37.6);
+    if(maxLon-minLon<2.6){ minLon=clamp(cx-1.3,66.5,98.2); maxLon=clamp(cx+1.3,66.8,98.5); }
+    if(maxLat-minLat<2.2){ minLat=clamp(cy-1.1,5.5,37.3); maxLat=clamp(cy+1.1,5.8,37.6); }
+    return [[minLon,minLat],[maxLon,maxLat]];
+  }
+  parkLearnRows(){
+    return this.activeLearnParks().map(p=>({correct:true, park:{name:p.name, lon:p.lon, lat:p.lat}}));
+  }
+  renderParkMarkers(){
+    if(!this.gParks) return;
+    this.gParks.selectAll('*').remove();
+    this.parkById = {};
+    const self=this;
+    this.PARKS.forEach(p=>{
+      const reg=this.PARK_REGIONS.find(r=>r.key===p.region)||{};
+      const color=reg.color || this.PARK_COLOR;
+      const g=this.gParks.append('g').attr('class','park-marker').style('cursor','pointer');
+      const hit=g.append('circle').attr('r',13).attr('fill','rgba(0,0,0,0)');
+      const pin=g.append('g').style('pointer-events','none');
+      pin.append('path').attr('d','M0,-13 C-7,-13 -11,-8 -11,-2 C-11,6 -3,10 0,15 C3,10 11,6 11,-2 C11,-8 7,-13 0,-13Z').attr('fill','#fff').attr('stroke',color).attr('stroke-width',2);
+      pin.append('path').attr('d','M0,-8 C-4,-4 -5,-1 -5,2 C-5,5 -3,7 0,7 C3,7 5,5 5,2 C5,-1 4,-4 0,-8Z').attr('fill',color).attr('opacity',.95);
+      pin.append('path').attr('d','M0,-4 V6 M-3,1 L0,4 L4,0').attr('fill','none').attr('stroke','#fff').attr('stroke-width',1.3).attr('stroke-linecap','round').attr('stroke-linejoin','round');
+      const label=g.append('text').attr('y',-17).attr('text-anchor','middle').attr('font-family','Fredoka, sans-serif').attr('font-weight',600).attr('font-size',11).attr('fill','#21432B').attr('paint-order','stroke').attr('stroke','#fff').attr('stroke-width',3.5).attr('stroke-linejoin','round').style('pointer-events','none').text(p.name.replace(/ National Park/g,''));
+      g.datum(p); hit.datum(p);
+      g.on('click',(event)=>{ self.handleParkClick(event, p.id); });
+      this.parkById[p.id]={g:g.node(), hit:hit.node(), pin:pin.node(), label:label.node(), data:p, color};
+    });
+    this.updateParkPositions();
+  }
+  updateParkPositions(){
+    if(!this.gParks || !this.proj) return;
+    Object.keys(this.parkById).forEach(id=>{
+      const p=this.parkById[id].data;
+      const xy=this.proj([p.lon,p.lat]);
+      if(xy) this.parkById[id].g.setAttribute('transform',`translate(${xy[0]},${xy[1]})`);
+    });
+    this.updateParkFeedbackPositions();
+  }
+  setParkVisibility(regionKey, showLabels){
+    if(!this.gParks) return;
+    this.gParks.style('display','none');
+    Object.keys(this.parkById).forEach(id=>{
+      const p=this.parkById[id].data;
+      const show=!regionKey || p.region===regionKey;
+      this.parkById[id].g.style.display=show?'':'none';
+      this.parkById[id].g.style.pointerEvents=this.state.screen==='parklearn'?'auto':'none';
+      this.parkById[id].label.style.display=show && showLabels && !!regionKey ? '' : 'none';
+    });
+    if(this.gParkFeedback) this.gParkFeedback.style('display', this.state.app==='india' && this.state.category==='parks' && (this.state.screen==='play' || this.state.screen==='parklearn') ? '' : 'none');
+  }
+  renderParkFeedback(history){
+    if(!this.gParkFeedback) return;
+    const rows=(history||[]).filter(Boolean).filter(h=>h.park);
+    this.gParkFeedback.selectAll('*').remove();
+    rows.forEach(h=>{
+      const label=h.park.name.replace(/ National Park/g,'');
+      const g=this.gParkFeedback.append('g').attr('class','park-answer-dot').attr('data-label',label).datum(h.park);
+      const color=h.correct?this.GREEN:this.RED;
+      g.append('line').attr('class','park-label-leader').attr('stroke','#7CB794').attr('stroke-width',1.4).attr('stroke-linecap','round').attr('opacity',.75).style('display','none');
+      g.append('circle').attr('r',6).attr('fill',color).attr('stroke','#fff').attr('stroke-width',2);
+      g.append('rect').attr('class','park-label-bg').attr('rx',6).attr('ry',6).attr('fill','rgba(255,255,255,.88)').attr('stroke','rgba(185,220,200,.95)').attr('stroke-width',1).style('display','none');
+      g.append('text').attr('class','park-label-text').attr('x',9).attr('y',4).attr('font-family','Fredoka, sans-serif').attr('font-weight',600).attr('font-size',11.2).attr('fill','#24382A').attr('paint-order','stroke').attr('stroke','#fff').attr('stroke-width',3).attr('stroke-linejoin','round').text(label);
+    });
+    this.updateParkFeedbackPositions();
+  }
+  updateParkFeedbackPositions(){
+    if(!this.gParkFeedback || !this.proj) return;
+    const placed=[];
+    this.gParkFeedback.selectAll('g.park-answer-dot').attr('transform', d=>{
+      const xy=this.proj([d.lon,d.lat]);
+      if(xy) placed.push({d,xy});
+      return xy?`translate(${xy[0]},${xy[1]})`:'translate(-9999,-9999)';
+    });
+    if(this.state.screen==='parklearn') this.layoutParkFeedbackLabels(placed);
+    else this.resetParkFeedbackLabels();
+  }
+  resetParkFeedbackLabels(){
+    if(!this.gParkFeedback) return;
+    this.gParkFeedback.selectAll('g.park-answer-dot').each(function(){
+      const g=d3.select(this);
+      g.select('text.park-label-text').attr('x',9).attr('y',4).attr('text-anchor','start').attr('font-size',11.5).attr('stroke-width',3.5);
+      g.select('rect.park-label-bg').style('display','none');
+      g.select('line.park-label-leader').style('display','none');
+    });
+  }
+  layoutParkFeedbackLabels(items){
+    if(!this.gParkFeedback) return;
+    const used=[];
+    const top=16, bottom=this.H-88, left=14, right=this.W-14;
+    const candidates=[
+      {x:12,y:4,a:'start'}, {x:-12,y:4,a:'end'}, {x:12,y:-13,a:'start'}, {x:-12,y:-13,a:'end'},
+      {x:12,y:20,a:'start'}, {x:-12,y:20,a:'end'}, {x:0,y:-17,a:'middle'}, {x:0,y:28,a:'middle'},
+      {x:24,y:-25,a:'start'}, {x:-24,y:-25,a:'end'}, {x:24,y:34,a:'start'}, {x:-24,y:34,a:'end'},
+      {x:38,y:4,a:'start'}, {x:-38,y:4,a:'end'}
+    ];
+    const intersect=(a,b)=>!(a.r+4<b.l || a.l>b.r+4 || a.b+3<b.t || a.t>b.b+3);
+    const scoreBox=box=>{
+      let score=0;
+      used.forEach(u=>{ if(intersect(box,u)) score+=1000; });
+      if(box.l<left) score+=left-box.l;
+      if(box.r>right) score+=box.r-right;
+      if(box.t<top) score+=top-box.t;
+      if(box.b>bottom) score+=box.b-bottom;
+      return score;
+    };
+    items.sort((a,b)=>a.xy[1]-b.xy[1]).forEach(item=>{
+      const node=this.gParkFeedback.selectAll('g.park-answer-dot').filter(d=>d===item.d).node();
+      if(!node) return;
+      const g=d3.select(node);
+      const label=node.getAttribute('data-label') || item.d.name || '';
+      const w=Math.min(176, Math.max(48, label.length*6.2+16));
+      const h=18;
+      const boxFor=c=>{
+        let l;
+        if(c.a==='end') l=item.xy[0]+c.x-w-6;
+        else if(c.a==='middle') l=item.xy[0]+c.x-w/2;
+        else l=item.xy[0]+c.x-6;
+        const t=item.xy[1]+c.y-13;
+        return {l,t,r:l+w,b:t+h,c};
+      };
+      let best=null, bestScore=Infinity;
+      candidates.forEach(c=>{
+        const box=boxFor(c);
+        const s=scoreBox(box);
+        if(s<bestScore){ bestScore=s; best=box; }
+      });
+      used.push(best);
+      const c=best.c;
+      const rectX=best.l-item.xy[0], rectY=best.t-item.xy[1];
+      g.select('text.park-label-text').attr('x',c.x).attr('y',c.y).attr('text-anchor',c.a).attr('font-size',11).attr('stroke-width',2.8);
+      g.select('rect.park-label-bg').style('display','').attr('x',rectX).attr('y',rectY).attr('width',best.r-best.l).attr('height',best.b-best.t);
+      const lineEndX=c.a==='end'?c.x+3:(c.a==='start'?c.x-3:c.x);
+      const lineEndY=c.y-4;
+      g.select('line.park-label-leader').style('display','').attr('x1',lineEndX<0?-6:6).attr('y1',0).attr('x2',lineEndX).attr('y2',lineEndY);
+    });
+  }
+  handleParkClick(event, id){
+    // Park markers are learning anchors only. In practice the answer is the state/UT.
+    if(this.state.screen==='parklearn') this.focusPark(id);
+  }
+  focusPark(id){
+    const p=this.parkById[id] && this.parkById[id].data;
+    if(!p || !this.svgSel || !this.zoom) return;
+    Object.keys(this.parkById).forEach(pid=>{ this.parkById[pid].label.style.display='none'; });
+    this.parkById[id].label.style.display='';
+    this.parkById[id].g.parentNode.appendChild(this.parkById[id].g);
+    const xy=this.proj([p.lon,p.lat]);
+    if(!xy) return;
+    const k=4.2;
+    const t=d3.zoomIdentity.translate(this.W/2 - xy[0]*k, this.H/2 - xy[1]*k).scale(k);
+    this.svgSel.transition().duration(450).call(this.zoom.transform, t);
+  }
+
+  fitContinent(name){
+    const ids = this.continents[name].map(c=>c.id);
+    const feats = ids.map(id=>this.featById[id]).filter(Boolean);
+    if(!feats.length) return;
+    this._view='continent';
+    this.activeContinent=name;
+    this.setVisibility(name);
+    this.showIndiaStates(false);
+    if(this.gRivers) this.gRivers.style('display','none');
+    if(this.gParks) this.gParks.style('display','none');
+    if(this.gParkFeedback) this.gParkFeedback.style('display','none');
+    if(this.gParkFeedback) this.gParkFeedback.style('display','none');
+    this.resetZoom(false);
+    const BOUNDS = {Europe:[[-25,34],[42,71]],Asia:[[25,-11],[150,78]],Africa:[[-18,-35],[52,38]],'North America':[[-168,7],[-52,72]],'South America':[[-82,-56],[-34,13]],Oceania:[[112,-48],[180,2]]};
+    const b=BOUNDS[name];
+    const frame = b ? {type:'MultiPoint',coordinates:[[b[0][0],b[0][1]],[b[1][0],b[0][1]],[b[1][0],b[1][1]],[b[0][0],b[1][1]]]} : {type:'FeatureCollection',features:feats};
+    this.proj.fitExtent([[24,20],[this.W-24,this.H-20]], frame);
+    if(this.gCountries) this.gCountries.attr('d', this.pathGen);
+    this.updateIndiaRiverClip();
+    this.recolor();
+  }
+  fitWorld(){
+    this._view='world';
+    this.activeContinent=null;
+    this.setVisibility(null);
+    this.showIndiaStates(false);
+    if(this.gRivers) this.gRivers.style('display','none');
+    if(this.gParks) this.gParks.style('display','none');
+    if(this.gParkFeedback) this.gParkFeedback.style('display','none');
+    this.resetZoom(false);
+    const fc={type:'FeatureCollection',features:Object.values(this.featById)};
+    this.proj.fitExtent([[14,10],[this.W-14,this.H-10]], fc);
+    if(this.gCountries) this.gCountries.attr('d', this.pathGen);
+    this.updateIndiaRiverClip();
+    this.recolor();
+  }
+  fitIndia(){
+    this._view='india';
+    this.activeContinent=null;
+    this.setIndiaVisibility();
+    this.showIndiaStates(true);
+    this.setRiverVisibility(null);
+    this.setParkVisibility(null, this.state.category==='parks' && this.state.screen==='parklearn');
+    this.resetZoom(false);
+    const b=[[68,6],[97,37]];
+    const frame={type:'MultiPoint',coordinates:[[b[0][0],b[0][1]],[b[1][0],b[0][1]],[b[1][0],b[1][1]],[b[0][0],b[1][1]]]};
+    this.proj.fitExtent([[34,28],[this.W-34,this.H-28]], frame);
+    if(this.gCountries) this.gCountries.attr('d', this.pathGen);
+    this.updateIndiaRiverClip();
+    if(this.gIndia) this.gIndia.selectAll('path').attr('d', this.pathGen);
+    if(this.gRivers){
+      this.gRivers.style('display', this.state.category==='parks' ? 'none' : '');
+      this.gRivers.selectAll('path').attr('d', d=> this.riverPath(d));
+    }
+    this.updateParkPositions();
+    this.recolor();
+  }
+  fitIndiaSystem(sysKey){
+    const sysDef = this.RIVER_SYSTEMS.find(s=>s.key===sysKey);
+    this._view='india-system';
+    this.activeContinent=null;
+    this.setIndiaVisibility();
+    this.showIndiaStates(true);
+    this.setRiverVisibility(sysKey);
+    if(this.gParks) this.gParks.style('display','none');
+    this.resetZoom(false);
+    const b = sysDef ? sysDef.bounds : [[68,6],[97,37]];
+    const frame={type:'MultiPoint',coordinates:[[b[0][0],b[0][1]],[b[1][0],b[0][1]],[b[1][0],b[1][1]],[b[0][0],b[1][1]]]};
+    this.proj.fitExtent([[42,36],[this.W-42,this.H-36]], frame);
+    if(this.gCountries) this.gCountries.attr('d', this.pathGen);
+    this.updateIndiaRiverClip();
+    if(this.gIndia) this.gIndia.selectAll('path').attr('d', this.pathGen);
+    if(this.gRivers){
+      this.gRivers.style('display','');
+      this.gRivers.selectAll('path').attr('d', d=> this.riverPath(d));
+    }
+    this.updateParkPositions();
+    this.recolor();
+  }
+  fitIndiaParks(regionKey){
+    const regDef = this.PARK_REGIONS.find(r=>r.key===regionKey);
+    this._view='india-parks';
+    this.activeContinent=null;
+    this.setIndiaVisibility();
+    this.showIndiaStates(true);
+    if(this.gRivers) this.gRivers.style('display','none');
+    if(this.gParkFeedback) this.gParkFeedback.style('display','none');
+    this.setParkVisibility(regionKey, this.state.screen==='parklearn');
+    this.resetZoom(false);
+    let b = regDef ? regDef.bounds : [[68,6],[97,37]];
+    if(this.state.screen==='parklearn' && this.state.parkLearnState) b=this.parkBoundsForParks(this.activeLearnParks(), b);
+    const frame={type:'MultiPoint',coordinates:[[b[0][0],b[0][1]],[b[1][0],b[0][1]],[b[1][0],b[1][1]],[b[0][0],b[1][1]]]};
+    const pad = this.state.screen==='parklearn' ? [[34,24],[this.W-34,this.H-76]] : [[42,36],[this.W-42,this.H-36]];
+    this.proj.fitExtent(pad, frame);
+    if(this.gCountries) this.gCountries.attr('d', this.pathGen);
+    this.updateIndiaRiverClip();
+    if(this.gIndia) this.gIndia.selectAll('path').attr('d', this.pathGen);
+    this.recolor();
+    this.updateParkPositions();
+    if(this.state.screen==='parklearn') this.renderParkFeedback(this.parkLearnRows());
+  }
+  setRiverVisibility(sysKey){
+    Object.keys(this.riverById).forEach(rid=>{
+      const r=this.riverById[rid];
+      const show = !sysKey || r.data.sys===sysKey;
+      r.vis.style.display = show?'':'none';
+      r.hit.style.display = show?'':'none';
+    });
+    this.updateRiverLabels();
+  }
+  updateRiverLabels(){
+    if(!this.gRiverLabels) return;
+    const showGroup = this.state.app==='india' && this.state.category==='rivers' && this.state.screen!=='play';
+    this.gRiverLabels.style('display', showGroup?'':'none');
+    Object.keys(this.riverLabelById).forEach(rid=>{
+      const el=this.riverLabelById[rid];
+      const r=this.riverById[rid];
+      if(!el || !r || !r.data || !r.data.label){
+        if(el) el.style.display='none';
+        return;
+      }
+      const visible = showGroup && r.vis.style.display!=='none';
+      if(!visible){ el.style.display='none'; return; }
+      const cfg=r.data.label;
+      const p=this.proj(cfg.point || this.centroidById[r.data.id]);
+      if(!p){ el.style.display='none'; return; }
+      const dx=cfg.dx||0, dy=cfg.dy||0, angle=cfg.angle||0;
+      el.style.display='';
+      el.setAttribute('transform',`translate(${p[0]+dx},${p[1]+dy}) rotate(${angle})`);
+      el.setAttribute('font-size', cfg.size || 10.5);
+      el.textContent = cfg.name || (r.data.labelName || r.data.name.toUpperCase());
+    });
+  }
+  handleRiverClick(event, fallbackId){
+    if(!this.isRiverAnswerable()) return;
+    const id=this.resolveRiverClick(event, fallbackId);
+    this.answer(id);
+  }
+  resolveRiverClick(event, fallbackId){
+    const svg = this.svgSel && this.svgSel.node ? this.svgSel.node() : null;
+    if(!svg || !event) return fallbackId;
+    const targetId = this.state.target && this.state.target.id;
+    const candidates=[];
+    Object.keys(this.riverById).forEach(rid=>{
+      const r=this.riverById[rid];
+      if(!r || r.hit.style.display==='none') return;
+      const p = svg.createSVGPoint();
+      p.x = event.clientX; p.y = event.clientY;
+      let local=null, under=false;
+      try {
+        local = p.matrixTransform(r.hit.getScreenCTM().inverse());
+        under = r.hit.isPointInStroke ? r.hit.isPointInStroke(local) : false;
+      } catch(e) {}
+      if(under) candidates.push({id:+rid, dist:this.riverScreenDistance(r.hit, local)});
+    });
+    if(candidates.some(c=>c.id===targetId)) return targetId;
+    if(!candidates.length) return fallbackId;
+    candidates.sort((a,b)=>a.dist-b.dist);
+    return candidates[0].id;
+  }
+  riverScreenDistance(path, point){
+    try {
+      const len=path.getTotalLength();
+      if(!Number.isFinite(len) || len<=0) return Infinity;
+      let best=Infinity;
+      const steps=Math.max(16, Math.min(80, Math.ceil(len/18)));
+      for(let i=0;i<=steps;i++){
+        const p=path.getPointAtLength((len*i)/steps);
+        const dx=p.x-point.x, dy=p.y-point.y;
+        best=Math.min(best, dx*dx+dy*dy);
+      }
+      return best;
+    } catch(e){ return Infinity; }
+  }
+  sourceMeta(type){
+    const M={glacier:{color:'#7FB4D6',label:'Glacier'},mountain:{color:'#8B6F4E',label:'Mountain'},hills:{color:'#A98B63',label:'Hills / Plateau'},lake:{color:'#3E8FB8',label:'Lake'},spring:{color:'#2FA37A',label:'Spring'},river:{color:'#2C6FBF',label:'Distributary'}};
+    return M[type]||M.mountain;
+  }
+  drawFeatureIcon(g, type){
+    if(type==='glacier'){
+      g.append('path').attr('d','M-10,0 L0,-15 L10,0 Z').attr('fill','#DCEFF7').attr('stroke','#7FB4D6').attr('stroke-width',1.2).attr('stroke-linejoin','round');
+      g.append('path').attr('d','M-3.6,-5.4 L0,-15 L3.6,-5.4 Z').attr('fill','#fff');
+    } else if(type==='lake' || type==='river'){
+      g.append('ellipse').attr('cy',-4).attr('rx',10).attr('ry',5).attr('fill','#7EC4E6').attr('stroke','#3E8FB8').attr('stroke-width',1.2);
+    } else if(type==='spring'){
+      g.append('circle').attr('cy',-5).attr('r',7).attr('fill','none').attr('stroke','#2FA37A').attr('stroke-width',1.5);
+      g.append('circle').attr('cy',-5).attr('r',3.4).attr('fill','#7EDCB8').attr('stroke','#2FA37A').attr('stroke-width',1);
+    } else if(type==='hills'){
+      g.append('path').attr('d','M-12,0 Q-7,-9 -2,-1 Q2,-12 7,-2 Q10,-6 12,0 Z').attr('fill','#A98B63').attr('stroke','#7A6038').attr('stroke-width',1.1).attr('stroke-linejoin','round');
+    } else {
+      g.append('path').attr('d','M-10,0 L0,-15 L10,0 Z').attr('fill','#8B6F4E').attr('stroke','#5E4A32').attr('stroke-width',1.2).attr('stroke-linejoin','round');
+      g.append('path').attr('d','M-3.6,-5.4 L0,-15 L3.6,-5.4 L1.4,-3.6 L0,-4.9 L-1.6,-3.6 Z').attr('fill','#fff');
+    }
+    g.append('circle').attr('r',2).attr('fill','#C0531F').attr('stroke','#fff').attr('stroke-width',0.8);
+  }
+  drawSource(river){
+    if(!this.gSources || !river || !river.src) return;
+    const p = this.proj(river.points[0]); if(!p) return;
+    const g=this.gSources.append('g').attr('transform',`translate(${p[0]},${p[1]})`).attr('opacity',0);
+    this.drawFeatureIcon(g, river.src.type);
+    g.transition().duration(300).attr('opacity',1);
+  }
+  clearSources(){ if(this.gSources) this.gSources.selectAll('*').remove(); }
+
+  recolor(){
+    this.clearSources();
+    Object.keys(this.pathById).forEach(k=>{ const el=this.pathById[k]; el.__feedback=false; el.classList.remove('qz-target'); el.setAttribute('fill',this.baseFillFor(+k)); el.setAttribute('stroke','#ffffff'); el.setAttribute('stroke-width','0.7'); });
+    if(this.gIndia){
+      this.gIndia.selectAll('path')
+        .each(function(){ this.__feedback=false; this.classList.remove('qz-target'); })
+        .attr('fill','#FFEFD8')
+        .attr('stroke','#9E7A4E')
+        .attr('stroke-width',0.55);
+      this.updateIndiaStateInteractivity();
+    }
+    if(this.gRivers){
+      Object.keys(this.riverById).forEach(rid=>{ const r=this.riverById[rid]; r.vis.classList.remove('qz-rtarget'); r.vis.setAttribute('stroke',this.RIVER_COLOR); r.vis.setAttribute('stroke-width', r.major?'3.2':'2'); r.vis.setAttribute('opacity', r.major?'1':'0.82'); r.vis.__feedback=false; r.hit.__feedback=false; });
+      if(this.state.app==='india') this.setRiverVisibility(this.state.riverSystem);
+    }
+    if(this.gParks){
+      Object.keys(this.parkById).forEach(pid=>{
+        const p=this.parkById[pid];
+        p.pin.classList.remove('qz-rtarget');
+        p.pin.setAttribute('opacity','1');
+        p.g.__feedback=false;
+        p.hit.__feedback=false;
+        p.g.style.filter='';
+        const path=p.pin.querySelector('path');
+        if(path){ path.setAttribute('stroke',p.color); path.setAttribute('stroke-width','2'); }
+      });
+      if(this.state.app==='india' && this.state.category==='parks') this.setParkVisibility(this.state.parkRegion, this.state.screen==='parklearn');
+      else this.gParks.style('display','none');
+    }
+    if(this.state.app==='india'){
+      const ie=this.pathById[356]; if(ie){ ie.setAttribute('fill','#FFEFD8'); ie.setAttribute('stroke','#D4B58E'); ie.setAttribute('stroke-width','0.9'); }
+    }
+  }
+
+  paint(id,color,raise){
+    if(typeof id==='string' && this.statePathByName[id]){
+      const el=this.statePathByName[id];
+      el.__feedback=true;
+      el.setAttribute('fill',color);
+      el.setAttribute('stroke','#ffffff');
+      el.setAttribute('stroke-width','1.8');
+      if(raise) el.parentNode.appendChild(el);
+      return;
+    }
+    if(this.riverById[id]){
+      const r=this.riverById[id];
+      r.vis.__feedback=true; r.hit.__feedback=true;
+      r.vis.setAttribute('stroke',color); r.vis.setAttribute('stroke-width', r.major?'5':'4');
+      if(raise){ r.hit.parentNode.appendChild(r.hit); r.vis.parentNode.appendChild(r.vis); }
+      return;
+    }
+    if(this.parkById[id]){
+      const p=this.parkById[id];
+      p.g.__feedback=true; p.hit.__feedback=true;
+      p.pin.style.filter=`drop-shadow(0 0 7px ${color})`;
+      p.pin.setAttribute('opacity','1');
+      const path=p.pin.querySelector('path');
+      if(path){ path.setAttribute('stroke',color); path.setAttribute('stroke-width','3'); }
+      if(raise) p.g.parentNode.appendChild(p.g);
+      return;
+    }
+    const el=this.pathById[+id]; if(!el) return;
+    el.__feedback=true; el.setAttribute('fill',color); el.setAttribute('stroke','#ffffff'); el.setAttribute('stroke-width','1.6');
+    if(raise) el.parentNode.appendChild(el);
+  }
+  highlightTarget(id){
+    if(typeof id==='string' && this.statePathByName[id]){
+      const el=this.statePathByName[id];
+      el.parentNode.appendChild(el);
+      el.__feedback=true;
+      el.setAttribute('fill',this.AMBER);
+      el.setAttribute('stroke','#C97A00');
+      el.setAttribute('stroke-width','1.8');
+      el.classList.add('qz-target');
+      return;
+    }
+    if(this.riverById[id]){
+      const r=this.riverById[id];
+      r.hit.parentNode.appendChild(r.hit); r.vis.parentNode.appendChild(r.vis);
+      r.vis.__feedback=true;
+      r.vis.setAttribute('stroke',this.AMBER); r.vis.setAttribute('stroke-width', r.major?'6':'5');
+      r.vis.classList.add('qz-rtarget');
+      return;
+    }
+    if(this.parkById[id]){
+      const p=this.parkById[id];
+      p.g.parentNode.appendChild(p.g);
+      p.g.__feedback=true;
+      p.pin.classList.add('qz-rtarget');
+      p.pin.style.filter='drop-shadow(0 0 8px rgba(255,159,28,.9))';
+      p.label.style.display='';
+      return;
+    }
+    const el=this.pathById[+id]; if(!el) return;
+    el.parentNode.appendChild(el); el.__feedback=true; el.setAttribute('fill',this.AMBER); el.setAttribute('stroke','#C97A00'); el.setAttribute('stroke-width','1.6'); el.classList.add('qz-target');
+  }
+
+  // ---- HELPERS ----
+  shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+  isAnswerable(){ return this.state.screen==='play' && this.state.app==='world' && this.state.mode==='locate' && !this.state.answeredThisRound && !this.frozen && this.state.loaded; }
+  isRiverAnswerable(){ return this.state.screen==='play' && this.state.app==='india' && this.state.category==='rivers' && this.state.mode==='locate' && !this.state.answeredThisRound && !this.frozen && this.state.loaded; }
+  isParkAnswerable(){ return this.state.screen==='play' && this.state.app==='india' && this.state.category==='parks' && this.state.mode==='locate' && !this.state.answeredThisRound && !this.frozen && this.state.loaded; }
+  mult(s){ return s<3?1 : s<6?2 : s<9?3 : s<12?4 : 5; }
+  answerTargetId(t){ return this.state.app==='india' && this.state.category==='parks' && t ? this.normStateName(t.state) : (t?t.id:null); }
+  currentPool(){
+    if(this.state.app==='india' && this.state.category==='parks') return this.state.parkRegion ? this.PARKS.filter(p=>p.region===this.state.parkRegion) : this.PARKS.slice();
+    if(this.state.app==='india') return this.state.riverSystem ? this.RIVERS.filter(r=>r.sys===this.state.riverSystem) : this.RIVERS.slice();
+    return this.activeContinent ? this.continents[this.activeContinent].slice() : [];
+  }
+  itemName(id){
+    if(typeof id==='string' && this.statePathByName[id]) return this.statePathByName[id].__stateName || id;
+    if(this.parkById[id]) return this.parkById[id].data.name;
+    if(this.riverById[id]) return this.riverById[id].data.name;
+    if(this.nameById[id]) return this.nameById[id];
+    return null;
+  }
+
+  makeChoices(t){
+    let pool;
+    if(this.state.app==='india' && this.state.category==='parks'){
+      const states=[...new Set(this.PARKS.map(p=>p.state))].filter(st=>st!==t.state).map(st=>({id:this.normStateName(st),name:st}));
+      const sameRegion=[...new Set(this.PARKS.filter(p=>!this.state.parkRegion || p.region===this.state.parkRegion).map(p=>p.state))].filter(st=>st!==t.state).map(st=>({id:this.normStateName(st),name:st}));
+      pool=(sameRegion.length>=2?sameRegion:states);
+      const arr=this.shuffle([{id:this.normStateName(t.state),name:t.state}, ...this.shuffle(pool).slice(0,2)]);
+      return arr;
+    }
+    else if(this.state.app==='india'){ pool=this.RIVERS.filter(r=>r.id!==t.id && (!this.state.riverSystem || r.sys===this.state.riverSystem)); if(pool.length<2) pool=this.RIVERS.filter(r=>r.id!==t.id); }
+    else {
+      pool=this.continents[this.activeContinent].filter(c=>c.id!==t.id);
+      if(pool.length<2) pool=Object.values(this.continents).flat().filter(c=>c.id!==t.id);
+    }
+    const tc=this.centroidById[t.id];
+    if(tc){ pool=pool.slice().sort((a,b)=> d3.geoDistance(this.centroidById[a.id]||[0,0],tc) - d3.geoDistance(this.centroidById[b.id]||[0,0],tc)); }
+    const near=this.shuffle(pool.slice(0, Math.min(5,pool.length)));
+    const arr=this.shuffle([t, near[0], near[1]]);
+    return arr.map(c=>({id:c.id,name:c.name}));
+  }
+
+  // ---- ROUTING ----
+  onPickWorld(){
+    this.ensureAudio(); this.playSound('click');
+    this.activeContinent=null;
+    this.setState({app:'world', screen:'menu', continent:null, category:null, toast:null}, ()=>this.fitWorld());
+  }
+  onPickIndia(){
+    this.ensureAudio(); this.playSound('click');
+    this.setState({app:'india', screen:'menu', continent:'India', category:null, riverSystem:null, parkRegion:null, toast:null}, ()=>this.fitIndia());
+  }
+  onPickIndiaRivers(){
+    this.playSound('click');
+    this.setState({screen:'riversystems', category:'rivers', riverSystem:null, parkRegion:null}, ()=>this.fitIndia());
+  }
+  onPickIndiaParks(){
+    this.playSound('click');
+    this.setState({screen:'parkregions', category:'parks', riverSystem:null, parkRegion:null, setupMode:'locate'}, ()=>this.fitIndiaParks(null));
+  }
+  onPickRiverSystem(key){
+    this.playSound('click');
+    const total=this.RIVERS.filter(r=>r.sys===key).length;
+    this.setState({screen:'setup', category:'rivers', riverSystem:key, parkRegion:null, setupTotal:total, setupCount:total, setupMode:'locate'}, ()=>this.fitIndiaSystem(key));
+  }
+  onLearnParkRegion(key){
+    this.playSound('click');
+    const states=this.parkStatesForRegion(key);
+    this.setState({screen:'parklearn', category:'parks', parkRegion:key, parkLearnState:states[0]||null, riverSystem:null, toast:null}, ()=>this.fitIndiaParks(key));
+  }
+  onPracticeParkRegion(key){
+    this.playSound('click');
+    const total=this.PARKS.filter(p=>p.region===key).length;
+    this.setState({screen:'setup', category:'parks', parkRegion:key, parkLearnState:null, riverSystem:null, setupTotal:total, setupCount:Math.min(10,total), setupMode:'locate'}, ()=>this.fitIndiaParks(key));
+  }
+  onPracticeAllParks(){
+    this.playSound('click');
+    const total=this.PARKS.length;
+    this.setState({screen:'setup', category:'parks', parkRegion:null, parkLearnState:null, riverSystem:null, setupTotal:total, setupCount:Math.min(20,total), setupMode:'locate'}, ()=>this.fitIndiaParks(null));
+  }
+  onPracticeLearnRegion(){
+    this.playSound('click');
+    const pool=this.activeLearnRegionParks();
+    this.setState({setupMode:'locate'}, ()=>this.startQuiz(pool));
+  }
+  selectParkLearnState(state){
+    this.playSound('click');
+    this.setState({parkLearnState:state}, ()=>this.fitIndiaParks(this.state.parkRegion));
+  }
+  backToIndiaMenu(){ clearTimeout(this.t); this.setState({app:'india', screen:'menu', riverSystem:null, parkRegion:null, category:null, toast:null}, ()=>this.fitIndia()); }
+  openSetupWorld(name){
+    this.playSound('click');
+    this.activeContinent=name;
+    this.setState({screen:'setup', continent:name, setupTotal:this.continents[name].length, setupCount:Math.min(10,this.continents[name].length), setupMode:'locate'}, ()=>this.fitContinent(name));
+  }
+  backToHome(){
+    clearTimeout(this.t);
+    this.activeContinent=null;
+    this.setState({app:null, screen:'home', continent:null, category:null, riverSystem:null, parkRegion:null, toast:null}, ()=>this.fitWorld());
+  }
+  backToMenu(){
+    clearTimeout(this.t);
+    if(this.state.app==='india'){
+      if(this.state.riverSystem){ this.setState({screen:'riversystems', toast:null}, ()=>this.fitIndiaSystem(this.state.riverSystem)); }
+      else if(this.state.category==='rivers'){ this.setState({screen:'riversystems', toast:null}, ()=>this.fitIndia()); }
+      else if(this.state.category==='parks'){ this.setState({screen:'parkregions', toast:null}, ()=>this.fitIndiaParks(this.state.parkRegion)); }
+      else this.setState({screen:'menu', toast:null}, ()=>this.fitIndia());
+    } else if(this.state.app==='world'){
+      this.activeContinent=null;
+      this.setState({screen:'menu', toast:null}, ()=>this.fitWorld());
+    } else { this.backToHome(); }
+  }
+
+  // ---- QUIZ FLOW ----
+  startQuiz(sourceList){
+    this.ensureAudio();
+    const maxCount = sourceList ? sourceList.length : this.currentPool().length;
+    const count = sourceList ? sourceList.length : Math.max(1, Math.min(maxCount, Number(this.state.setupCount)||maxCount));
+    const mode = this.state.setupMode;
+    const pool = sourceList ? sourceList.slice() : this.currentPool();
+    if(pool.length===0){ this.setState({toast:{kind:'wrong',text:'No rivers in this system.'}}); return; }
+    const queue = this.shuffle(pool).slice(0, count);
+    const hints = Math.max(2, Math.ceil(queue.length/3));
+    this.lastConfig = {app:this.state.app, continent:this.state.continent, category:this.state.category, riverSystem:this.state.riverSystem, parkRegion:this.state.parkRegion, count:this.state.setupCount, mode};
+    this.setState({
+      screen:'play', mode, queue, qIndex:0, target:null, choices:[], chosenId:null,
+      score:0, streak:0, best:0, correctCount:0, wrongList:[], answerHistory:[], sourceInfo:null,
+      hintsLeft:hints, hintUsedThisRound:false, hintRemovedId:null, answeredThisRound:false, toast:null
+    }, ()=>{
+      if(this.state.app==='india' && this.state.category==='parks') this.fitIndiaParks(this.state.parkRegion);
+      else if(this.state.app==='india') this.fitIndiaSystem(this.state.riverSystem);
+      else this.fitContinent(this.state.continent);
+      this.loadQuestion(0);
+    });
+  }
+  setCustomPracticeCount(){
+    const total=this.currentPool().length;
+    if(!total) return;
+    const raw=window.prompt(`How many questions? Enter 1 to ${total}.`, String(Math.min(this.state.setupCount||total,total)));
+    if(raw==null) return;
+    const n=Math.floor(Number(raw));
+    if(!Number.isFinite(n) || n<1){
+      this.setToast({kind:'hint', text:`Enter a number from 1 to ${total}`}, 1800);
+      return;
+    }
+    this.setState({setupCount:Math.max(1, Math.min(total,n))});
+  }
+
+  loadQuestion(i){
+    this.frozen=false; this.recolor();
+    const t=this.state.queue[i];
+    const hist=this.state.answerHistory && this.state.answerHistory[i];
+    if(hist){
+      const upd={qIndex:i, target:t, answeredThisRound:true, chosenId:hist.chosenId, toast:hist.toast, hintUsedThisRound:!!hist.hintUsedThisRound, hintRemovedId:hist.hintRemovedId||null, sourceInfo:hist.sourceInfo||null, choices:hist.choices||[]};
+      this.setState(upd, ()=>{
+        if(hist.mode==='locate'){
+          if(hist.correct) this.paint(hist.targetId,this.GREEN,true);
+          else { if(hist.chosenId!=null) this.paint(hist.chosenId,this.RED,true); this.paint(hist.targetId,this.GREEN,true); }
+        } else this.paint(hist.targetId,this.GREEN,true);
+        this.renderParkFeedback(this.state.answerHistory);
+        this.updateIndiaStateInteractivity();
+      });
+      return;
+    }
+    const upd={qIndex:i, target:t, answeredThisRound:false, chosenId:null, toast:null, hintUsedThisRound:false, hintRemovedId:null, sourceInfo:null};
+    upd.choices = this.state.mode==='name' ? this.makeChoices(t) : [];
+    this.setState(upd, ()=>{
+      if(this.state.mode==='name' && !(this.state.app==='india' && this.state.category==='parks')) this.highlightTarget(this.answerTargetId(t));
+      this.renderParkFeedback(this.state.answerHistory);
+      this.updateIndiaStateInteractivity();
+    });
+  }
+  advance(){ const next=this.state.qIndex+1; if(next < this.state.queue.length) this.loadQuestion(next); else { this.playSound('level'); this.setState({screen:'results'}); } }
+  previousQuestion(){
+    if(this.state.qIndex<=0) return;
+    clearTimeout(this.t);
+    this.loadQuestion(this.state.qIndex-1);
+  }
+
+  answer(id){
+    if(this.state.answeredThisRound||this.frozen) return;
+    const t=this.state.target; if(!t) return;
+    const targetId=this.answerTargetId(t);
+    const correct = id===targetId;
+    const isRiver = this.state.app==='india' && this.state.category==='rivers';
+    const isPark = this.state.app==='india' && this.state.category==='parks';
+    this.frozen=true;
+    if(this.state.mode==='locate'){
+      if(correct){ this.paint(targetId,this.GREEN,true); }
+      else { if(id!=null) this.paint(id,this.RED,true); this.paint(targetId,this.GREEN,true); }
+    } else { this.paint(targetId,this.GREEN,true); }
+    let srcInfo=null;
+    if(isRiver && t.src){ this.drawSource(t); const meta=this.sourceMeta(t.src.type); srcInfo={name:t.src.name, place:t.src.place, label:meta.label, color:meta.color}; }
+    if(correct){
+      this.playSound('correct');
+      const m=this.mult(this.state.streak), pts=100*m, newStreak=this.state.streak+1;
+      const toast={kind:'correct', text: m>1?`Correct!  +${pts}  ×${m} combo`:`Correct!  +${pts}`};
+      const answerHistory=this.state.answerHistory.slice();
+      answerHistory[this.state.qIndex]={mode:this.state.mode,targetId,chosenId:id,correct:true,choices:this.state.choices.slice(),toast,sourceInfo:srcInfo,hintUsedThisRound:this.state.hintUsedThisRound,hintRemovedId:this.state.hintRemovedId,park:isPark?{name:t.name,lon:t.lon,lat:t.lat}:null};
+      this.setState({score:this.state.score+pts, streak:newStreak, best:Math.max(this.state.best,newStreak), correctCount:this.state.correctCount+1, answeredThisRound:true, chosenId:id, sourceInfo:srcInfo, toast, answerHistory}, ()=>{ this.renderParkFeedback(this.state.answerHistory); this.updateIndiaStateInteractivity(); });
+      this.scheduleAdvance((isRiver||isPark)?1800:1000);
+    } else {
+      this.playSound(id==null?'hint':'wrong');
+      const exists=this.state.wrongList.some(w=>w.id===t.id);
+      const wrongList = exists?this.state.wrongList:[...this.state.wrongList,t];
+      let msg;
+      if(id==null) msg = isPark ? `Skipped — ${t.name} is in ${t.state}` : `Skipped — that was ${t.name}`;
+      else if(this.state.mode==='locate'){
+        const clicked=this.itemName(id);
+        const noun = isRiver ? 'river' : (isPark ? 'state/UT' : 'country');
+        if(clicked) msg = isPark ? `That's ${clicked} — ${t.name} is in ${t.state}` : `That's ${isRiver?'the ':''}${clicked} — ${t.name} is here`;
+        else msg = isPark ? `Not the right ${noun} — ${t.name} is in ${t.state}` : `Not the right ${noun} — ${t.name} is here`;
+      }
+      else msg = isPark ? `Not quite — ${t.name} is in ${t.state}` : `Not quite — that's ${t.name}`;
+      const toast={kind:'wrong', text:msg};
+      const answerHistory=this.state.answerHistory.slice();
+      answerHistory[this.state.qIndex]={mode:this.state.mode,targetId,chosenId:id,correct:false,choices:this.state.choices.slice(),toast,sourceInfo:srcInfo,hintUsedThisRound:this.state.hintUsedThisRound,hintRemovedId:this.state.hintRemovedId,park:isPark?{name:t.name,lon:t.lon,lat:t.lat}:null};
+      this.setState({streak:0, answeredThisRound:true, chosenId:id, wrongList, sourceInfo:srcInfo, toast, answerHistory}, ()=>{ this.renderParkFeedback(this.state.answerHistory); this.updateIndiaStateInteractivity(); });
+      this.scheduleAdvance((isRiver||isPark)?2200:1600);
+    }
+  }
+  scheduleAdvance(delay){ clearTimeout(this.t); this.t=setTimeout(()=>this.advance(), delay); }
+
+  onHint(){
+    if(this.state.hintsLeft<=0||this.state.answeredThisRound||this.state.hintUsedThisRound||!this.state.target) return;
+    this.playSound('hint');
+    if(this.state.mode==='locate'){
+      const t=this.state.target;
+      const tip = this.state.app==='india' && this.state.category==='parks' ? `Hint: ${t.state}` : (this.state.app==='india' && t.region ? `Hint: flows through ${t.region}` : `Hint: it starts with “${t.name[0]}”`);
+      this.setState({hintsLeft:this.state.hintsLeft-1, hintUsedThisRound:true});
+      this.setToast({kind:'hint', text:tip}, 2400);
+    } else {
+      const t=this.state.target;
+      const correctId=this.answerTargetId(t);
+      const wrongs=this.state.choices.filter(c=>c.id!==correctId && c.id!==this.state.hintRemovedId);
+      if(!wrongs.length) return;
+      const drop=wrongs[Math.floor(Math.random()*wrongs.length)];
+      this.setState({hintsLeft:this.state.hintsLeft-1, hintUsedThisRound:true, hintRemovedId:drop.id});
+      this.setToast({kind:'hint', text:'Hint: one option removed'}, 1600);
+    }
+  }
+  onSkip(){ if(this.state.answeredThisRound){ clearTimeout(this.t); this.advance(); return; } if(this.frozen) return; this.answer(null); }
+  switchPlayMode(m){
+    if(m===this.state.mode || this.state.answeredThisRound || this.frozen) return;
+    this.playSound('click');
+    this.recolor();
+    const t=this.state.target;
+    if(m==='name'){
+      const choices=this.makeChoices(t);
+      this.setState({mode:m, choices, chosenId:null, hintRemovedId:null, toast:null}, ()=>{
+        if(!(this.state.app==='india' && this.state.category==='parks')) this.highlightTarget(this.answerTargetId(t));
+        this.updateIndiaStateInteractivity();
+      });
+    } else {
+      this.setState({mode:m, choices:[], chosenId:null, hintRemovedId:null, toast:null}, ()=>this.updateIndiaStateInteractivity());
+    }
+  }
+  setToast(toast, autoClear){ clearTimeout(this.ht); this.setState({toast}); if(autoClear) this.ht=setTimeout(()=>this.setState(s=> s.toast===toast?{toast:null}:{}), autoClear); }
+
+  toggleSound(){
+    this.ensureAudio();
+    const next=!this.state.sound;
+    this.setState({sound:next}, ()=>{ if(next) this.playSound('click'); });
+  }
+
+  // ---- RENDER ----
+  renderVals(){
+    const s=this.state, m=this.mult(s.streak);
+    const comboPct=Math.min(s.streak,12)/12*100;
+    const qTotal=s.queue.length;
+    const isIndia = s.app==='india';
+    const isParks = isIndia && s.category==='parks';
+    const isRivers = isIndia && s.category!=='parks';
+    const choices = s.choices.map(c=>{
+      const targetChoiceId=this.answerTargetId(s.target);
+      const base={display:'flex',alignItems:'center',justifyContent:'center',pointerEvents:'auto',flex:'0 1 auto',minWidth:'90px',padding:'13px 16px',borderRadius:'14px',cursor:'pointer',fontFamily:'Fredoka, sans-serif',fontWeight:600,fontSize:'clamp(15px,3.5vw,18px)',background:'#FFFFFF',color:'#2B2620',border:'2px solid #ECDFCF',boxShadow:'0 8px 20px -8px rgba(80,50,20,.45)',transition:'transform .12s, background .12s'};
+      let style={...base};
+      if(s.hintRemovedId===c.id && !s.answeredThisRound) style={...base,opacity:.3,pointerEvents:'none',textDecoration:'line-through',boxShadow:'none'};
+      if(s.answeredThisRound){ style.pointerEvents='none';
+        if(c.id===targetChoiceId) style={...base,pointerEvents:'none',background:'#E7F7EE',color:'#15784E',border:'2px solid #22A36A'};
+        else if(c.id===s.chosenId) style={...base,pointerEvents:'none',background:'#FFE9E9',color:'#C13238',border:'2px solid #FF5A5F'};
+        else style={...base,pointerEvents:'none',opacity:.5}; }
+      return {id:c.id, name:c.name, style, onClick:()=>this.answer(c.id)};
+    });
+    const continents = this.ORDER.filter(n=>this.continents[n]).map(n=>({
+      name:n, count:this.continents[n].length, color:this.CONT_COLOR[n], onClick:()=>this.openSetupWorld(n),
+      style:{display:'flex',alignItems:'center',gap:'12px',textAlign:'left',background:'#fff',border:'1.5px solid #F0E4D6',borderRadius:'16px',padding:'16px 18px',cursor:'pointer',boxShadow:'0 8px 20px -12px rgba(80,50,20,.4)',transition:'transform .15s, box-shadow .15s'}
+    }));
+    const catTile=()=>({display:'flex',alignItems:'center',gap:'12px',textAlign:'left',background:'#fff',border:'1.5px solid #F0E4D6',borderRadius:'16px',padding:'16px 18px',cursor:'pointer',boxShadow:'0 8px 20px -12px rgba(80,50,20,.4)',transition:'transform .15s, box-shadow .15s'});
+    const indiaCategories=[
+      {name:'Rivers', subtitle:'River systems and tributaries', color:'#2C6FBF', onClick:()=>this.onPickIndiaRivers(), style:catTile()},
+      {name:'National Parks', subtitle:'Region-wise national park practice', color:'#168A55', onClick:()=>this.onPickIndiaParks(), style:catTile()}
+    ];
+    const riverSystems=this.RIVER_SYSTEMS.map(sys=>({
+      name:sys.name, blurb:sys.blurb, color:sys.color,
+      onClick:()=>this.onPickRiverSystem(sys.key),
+      style:{display:'flex',alignItems:'center',gap:'13px',textAlign:'left',background:'#fff',border:'1.5px solid #F0E4D6',borderRadius:'16px',padding:'16px 18px',cursor:'pointer',boxShadow:'0 8px 20px -12px rgba(80,50,20,.4)',transition:'transform .15s, box-shadow .15s'}
+    }));
+    const smallBtn={border:'1.5px solid #D7EBD7',background:'#F7FCF8',color:'#15784E',fontFamily:'Fredoka, sans-serif',fontWeight:600,fontSize:'13px',padding:'7px 11px',borderRadius:'10px',cursor:'pointer'};
+    const parkRegions=this.PARK_REGIONS.map(reg=>({
+      name:reg.name, blurb:reg.blurb, color:reg.color, count:this.PARKS.filter(p=>p.region===reg.key).length,
+      onLearn:()=>this.onLearnParkRegion(reg.key), onPractice:()=>this.onPracticeParkRegion(reg.key),
+      learnStyle:smallBtn, practiceStyle:{...smallBtn,background:'#fff'},
+      style:{display:'flex',alignItems:'flex-start',gap:'13px',textAlign:'left',background:'#fff',border:'1.5px solid #E1ECDD',borderRadius:'16px',padding:'16px 18px',boxShadow:'0 8px 20px -12px rgba(40,90,50,.35)'}
+    }));
+    const sysName = s.riverSystem ? (this.RIVER_SYSTEMS.find(x=>x.key===s.riverSystem)||{}).name : null;
+    const parkReg = s.parkRegion ? (this.PARK_REGIONS.find(x=>x.key===s.parkRegion)||{}) : null;
+    const parkRegionName = parkReg ? parkReg.name : 'All National Parks';
+    const total=isParks ? (s.parkRegion ? this.PARKS.filter(p=>p.region===s.parkRegion).length : this.PARKS.length) : (isIndia ? (s.riverSystem ? this.RIVERS.filter(r=>r.sys===s.riverSystem).length : this.RIVERS.length) : (this.activeContinent?this.continents[this.activeContinent].length:0));
+    const chip=(active)=>({border:'2px solid '+(active?this.accent:'#ECDFCF'),background:active?'#FFF1E9':'#fff',color:active?'#C0531F':'#5A4A3C',fontFamily:'Fredoka, sans-serif',fontWeight:600,fontSize:'15px',padding:'9px 18px',borderRadius:'12px',cursor:'pointer'});
+    const presets=[5,8,10,15,20].filter(n=>n<total);
+    const countOptions=presets.map(v=>({label:String(v), value:v, style:chip(s.setupCount===v), onClick:()=>this.setState({setupCount:v})}));
+    countOptions.push({label:'Custom…', value:'custom', style:{...chip(false),border:'2px dashed #D8C8B8'}, onClick:()=>this.setCustomPracticeCount()});
+    countOptions.push({label:`All ${total}`, value:total, style:chip(s.setupCount===total), onClick:()=>this.setState({setupCount:total})});
+    const modeBtn=(active)=>({flex:'1 1 200px',display:'flex',flexDirection:'column',alignItems:'flex-start',gap:'3px',textAlign:'left',border:'2px solid '+(active?this.accent:'#ECDFCF'),background:active?'#FFF1E9':'#fff',borderRadius:'14px',padding:'14px 16px',cursor:'pointer'});
+    const tk=s.toast?s.toast.kind:null;
+    const tcs={correct:{bg:'#E7F7EE',bd:'#9FE0BF',fg:'#15784E'},wrong:{bg:'#FFEBEB',bd:'#FFC0C2',fg:'#C13238'},hint:{bg:'#FFF4E0',bd:'#FBD89B',fg:'#B5760A'},level:{bg:'#EEE9FE',bd:'#C9BCF7',fg:'#5B45D6'}};
+    const tc=tcs[tk]||tcs.hint;
+    const missed=s.wrongList;
+    const learnStates=this.parkStatesForRegion(s.parkRegion);
+    const stateChip=(active)=>({border:'1.5px solid '+(active?'#168A55':'#D7EBD7'),background:active?'#E9F8EF':'#fff',color:active?'#15784E':'#6E8874',fontFamily:'Fredoka, sans-serif',fontWeight:600,fontSize:'12.5px',padding:'6px 10px',borderRadius:'999px',cursor:'pointer',flex:'0 0 auto'});
+    const parkLearnStateOptions=learnStates.map(st=>({label:st, style:stateChip(s.parkLearnState===st), onClick:()=>this.selectParkLearnState(st)}));
+    const visibleLearnParks=this.activeLearnParks();
+    const topicLabel = isParks ? parkRegionName : (isIndia ? (sysName || 'India · Rivers') : (s.continent||''));
+    const contColor = isParks ? ((parkReg||{}).color || this.PARK_COLOR) : (isIndia ? ((this.RIVER_SYSTEMS.find(x=>x.key===s.riverSystem)||{}).color || this.RIVER_COLOR) : (this.CONT_COLOR[s.continent]||this.accent));
+    return {
+      accent:this.accent, mapRef:this.mapRef, loading:!s.loaded,
+      tagline: s.app==='india' ? 'India Map Quiz' : (s.app==='world' ? 'World Map Quiz' : 'Geography Practice'),
+      screenHome:s.screen==='home', screenWorldMenu:s.screen==='menu' && s.app==='world', screenIndiaMenu:s.screen==='menu' && s.app==='india',
+      screenRiverSystems:s.screen==='riversystems', riverSystems,
+      screenParkRegions:s.screen==='parkregions', parkRegions,
+      screenParkLearn:s.screen==='parklearn', parkLearnStateOptions, parkLearnTitle:parkRegionName, parkLearnSubtitle:`${visibleLearnParks.length} parks · ${s.parkLearnState||'select a state'}`,
+      screenMenu:s.screen==='menu', screenSetup:s.screen==='setup', screenPlay:s.screen==='play', screenResults:s.screen==='results',
+      modeLocate:s.mode==='locate', modeName:s.mode==='name', showChoices: s.screen==='play' && s.mode==='name',
+      continent:s.continent||'', contColor, topicLabel,
+      promptLabel: isParks ? (s.mode==='locate'?'Select the state/UT for this national park':'Choose the state/UT') : (isIndia ? (s.mode==='locate'?'Find this river':'Identify the glowing river') : (s.mode==='locate'?'Find this country':'Identify the glowing country')),
+      promptName: s.target?s.target.name:'',
+      nameModePrompt: isParks ? (s.target?`Which state/UT is ${s.target.name} in?`:'Which state/UT?') : (isIndia ? 'Which river is glowing?' : 'Which country is glowing?'),
+      score:s.score, streak:s.streak, best:s.best, hintsLeft:s.hintsLeft,
+      qNum:s.qIndex+1, qTotal, multLabel:'×'+m,
+      comboFillStyle:{width:comboPct+'%',height:'100%',borderRadius:'6px',background:'linear-gradient(90deg,#FFD15C,#FF9F1C)',transition:'width .4s'},
+      choices, continents, indiaCategories,
+      setupTotal:total, countOptions,
+      setupTitle: isParks ? parkRegionName : (isIndia ? (sysName || 'India · Rivers') : s.continent),
+      setupCountLabel: isParks ? `${total} parks` : (isIndia ? `${total} rivers` : `${total} countries`),
+      setupBackLabel: isParks ? '← Park regions' : (isIndia ? '← River systems' : '← All continents'),
+      findItHelp: isParks ? 'Click the state or UT that contains the park' : (isIndia ? 'Click the river on the map' : 'Click the country on the map'),
+      setupLocateStyle:modeBtn(s.setupMode==='locate'), setupNameStyle:modeBtn(s.setupMode==='name'),
+      onModeLocate:()=>this.setState({setupMode:'locate'}), onModeName:()=>this.setState({setupMode:'name'}),
+      onBack:()=>this.backToMenu(), onStart:()=>this.startQuiz(),
+      resultTitle: missed.length===0?'Perfect run! 🎉':'Quiz complete',
+      resultMode: s.mode==='locate'?'Find it':'Name it',
+      resultCorrect:s.correctCount, resultAccuracy: qTotal?Math.round(s.correctCount/qTotal*100):0,
+      hasMissed: missed.length>0, missedCount:missed.length, missedList: missed.map(c=>({name:c.name})),
+      reviewLabel: isParks ? 'National parks to review' : (isIndia ? 'Rivers to review' : 'Countries to review'),
+      restartLabel: isParks ? 'Restart parks' : (isIndia ? ('Restart '+(sysName||'Rivers')) : `Restart ${s.continent||''}`.trim()),
+      menuLabel: isParks ? 'Pick another region' : (isIndia ? 'Pick another system' : 'Pick a continent'),
+      onPracticeWrong:()=>this.startQuiz(missed),
+      onRestart:()=> this.startQuiz(),
+      onMenu:()=>this.backToMenu(),
+      onHome:()=>this.backToHome(),
+      onBackToIndiaMenu:()=>this.backToIndiaMenu(),
+      onBackToParkRegions:()=>this.setState({screen:'parkregions', toast:null}, ()=>this.fitIndiaParks(this.state.parkRegion)),
+      onPracticeAllParks:()=>this.onPracticeAllParks(),
+      onPracticeLearnRegion:()=>this.onPracticeLearnRegion(),
+      onPickWorld:()=>this.onPickWorld(),
+      onPickIndia:()=>this.onPickIndia(),
+      showSource: !!s.sourceInfo,
+      sourceName: s.sourceInfo?s.sourceInfo.name:'',
+      sourcePlace: s.sourceInfo?s.sourceInfo.place:'',
+      sourceTypeLabel: s.sourceInfo?s.sourceInfo.label:'',
+      sourceColor: s.sourceInfo?s.sourceInfo.color:'#8B6F4E',
+      sourceDotStyle: {width:'12px',height:'12px',borderRadius:'50%',flex:'none',background:(s.sourceInfo?s.sourceInfo.color:'#8B6F4E')},
+      showToast:!!s.toast, toastText:s.toast?s.toast.text:'',
+      toastStyle:{fontFamily:'Fredoka, sans-serif',fontWeight:600,fontSize:'17px',padding:'12px 22px',borderRadius:'14px',whiteSpace:'nowrap',background:tc.bg,color:tc.fg,border:'2px solid '+tc.bd,boxShadow:'0 12px 28px -12px rgba(40,20,0,.4)'},
+      onHint:()=>this.onHint(), onSkip:()=>this.onSkip(),
+      onPrevious:()=>this.previousQuestion(),
+      skipLabel:s.answeredThisRound?'Next →':'Skip →',
+      previousBtnStyle:{border:'1.5px solid #EADFD2',background:'#fff',color:s.qIndex>0?'#8A7563':'#CBB9A8',fontFamily:'Fredoka, sans-serif',fontWeight:600,fontSize:'15px',padding:'11px 18px',borderRadius:'13px',cursor:s.qIndex>0?'pointer':'not-allowed',opacity:s.qIndex>0?1:.55,pointerEvents:s.qIndex>0?'auto':'none'},
+      onZoomIn:()=> this.svgSel && this.svgSel.transition().duration(250).call(this.zoom.scaleBy, 1.6),
+      onZoomOut:()=> this.svgSel && this.svgSel.transition().duration(250).call(this.zoom.scaleBy, 0.62),
+      onZoomReset:()=> this.resetZoom(true),
+      onPlayModeLocate:()=>this.switchPlayMode('locate'),
+      onPlayModeName:()=>this.switchPlayMode('name'),
+      soundOn:s.sound, onToggleSound:()=>this.toggleSound(),
+      soundIcon: s.sound?'♪':'♪',
+      soundTitle: s.sound?'Sound on (click to mute)':'Sound off (click to enable)',
+      soundBtnStyle:{display:'flex',alignItems:'center',justifyContent:'center',width:'40px',height:'40px',borderRadius:'12px',border:'1.5px solid '+(s.sound?'#FBE0C4':'#EADFD2'),background:s.sound?'#FFF6EC':'#fff',color:s.sound?'#D9760B':'#B79A82',cursor:'pointer',boxShadow:'0 4px 12px -6px rgba(80,50,20,.4)',position:'relative',textDecoration:s.sound?'none':'line-through'},
+      dots: s.queue.map((q,i)=>{
+        const wrong = s.wrongList.some(w=>w.id===q.id);
+        const answered = i < s.qIndex || (i===s.qIndex && s.answeredThisRound);
+        let bg='#ECE0CE', bd='#ECE0CE';
+        if(answered){ if(wrong){ bg='#FF5A5F'; bd='#FF5A5F'; } else { bg='#22A36A'; bd='#22A36A'; } }
+        if(i===s.qIndex && !s.answeredThisRound){ bg='#fff'; bd=this.accent; }
+        return {style:{width:'10px',height:'10px',borderRadius:'50%',background:bg,border:'2px solid '+bd,flex:'none'}};
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

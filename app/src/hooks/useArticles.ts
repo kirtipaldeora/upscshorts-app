@@ -64,13 +64,25 @@ export function useArticles(date: string) {
           return r.json() as Promise<ArticlesByDate>
         })
 
+    // When the device's date has no briefing, fall back to the newest available
+    // day (from the manifest), not a hard-coded old date — so users always land
+    // on the latest current affairs regardless of their clock.
+    const fetchLatestFallback = () =>
+      fetch(asset('data/articles/index.json'), { signal: controller.signal })
+        .then((r) => (r.ok ? (r.json() as Promise<{ dates?: string[] }>) : null))
+        .catch(() => null)
+        .then((manifest) => {
+          const latest = manifest?.dates?.slice().sort().reverse()[0] ?? BUNDLED_FALLBACK_DATE
+          return fetchArticles(latest).then((data) => {
+            setSelectedDate(latest)
+            return data
+          })
+        })
+
     fetchArticles(date)
       .catch((e: Error) => {
-        if (e.name === 'AbortError' || date === BUNDLED_FALLBACK_DATE) throw e
-        return fetchArticles(BUNDLED_FALLBACK_DATE).then((data) => {
-          setSelectedDate(BUNDLED_FALLBACK_DATE)
-          return data
-        })
+        if (e.name === 'AbortError') throw e
+        return fetchLatestFallback()
       })
       .then((r) => {
         mergeArticles(r)
