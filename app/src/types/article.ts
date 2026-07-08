@@ -10,7 +10,7 @@ export interface PrelimQuestion {
 // ─── DeepDive ────────────────────────────────────────────────
 export interface DeepDive {
   explanation: string          // HTML string (contains <strong> tags)
-  prelimsFacts: string[]
+  prelimsFacts?: string[]      // Deprecated: no longer surfaced in the deep-dive UI
   possibleMainsQuestion: string
 }
 

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft, faShareAlt, faBullseye, faPenFancy, faCircle, faDumbbell, faPlay, faCloudArrowUp } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faShareAlt, faPenFancy, faCircle, faDumbbell, faPlay, faCloudArrowUp } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
 import { useHaptic } from '@/hooks/useHaptic'
 import { CATEGORY_COLORS } from '@/constants/categories'
@@ -139,21 +139,6 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
           />
 
           <div className="dd-divider"></div>
-
-          {/* Prelims Facts */}
-          <div style={{ marginBottom: 18 }}>
-            <div className="dd-section-title">
-              <FontAwesomeIcon icon={faBullseye} style={{ marginRight: 6 }} />
-              Prelims Facts
-            </div>
-            <div className="dd-fact-box">
-              <ul style={{ paddingLeft: 14, margin: 0 }}>
-                {a.deepDive.prelimsFacts.map((f, i) => (
-                  <li key={i}>{f}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
 
           {/* Expected Mains Question */}
           <div>

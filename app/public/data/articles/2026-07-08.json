@@ -1,0 +1,646 @@
+{
+  "2026-07-08": [
+    {
+      "id": "ca080726-01",
+      "headline": "Wayanad Tunnel Debris Slip & Record Western Ghats Rain",
+      "date": "2026-07-08",
+      "source": "The Hindu",
+      "category": "Environment",
+      "gsPaper": "GS 3",
+      "summary": "On 7 July 2026, excavated mud swamped the portal of an under-construction tunnel road at Kalladi/Meenakshi near Meppadi in Wayanad, Kerala, killing at least three migrant workers with five to seven missing. It coincided with record orographic rain across the Western Ghats — Lonavala logged 1,290 mm in 48 hours, the highest ever — and a cloudburst-hit Doda in J&K. Ministers called it a 'man-made disaster' as the contractor allegedly ignored a DDMA halt order.",
+      "whyItMatters": "Landslides, the Western Ghats, monsoon dynamics and disaster management are recurring GS 1 and GS 3 themes; the Gadgil–Kasturirangan debate and DDMA framework are high-yield.",
+      "deepDive": {
+        "explanation": "<p>On <strong>7 July 2026</strong>, a heap of excavated mud swamped the portal of an under-construction tunnel road at <strong>Kalladi/Meenakshi near Meppadi</strong> in <strong>Wayanad, Kerala</strong>, killing at least three migrant workers with five to seven missing; 10 were rescued. It coincided with record orographic rain across the Western Ghats — <strong>Lonavala logged 1,290 mm in 48 hours</strong>, the highest on record — and a cloudburst-triggered flash flood at Doda (J&amp;K).</p><h4>Why this became a disaster</h4><ul><li>The site lies just <strong>~4 km from Chooralmala</strong>, where the July 2024 landslides killed ~300 people.</li><li>The <strong>District Collector (also DDMA head)</strong> had on 20 June ordered work halted and the piled soil removed; the contractor allegedly did not comply.</li><li>Only a <strong>yellow alert</strong> was in force; the CM and ministers called it a <strong>'man-made disaster'</strong> from unscientific spoil dumping.</li></ul><div class='dd-stats'><div class='dd-stat'><span class='v'>1,290 mm</span><span class='l'>Lonavala rain in 48 hrs (all-time record)</span></div><div class='dd-stat'><span class='v'>~4 km</span><span class='l'>From the 2024 Chooralmala slide site</span></div><div class='dd-stat'><span class='v'>17%</span><span class='l'>Seasonal rain deficit, down from 40%</span></div></div><h4>Why the Ghats get hammered: orographic rainfall</h4><div class='dd-flow'><span class='node'>Moist SW monsoon off Arabian Sea</span><span class='arrow'>→</span><span class='node'>Forced to rise over Western Ghats</span><span class='arrow'>→</span><span class='node'>Air cools & condenses</span><span class='arrow'>→</span><span class='node'>Heavy windward rain + landslides</span></div><p>The <strong>Western Ghats</strong> are a ~1,600 km chain across six States, a <strong>UNESCO World Heritage Site</strong> and one of the world's eight 'hottest' biodiversity hotspots. Steep slopes, deep-cut valleys and saturated soils make large linear projects landslide-prone in the monsoon.</p><h4>The two panels that shaped Ghats policy</h4><table><tr><th>Gadgil Committee (2011)</th><th>Kasturirangan Committee (2013)</th></tr><tr><td>Western Ghats Ecology Expert Panel</td><td>High-Level Working Group set up to review Gadgil</td></tr><tr><td>Treat <strong>almost the whole Ghats</strong> as an Ecologically Sensitive Area (ESA) in three graded zones</td><td>Diluted this to protect only <strong>~37%</strong> as ESA</td></tr><tr><td>Seen as too restrictive by States</td><td>Adopted as the working basis; still contested</td></tr></table><h4>IMD colour-coded warnings</h4><div class='dd-flow'><span class='node'>Green: no action</span><span class='arrow'>→</span><span class='node'>Yellow: be aware</span><span class='arrow'>→</span><span class='node'>Orange: be prepared</span><span class='arrow'>→</span><span class='node'>Red: take action</span></div><div class='dd-callout'><b>Way forward:</b> Enforce DDMA directions, mandate scientific spoil disposal and slope-stability engineering, and run a pre-monsoon safety audit of every Ghats project site. Ignoring warnings turned a weather event into a fatal disaster.</div><p><strong>Institutions:</strong> The <strong>NDRF</strong> is raised under the <strong>Disaster Management Act, 2005</strong>, which also created the <strong>NDMA</strong> (chaired by the PM) and <strong>State/District DMAs</strong> (the DDMA chaired by the District Collector). A <strong>cloudburst</strong> is very intense rain (&gt;100 mm/hour over a small area), common where moist air is forced sharply upward in hills.</p>",
+        "possibleMainsQuestion": "Large linear infrastructure in the ecologically fragile, high-rainfall Western Ghats repeatedly converts weather events into disasters. Critically examine, with reference to disaster-management institutions and the Gadgil–Kasturirangan debate.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["Western Ghats", "Gadgil Committee", "Kasturirangan Committee", "Ecologically Sensitive Area", "Orographic rainfall", "Disaster Management Act 2005"],
+      "prelimsQs": [
+        {
+          "q": "Consider the following statements: 1. The Gadgil Committee recommended treating almost the entire Western Ghats as an Ecologically Sensitive Area. 2. The Kasturirangan Committee reduced the proposed ESA to about 37% of the Western Ghats. Which of the statements given above is/are correct?",
+          "options": ["1 only", "2 only", "Both 1 and 2", "Neither 1 nor 2"],
+          "answer": 2,
+          "explanation": "Gadgil (2011) proposed a near-whole-Ghats ESA in three zones; Kasturirangan (2013) diluted it to about 37%."
+        },
+        {
+          "q": "The National Disaster Response Force (NDRF) and the NDMA were established under which law?",
+          "options": ["Environment (Protection) Act, 1986", "Disaster Management Act, 2005", "National Security Act, 1980", "Epidemic Diseases Act, 1897"],
+          "answer": 1,
+          "explanation": "Both were created under the Disaster Management Act, 2005; the NDMA is chaired by the Prime Minister."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-02",
+      "headline": "India's Economic Prospects After the West Asian Crisis",
+      "date": "2026-07-08",
+      "source": "The Hindu",
+      "category": "Economy",
+      "gsPaper": "GS 3",
+      "summary": "With the US and Iran agreeing a 14-point preliminary MoU to end the West Asian crisis and reopen the Strait of Hormuz, crude prices are set to normalise lower. Economists C. Rangarajan and D.K. Srivastava argue India must recalibrate its economic strategy for 2026-27, build strategic reserves and diversify energy sources.",
+      "whyItMatters": "Monsoon, oil-price and energy-security shocks feeding into growth, fiscal deficit and CAD are core GS 3 Economy — the Hormuz chokepoint is Prelims-worthy.",
+      "deepDive": {
+        "explanation": "<p>With the <strong>US and Iran agreeing a 14-point preliminary MoU</strong> to end the West Asian crisis and reopen the <strong>Strait of Hormuz</strong>, crude prices are set to normalise lower. Economists <strong>C. Rangarajan and D.K. Srivastava</strong> argue India must recalibrate its strategy for 2026-27 and the medium term.</p><div class='dd-stats'><div class='dd-stat'><span class='v'>$86.3</span><span class='l'>Crude basket (24 Jun), down from $114.5 in April</span></div><div class='dd-stat'><span class='v'>7.7%</span><span class='l'>Provisional GDP growth 2025-26 (GVA 7.9%)</span></div><div class='dd-stat'><span class='v'>&gt;90%</span><span class='l'>Crude import dependence (54.9% in 1998-99)</span></div></div><h4>The macro picture</h4><ul><li>RBI projects <strong>6.6% growth for 2026-27</strong>, dampened by crude disruption and an El Niño-linked rainfall shortfall.</li><li>Domestic crude output has slipped to <strong>26 MMT</strong>; import dependence keeps rising.</li><li>A <strong>₹2.69 lakh crore RBI dividend</strong> should help meet the <strong>4.3% fiscal-deficit</strong> target; the CAD is seen at ~<strong>1.5% of GDP</strong>.</li></ul><h4>Why the Strait of Hormuz matters</h4><div class='dd-flow'><span class='node'>~20% of global oil trade</span><span class='arrow'>→</span><span class='node'>Passes through the Strait of Hormuz</span><span class='arrow'>→</span><span class='node'>Any closure spikes India's import bill, CAD & inflation</span></div><div class='dd-callout'><b>Way forward:</b> Build strategic reserves of crude and fertilizer, diversify oil sources away from Hormuz, revive domestic output, and accelerate the shift to green and nuclear energy.</div><p><strong>Concepts:</strong> <strong>Fiscal deficit</strong> = total government expenditure minus revenue (excluding borrowings). The <strong>Current Account Deficit (CAD)</strong> arises when imports of goods, services and transfers exceed exports. The <strong>Implicit Price Deflator (IPD)</strong> converts nominal GDP to real GDP.</p>",
+        "possibleMainsQuestion": "India's high crude-import dependence leaves it acutely vulnerable to West Asian instability. Discuss the fiscal and external-sector risks and outline a strategy to build energy resilience.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["Strait of Hormuz", "Fiscal deficit", "Current Account Deficit", "Crude oil basket", "Implicit Price Deflator"],
+      "prelimsQs": [
+        {
+          "q": "The Strait of Hormuz, frequently in the news as an oil chokepoint, lies between:",
+          "options": ["Iran and Oman/UAE", "Yemen and Djibouti", "Egypt and Saudi Arabia", "Oman and Pakistan"],
+          "answer": 0,
+          "explanation": "The Strait of Hormuz lies between Iran and Oman/UAE and carries about 20% of the world's oil trade."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-03",
+      "headline": "Ministry of Cooperation at 5 Years: A Worker-Centric Model",
+      "date": "2026-07-08",
+      "source": "The Hindu",
+      "category": "Economy",
+      "gsPaper": "GS 3",
+      "summary": "Marking five years of the Ministry of Cooperation (created 6 July 2021), an editorial argues the cooperative model offers a worker-centric alternative to hyper-competitive capitalism and must expand beyond agriculture into services. PACS can now run 25+ activities, new multi-State cooperatives have been set up, and a National Cooperation Policy is being drafted.",
+      "whyItMatters": "Cooperatives, 'Sahkar se Samriddhi' and the Centre-State balance are a growing GS 3 economy and GS 2 governance focus; the 97th Amendment and PACS structure are Prelims staples.",
+      "deepDive": {
+        "explanation": "<p>Marking five years of the <strong>Ministry of Cooperation</strong> (created 6 July 2021), commentators argue the cooperative model offers a <strong>worker-centric alternative</strong> to hyper-competitive capitalism and must expand beyond agriculture into services.</p><h4>What's happening</h4><ul><li><strong>PACS</strong> — the base of rural cooperatives — can now undertake <strong>25+ business activities</strong>.</li><li>New <strong>multi-State cooperatives</strong> for exports, seeds and organics; a <strong>National Cooperation Policy</strong> is being drafted.</li><li>The portfolio is held by Home Minister <strong>Amit Shah</strong>; challenges cited: corruption, inefficiency, and States fearing loss of control to a national mechanism.</li></ul><h4>The three-tier short-term cooperative credit structure</h4><div class='dd-flow'><span class='node'>PACS (village level)</span><span class='arrow'>→</span><span class='node'>District Central Cooperative Banks</span><span class='arrow'>→</span><span class='node'>State Cooperative Banks</span></div><div class='dd-callout'><b>Way forward:</b> Find the 'sweet spot' between consolidation and decentralisation, and between technology and human labour — a federated yet coordinated sector positioning India as a global cooperative model.</div><p><strong>Concepts:</strong> A <strong>cooperative</strong> is a member-owned, democratically run enterprise ('one member, one vote'). The Ministry pursues <strong>'Sahkar se Samriddhi'</strong>. The <strong>97th Constitutional Amendment (2011)</strong> made forming cooperatives a fundamental right under <strong>Article 19(1)(c)</strong> and added <strong>Article 43B (DPSP)</strong> and <strong>Part IX-B</strong>. Cooperation is a <strong>State subject (Entry 32)</strong>.</p>",
+        "possibleMainsQuestion": "'Cooperatives can offer a worker-centric development model.' Evaluate the initiatives of the Ministry of Cooperation, keeping in mind that cooperation is a State subject.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["Ministry of Cooperation", "PACS", "97th Amendment", "Article 43B", "Sahkar se Samriddhi"],
+      "prelimsQs": [
+        {
+          "q": "The 97th Constitutional Amendment Act, 2011 is associated with:",
+          "options": ["Goods and Services Tax", "Cooperative societies", "Panchayati Raj institutions", "The anti-defection law"],
+          "answer": 1,
+          "explanation": "It made forming cooperatives a fundamental right under Article 19(1)(c) and inserted Article 43B (DPSP) and Part IX-B."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-04",
+      "headline": "Beyond Three Cs: The New Lexicon of India–Australia Ties",
+      "date": "2026-07-08",
+      "source": "The Hindu",
+      "category": "International Relations",
+      "gsPaper": "GS 2",
+      "summary": "As PM Modi makes his third visit to Australia, the partnership is maturing beyond the old 'three Cs' (Commonwealth, Cricket, Curry) and 'three Ds' (Democracy, Diaspora, Dosti) to new Ds of Development and Defence and Es of Energy and Education, with a $100 bn trade target by 2030 and defence as the fastest-growing area.",
+      "whyItMatters": "India–Australia ties, the Quad and Indo-Pacific supply chains are perennial GS 2 IR themes; ECTA and critical-mineral cooperation are topical.",
+      "deepDive": {
+        "explanation": "<p>As <strong>PM Modi</strong> makes his third visit to Australia, the partnership is maturing beyond the old <strong>'three Cs' (Commonwealth, Cricket, Curry)</strong> and <strong>'three Ds' (Democracy, Diaspora, Dosti)</strong> to new <strong>Ds (Development, Defence)</strong> and <strong>Es (Energy, Education)</strong>.</p><div class='dd-flow'><span class='node'>3 Cs: Commonwealth, Cricket, Curry</span><span class='arrow'>→</span><span class='node'>3 Ds: Democracy, Diaspora, Dosti</span><span class='arrow'>→</span><span class='node'>New: Development, Defence, Energy, Education</span></div><div class='dd-stats'><div class='dd-stat'><span class='v'>$100 bn</span><span class='l'>Bilateral trade target by 2030 (from $33 bn)</span></div><div class='dd-stat'><span class='v'>~$50 bn</span><span class='l'>Two-way investment</span></div><div class='dd-stat'><span class='v'>10 lakh+</span><span class='l'>Indian diaspora ('living bridge')</span></div></div><h4>Key threads</h4><ul><li>All Indian exports get duty-free access under <strong>ECTA (2022)</strong>; Australia's <strong>AirTrunk</strong> plans a $30 bn AI data-centre investment.</li><li>Defence is the fastest-growing area — exercises <strong>AUSINDEX, Malabar, Talisman Sabre</strong>; possible Australian <strong>uranium exports</strong> to India.</li><li>Over one lakh Indian students study in Australia.</li></ul><div class='dd-callout'><b>Way forward:</b> Deepen trilaterals (India-France-Australia, Australia-Canada-India) and fora like the <strong>Quad and IORA</strong> to secure critical-mineral and semiconductor supply chains.</div><p><strong>Concepts:</strong> The <strong>Quad</strong> (India, US, Japan, Australia) works for a free, open Indo-Pacific; <strong>IORA</strong> promotes Indian-Ocean-rim cooperation; <strong>Malabar</strong> is a major naval exercise (now Quad).</p>",
+        "possibleMainsQuestion": "Trace the evolution of India–Australia relations from a Commonwealth-and-cricket association to a comprehensive strategic partnership, and assess its role in India's Indo-Pacific strategy.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["ECTA", "Quad", "IORA", "Malabar exercise", "AUSINDEX"],
+      "prelimsQs": [
+        {
+          "q": "ECTA, sometimes seen in the news, is an interim free-trade agreement between India and:",
+          "options": ["The UAE", "Australia", "The European Union", "The United Kingdom"],
+          "answer": 1,
+          "explanation": "The India-Australia Economic Cooperation and Trade Agreement (ECTA) came into force in 2022."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-05",
+      "headline": "PM Modi's Indonesia Visit: BrahMos Export, Two-State Solution",
+      "date": "2026-07-08",
+      "source": "The Hindu",
+      "category": "International Relations",
+      "gsPaper": "GS 2",
+      "summary": "On the first leg (Indonesia) of a three-nation tour, PM Modi and President Prabowo Subianto oversaw 14 agreements, including deals to export the BrahMos supersonic cruise missile and Astra Mk-1 air-to-air missiles to Indonesia. Modi backed a two-state solution and announced an IIM-Bangalore campus at the Singhasari SEZ, Malang.",
+      "whyItMatters": "India as a defence exporter, ASEAN centrality and Indo-Pacific chokepoints are core GS 2 IR and GS 3 defence themes; BrahMos and MTCR are Prelims-worthy.",
+      "deepDive": {
+        "explanation": "<p>On the first leg (Indonesia) of a three-nation tour, <strong>PM Modi</strong> and President <strong>Prabowo Subianto</strong> oversaw <strong>14 agreements</strong>, including deals to export the <strong>BrahMos</strong> supersonic cruise missile and <strong>Astra Mk-1</strong> air-to-air missiles to Indonesia. Modi reiterated support for a <strong>two-state solution</strong> and announced an <strong>IIM-Bangalore campus</strong> in Indonesia.</p><h4>Key outcomes</h4><ul><li>Modi received Indonesia's highest civilian honour, the <strong>'Bintang Adipurna'</strong> — the second Indian PM after Nehru.</li><li>With this deal India will export BrahMos to <strong>three countries</strong> (also the Philippines and Vietnam); a battery has four launchers and 12 missiles.</li><li>Work is on to extend BrahMos range to <strong>500 km (land)/400 km (ship)</strong>; a compact <strong>BrahMos-NG</strong> is offered to ~10 nations.</li><li>India eyes <strong>Sabang Port</strong> near the Strait of Malacca (~160 km from the Great Nicobar hub); pacts covered rare-earth magnets and critical minerals (Indonesia holds ~21% of world nickel reserves).</li></ul><div class='dd-callout'><b>Significance:</b> Marks India's arrival as a credible defence exporter (Atmanirbhar/Make in India) and deepens the <strong>Comprehensive Strategic Partnership (2018)</strong>.</div><p><strong>Concepts:</strong> <strong>BrahMos</strong> (~Mach 2.8) is a DRDO–NPO Mashinostroyeniya joint venture; its 290 km range was capped by the <strong>MTCR</strong> (India joined in 2016). <strong>ASEAN</strong> (est. 1967) is central to India's <strong>Act East Policy</strong>. The <strong>Strait of Malacca</strong> carries 25–40% of global seaborne trade.</p>",
+        "possibleMainsQuestion": "India's export of the BrahMos missile signals a shift in its defence-industrial posture. Discuss the strategic and economic significance of defence exports for India's Indo-Pacific engagement.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["BrahMos", "ASEAN", "Strait of Malacca", "MTCR", "Comprehensive Strategic Partnership"],
+      "prelimsQs": [
+        {
+          "q": "The name 'BrahMos' is derived from:",
+          "options": ["The Brahmani and Mosel rivers", "The Brahmaputra and Moskva rivers", "The cities of Brahma and Moscow", "The Brahmagiri hills and Mostar"],
+          "answer": 1,
+          "explanation": "BrahMos blends the names of the Brahmaputra (India) and Moskva (Russia) rivers."
+        },
+        {
+          "q": "The original 290 km range of BrahMos was capped because of India's obligations under the:",
+          "options": ["Wassenaar Arrangement", "Missile Technology Control Regime (MTCR)", "Nuclear Suppliers Group", "Australia Group"],
+          "answer": 1,
+          "explanation": "MTCR norms capped the range at 290 km; after India joined the MTCR in 2016, longer-range variants became possible."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-06",
+      "headline": "'Bridge Man of India' Girish Bharadwaj Passes Away",
+      "date": "2026-07-08",
+      "source": "The Hindu",
+      "category": "Social Issues",
+      "gsPaper": "GS 1",
+      "summary": "Girish Bharadwaj, the 'Bridge Man of India', died on 7 July 2026 at Sullia, Karnataka, aged 76. A mechanical-engineering graduate who chose rural service, he built over 140 low-cost suspension (hanging) footbridges across four States, providing last-mile rural connectivity, and was awarded the Padma Shri in 2017.",
+      "whyItMatters": "A clean example of appropriate (frugal) technology for rural connectivity, plus Padma-award precedence — useful for GS 1 society and Prelims.",
+      "deepDive": {
+        "explanation": "<p><strong>Girish Bharadwaj</strong>, the <strong>'Bridge Man of India'</strong>, died on 7 July 2026 at Sullia, Karnataka, aged 76. A mechanical-engineering graduate (1973), he chose rural service, building <strong>low-cost suspension (hanging) footbridges</strong>.</p><ul><li>Built <strong>140+</strong> (by some counts 300+) footbridges across Karnataka, Kerala, Andhra Pradesh and Odisha; ~120 gave rural connectivity.</li><li>His first bridge was over the <strong>Payaswini River at Aramburu, Sullia (1989)</strong>.</li><li>He was awarded the <strong>Padma Shri in 2017</strong>.</li></ul><div class='dd-callout'>His work exemplifies <strong>appropriate (frugal) technology</strong> — a suspension footbridge slung from cables anchored at both ends delivers 'last-mile' rural connectivity cheaply.</div><p><strong>Concepts:</strong> The <strong>Padma Awards</strong> — in descending order Padma Vibhushan, Padma Bhushan and Padma Shri — are announced annually on Republic Day; the highest civilian award overall is the <strong>Bharat Ratna</strong>.</p>",
+        "possibleMainsQuestion": "'Appropriate technology can bridge the last mile of rural development.' Discuss with suitable examples from India.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["Padma Shri", "Appropriate technology", "Suspension footbridge", "Bharat Ratna", "Rural connectivity"],
+      "prelimsQs": [
+        {
+          "q": "Which of the following lists the Padma Awards in correct descending order of precedence?",
+          "options": ["Padma Shri > Padma Bhushan > Padma Vibhushan", "Padma Vibhushan > Padma Bhushan > Padma Shri", "Padma Bhushan > Padma Vibhushan > Padma Shri", "Padma Vibhushan > Padma Shri > Padma Bhushan"],
+          "answer": 1,
+          "explanation": "The order is Padma Vibhushan > Padma Bhushan > Padma Shri; the Bharat Ratna is the highest civilian award overall."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-07",
+      "headline": "Linking Women's Incomes and Healthcare",
+      "date": "2026-07-08",
+      "source": "The Hindu",
+      "category": "Social Issues",
+      "gsPaper": "GS 2",
+      "summary": "New research links rising female labour-force participation with the shift to chronic diseases, arguing that raising women's incomes changes household health investment. Studying India's 2018 EPF reform, female-led beneficiary households cut overall healthcare spending ~11.6% while spending more on nutrition and fitness.",
+      "whyItMatters": "Women's empowerment, health financing and preventive health converge here — a fresh GS 1/GS 2 angle linking employment policy to public health.",
+      "deepDive": {
+        "explanation": "<p>New research (forthcoming, <em>Oxford Open Economics</em>) links two Indian shifts — rising <strong>female labour-force participation</strong> and the move to <strong>chronic (non-communicable) diseases</strong> — arguing that raising women's incomes changes household health investment.</p><h4>The natural experiment</h4><ul><li>It studied India's <strong>2018 EPF reform</strong> that cut mandatory provident-fund contributions for newly employed women from <strong>12% to 8%</strong> for three years, raising take-home pay.</li><li>Female-led beneficiary households <strong>cut overall healthcare spending ~11.6%</strong> — less on medicines and consultations, more on <strong>nutrition and fitness</strong>.</li><li>It echoes <strong>Duflo–Banerjee</strong> findings that resources routed to women improve household outcomes.</li></ul><div class='dd-callout'><b>Insight:</b> If women's income shifts spending toward prevention, <strong>employment policy becomes health policy</strong> — quietly one of India's most important public-health investments.</div><p><strong>Concepts:</strong> <strong>Out-of-pocket expenditure (OOPE)</strong> is health spending borne directly by households — a major impoverishment risk. <strong>Ayushman Bharat (PM-JAY)</strong> gives ₹5 lakh/family/year cover. <strong>NCDs</strong> (diabetes, hypertension, cardiovascular disease) now cause most Indian deaths. The <strong>EPF</strong> is run by the EPFO under the Labour Ministry.</p>",
+        "possibleMainsQuestion": "'Economic empowerment of women can be a powerful public-health intervention.' Examine the linkage between female labour-force participation and household health investment in India.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["EPF reform", "Out-of-pocket expenditure", "Ayushman Bharat", "Non-communicable diseases", "Female labour-force participation"],
+      "prelimsQs": [
+        {
+          "q": "Out-of-pocket expenditure (OOPE) in health financing refers to:",
+          "options": ["The government's health budget", "Health spending borne directly by households at the point of care", "Insurance-company payouts", "Foreign aid for the health sector"],
+          "answer": 1,
+          "explanation": "OOPE is direct household spending on health at the point of use — a key impoverishment risk in India."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-08",
+      "headline": "India's EV Transition Cannot Ignore Retrofitment",
+      "date": "2026-07-08",
+      "source": "The Hindu",
+      "category": "Environment",
+      "gsPaper": "GS 3",
+      "summary": "With the West Asia crisis exposing India's over-85% crude-import dependence, analysts argue that vehicle retrofitment — converting existing internal-combustion vehicles to electric — must be mainstreamed alongside new-EV sales. Over 30 crore ICE vehicles are already on the road while EVs are just 8.5% of new sales.",
+      "whyItMatters": "Transport decarbonisation, the circular economy and energy security are core GS 3; retrofitment is an under-discussed policy lever.",
+      "deepDive": {
+        "explanation": "<p>With the West Asia crisis exposing India's <strong>over-85% crude-import dependence</strong>, analysts argue that <strong>vehicle retrofitment</strong> — converting existing internal-combustion (ICE) vehicles to electric — must be mainstreamed alongside new-EV sales.</p><div class='dd-stats'><div class='dd-stat'><span class='v'>8.5%</span><span class='l'>EV share of new vehicle sales (FY25-26)</span></div><div class='dd-stat'><span class='v'>30 cr+</span><span class='l'>ICE vehicles already on the road</span></div></div><h4>How retrofitting works</h4><div class='dd-flow'><span class='node'>Remove engine + exhaust</span><span class='arrow'>→</span><span class='node'>Fit battery, motor & controllers</span><span class='arrow'>→</span><span class='node'>Keep the chassis (cheaper than new)</span></div><ul><li><strong>Madhya Pradesh</strong> offers upfront subsidies and Statewide retrofit-agency registration; Nepal and parts of Europe promote retrofits too.</li></ul><div class='dd-callout'><b>Way forward:</b> A national retrofitment framework — standard State policies, financeable-asset status, safety certification, rationalised GST on kits, and inclusion under <strong>PM E-DRIVE</strong>.</div><p><strong>Concepts:</strong> <strong>FAME</strong> and its successor <strong>PM E-DRIVE</strong> subsidise EV adoption and manufacturing. Retrofitment extends asset life, fitting the <strong>circular economy</strong> (minimising waste by keeping products in use). <strong>ICE</strong> = internal combustion engine.</p>",
+        "possibleMainsQuestion": "Retrofitment of internal-combustion vehicles is a neglected lever in India's EV transition. Discuss its potential and the policy framework needed to mainstream it.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["Vehicle retrofitment", "FAME", "PM E-DRIVE", "Circular economy", "ICE vehicles"],
+      "prelimsQs": [
+        {
+          "q": "PM E-DRIVE is the successor to which earlier central scheme for electric mobility?",
+          "options": ["FAME", "UDAY", "SATAT", "PLI"],
+          "answer": 0,
+          "explanation": "PM E-DRIVE succeeds the FAME (Faster Adoption and Manufacturing of Electric Vehicles) scheme."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-09",
+      "headline": "How India's Life Insurance Sector Funds Government Expenditure",
+      "date": "2026-07-08",
+      "source": "The Hindu",
+      "category": "Economy",
+      "gsPaper": "GS 3",
+      "summary": "Life insurers are the largest domestic funders of government borrowing, since premiums are reinvested for decades in government securities. Life insurers hold close to a quarter of outstanding central G-Secs; LIC alone holds ~19% (₹20.2 lakh crore), making the sector's health a matter of fiscal stability.",
+      "whyItMatters": "Government borrowing, financial markets and the insurance sector's macro role are a nuanced GS 3 Economy theme; G-Secs and D-SII are Prelims-worthy.",
+      "deepDive": {
+        "explanation": "<p>Life insurers are the <strong>largest domestic funders of government borrowing</strong> — because premiums are reinvested for decades in government securities.</p><h4>How the money flows</h4><div class='dd-flow'><span class='node'>Policyholders pay premiums</span><span class='arrow'>→</span><span class='node'>Insurers invest long-term in G-Secs</span><span class='arrow'>→</span><span class='node'>Government finances its fiscal deficit</span></div><div class='dd-stats'><div class='dd-stat'><span class='v'>~25%</span><span class='l'>Share of central G-Secs held by life insurers</span></div><div class='dd-stat'><span class='v'>~19%</span><span class='l'>Held by LIC alone (₹20.2 lakh crore)</span></div><div class='dd-stat'><span class='v'>2.7%</span><span class='l'>Life-insurance penetration (% of GDP, FY25)</span></div></div><ul><li>The insurers' G-Sec stock stayed stable even as sovereign debt grew ~40% in three years.</li><li>Sovereign paper is <strong>~63% of LIC's non-linked corpus</strong>; IRDAI designates LIC a <strong>D-SII</strong> annually.</li><li>Penetration has fallen for a third straight year from a 3.2% peak.</li></ul><div class='dd-callout'>Because insurers are <strong>counter-cyclical, buy-and-hold</strong> investors, they stabilise sovereign borrowing costs — making the sector's health a matter of <strong>fiscal stability</strong>, not just household protection.</div><p><strong>Concepts:</strong> <strong>G-Secs</strong> are tradable sovereign debt used to finance the fiscal deficit and serve as the 'risk-free' benchmark. <strong>IRDAI</strong> regulates insurance; a <strong>D-SII</strong> (Domestic Systemically Important Insurer) is 'too big to fail' and faces enhanced supervision.</p>",
+        "possibleMainsQuestion": "Explain how India's life-insurance sector underpins government borrowing, and why the health of the sector carries macroeconomic significance.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["Government Securities", "LIC", "IRDAI", "D-SII", "Insurance penetration"],
+      "prelimsQs": [
+        {
+          "q": "Government Securities (G-Secs) are best described as:",
+          "options": ["Equity shares issued by public-sector undertakings", "Tradable sovereign debt instruments used to finance the fiscal deficit", "Foreign-currency bonds issued by the RBI", "Concessional loans from multilateral banks"],
+          "answer": 1,
+          "explanation": "G-Secs are tradable sovereign debt (dated securities and T-bills), the 'risk-free' benchmark for pricing other debt."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-10",
+      "headline": "Four States Sign Pact on Narmada (Sardar Sarovar) Dues",
+      "date": "2026-07-08",
+      "source": "The Hindu",
+      "category": "Polity",
+      "gsPaper": "GS 2",
+      "summary": "The four Narmada Award beneficiary States — Gujarat, MP, Maharashtra and Rajasthan — signed a one-time settlement resolving long-pending payment issues over the Sardar Sarovar Project, in the presence of Amit Shah and C.R. Patil. It showcases cooperative federalism in resolving a decades-old inter-State water dispute without litigation.",
+      "whyItMatters": "Inter-State water disputes, cooperative federalism and the constitutional scheme (Article 262, ISRWD Act) are core GS 2 polity and GS 1 geography.",
+      "deepDive": {
+        "explanation": "<p>The four <strong>Narmada Award beneficiary States — Gujarat, Madhya Pradesh, Maharashtra and Rajasthan</strong> — signed an agreement (before HM Amit Shah and Jal Shakti Minister C.R. Patil) resolving long-pending payment issues over the <strong>Sardar Sarovar Project</strong> via a <strong>one-time settlement</strong>.</p><ul><li>Signed by CMs Fadnavis (MH), Bhupendra Patel (GJ), Bhajan Lal Sharma (RJ) and Mohan Yadav (MP).</li><li>The <strong>Narmada Water Disputes Tribunal (NWDT)</strong>, constituted in 1969, gave its <strong>Award in 1979</strong>, fixing each State's water and power share.</li><li>Settled: cost-sharing of SSP and Indira Sagar, R&amp;R expenditure, submerged-land compensation and interest on borrowings.</li><li>Part of a wider water-diplomacy push (Rajasthan–Haryana Yamuna pact; Kishau project MoU).</li></ul><div class='dd-callout'>A textbook case of <strong>cooperative federalism</strong> — resolving a decades-old inter-State water dispute without litigation.</div><h4>Constitutional scheme for river-water disputes</h4><div class='dd-flow'><span class='node'>Water = State subject (Entry 17)</span><span class='arrow'>→</span><span class='node'>Inter-State rivers = Union (Entry 56)</span><span class='arrow'>→</span><span class='node'>Article 262 → ISRWD Act, 1956 → Tribunals</span></div><p>The <strong>Sardar Sarovar Dam</strong> is a multipurpose gravity dam on the Narmada in Gujarat; the river rises at <strong>Amarkantak (MP)</strong> and flows west into the Arabian Sea through a rift valley.</p>",
+        "possibleMainsQuestion": "The one-time settlement among Narmada basin States illustrates cooperative federalism in resolving inter-State water disputes. Discuss the constitutional framework for such disputes.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["Narmada Water Disputes Tribunal", "Sardar Sarovar Project", "Article 262", "ISRWD Act 1956", "Cooperative federalism"],
+      "prelimsQs": [
+        {
+          "q": "Under the Constitution, disputes relating to the waters of inter-State rivers are dealt with under:",
+          "options": ["Article 131", "Article 262", "Article 263", "Article 356"],
+          "answer": 1,
+          "explanation": "Article 262 empowers Parliament to legislate (the ISRWD Act, 1956) and can bar the jurisdiction of courts in such disputes."
+        },
+        {
+          "q": "The river Narmada originates at:",
+          "options": ["Amarkantak", "Mahabaleshwar", "Trimbak", "Amravati"],
+          "answer": 0,
+          "explanation": "The Narmada rises at Amarkantak in Madhya Pradesh and flows west into the Arabian Sea through a rift valley."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-11",
+      "headline": "Ram Temple Trust: SIT Finds Donation Pilferage; CEO Post Created",
+      "date": "2026-07-08",
+      "source": "The Hindu",
+      "category": "Governance",
+      "gsPaper": "GS 2",
+      "summary": "A UP-government SIT found prima facie proof of theft and pilferage during donation-counting at the Shri Ram Janmabhoomi Teerth Kshetra. The Trust accepted resignations and will appoint a CEO for the first time. The CIC has held the Trust is not a 'public authority' under the RTI Act, highlighting a transparency gap.",
+      "whyItMatters": "Transparency, RTI's 'public authority' definition and temple-governance models are a topical GS 2 governance case study.",
+      "deepDive": {
+        "explanation": "<p>A UP-government <strong>Special Investigation Team (SIT)</strong> found prima facie proof of <strong>theft and pilferage</strong> during donation-counting at the <strong>Shri Ram Janmabhoomi Teerth Kshetra</strong> temple. The Trust accepted the resignations of General Secretary <strong>Champat Rai</strong> and member Anil Mishra, and announced it will appoint a <strong>CEO for the first time</strong>.</p><ul><li>The SIT reviewed CCTV footage, bank records and seizures; it found the Trust's SOP (frisking, biometric attendance, CCTV) was not enforced.</li><li><strong>Eight accused</strong> were arrested; the next hearing is on 13 July.</li><li>Unlike Tirupati, Vaishno Devi or Kashi Vishwanath (governed by dedicated <strong>State statutes</strong>), this Trust rests on the <strong>2019 SC Ayodhya judgment + the 1993 Acquisition Act + a Central scheme + a trust deed</strong> — a unique public religious trust created by executive action.</li><li>The <strong>CIC held the Trust is not a 'public authority'</strong> under the RTI Act, keeping its rulebook outside the public domain.</li></ul><div class='dd-callout'>The episode highlights the <strong>transparency gap</strong> when a large public-facing religious body is exempt from RTI; appointing a professional CEO signals institutionalisation.</div><p><strong>Concepts:</strong> A <strong>'public authority'</strong> under <strong>Section 2(h) of the RTI Act, 2005</strong> is any body established by the Constitution, a law, a government notification, or one substantially government-financed — such bodies must appoint Public Information Officers and disclose information.</p>",
+        "possibleMainsQuestion": "The Ram Janmabhoomi Trust controversy raises questions about transparency in the governance of large public religious bodies. Examine with reference to the RTI Act's definition of 'public authority'.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["Shri Ram Janmabhoomi Teerth Kshetra", "RTI Act 2005", "Public authority", "Central Information Commission", "Ayodhya Acquisition Act 1993"],
+      "prelimsQs": [
+        {
+          "q": "Under the RTI Act, 2005, a 'public authority' includes a body that is:",
+          "options": ["Only a ministry of the Union government", "Established by the Constitution, a law, a notification, or substantially government-financed", "Any registered private trust", "Only bodies wholly owned by the State"],
+          "answer": 1,
+          "explanation": "Section 2(h) covers bodies established by the Constitution/law/notification or substantially financed by the government."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-12",
+      "headline": "HC Upholds Uniform Legal Marriage Age for All Religions",
+      "date": "2026-07-08",
+      "source": "The Hindu",
+      "category": "Polity",
+      "gsPaper": "GS 2",
+      "summary": "The Allahabad High Court held that the minimum marriage age under the PCMA, 2006 applies to all citizens irrespective of religion, and that the Muslim personal-law principle of puberty as the marriageable age cannot override the central law. It agreed with the Kerala HC that personal law cannot dilute PCMA or POCSO.",
+      "whyItMatters": "Personal law versus secular statute, child protection and the Uniform Civil Code debate are a conceptually clean GS 2 polity theme.",
+      "deepDive": {
+        "explanation": "<p>The <strong>Allahabad High Court</strong> (judgment of 1 July) held that the minimum marriage age under the <strong>Prohibition of Child Marriage Act (PCMA), 2006</strong> applies to <strong>all citizens irrespective of religion</strong>, and that the Muslim personal-law principle recognising puberty as the marriageable age <strong>cannot override</strong> the central law.</p><ul><li>The ruling came while quashing pleas over an FIR against 19 people for allegedly marrying a 16-year-old girl in Bulandshahr.</li><li>Petitioners relied on the <strong>Muslim Personal Law (Shariat) Application Act, 1937</strong> and the Indian Majority Act, 1875.</li><li>The Bench agreed with the <strong>Kerala HC</strong> that personal law cannot dilute PCMA or the <strong>POCSO Act, 2012</strong>.</li></ul><h4>Secular statute vs personal-law claim</h4><table><tr><th>Secular statute</th><th>Personal-law claim</th></tr><tr><td>PCMA 2006: 21 (men), 18 (women); POCSO 2012: no sexual activity under 18</td><td>Shariat 1937: puberty as the marriageable age</td></tr><tr><td>HC: applies to all citizens; cannot be overridden</td><td>HC: cannot dilute child-protection statutes</td></tr></table><div class='dd-callout'>The verdict strengthens <strong>secular statutory protection of minors</strong> over personal law and feeds the <strong>Uniform Civil Code (Article 44)</strong> debate — a definitive Supreme Court ruling may still be needed.</div><p><strong>Concepts:</strong> <strong>PCMA 2006</strong> makes child marriage voidable; <strong>POCSO 2012</strong> criminalises all sexual activity with anyone under 18; <strong>Article 44 (DPSP)</strong> urges the State to secure a Uniform Civil Code.</p>",
+        "possibleMainsQuestion": "'Secular child-protection statutes must prevail over personal law.' Examine in light of recent High Court rulings on the minimum age of marriage and the Uniform Civil Code debate.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["PCMA 2006", "POCSO Act 2012", "Shariat Application Act 1937", "Uniform Civil Code", "Article 44"],
+      "prelimsQs": [
+        {
+          "q": "Under the Prohibition of Child Marriage Act, 2006, the minimum age of marriage is:",
+          "options": ["18 for both men and women", "21 for men and 18 for women", "21 for both men and women", "18 for men and 21 for women"],
+          "answer": 1,
+          "explanation": "The PCMA sets 21 for men and 18 for women; a child marriage is voidable at the option of a party who was a minor."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-13",
+      "headline": "WhatsApp 'Username' Debate Brings Informational Privacy to the Fore",
+      "date": "2026-07-08",
+      "source": "The Hindu",
+      "category": "Polity",
+      "gsPaper": "GS 2",
+      "summary": "A debate has arisen over WhatsApp's optional 'username' feature: WhatsApp says it enhances privacy by hiding phone numbers, while MeitY fears it could enable cybercrime — both invoking informational privacy. The episode illustrates balancing individual privacy, corporate innovation and state security under the Puttaswamy framework.",
+      "whyItMatters": "Privacy as a fundamental right, the proportionality test and the DPDP Act are high-yield GS 2 polity and GS 3 cyber themes.",
+      "deepDive": {
+        "explanation": "<p>A debate has arisen over WhatsApp's optional <strong>'username' feature</strong> (announced 29 June, not yet rolled out in India): WhatsApp says it enhances privacy by hiding phone numbers, while <strong>MeitY</strong> fears it could enable cybercrime — yet both invoke <strong>informational privacy</strong>.</p><ul><li>The <strong>2017 Puttaswamy</strong> nine-judge ruling held informational privacy a facet of <strong>Article 21</strong>, threatened by both state and non-state actors.</li><li>MeitY warns usernames could enable fraud, phishing, 'digital arrest' scams and impersonation of institutions.</li><li>Critics say the government cannot block a lawful feature without a statutory basis; the government cites national security and public welfare.</li></ul><h4>The proportionality test</h4><div class='dd-flow'><span class='node'>Fair law</span><span class='arrow'>→</span><span class='node'>Legitimate aim</span><span class='arrow'>→</span><span class='node'>Proportionate means</span></div><div class='dd-callout'>Best resolved through a clear statutory framework (the <strong>DPDP Act, 2023</strong>) rather than ad hoc executive intervention.</div><p><strong>Concepts:</strong> <strong>K.S. Puttaswamy v. Union of India (2017)</strong> declared privacy a fundamental right under Article 21, subject to a three-fold proportionality test. The <strong>DPDP Act, 2023</strong> is India's data-protection law; <strong>MeitY</strong> is the Ministry of Electronics and Information Technology.</p>",
+        "possibleMainsQuestion": "The WhatsApp username debate captures the tension between individual privacy, corporate innovation and state security. Discuss with reference to the Puttaswamy judgment and the DPDP Act.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["Puttaswamy judgment", "Informational privacy", "Proportionality test", "DPDP Act 2023", "Article 21"],
+      "prelimsQs": [
+        {
+          "q": "The right to privacy was unanimously declared a fundamental right under Article 21 in which case?",
+          "options": ["ADM Jabalpur v. Shivkant Shukla", "K.S. Puttaswamy v. Union of India", "Maneka Gandhi v. Union of India", "Kesavananda Bharati v. State of Kerala"],
+          "answer": 1,
+          "explanation": "The 2017 nine-judge Bench in K.S. Puttaswamy held privacy to be a fundamental right under Article 21."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-14",
+      "headline": "Independence of the Bar is Crucial for the Rule of Law: SC",
+      "date": "2026-07-08",
+      "source": "The Hindu",
+      "category": "Polity",
+      "gsPaper": "GS 2",
+      "summary": "The Supreme Court held that the independence of the Bar is as vital as judicial independence and is the foundation of the rule of law. It proposed a full-time 'National Legal Academy', directed the Bar Council of India to audit disciplinary mechanisms, and called pendency the greatest challenge to justice delivery.",
+      "whyItMatters": "The legal profession, self-regulation and the rule of law (a Basic Structure feature) are a clean GS 2 judiciary theme.",
+      "deepDive": {
+        "explanation": "<p>The <strong>Supreme Court</strong> (Bench of Justice P.S. Narasimha) held that the <strong>independence of the Bar</strong> (lawyers) is as vital as judicial independence and forms the foundation of the <strong>rule of law</strong> — significant because judges are appointed from the Bar.</p><ul><li><strong>Self-regulation</strong> is the defining feature of the profession's independence; advocates as 'officers of the court' must be insulated from external pressure.</li><li>It proposed a full-time <strong>'National Legal Academy'</strong> (like the National Judicial Academy) for continuing legal education.</li><li>It directed the <strong>Bar Council of India</strong> to conduct a performance audit of disciplinary mechanisms under the <strong>Advocates Act, 1961</strong>.</li><li>It called <strong>pendency</strong> the greatest challenge to justice delivery; the Bar must share responsibility for reducing delays.</li></ul><div class='dd-callout'>A 'paradigm shift' is needed making both <strong>Bar and Bench jointly responsible</strong> for tackling pendency, backed by institutionalised legal education and audited discipline.</div><p><strong>Concepts:</strong> The <strong>Bar Council of India (BCI)</strong>, a statutory body under the <strong>Advocates Act, 1961</strong>, regulates legal education and the profession. <strong>Rule of law</strong> — a Basic Structure feature — means governance by law, not arbitrary power; an independent Bar and Bench are its 'two wheels of the chariot of justice'.</p>",
+        "possibleMainsQuestion": "'An independent Bar is indispensable to the rule of law.' Discuss the Supreme Court's observations on the legal profession and the reforms it proposed.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["Bar Council of India", "Advocates Act 1961", "Rule of law", "Independence of the Bar", "National Legal Academy"],
+      "prelimsQs": [
+        {
+          "q": "The Bar Council of India is a statutory body constituted under the:",
+          "options": ["Advocates Act, 1961", "Legal Services Authorities Act, 1987", "Contempt of Courts Act, 1971", "Judges (Inquiry) Act, 1968"],
+          "answer": 0,
+          "explanation": "The BCI is created under the Advocates Act, 1961 and regulates legal education and the legal profession."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-15",
+      "headline": "New Index of Services Production (ISP) to Rely on GST Data",
+      "date": "2026-07-08",
+      "source": "The Hindu",
+      "category": "Reports and Indices",
+      "gsPaper": "GS 3",
+      "summary": "The technical committee designing India's new Index of Services Production (ISP) recommends it rely heavily on GST data, supplemented by administrative data and the ASISSE survey. The first release is on 29 July 2026 — India's first attempt to periodically quantify formal services-sector production, akin to the IIP for industry.",
+      "whyItMatters": "National income statistics, the services sector and GST-based data are a topical GS 3 economy theme; the formal-only coverage is a key nuance.",
+      "deepDive": {
+        "explanation": "<p>The technical committee designing India's new <strong>Index of Services Production (ISP)</strong> recommends it rely heavily on <strong>GST data</strong>, supplemented by administrative data and the <strong>ASISSE</strong> survey. The first data release is on <strong>29 July 2026</strong> — India's first periodic measure of <strong>formal</strong> services output.</p><h4>How the ISP is built</h4><div class='dd-flow'><span class='node'>GST turnover data (primary source)</span><span class='arrow'>→</span><span class='node'>+ ASISSE + administrative data</span><span class='arrow'>→</span><span class='node'>Monthly sectoral indices → ISP within 60 days</span></div><ul><li>Set up under the <strong>TAC-ISP</strong> (May 2025), chaired by <strong>Debjani Ghosh</strong>.</li><li>GST registration is not mandatory below <strong>₹20 lakh turnover</strong> (₹10 lakh in some NE States) — so the ISP covers <strong>only the formal sector</strong> and must not be read as measuring the informal services sector.</li></ul><div class='dd-callout'>Fills a long-standing gap: services are <strong>~50%+ of GVA</strong> yet lacked a high-frequency index like the <strong>IIP</strong> for industry. Anchoring on GST gives near-real-time coverage, but the formal-only scope must be read alongside informal-sector surveys.</div><p><strong>Concepts:</strong> The <strong>IIP (Index of Industrial Production)</strong> is the existing high-frequency measure of industrial output (base 2011-12). <strong>GST</strong> (1 July 2017, 101st Amendment) runs on the <strong>GSTN</strong>, a rich data trove. <strong>GVA</strong> measures output net of intermediate consumption.</p>",
+        "possibleMainsQuestion": "The proposed Index of Services Production fills a critical gap in India's statistical system. Discuss its methodology and the limitations of anchoring it on GST data.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["Index of Services Production", "IIP", "GSTN", "ASISSE", "Gross Value Added"],
+      "prelimsQs": [
+        {
+          "q": "The proposed Index of Services Production (ISP) will draw primarily on:",
+          "options": ["Income-tax returns", "GST data", "Census data", "RBI household surveys"],
+          "answer": 1,
+          "explanation": "The committee recommends GST data as the ISP's major source, which is why it covers only the GST-registered formal sector."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-16",
+      "headline": "School Dropout Rate Falls Across Key Stages: UDISE+ Report",
+      "date": "2026-07-08",
+      "source": "The Hindu",
+      "category": "Reports and Indices",
+      "gsPaper": "GS 2",
+      "summary": "The UDISE+ report for 2025-26 shows falling dropouts and gains in enrolment, retention, teacher strength and infrastructure. Secondary dropout dipped from 8.2% to 7.0%, secondary GER rose to 71.7%, and women are now 54.9% of all teachers — broadly aligning with NEP 2020 targets.",
+      "whyItMatters": "Education indicators, UDISE+, GER and NEP 2020 are recurring GS 2 governance and human-development themes.",
+      "deepDive": {
+        "explanation": "<p>The <strong>UDISE+ report for 2025-26</strong> shows a downward trend in dropouts and improvements in enrolment, retention, teacher strength and school infrastructure.</p><div class='dd-stats'><div class='dd-stat'><span class='v'>1.8%</span><span class='l'>Preparatory (Cl 3-5) dropout, down from 2.3%</span></div><div class='dd-stat'><span class='v'>7.0%</span><span class='l'>Secondary (Cl 9-12) dropout, down from 8.2%</span></div><div class='dd-stat'><span class='v'>71.7%</span><span class='l'>Secondary GER, up from 68.5%</span></div></div><ul><li>Women are now <strong>54.9%</strong> of all teachers; girls' enrolment edged up to 48.4%.</li><li>Total teachers are up 8.3% vs 2022-23; zero-enrolment schools are down 29%.</li><li>Schools with computers rose to 69.9% and internet to 67.4%; 95% have electricity.</li></ul><div class='dd-callout'>Aligns with <strong>NEP 2020</strong>'s goal of universal secondary participation; the remaining challenge is the secondary-retention gap and the digital-access divide.</div><p><strong>Concepts:</strong> <strong>UDISE+</strong> is the Education Ministry's online database on schools. <strong>GER</strong> = students enrolled at a level ÷ official school-age population (it can exceed 100% due to over/under-age enrolment). The <strong>RTE Act, 2009</strong> (Article 21A) guarantees free education for ages 6–14; <strong>NEP 2020</strong> targets 100% school GER by 2030.</p>",
+        "possibleMainsQuestion": "Falling dropout rates in the UDISE+ data signal progress toward NEP 2020 goals. Examine the remaining challenges in India's school education.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["UDISE+", "Gross Enrolment Ratio", "NEP 2020", "RTE Act 2009", "Retention rate"],
+      "prelimsQs": [
+        {
+          "q": "The Gross Enrolment Ratio (GER) can exceed 100% because:",
+          "options": ["Every child is counted twice", "It includes over-age and under-age enrolments against the official age group", "It counts teachers as well as students", "Private-school students are excluded"],
+          "answer": 1,
+          "explanation": "GER divides all students enrolled at a level by the official school-age population, so over/under-age enrolment can push it above 100%."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-17",
+      "headline": "For the Indo-Pacific, a 'G-Minus 2' Strategy",
+      "date": "2026-07-08",
+      "source": "Indian Express",
+      "category": "International Relations",
+      "gsPaper": "GS 2",
+      "summary": "C. Raja Mohan frames PM Modi's eastward tour (Indonesia, Australia, New Zealand) as a 'G-Minus Two' approach — Asian powers deepening cooperation among themselves rather than resigning to a US-China condominium (G2), especially amid Trump discarding 'Indo-Pacific' terminology. The aim is to de-risk, not decouple, from China.",
+      "whyItMatters": "Great-power competition, strategic autonomy and minilaterals are central GS 2 IR themes with fresh framing.",
+      "deepDive": {
+        "explanation": "<p>C. Raja Mohan frames Modi's eastward tour (Indonesia, Australia, New Zealand) as consolidating a <strong>'G-Minus Two'</strong> approach — Asian powers deepening cooperation among themselves rather than resigning to a US-China condominium (<strong>G2</strong>), amid Trump discarding 'Indo-Pacific' terminology.</p><ul><li>Recent Delhi visits by Japan's PM Takaichi and Korea's President Lee reflect the same logic.</li><li>Trade is deep — China ~$150 bn, South Korea ~$300 bn, Japan &gt;$300 bn, Australia &gt;$200 bn — so the aim is to <strong>'de-risk'</strong>, not decouple.</li><li>Complementarities: Japan (manufacturing/defence tech), Korea (shipbuilding/chips), Australia (critical minerals), New Zealand (trade/education).</li></ul><div class='dd-callout'>'G-Minus Two' is <strong>neither anti-China nor anti-US</strong> — it widens India's strategic space; its success depends on India's own economic reform and defence modernisation.</div><p><strong>Concepts:</strong> <strong>'G2'</strong> is a hypothetical US-China duopoly managing world affairs, long unwelcome to India. <strong>Strategic autonomy</strong> is India's policy of independent decision-making without formal alliances. <strong>Minilaterals</strong> (Quad, trilaterals) are small, issue-based groupings supplementing formal alliances.</p>",
+        "possibleMainsQuestion": "'India's Indo-Pacific strategy is shifting toward intra-Asian coalitions.' Examine the logic of a 'G-Minus Two' approach and its limits.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["G-Minus Two", "Strategic autonomy", "Minilaterals", "ASEAN centrality", "Indo-Pacific"],
+      "prelimsQs": [
+        {
+          "q": "In strategic commentary, 'G2' usually refers to a hypothetical duopoly of:",
+          "options": ["India and China", "The US and China", "The US and Russia", "The EU and China"],
+          "answer": 1,
+          "explanation": "'G2' denotes a US-China condominium managing global and Asian affairs — an outcome India seeks to avoid."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-18",
+      "headline": "Contact Lost with Mission Drishti — World's First OptoSAR Satellite",
+      "date": "2026-07-08",
+      "source": "The Hindu",
+      "category": "Science and Tech",
+      "gsPaper": "GS 3",
+      "summary": "Bengaluru start-up GalaxEye lost contact with Mission Drishti — described as the world's first OptoSAR satellite and India's largest privately developed Earth-observation satellite — after an anomaly following a geomagnetic solar storm. It fused electro-optical and SAR sensors on a single platform for all-weather, high-detail imaging.",
+      "whyItMatters": "Private space, SAR vs EO sensors and space weather are core GS 3 S&T; GalaxEye reflects the post-2020 opening of India's space sector.",
+      "deepDive": {
+        "explanation": "<p>Bengaluru space start-up <strong>GalaxEye</strong> lost contact with <strong>Mission Drishti</strong> — described as the <strong>world's first OptoSAR satellite</strong> and India's largest privately developed Earth-observation satellite — after an anomaly following a <strong>geomagnetic solar storm</strong>.</p><ul><li>It was launched on <strong>3 May 2026</strong> aboard a SpaceX Falcon 9 from Vandenberg, California.</li><li>The anomaly struck in the final stage of <strong>LEOP</strong>; radiation from the storm likely damaged a critical onboard system; recovery chances are 'low'.</li></ul><h4>Why 'OptoSAR' — fusing two sensor types</h4><table><tr><th>Electro-Optical (EO)</th><th>Synthetic Aperture Radar (SAR)</th></tr><tr><td>Captures visible/infrared light like a camera</td><td>Active microwave sensor; transmits radar pulses</td></tr><tr><td>High detail, but needs daylight and clear skies</td><td>Images day and night and through clouds</td></tr><tr><td>Best for detailed mapping</td><td>Ideal for flood/agriculture monitoring</td></tr></table><div class='dd-callout'>Combining both gives <strong>all-weather plus high-detail imaging</strong>. The episode highlights the risk of <strong>space weather</strong> to satellites and reflects the rise of India's private space sector, opened up via <strong>IN-SPACe</strong> and 2020 reforms.</div><p><strong>Concepts:</strong> <strong>LEOP</strong> (Launch and Early Orbit Phase) is the critical early period when a satellite deploys and reaches its operational orbit. A <strong>geomagnetic storm</strong> is a disturbance of Earth's magnetosphere from solar activity (CMEs/solar wind) that can damage satellite electronics.</p>",
+        "possibleMainsQuestion": "The loss of Mission Drishti underscores both the promise of India's private space sector and the risks of space weather. Discuss.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["OptoSAR", "Synthetic Aperture Radar", "IN-SPACe", "LEOP", "Geomagnetic storm"],
+      "prelimsQs": [
+        {
+          "q": "A key advantage of Synthetic Aperture Radar (SAR) over electro-optical sensors is that SAR:",
+          "options": ["Produces natural colour images", "Can image through clouds and at night", "Requires no power source", "Works only in daylight"],
+          "answer": 1,
+          "explanation": "SAR is an active microwave sensor that images day and night and through clouds, unlike EO sensors that need daylight and clear skies."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-19",
+      "headline": "Finerenone Slows Kidney Disease in Patients Without Diabetes",
+      "date": "2026-07-08",
+      "source": "The Hindu",
+      "category": "Science and Tech",
+      "gsPaper": "GS 3",
+      "summary": "Three global studies show finerenone — earlier used mainly in diabetes-related kidney disease — can help a much broader group of chronic kidney disease patients, including those without diabetes, by blocking inflammation and scarring. Costs are expected to fall after patent expiry in 2028.",
+      "whyItMatters": "Health, clinical research and drug affordability (patent expiry, generics) are recurring GS 3 S&T themes.",
+      "deepDive": {
+        "explanation": "<p>Three global studies (in the <em>New England Journal of Medicine, JAMA</em> and <em>The Lancet</em>) show <strong>finerenone</strong> — a drug earlier used mainly in diabetes-related kidney disease — can help a much broader group of <strong>chronic kidney disease (CKD)</strong> patients, including those <strong>without diabetes</strong>.</p><ul><li>It blocks <strong>inflammation and scarring</strong> in the kidneys rather than targeting diabetes, slowing progression and cutting kidney-failure risk.</li><li>The <strong>FIND-CKD trial</strong> enrolled 1,584 non-diabetic patients; a sub-analysis of 900+ with glomerular diseases showed <strong>~42% less urine protein leakage</strong>.</li><li>A pooled analysis of <strong>14,574 patients</strong> found consistent benefit regardless of diabetes status — a shared damage pathway.</li><li>Main side effect: <strong>hyperkalaemia</strong> (high blood potassium, ~17%). It costs ₹80–90/day now; expected to fall after <strong>patent expiry in 2028</strong>.</li></ul><div class='dd-callout'><b>Way forward:</b> A shift toward <strong>combination therapy</strong> (as in cancer care), but the bigger win is <strong>early detection</strong> — a simple urine-protein test in primary care ('detect the smoke before the fire').</div><p><strong>Concepts:</strong> <strong>CKD</strong> is the gradual loss of the kidneys' ability to filter waste (leading causes: diabetes, hypertension). The <strong>glomeruli</strong> are the kidneys' tiny filtering units; their damage (e.g. IgA nephropathy) is a major cause of failure. <strong>Patent expiry</strong> enables cheaper generic versions.</p>",
+        "possibleMainsQuestion": "Advances like finerenone shift the focus in kidney disease toward broader treatment and early detection. Discuss the public-health and drug-affordability dimensions.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["Finerenone", "Chronic Kidney Disease", "Glomeruli", "Hyperkalaemia", "Patent expiry"],
+      "prelimsQs": [
+        {
+          "q": "The glomeruli, referred to in health reporting on kidney disease, are the functional filtering units of the:",
+          "options": ["Liver", "Kidneys", "Lungs", "Pancreas"],
+          "answer": 1,
+          "explanation": "Glomeruli are the kidneys' tiny filtering units; their damage (e.g. IgA nephropathy) is a major cause of kidney failure."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-20",
+      "headline": "Delhi Ridge to be Revived with Legal Protection; 70 Lakh Trees",
+      "date": "2026-07-08",
+      "source": "Indian Express",
+      "category": "Environment",
+      "gsPaper": "GS 3",
+      "summary": "Home Minister Amit Shah launched the Delhi Ridge Rejuvenation Campaign and a 'Mission 70 Lakh Plantation' drive, pledging to develop 6,300 hectares of Ridge into forest over four years with legal protection. Delhi has now declared 5,000 hectares as forest land after three decades without a final notification.",
+      "whyItMatters": "Urban ecology, the Aravallis and forest law (Indian Forest Act) are recurring GS 3 environment themes.",
+      "deepDive": {
+        "explanation": "<p>Home Minister <strong>Amit Shah</strong>, with the LG and CM Rekha Gupta, launched the <strong>Delhi Ridge Rejuvenation Campaign</strong> and a <strong>'Mission 70 Lakh Plantation'</strong> drive, pledging to develop <strong>6,300 hectares</strong> of the Ridge into forest over four years with legal protection.</p><ul><li>The Ridge, first notified under the Indian Forest Act in <strong>1994</strong>, lacked a final notification for three decades; Delhi has now declared <strong>5,000 hectares</strong> as forest land.</li><li>Native long-lived species — <strong>peepal, banyan, neem, gular, arjun, jamun</strong> — will replace 'poisonous and thorny' ones.</li><li>The drive covers 20.01 lakh trees, 37.07 lakh shrubs and free saplings under <strong>'Ek Ped Maa Ke Naam'</strong>; an NDDB tie-up will keep cow dung out of the Yamuna.</li></ul><div class='dd-callout'>Final notification and legal protection would safeguard Delhi's <strong>'green lungs'</strong>, biodiversity, soil and groundwater — a long-pending conservationist demand.</div><p><strong>Concepts:</strong> The <strong>Delhi Ridge</strong> is the northern extension of the <strong>Aravalli Range</strong> (among the world's oldest fold mountains), the capital's green lung and a barrier against desert winds. <strong>Reserved-forest</strong> notification under the <strong>Indian Forest Act, 1927</strong> confers the strongest legal protection. The Aravallis help check desertification of the Indo-Gangetic plain.</p>",
+        "possibleMainsQuestion": "The revival of the Delhi Ridge highlights the ecological role of the Aravallis. Discuss their significance and the need for legal protection of urban forests.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["Delhi Ridge", "Aravalli Range", "Indian Forest Act 1927", "Reserved Forest", "Ek Ped Maa Ke Naam"],
+      "prelimsQs": [
+        {
+          "q": "The Delhi Ridge is the northern extension of which mountain range?",
+          "options": ["Vindhya Range", "Aravalli Range", "Satpura Range", "Shivalik Range"],
+          "answer": 1,
+          "explanation": "The Delhi Ridge is the tail end of the Aravallis, acting as the city's green lung and a barrier against desert dust."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-21",
+      "headline": "NBFC Gold-Loan Growth: Price Surge Fuels a Boom",
+      "date": "2026-07-08",
+      "source": "Indian Express",
+      "category": "Economy",
+      "gsPaper": "GS 3",
+      "summary": "Gold loans have become the fastest-growing segment of retail credit for NBFCs, driven by record-high gold prices. NBFC gold-loan outstanding surged 69.9% year-on-year to ₹3.29 lakh crore, aiding financial inclusion — but rising loan roll-overs ('ever-greening') warrant close RBI supervision.",
+      "whyItMatters": "NBFCs, financial inclusion and RBI regulation (LTV, priority-sector lending) are staple GS 3 economy topics.",
+      "deepDive": {
+        "explanation": "<p>Gold loans have become the <strong>fastest-growing segment of retail credit</strong> for non-banking financial companies (NBFCs), driven by record-high gold prices.</p><div class='dd-stats'><div class='dd-stat'><span class='v'>69.9%</span><span class='l'>YoY growth in NBFC gold-loan book (May 2026)</span></div><div class='dd-stat'><span class='v'>₹3.29 L cr</span><span class='l'>Outstanding, up from ₹1.94 lakh crore</span></div><div class='dd-stat'><span class='v'>~136%</span><span class='l'>Jump in two years</span></div></div><ul><li>Strong growth beyond the traditional South — <strong>UP (138%), West Bengal (112%), Rajasthan (105%), Maharashtra (102%)</strong>.</li><li>Gold loans aid financial inclusion for women-led households and micro-enterprises.</li><li>Risk: rising <strong>loan roll-overs</strong> via partial payments ('ever-greening').</li></ul><div class='dd-callout'>Gold loans convert dormant household gold into productive credit — but roll-overs and reliance on high gold prices warrant close <strong>RBI supervision</strong> to pre-empt asset-quality stress.</div><p><strong>Concepts:</strong> An <strong>NBFC</strong> offers loans/credit but cannot accept demand deposits and lacks a full banking licence; it is regulated by the RBI. A <strong>gold loan</strong> is secured against pledged jewellery, with an RBI-capped <strong>Loan-to-Value (LTV)</strong> ratio. Gold loans partly qualify as <strong>priority-sector lending</strong>; 'ever-greening' can mask underlying stress.</p>",
+        "possibleMainsQuestion": "The gold-loan boom reflects both financial deepening and emerging risks in the NBFC sector. Discuss.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["NBFC", "Gold loan", "Loan-to-Value ratio", "Ever-greening", "Priority-sector lending"],
+      "prelimsQs": [
+        {
+          "q": "Which of the following is true of a Non-Banking Financial Company (NBFC)?",
+          "options": ["It can accept demand deposits like a bank", "It cannot accept demand deposits and lacks a full banking licence", "It is regulated by SEBI", "It is barred from lending against gold"],
+          "answer": 1,
+          "explanation": "NBFCs offer credit but cannot accept demand deposits and lack a full banking licence; they are regulated by the RBI."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-22",
+      "headline": "BRICS Nations Adopt Guwahati Declaration on Drug Trafficking",
+      "date": "2026-07-08",
+      "source": "The Hindu",
+      "category": "International Relations",
+      "gsPaper": "GS 2",
+      "summary": "The BRICS nations adopted the Guwahati Declaration, reaffirming cooperation to combat illicit drug trafficking and related transnational organised crime. Members flagged synthetic drugs, precursor-chemical diversion and misuse of virtual assets, and India cited a three-year road map through the NCB.",
+      "whyItMatters": "BRICS membership and expansion, global governance and internal security (drug trafficking) are recurring GS 2/GS 3 themes.",
+      "deepDive": {
+        "explanation": "<p>The <strong>BRICS</strong> nations adopted the <strong>Guwahati Declaration</strong>, reaffirming cooperation to prevent and combat illicit <strong>drug trafficking</strong> and related transnational organised crime, at a meeting of anti-drug agency heads.</p><ul><li><strong>BRICS</strong> = Brazil, Russia, India, China, South Africa, now expanded to add <strong>Egypt, Ethiopia, Iran, Saudi Arabia, the UAE and Indonesia</strong>.</li><li>Members stressed timely intelligence-sharing and flagged <strong>synthetic drugs, new psychoactive substances, precursor-chemical diversion</strong> and misuse of <strong>virtual assets</strong>.</li><li><strong>NCB</strong> DG Anurag Garg cited India's zero-tolerance policy and a three-year road map (2026–29) using a network-centric approach.</li></ul><p><strong>Concepts:</strong> <strong>BRICS</strong> originated as an economic grouping (term coined by Jim O'Neill in 2001; first summit 2009; South Africa joined in 2010; a major expansion took effect in 2024). It runs the <strong>New Development Bank</strong> (HQ Shanghai) and a Contingent Reserve Arrangement. India's nodal anti-narcotics agency is the <strong>Narcotics Control Bureau (NCB)</strong> under the <strong>NDPS Act, 1985</strong>.</p>",
+        "possibleMainsQuestion": "BRICS is broadening from an economic grouping to a platform for security cooperation. Discuss with reference to transnational drug trafficking.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["BRICS", "Guwahati Declaration", "New Development Bank", "Narcotics Control Bureau", "NDPS Act 1985"],
+      "prelimsQs": [
+        {
+          "q": "The New Development Bank, associated with BRICS, is headquartered at:",
+          "options": ["Beijing", "Shanghai", "New Delhi", "Moscow"],
+          "answer": 1,
+          "explanation": "The NDB is headquartered in Shanghai; BRICS also operates a Contingent Reserve Arrangement."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-23",
+      "headline": "The Safety Net and the Trade-Off: Women's Cash-Transfer Schemes",
+      "date": "2026-07-08",
+      "source": "Indian Express",
+      "category": "Economy",
+      "gsPaper": "GS 3",
+      "summary": "Unconditional cash-transfer schemes for women are proliferating across States. In 2025-26, 12 States were estimated to spend ₹1.68 lakh crore on such transfers. An EAC-PM paper finds they raised consumption and savings, but the RBI warns they risk crowding out investment.",
+      "whyItMatters": "Welfare schemes, State finances and fiscal prudence are a topical GS 2 governance and GS 3 economy debate.",
+      "deepDive": {
+        "explanation": "<p>Unconditional <strong>cash-transfer schemes for women</strong> are proliferating across States (Ladli Behna–MP, Maiya Samman–Jharkhand, Magalir Urimai Thogai–TN), prompting a debate on welfare gains versus fiscal risk.</p><div class='dd-stats'><div class='dd-stat'><span class='v'>₹1.68 L cr</span><span class='l'>12 States' spend on such transfers (2025-26)</span></div><div class='dd-stat'><span class='v'>₹86,000 cr</span><span class='l'>Union MGNREGA allocation (for scale)</span></div></div><ul><li>An <strong>EAC-PM</strong> working paper finds the schemes raised beneficiaries' consumption, savings and spending on health/education.</li><li>The <strong>RBI</strong> warns they 'run the risk of crowding out' investment; State debt varies — Punjab 46.4%, West Bengal 38.9%, Bihar 36.8% of GSDP.</li></ul><div class='dd-callout'><b>Way forward:</b> Real welfare gains, but States must guard against <strong>crowding out capital spending</strong> and mounting contingent liabilities — fiscal sustainability needs 'closer attention' to how these are financed.</div><p><strong>Concepts:</strong> <strong>Direct Benefit Transfer (DBT)</strong> routes payments directly to beneficiaries' bank accounts, cutting leakages. <strong>Crowding out</strong> occurs when high government/subsidy spending reduces resources for productive investment. The <strong>Debt-to-GSDP ratio</strong> measures a State's debt burden relative to its economy.</p>",
+        "possibleMainsQuestion": "'Women's cash-transfer schemes deliver welfare but strain State finances.' Critically examine the trade-off between social protection and fiscal prudence.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["Direct Benefit Transfer", "Crowding out", "Debt-to-GSDP ratio", "EAC-PM", "Contingent liabilities"],
+      "prelimsQs": [
+        {
+          "q": "'Crowding out', in the context of government finances, refers to:",
+          "options": ["Excess demand for public services", "Government spending reducing resources available for private/productive investment", "Rural-to-urban migration", "Over-subscription of a bond issue"],
+          "answer": 1,
+          "explanation": "Crowding out is when high government or subsidy spending reduces the resources available for productive private investment."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-24",
+      "headline": "Eight Wildlife Sanctuaries, 281 Reserve Forests Encroached in Assam",
+      "date": "2026-07-08",
+      "source": "The Hindu",
+      "category": "Environment",
+      "gsPaper": "GS 3",
+      "summary": "Assam's Forest Minister told the Assembly that eight wildlife sanctuaries and 281 reserve forests are under encroachment, presenting data on illegal occupation and human-elephant conflict. The State has evicted squatters from 25,588 hectares, but balancing conservation with rehabilitation remains a challenge.",
+      "whyItMatters": "Forest governance, protected-area categories and human-wildlife conflict are recurring GS 3 environment themes.",
+      "deepDive": {
+        "explanation": "<p>Assam's Forest and Environment Minister told the Assembly that <strong>eight wildlife sanctuaries and 281 reserve forests</strong> are under encroachment, presenting data on illegal occupation and <strong>human-elephant conflict</strong>.</p><ul><li>As of February 2016, about <strong>3,15,996 hectares</strong> of protected areas/reserve forests were under illegal occupation.</li><li>The State has evicted squatters from <strong>25,588 hectares</strong>, including 16,937 hectares in the past five years.</li></ul><div class='dd-callout'>Balancing eviction to protect <strong>biodiversity corridors</strong> against the rehabilitation of affected communities is a governance challenge, sharpened by rising human-elephant conflict.</div><h4>Forest classification (Indian Forest Act, 1927)</h4><table><tr><th>Reserved Forest</th><th>Protected Forest</th><th>Village Forest</th></tr><tr><td>Most protected; activities banned unless permitted</td><td>Activities allowed unless prohibited</td><td>Assigned to village communities</td></tr></table><p><strong>Concepts:</strong> Under the <strong>Wildlife (Protection) Act, 1972</strong>, a <strong>wildlife sanctuary</strong> allows some regulated human activity with permission, while a <strong>national park</strong> enjoys stricter protection. Encroachment fragments wildlife and elephant corridors, intensifying conflict.</p>",
+        "possibleMainsQuestion": "Encroachment of protected areas intensifies human-wildlife conflict. Discuss the trade-offs between conservation and the rehabilitation of affected communities.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["Wildlife Protection Act 1972", "Reserved Forest", "Protected Forest", "Human-elephant conflict", "Biodiversity corridor"],
+      "prelimsQs": [
+        {
+          "q": "Under the Indian Forest Act, 1927, in which category are activities permitted unless specifically prohibited?",
+          "options": ["Reserved Forest", "Protected Forest", "National Park", "Wildlife Sanctuary"],
+          "answer": 1,
+          "explanation": "In a Protected Forest, activities are allowed unless prohibited; in a Reserved Forest they are banned unless expressly permitted."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-25",
+      "headline": "NATO Flaunts Arms Deals as Trump Targets European Allies",
+      "date": "2026-07-08",
+      "source": "Indian Express",
+      "category": "International Relations",
+      "gsPaper": "GS 2",
+      "summary": "At a summit in Ankara, NATO leaders unveiled arms deals worth at least $50 billion to signal higher defence spending, even as President Trump said he felt 'let down' by European allies and renewed his push to control Greenland. The US also moved to lift 2020 sanctions on Turkey over its S-400 purchase.",
+      "whyItMatters": "NATO, transatlantic strains and CAATSA-type sanctions (relevant to India's S-400) are topical GS 2 IR themes.",
+      "deepDive": {
+        "explanation": "<p>At a summit in <strong>Ankara, Turkey</strong>, NATO leaders unveiled arms deals worth tens of billions to signal higher defence spending, even as President <strong>Trump</strong> said he felt 'let down' by European allies and renewed his push to control <strong>Greenland</strong>.</p><ul><li>A defence-industry forum yielded deals worth <strong>at least $50 billion</strong> (Northrop Grumman drones, Saab planes).</li><li>Trump faulted Britain, France, Germany and Italy for not backing the US war on Iran; he did not rule out further US troop withdrawals from Europe.</li><li>The US will lift 2020 sanctions on Turkey (imposed over its Russian <strong>S-400</strong> purchase) and may sell it <strong>F-35s</strong> — the first US presidential visit to Turkey in 11 years.</li><li>Tensions persist over Ukraine and Greenland (a Danish territory).</li></ul><p><strong>Concepts:</strong> <strong>NATO</strong> (North Atlantic Treaty Organization, 1949) is a transatlantic collective-defence alliance; <strong>Article 5</strong> treats an attack on one member as an attack on all. Members target <strong>2% of GDP</strong> on defence. The <strong>F-35</strong> is a US fifth-generation stealth fighter; the <strong>S-400</strong> is a Russian air-defence system whose purchase triggered US <strong>CAATSA</strong> sanctions on Turkey (a concern India shares).</p>",
+        "possibleMainsQuestion": "Intra-alliance strains within NATO have implications for the global strategic balance. Discuss, noting the relevance of CAATSA-type sanctions for India.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["NATO", "Article 5", "CAATSA", "S-400", "F-35"],
+      "prelimsQs": [
+        {
+          "q": "Article 5 of the NATO treaty embodies the principle of:",
+          "options": ["Non-alignment", "Collective defence — an attack on one member is an attack on all", "Nuclear no-first-use", "Freedom of navigation"],
+          "answer": 1,
+          "explanation": "Article 5 is NATO's collective-defence clause: an armed attack on one member is treated as an attack on all members."
+        }
+      ]
+    },
+    {
+      "id": "ca080726-26",
+      "headline": "SC Refuses DMK Plea Against TVK Remarks on Karur Stampede",
+      "date": "2026-07-08",
+      "source": "The Hindu",
+      "category": "Polity",
+      "gsPaper": "GS 2",
+      "summary": "The Supreme Court refused a DMK plea seeking to bar TVK leaders from statements linking rivals to the Karur stampede, saying such a bar could amount to an injunction on free speech. It advised countering 'speech with more speech', reinforcing a robust reading of Article 19(1)(a).",
+      "whyItMatters": "Free speech, reasonable restrictions and judicial reluctance to grant prior restraint are a clean GS 2 polity theme.",
+      "deepDive": {
+        "explanation": "<p>The <strong>Supreme Court</strong> refused a DMK plea seeking to bar <strong>Tamilaga Vettri Kazhagam (TVK)</strong> leaders (including C. Joseph Vijay) from making statements linking rivals to the <strong>Karur stampede</strong>, saying such a bar could amount to an <strong>injunction on free speech</strong>.</p><ul><li>The Bench (Justice K.V. Viswanathan) advised countering <strong>'speech with more speech'</strong> rather than seeking a judicial gag; the applicant withdrew the plea.</li><li>The <strong>Karur stampede</strong> (27 September 2025) at a TVK rally left 41 dead and 142 injured; the SC ordered a <strong>CBI probe</strong> on 13 October 2025.</li></ul><div class='dd-callout'>The Court's stance reinforces that the remedy for contested political speech is <strong>more speech, not prior restraint</strong> — a robust reading of <strong>Article 19(1)(a)</strong>.</div><p><strong>Concepts:</strong> <strong>Article 19(1)(a)</strong> guarantees freedom of speech and expression, subject to <strong>reasonable restrictions</strong> under Article 19(2) (public order, defamation, contempt). Courts are reluctant to grant prior restraint/gag orders. The <strong>CBI</strong> operates under the <strong>Delhi Special Police Establishment Act, 1946</strong>.</p>",
+        "possibleMainsQuestion": "'The remedy for objectionable speech is more speech, not enforced silence.' Discuss in light of the Supreme Court's reluctance to grant prior restraint.",
+        "prelimsFacts": []
+      },
+      "keyTerms": ["Article 19(1)(a)", "Reasonable restrictions", "Prior restraint", "CBI", "Delhi Special Police Establishment Act 1946"],
+      "prelimsQs": [
+        {
+          "q": "The Central Bureau of Investigation (CBI) derives its powers from which law?",
+          "options": ["The CBI Act, 1963", "The Delhi Special Police Establishment Act, 1946", "The Police Act, 1861", "The NIA Act, 2008"],
+          "answer": 1,
+          "explanation": "The CBI has no dedicated statute of its own; it functions under the Delhi Special Police Establishment Act, 1946."
+        }
+      ]
+    }
+  ]
+}

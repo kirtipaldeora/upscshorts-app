@@ -275,6 +275,29 @@ html.dark {
 .dd-fact-box li::marker{color:var(--acc)}
 .dd-question{background:var(--panel);border:1px solid var(--panel-border);backdrop-filter:blur(14px);border-radius:22px;padding:16px;font-size:13.5px;line-height:1.75;color:var(--on);font-style:italic;position:relative;font-weight:600}
 .dd-question::before{display:none}
+/* ── Deep-dive rich content (structured explanations & diagrams) ── */
+.dd-explain h4{font-size:12px;font-weight:900;color:var(--on);text-transform:uppercase;letter-spacing:.7px;margin:22px 0 9px;display:flex;align-items:center;gap:7px}
+.dd-explain h4:first-child{margin-top:0}
+.dd-explain h4::before{content:"";width:14px;height:3px;border-radius:3px;background:var(--acc);flex:none}
+.dd-explain p{margin:0 0 11px}
+.dd-explain p:last-child{margin-bottom:0}
+.dd-explain ul,.dd-explain ol{margin:9px 0 12px;padding-left:19px}
+.dd-explain li{margin-bottom:6px;line-height:1.72}
+.dd-explain li::marker{color:var(--acc)}
+.dd-explain table{width:100%;border-collapse:separate;border-spacing:0;margin:12px 0 14px;font-size:12.5px;font-weight:600;border:1px solid var(--panel-border);border-radius:14px;overflow:hidden}
+.dd-explain th,.dd-explain td{padding:9px 11px;text-align:left;vertical-align:top;border-bottom:1px solid var(--panel-border);border-right:1px solid var(--panel-border)}
+.dd-explain th:last-child,.dd-explain td:last-child{border-right:none}
+.dd-explain tr:last-child td{border-bottom:none}
+.dd-explain th{background:var(--panel);color:var(--on);font-weight:800;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px}
+.dd-explain .dd-flow{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:14px 0}
+.dd-explain .dd-flow .node{background:var(--panel);border:1px solid var(--panel-border);border-radius:12px;padding:7px 11px;font-size:11.5px;font-weight:800;color:var(--on);line-height:1.35;text-align:center}
+.dd-explain .dd-flow .arrow{color:var(--acc);font-weight:900;font-size:14px}
+.dd-explain .dd-callout{background:var(--panel);border-left:3px solid var(--acc);border-radius:0 14px 14px 0;padding:11px 15px;margin:13px 0;font-size:13px;line-height:1.7}
+.dd-explain .dd-callout b,.dd-explain .dd-callout strong{color:var(--acc)}
+.dd-explain .dd-stats{display:flex;flex-wrap:wrap;gap:9px;margin:13px 0}
+.dd-explain .dd-stat{flex:1 1 120px;background:var(--panel);border:1px solid var(--panel-border);border-radius:14px;padding:11px 13px}
+.dd-explain .dd-stat .v{display:block;font-size:17px;font-weight:900;color:var(--acc);line-height:1.1}
+.dd-explain .dd-stat .l{display:block;font-size:10.5px;font-weight:700;color:var(--on);margin-top:3px;line-height:1.35;opacity:.85}
 .dd-mains-eval-btn{margin-top:12px;width:100%}
 .dd-prelims-card{background:var(--card);border-radius:22px;padding:16px;box-shadow:var(--shadow-soft);color:var(--ink)}
 .dd-prelims-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
