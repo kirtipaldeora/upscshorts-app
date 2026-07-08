@@ -165,7 +165,7 @@ export default function NewsGlobe() {
     const w = globeRef.current
     const s = stories[idx]
     if (!w || !ready || !s) return
-    w.pointOfView({ lat: s.lat, lng: s.lon, altitude: 1.7 }, 1200)
+    w.pointOfView({ lat: s.lat, lng: s.lon, altitude: 1.6 }, 1200)
     const ctrls = w.controls() as { autoRotate: boolean }
     ctrls.autoRotate = false
     const t = setTimeout(() => {
