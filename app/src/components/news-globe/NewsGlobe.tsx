@@ -17,6 +17,15 @@ interface Story extends Article {
   place: string
 }
 
+type GlobeWithHtml = GlobeInstance & {
+  htmlElementsData: (data: object[]) => GlobeWithHtml
+  htmlLat: (fn: (d: object) => number) => GlobeWithHtml
+  htmlLng: (fn: (d: object) => number) => GlobeWithHtml
+  htmlAltitude: (fn: (d: object) => number) => GlobeWithHtml
+  htmlElement: (fn: (d: object) => HTMLElement) => GlobeWithHtml
+  htmlElementVisibilityModifier: (fn: (el: HTMLElement, isVisible: boolean) => void) => GlobeWithHtml
+}
+
 /**
  * 3D vector news globe (globe.gl / three.js) — a dark dotted-continent globe
  * that flies to each geolocated story, Ground-News style. Rendered as vectors
@@ -113,6 +122,42 @@ export default function NewsGlobe() {
       .ringMaxRadius(5)
       .ringPropagationSpeed(2.2)
       .ringRepeatPeriod(850)
+
+    const htmlWorld = w as GlobeWithHtml
+    htmlWorld
+      .htmlElementsData(active ? [active as unknown as object] : [])
+      .htmlLat((d) => (d as Story).lat)
+      .htmlLng((d) => (d as Story).lon)
+      .htmlAltitude(() => 0.13)
+      .htmlElement((d) => {
+        const story = d as Story
+        const el = document.createElement('button')
+        el.className = 'globe-map-snippet'
+        el.type = 'button'
+        el.style.setProperty('--snippet-color', CATEGORY_COLORS[story.category] ?? '#9da2f2')
+        el.onclick = () => {
+          setActiveArticle(story)
+          setOverlay('deep-dive')
+        }
+
+        const place = document.createElement('span')
+        place.className = 'globe-map-snippet-place'
+        place.textContent = story.place
+
+        const headline = document.createElement('b')
+        headline.textContent = story.headline
+
+        const summary = document.createElement('span')
+        summary.className = 'globe-map-snippet-summary'
+        summary.textContent = story.summary
+
+        el.append(place, headline, summary)
+        return el
+      })
+      .htmlElementVisibilityModifier((el, isVisible) => {
+        el.style.opacity = isVisible ? '1' : '0'
+        el.style.pointerEvents = isVisible ? 'auto' : 'none'
+      })
   }, [stories, idx, ready])
 
   // Fly to the current story

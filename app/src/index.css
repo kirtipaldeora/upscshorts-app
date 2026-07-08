@@ -337,9 +337,11 @@ html.dark {
 .globe-card-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .globe-card-meta .tag-src{color:rgba(255,255,255,.72) !important;border-color:rgba(255,255,255,.14) !important;background:rgba(255,255,255,.05) !important}
 .globe-card-cta{margin-left:auto;font-size:12.5px;font-weight:800;color:#9da2f2}
-/* ── News Globe feed shortcut ─────────────────────────────── */
-.news-globe-fab{position:absolute;top:2px;right:18px;width:42px;height:42px;border-radius:15px;border:1px solid var(--panel-border);background:var(--panel);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:var(--on);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow-soft);font-size:16px;transition:transform .12s ease,background .12s ease}
-.news-globe-fab:active{transform:scale(.94)}
+.globe-map-snippet{width:min(220px,58vw);border:none;border-left:3px solid var(--snippet-color);border-radius:14px;background:rgba(10,12,28,.86);color:#fff;text-align:left;padding:10px 11px;box-shadow:0 16px 36px -16px rgba(0,0,0,.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);cursor:pointer;transform:translate(12px,-18px);transition:opacity .2s ease,transform .2s ease;pointer-events:auto}
+.globe-map-snippet:hover{transform:translate(12px,-20px)}
+.globe-map-snippet-place{display:block;color:var(--snippet-color);font-size:9px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.globe-map-snippet b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:12.5px;line-height:1.25;font-weight:850;margin-bottom:5px}
+.globe-map-snippet-summary{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:rgba(255,255,255,.68);font-size:10.5px;line-height:1.35;font-weight:650}
 .dd-mains-eval-btn{margin-top:12px;width:100%}
 .dd-prelims-card{background:var(--card);border-radius:22px;padding:16px;box-shadow:var(--shadow-soft);color:var(--ink)}
 .dd-prelims-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
