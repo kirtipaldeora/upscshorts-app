@@ -9,6 +9,7 @@ export type Screen =
   | 'bookmarks'
   | 'profile'
   | 'practice'
+  | 'maps'
   | 'settings'
 
 export type ViewMode = 'deck' | 'list'

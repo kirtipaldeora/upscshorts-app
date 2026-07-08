@@ -72,6 +72,11 @@ export default function App() {
         }}
       />
 
+      {/* Ambient animated backdrop — slow-drifting color fields */}
+      <div className="bg-blobs" aria-hidden="true">
+        <i /><i /><i />
+      </div>
+
       {/* Ambient glass sheen */}
       <div
         style={{
@@ -118,6 +123,7 @@ export default function App() {
               onOpenMainsRecord={(rec) => setMainsRecordOpen(rec)}
             />
           )}
+          {activeScreen === 'maps' && <MapsArcade />}
           {activeScreen === 'settings' && (
             <SettingsScreen
               onClose={() => setScreen('profile')}
@@ -128,9 +134,7 @@ export default function App() {
         </div>
 
         {/* Bottom navigation */}
-        <BottomNav
-          onOpenMapsArcade={() => setOverlay('maps-arcade')}
-        />
+        <BottomNav />
       </div>
 
       {/* ── Overlay screens (slide over the main app) ── */}
@@ -140,9 +144,6 @@ export default function App() {
 
       {/* Daily Digest */}
       <Digest />
-
-      {/* Maps Arcade */}
-      {overlayScreen === 'maps-arcade' && <MapsArcade />}
 
       {/* News Globe (3D world) */}
       {overlayScreen === 'news-globe' && (

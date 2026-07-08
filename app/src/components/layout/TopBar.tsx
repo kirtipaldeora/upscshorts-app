@@ -10,6 +10,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { useThemeStore } from '@/stores/useThemeStore'
 import { useAppStore } from '@/stores/useAppStore'
+import { themeWipe } from '@/anim/animations'
 
 interface TopBarProps {
   showBack?: boolean
@@ -169,7 +170,10 @@ export function TopBar({ showBack, onBack, onOpenUpload }: TopBarProps) {
           <FontAwesomeIcon icon={faMagnifyingGlass} />
         </button>
         <button
-          onClick={toggle}
+          onClick={(e) => {
+            const r = e.currentTarget.getBoundingClientRect()
+            themeWipe(r.left + r.width / 2, r.top + r.height / 2, toggle)
+          }}
           aria-label="Toggle theme"
           className="glass-icon-btn"
           style={{

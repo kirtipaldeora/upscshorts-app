@@ -16,18 +16,14 @@ interface NavItem {
   action?: () => void
 }
 
-interface BottomNavProps {
-  onOpenMapsArcade: () => void
-}
-
-export function BottomNav({ onOpenMapsArcade }: BottomNavProps) {
+export function BottomNav() {
   const { activeScreen, setScreen } = useAppStore()
   const haptic = useHaptic()
 
   const items: NavItem[] = [
     { screen: 'feed',     icon: faHouse,      label: 'Feed' },
     { screen: 'revise',   icon: faBookOpen,   label: 'Revise' },
-    { icon: faEarthAsia,  label: 'Arcade',    action: onOpenMapsArcade },
+    { screen: 'maps',     icon: faEarthAsia,  label: 'Maps' },
     { screen: 'practice', icon: faDumbbell,   label: 'Practice' },
     { screen: 'profile',  icon: faUser,       label: 'Profile' },
   ]

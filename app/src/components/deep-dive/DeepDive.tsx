@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faArrowRight, faShareAlt, faPenFancy, faCircle, faDumbbell, faPlay, faCloudArrowUp, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
 import { useHaptic } from '@/hooks/useHaptic'
+import { gsap, reducedMotion, DUR, EASE } from '@/anim/animations'
 import { CATEGORY_COLORS } from '@/constants/categories'
 import { articleQs } from '@/utils/practiceUtils'
 import type { MainsQuestion, Question } from '@/utils/practiceUtils'
@@ -58,7 +59,29 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
   // Reset scroll to top whenever the shown article changes
   useEffect(() => {
     bodyRef.current?.scrollTo({ top: 0 })
+    setReadProgress(0)
   }, [a?.id])
+
+  // Sections settle in softly when an article opens or changes
+  useEffect(() => {
+    const el = bodyRef.current
+    if (!el || !visible || !a || reducedMotion()) return
+    const kids = el.querySelectorAll(':scope > *')
+    if (!kids.length) return
+    const tween = gsap.fromTo(kids,
+      { opacity: 0, y: 14 },
+      { opacity: 1, y: 0, duration: DUR.md, ease: EASE.out, stagger: 0.05, clearProps: 'transform,opacity' })
+    return () => { tween.kill() }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [a?.id, visible])
+
+  const [readProgress, setReadProgress] = useState(0)
+  function onBodyScroll() {
+    const el = bodyRef.current
+    if (!el) return
+    const max = el.scrollHeight - el.clientHeight
+    setReadProgress(max > 0 ? Math.min(100, (el.scrollTop / max) * 100) : 0)
+  }
 
   async function goToArticle(article: Article) {
     await haptic()
@@ -132,11 +155,12 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
         <button onClick={handleShare} aria-label="Share">
           <FontAwesomeIcon icon={faShareAlt} />
         </button>
+        <div className="dd-progress" aria-hidden="true"><span style={{ width: `${readProgress}%` }} /></div>
       </div>
 
       {/* Body */}
       {a && (
-        <div className="dd-body" ref={bodyRef}>
+        <div className="dd-body" ref={bodyRef} onScroll={onBodyScroll}>
           {/* Metadata tags */}
           <div style={{ display: 'flex', gap: 6, marginBottom: 18, flexWrap: 'wrap', alignItems: 'center' }}>
             <span

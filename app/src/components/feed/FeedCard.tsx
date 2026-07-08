@@ -6,6 +6,7 @@ import { CATEGORY_COLORS, CATEGORY_ICONS, fmtShort } from '@/constants/categorie
 import { useBookmarkStore } from '@/stores/useBookmarkStore'
 import { useAppStore } from '@/stores/useAppStore'
 import { useHaptic } from '@/hooks/useHaptic'
+import { popElement } from '@/anim/animations'
 
 interface FeedCardProps {
   article: Article
@@ -23,6 +24,7 @@ export function FeedCard({ article, animationDelay = 0, onShowToast }: FeedCardP
 
   async function handleBookmark(e: React.MouseEvent) {
     e.stopPropagation()
+    popElement(e.currentTarget)
     await haptic()
     toggle(article.id)
     onShowToast(bookmarked ? 'Bookmark removed' : 'Bookmarked!')

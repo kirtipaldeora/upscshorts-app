@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark, faCheck, faArrowRight, faBookmark as faBookmarkSolid } from '@fortawesome/free-solid-svg-icons'
 import { faBookmark as faBookmarkReg } from '@fortawesome/free-regular-svg-icons'
 import { usePracticeStore } from '@/stores/usePracticeStore'
+import { pulseCorrect, shakeWrong } from '@/anim/animations'
 import type { Question } from '@/utils/practiceUtils'
 
 interface QuizPlayerProps {
@@ -31,6 +32,11 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
     if (correct) setScore(s => s + 1)
     setAnswered({ picked: i, correct })
     recordAnswer(q.id, correct, q.subject, settings.target, onShowToast)
+    // Feedback motion after the correct/wrong classes render
+    requestAnimationFrame(() => {
+      pulseCorrect(document.querySelector('.pv-opt.correct'))
+      if (!correct) shakeWrong(document.querySelector('.pv-opt.wrong'))
+    })
   }
 
   function next() {
