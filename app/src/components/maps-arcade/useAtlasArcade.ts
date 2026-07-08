@@ -28,6 +28,8 @@ const INITIAL: AtlasState = {
   hintUsedThisRound: false,
   hintRemovedId: null,
   answeredThisRound: false,
+  chosenId: null,
+  sourceInfo: null,
   toast: null,
   loading: false,
 }
@@ -69,7 +71,36 @@ function shuffle<T>(arr: T[]): T[] {
   return a
 }
 
+function normalizeAnswer(value: string | number | null | undefined): string {
+  return String(value ?? '')
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/\bislands\b/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function answerIdFor(item: QuizItem): string | number {
+  return item.parkRegion && item.state ? normalizeAnswer(item.state) : item.id
+}
+
 function buildChoices(target: QuizItem, pool: QuizItem[], removed: string | number | null): Choice[] {
+  if (target.parkRegion && target.state) {
+    const stateChoices = Array.from(
+      new Map(
+        pool
+          .filter(q => q.state)
+          .map(q => [normalizeAnswer(q.state), q.state as string])
+      ).entries()
+    )
+    const targetKey = normalizeAnswer(target.state)
+    const others = shuffle(stateChoices.filter(([key]) => key !== targetKey)).slice(0, 2)
+    const all = shuffle([[targetKey, target.state], ...others] as [string, string][])
+    return all
+      .filter(([key]) => String(key) !== String(removed))
+      .map(([id, name]) => ({ id, name }))
+  }
+
   const others = shuffle(pool.filter(q => String(q.id) !== String(target.id))).slice(0, 2)
   const all = shuffle([target, ...others])
   return all
@@ -100,6 +131,8 @@ function nextRoundState(state: AtlasState, nextIdx: number): Partial<AtlasState>
     answeredThisRound: false,
     hintUsedThisRound: false,
     hintRemovedId: null,
+    chosenId: null,
+    sourceInfo: null,
     toast: null,
   }
 }
@@ -165,25 +198,31 @@ function reducer(state: AtlasState, action: Action): AtlasState {
         hintUsedThisRound: false,
         hintRemovedId: null,
         answeredThisRound: false,
+        chosenId: null,
+        sourceInfo: null,
         toast: null,
       }
     }
 
     case 'ANSWER': {
       if (state.answeredThisRound || !state.target) return state
-      const isCorrect = String(action.id) === String(state.target.id)
+      const correctId = answerIdFor(state.target)
+      const isCorrect = normalizeAnswer(action.id) === normalizeAnswer(correctId)
       const newStreak = isCorrect ? state.streak + 1 : 0
       const combo = comboFor(newStreak)
-      const points = isCorrect ? combo * (state.hintUsedThisRound ? 1 : 1) : 0
+      const points = isCorrect ? 100 * combo : 0
+      const correctLabel = state.target.parkRegion && state.target.state ? state.target.state : state.target.name
       const toast = makeToast(
         isCorrect ? 'correct' : 'wrong',
         isCorrect
-          ? combo > 1 ? `✓ Correct! ×${combo} combo!` : '✓ Correct!'
-          : `✗ That was ${state.target.name}`,
+          ? combo > 1 ? `Correct! x${combo} combo!` : 'Correct!'
+          : `Not quite. ${correctLabel}`,
       )
       return {
         ...state,
         answeredThisRound: true,
+        chosenId: action.id,
+        sourceInfo: state.category === 'india-rivers' ? state.target.src ?? null : null,
         score: state.score + points,
         streak: newStreak,
         combo,
@@ -211,7 +250,7 @@ function reducer(state: AtlasState, action: Action): AtlasState {
       const newHistory = [...state.answerHistory, false]
       const newWrong = [...state.wrongList, skipped]
       if (next >= state.queue.length) {
-        return { ...state, screen: 'results', answerHistory: newHistory, wrongList: newWrong, streak: 0, combo: 1, toast: null }
+        return { ...state, screen: 'results', answerHistory: newHistory, wrongList: newWrong, streak: 0, combo: 1, chosenId: null, sourceInfo: null, toast: null }
       }
       return {
         ...state,
@@ -224,9 +263,24 @@ function reducer(state: AtlasState, action: Action): AtlasState {
     }
 
     case 'HINT': {
-      if (state.hintsLeft <= 0 || state.hintUsedThisRound || state.playMode !== 'name') return state
+      if (state.hintsLeft <= 0 || state.hintUsedThisRound || !state.target) return state
+      if (state.playMode === 'locate') {
+        const text = state.target.parkRegion && state.target.state
+          ? `Hint: ${state.target.name} is in ${state.target.state}.`
+          : state.target.region
+          ? `Hint: look around ${state.target.region}.`
+          : `Hint: it starts with ${state.target.name.slice(0, 1)}.`
+        return {
+          ...state,
+          hintsLeft: state.hintsLeft - 1,
+          hintUsedThisRound: true,
+          toast: makeToast('hint', text),
+        }
+      }
+
       // Remove one wrong choice from MCQ
-      const wrong = state.choices.filter(c => String(c.id) !== String(state.target?.id))
+      const correctId = answerIdFor(state.target)
+      const wrong = state.choices.filter(c => normalizeAnswer(c.id) !== normalizeAnswer(correctId))
       const toRemove = wrong[Math.floor(Math.random() * wrong.length)]
       const newChoices = state.choices.filter(c => String(c.id) !== String(toRemove?.id))
       return {
@@ -235,7 +289,7 @@ function reducer(state: AtlasState, action: Action): AtlasState {
         hintUsedThisRound: true,
         hintRemovedId: toRemove?.id ?? null,
         choices: newChoices,
-        toast: makeToast('hint', `💡 One wrong answer removed. ${state.hintsLeft - 1} hints left.`),
+        toast: makeToast('hint', `One wrong answer removed. ${state.hintsLeft - 1} hints left.`),
       }
     }
 
@@ -261,6 +315,8 @@ function reducer(state: AtlasState, action: Action): AtlasState {
         hintUsedThisRound: false,
         hintRemovedId: null,
         answeredThisRound: false,
+        chosenId: null,
+        sourceInfo: null,
         toast: null,
       }
     }
@@ -286,6 +342,8 @@ function reducer(state: AtlasState, action: Action): AtlasState {
         hintUsedThisRound: false,
         hintRemovedId: null,
         answeredThisRound: false,
+        chosenId: null,
+        sourceInfo: null,
         toast: null,
       }
     }

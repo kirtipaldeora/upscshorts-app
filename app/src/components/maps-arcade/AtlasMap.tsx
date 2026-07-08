@@ -103,6 +103,7 @@ export const AtlasMap = forwardRef<AtlasMapHandle, Props>(function AtlasMap(
         type: 'FeatureCollection',
         features: feats as d3.ExtendedFeature[],
       }
+      const indiaFeature = feats.find((f) => featId(f) === INDIA_ID) ?? null
 
       const proj = d3.geoNaturalEarth1().fitExtent([[14, 10], [W - 14, H - 10]], fc)
       const pathGen = d3.geoPath(proj)
@@ -236,15 +237,20 @@ export const AtlasMap = forwardRef<AtlasMapHandle, Props>(function AtlasMap(
 
       d3Ref.current = {
         svg, g, zoom, proj, pathGen, gCountries,
-        gIndia, gRivers, gRiverLabels, gParks, riverClipPath, indiaFeat: null,
+        gIndia, gRivers, gRiverLabels, gParks, riverClipPath, indiaFeat: indiaFeature,
       }
+      if (indiaFeature) riverClipPath.datum(indiaFeature).attr('d', pathGen)
 
       // Load India states in background
       loadIndiaStates(gIndia, pathGen, (feat) => {
         if (d3Ref.current) {
-          d3Ref.current.indiaFeat = feat
-          riverClipPath.datum(feat).attr('d', pathGen)
+          d3Ref.current.indiaFeat = d3Ref.current.indiaFeat ?? feat
+          riverClipPath.datum(d3Ref.current.indiaFeat).attr('d', pathGen)
         }
+      }, (feat) => {
+        const { atlasState: st, onAnswer: cb } = live.current
+        if (st.screen !== 'play' || st.answeredThisRound || st.category !== 'india-parks' || st.playMode !== 'locate') return
+        cb(normalizeStateName(featureName(feat)))
       })
 
       onReady?.()
@@ -268,8 +274,8 @@ export const AtlasMap = forwardRef<AtlasMapHandle, Props>(function AtlasMap(
 
     // ── Layer visibility ──────────────────────────────────────────────────────
     const isIndia = st.category === 'india-rivers' || st.category === 'india-parks'
-    const showRivers = st.category === 'india-rivers' && (st.screen === 'play' || st.screen === 'riverSystems')
-    const showParks = st.category === 'india-parks' && (st.screen === 'play' || st.screen === 'parkLearn' || st.screen === 'parkRegions')
+    const showRivers = st.category === 'india-rivers' && (st.screen === 'play' || st.screen === 'riverSystems' || st.screen === 'setup')
+    const showParks = st.category === 'india-parks' && (st.screen === 'play' || st.screen === 'parkLearn' || st.screen === 'parkRegions' || st.screen === 'setup')
 
     r.gIndia.style('display', isIndia ? '' : 'none')
     r.gRivers.style('display', showRivers ? '' : 'none')
@@ -298,6 +304,30 @@ export const AtlasMap = forwardRef<AtlasMapHandle, Props>(function AtlasMap(
         const id = featId(d)
         return ID_TO_CONT[id] === st.continent ? 'auto' : 'none'
       })
+
+    // ── India state fills / answerability ─────────────────────────────────────
+    const targetStateKey = st.target?.state ? normalizeStateName(st.target.state) : null
+    const chosenStateKey = normalizeStateName(st.chosenId ?? '')
+    r.gIndia.selectAll<SVGPathElement, d3.GeoPermissibleObjects>('path.india-state')
+      .attr('fill', (d) => {
+        const key = normalizeStateName(featureName(d))
+        if (st.category === 'india-parks' && st.screen === 'play' && st.answeredThisRound) {
+          if (targetStateKey && key === targetStateKey) return GREEN
+          if (chosenStateKey && key === chosenStateKey) return '#FF9B9F'
+        }
+        return '#FFEFD8'
+      })
+      .attr('stroke', (d) => {
+        const key = normalizeStateName(featureName(d))
+        if (st.category === 'india-parks' && st.screen === 'play' && targetStateKey && key === targetStateKey && st.answeredThisRound) return '#15784E'
+        return '#9E7A4E'
+      })
+      .attr('stroke-width', (d) => {
+        const key = normalizeStateName(featureName(d))
+        return st.category === 'india-parks' && st.screen === 'play' && targetStateKey && key === targetStateKey && st.answeredThisRound ? 1.4 : 0.55
+      })
+      .style('pointer-events', st.category === 'india-parks' && st.screen === 'play' && st.playMode === 'locate' && !st.answeredThisRound ? 'auto' : 'none')
+      .style('cursor', st.category === 'india-parks' && st.screen === 'play' && st.playMode === 'locate' && !st.answeredThisRound ? 'pointer' : 'default')
 
     // ── River highlights ──────────────────────────────────────────────────────
     if (showRivers) {
@@ -372,9 +402,10 @@ async function loadIndiaStates(
   gIndia: d3.Selection<SVGGElement, unknown, null, undefined>,
   pathGen: d3.GeoPath,
   onLoaded: (feat: d3.GeoPermissibleObjects) => void,
+  onStateClick: (feat: d3.GeoPermissibleObjects) => void,
 ) {
   const SOURCES = [
-    'https://gist.githubusercontent.com/jbrobst/56c13bbbf9d97d187fea01ca62ea5112/raw/e388c4cae20aa53cb5090210a42ebb9b765c0a36/india_states.geojson',
+    '/data/india-states.json',
   ]
   for (const url of SOURCES) {
     try {
@@ -386,12 +417,26 @@ async function loadIndiaStates(
       gIndia.selectAll<SVGPathElement, d3.GeoPermissibleObjects>('path')
         .data(feats)
         .join('path')
+        .attr('class', 'india-state')
+        .attr('data-state', (d) => normalizeStateName(featureName(d)))
         .attr('d', (d) => pathGen(d) ?? '')
         .attr('fill', '#FFEFD8')
         .attr('stroke', '#9E7A4E')
         .attr('stroke-width', 0.55)
         .attr('stroke-linejoin', 'round')
         .style('pointer-events', 'none')
+        .style('transition', 'fill .12s, stroke .12s')
+        .on('mouseover', function(_, d) {
+          const el = d3.select(this)
+          if (el.style('pointer-events') !== 'auto') return
+          el.attr('fill', '#FFD27A')
+        })
+        .on('mouseout', function(_, d) {
+          const el = d3.select(this)
+          if (el.style('pointer-events') !== 'auto') return
+          el.attr('fill', '#FFEFD8')
+        })
+        .on('click', (_, d) => onStateClick(d))
       // Build a union bounding box feature for clip path — use India country feat fallback
       // We just signal success; caller attaches it to clip when a world feat is found
       onLoaded(feats[0]) // approximate; real clip comes from world feat
@@ -411,7 +456,7 @@ function renderParks(
 ) {
   gParks.selectAll('*').remove()
   const targetId = st.target ? String(st.target.id) : null
-  const answerable = st.screen === 'play' && !st.answeredThisRound
+  const answerable = st.screen === 'play' && st.category !== 'india-parks' && !st.answeredThisRound
 
   parks.forEach(p => {
     if (p.lon == null || p.lat == null) return
@@ -440,5 +485,35 @@ function renderParks(
         .attr('fill', '#21432B').attr('paint-order', 'stroke').attr('stroke', '#fff').attr('stroke-width', 3)
         .text(p.name.replace(/ National Park$/, ''))
     }
+
+    if (st.screen === 'play' && isTarget) {
+      group.append('text')
+        .attr('y', -12).attr('text-anchor', 'middle')
+        .attr('font-family', 'Fredoka, sans-serif').attr('font-weight', 700).attr('font-size', 10)
+        .attr('fill', '#21432B').attr('paint-order', 'stroke').attr('stroke', '#fff').attr('stroke-width', 3)
+        .text(p.name.replace(/ National Park$/, ''))
+    }
   })
+}
+
+function featureName(d: d3.GeoPermissibleObjects): string {
+  const props = (d as { properties?: Record<string, unknown> }).properties ?? {}
+  return String(
+    props.ST_NM ??
+    props.NAME_1 ??
+    props.NAME ??
+    props.name ??
+    props.state ??
+    props.State_Name ??
+    ''
+  )
+}
+
+function normalizeStateName(value: string | number | null | undefined): string {
+  return String(value ?? '')
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/\bislands\b/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
 }

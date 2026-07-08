@@ -37,6 +37,7 @@ export interface QuizItem {
   name: string
   continent?: string
   region?: string
+  state?: string
   sys?: string            // river system key
   parkRegion?: string     // park region key
   lon?: number
@@ -68,6 +69,8 @@ export interface AtlasState {
   hintUsedThisRound: boolean
   hintRemovedId: string | number | null
   answeredThisRound: boolean
+  chosenId: string | number | null
+  sourceInfo: QuizItem['src'] | null
   toast: Toast | null
   loading: boolean
 }

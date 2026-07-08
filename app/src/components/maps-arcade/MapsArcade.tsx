@@ -64,7 +64,7 @@ export function MapsArcade() {
       .then(d => {
         setParkRegionData(d.regions ?? [])
         setAllParks((d.parks ?? []).map((p: {id:number;name:string;state:string;region:string;lon:number;lat:number}) => ({
-          id: p.id, name: p.name, parkRegion: p.region, lon: p.lon, lat: p.lat,
+          id: p.id, name: p.name, state: p.state, region: p.region, parkRegion: p.region, lon: p.lon, lat: p.lat,
         })))
       })
       .catch(() => {/* parks unavailable */})
@@ -123,7 +123,7 @@ export function MapsArcade() {
   const accuracy = qNum > 1 ? Math.round((state.correctCount / Math.max(1, state.answerHistory.length)) * 100) : 0
   void pct
 
-  const countOptions = [10, 20, 30, 'All']
+  const countOptions = [5, 8, 10, 15, 20, 'All']
   const poolSize = state.category === 'world' && state.continent
     ? (CONT_DATA[state.continent]?.length ?? 0)
     : state.category === 'india-rivers' && state.riverSystem
@@ -169,7 +169,7 @@ export function MapsArcade() {
         {state.screen === 'play' && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <span style={{ fontFamily: F, fontWeight: 600, fontSize: 16, color: '#fff', background: state.category === 'world' ? CONT_COLOR[state.continent ?? ''] ?? ACCENT : ACCENT, padding: '7px 16px', borderRadius: 11, boxShadow: '0 6px 14px -7px rgba(0,0,0,.5)' }}>
-              {state.target?.name ?? ''}
+              {state.category === 'india-parks' && state.target?.state ? state.target.state : state.target?.name ?? ''}
             </span>
             <span style={{ fontFamily: F, fontWeight: 600, fontSize: 15, color: '#B79A82' }}>Q {qNum} / {qTotal}</span>
           </div>
@@ -211,7 +211,9 @@ export function MapsArcade() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 14, padding: 'clamp(12px,3vw,20px) clamp(14px,4vw,26px) clamp(10px,2.5vw,16px)', borderBottom: '1px solid #F5ECE0' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 5, flex: '1 1 220px', minWidth: 0 }}>
               <span style={{ fontSize: 12, fontWeight: 800, letterSpacing: '1.6px', textTransform: 'uppercase', color: '#C7A98F' }}>
-                {state.playMode === 'locate' ? 'Find it on the map' : 'Pick the correct name'}
+                {state.category === 'india-parks'
+                  ? state.playMode === 'locate' ? 'Select the state or UT' : 'Pick the correct state or UT'
+                  : state.playMode === 'locate' ? 'Find it on the map' : 'Pick the correct name'}
               </span>
               <span style={{ fontFamily: F, fontWeight: 700, fontSize: 'clamp(26px,5.5vw,40px)', lineHeight: 1.05, color: '#2B2620', overflowWrap: 'anywhere' }}>
                 {state.target?.name ?? ''}
@@ -249,25 +251,46 @@ export function MapsArcade() {
           />
 
           {/* MCQ choices (Name It mode) */}
-          {state.screen === 'play' && state.playMode === 'name' && state.choices.length > 0 && !state.answeredThisRound && (
+          {state.screen === 'play' && state.playMode === 'name' && state.choices.length > 0 && (
             <div style={{ position: 'absolute', left: 0, right: 0, bottom: 14, display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 10, padding: '0 12px', pointerEvents: 'none' }}>
-              {state.choices.map(c => (
-                <button
-                  key={String(c.id)}
-                  onClick={() => { playSound('click', !state.sound); arcade.answer(c.id) }}
-                  style={{
-                    pointerEvents: 'auto', fontFamily: F, fontWeight: 700, fontSize: 16,
-                    padding: '11px 22px', borderRadius: 14, border: '2px solid #E7DDCF',
-                    background: '#fff', color: '#2B2620', cursor: 'pointer',
-                    boxShadow: '0 8px 20px -10px rgba(80,50,20,.55)',
-                    transition: 'transform .12s, box-shadow .12s',
-                  }}
-                  onMouseOver={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)' }}
-                  onMouseOut={e => { (e.currentTarget as HTMLButtonElement).style.transform = '' }}
-                >
-                  {c.name}
-                </button>
-              ))}
+              {state.choices.map(c => {
+                const correctId = state.category === 'india-parks' && state.target?.state
+                  ? state.target.state.toLowerCase().replace(/&/g, 'and').replace(/\s+/g, ' ').trim()
+                  : String(state.target?.id ?? '')
+                const cid = String(c.id).toLowerCase().replace(/&/g, 'and').replace(/\s+/g, ' ').trim()
+                const chosen = String(state.chosenId ?? '').toLowerCase().replace(/&/g, 'and').replace(/\s+/g, ' ').trim()
+                const isCorrect = state.answeredThisRound && cid === correctId
+                const isWrong = state.answeredThisRound && cid === chosen && cid !== correctId
+                return (
+                  <button
+                    key={String(c.id)}
+                    disabled={state.answeredThisRound}
+                    onClick={() => { playSound('click', !state.sound); arcade.answer(c.id) }}
+                    style={{
+                      pointerEvents: 'auto', fontFamily: F, fontWeight: 700, fontSize: 16,
+                      padding: '11px 22px', borderRadius: 14,
+                      border: `2px solid ${isCorrect ? '#22A36A' : isWrong ? '#FF5A5F' : '#E7DDCF'}`,
+                      background: isCorrect ? '#E9F8F0' : isWrong ? '#FFECEC' : '#fff',
+                      color: isCorrect ? '#15784E' : isWrong ? '#C13238' : '#2B2620',
+                      cursor: state.answeredThisRound ? 'default' : 'pointer',
+                      boxShadow: '0 8px 20px -10px rgba(80,50,20,.55)',
+                      transition: 'transform .12s, box-shadow .12s',
+                    }}
+                    onMouseOver={e => { if (!state.answeredThisRound) (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)' }}
+                    onMouseOut={e => { (e.currentTarget as HTMLButtonElement).style.transform = '' }}
+                  >
+                    {c.name}
+                  </button>
+                )
+              })}
+            </div>
+          )}
+
+          {state.screen === 'play' && state.sourceInfo && (
+            <div style={{ position: 'absolute', left: 18, top: 18, zIndex: 8, maxWidth: 320, background: 'rgba(255,255,255,.94)', border: '1.5px solid #DCE8F6', borderRadius: 16, padding: '12px 14px', boxShadow: '0 16px 34px -22px rgba(30,60,100,.55)', color: '#24435F' }}>
+              <div style={{ fontFamily: F, fontWeight: 700, fontSize: 13, textTransform: 'uppercase', letterSpacing: '1px', color: '#2C6FBF', marginBottom: 4 }}>{state.sourceInfo.type} source</div>
+              <div style={{ fontFamily: F, fontWeight: 700, fontSize: 17, lineHeight: 1.15 }}>{state.sourceInfo.name}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#6A8298', marginTop: 3 }}>{state.sourceInfo.place}</div>
             </div>
           )}
 
@@ -571,15 +594,13 @@ export function MapsArcade() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10, padding: 'clamp(10px,3vw,16px) clamp(12px,4vw,26px)', borderTop: '1px solid #F5ECE0', background: '#FFFDFA' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 11, flexWrap: 'wrap' }}>
               <button onClick={arcade.menu} style={{ ...btn(), display: 'flex', alignItems: 'center', gap: 7 }}>← Quit</button>
-              {state.playMode === 'name' && (
-                <button onClick={arcade.hint}
-                  disabled={state.hintsLeft <= 0 || state.hintUsedThisRound}
-                  style={{ display: 'flex', alignItems: 'center', gap: 9, border: '1.5px solid #FBE0C4', background: '#FFF6EC', color: '#D9760B', fontFamily: F, fontWeight: 600, fontSize: 15, padding: '11px 18px', borderRadius: 13, cursor: state.hintsLeft > 0 && !state.hintUsedThisRound ? 'pointer' : 'not-allowed', opacity: state.hintsLeft <= 0 || state.hintUsedThisRound ? 0.5 : 1 }}>
-                  <span style={{ display: 'inline-flex', width: 22, height: 22, borderRadius: '50%', background: '#FFD89B', color: '#A85F08', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 13 }}>?</span>
-                  Hint
-                  <span style={{ fontSize: 13, fontWeight: 800, color: '#C99A5B', background: '#FCEBD4', borderRadius: 8, padding: '2px 8px' }}>{state.hintsLeft} left</span>
-                </button>
-              )}
+              <button onClick={arcade.hint}
+                disabled={state.hintsLeft <= 0 || state.hintUsedThisRound || state.answeredThisRound}
+                style={{ display: 'flex', alignItems: 'center', gap: 9, border: '1.5px solid #FBE0C4', background: '#FFF6EC', color: '#D9760B', fontFamily: F, fontWeight: 600, fontSize: 15, padding: '11px 18px', borderRadius: 13, cursor: state.hintsLeft > 0 && !state.hintUsedThisRound && !state.answeredThisRound ? 'pointer' : 'not-allowed', opacity: state.hintsLeft <= 0 || state.hintUsedThisRound || state.answeredThisRound ? 0.5 : 1 }}>
+                <span style={{ display: 'inline-flex', width: 22, height: 22, borderRadius: '50%', background: '#FFD89B', color: '#A85F08', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 13 }}>?</span>
+                Hint
+                <span style={{ fontSize: 13, fontWeight: 800, color: '#C99A5B', background: '#FCEBD4', borderRadius: 8, padding: '2px 8px' }}>{state.hintsLeft} left</span>
+              </button>
             </div>
             {/* Progress dots */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', justifyContent: 'center', maxWidth: 480 }}>
