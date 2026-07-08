@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faMagnifyingGlass, faBookmark } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
+import { asset } from '@/utils/asset'
 
 interface PYQQuestion {
   id: string
@@ -153,7 +154,7 @@ export function PYQVault() {
   const [subjectOpen, setSubjectOpen] = useState(false)
 
   useEffect(() => {
-    fetch('/data/pyq-data.json')
+    fetch(asset('data/pyq-data.json'))
       .then((r) => r.json())
       .then(setData)
       .catch(() => {})

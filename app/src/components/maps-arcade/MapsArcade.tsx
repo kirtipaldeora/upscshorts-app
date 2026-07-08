@@ -7,13 +7,14 @@ import { useMapQuiz } from './useMapQuiz'
 import { MapSVG } from './MapSVG'
 import type { QuizMode, QuizQuestion } from '@/types/quiz'
 import type { Topology } from 'topojson-specification'
+import { asset } from '@/utils/asset'
 
 // Quiz mode definitions
 const MODES: { mode: QuizMode; icon: typeof faMap; label: string; description: string; dataFile: string; topologyKey?: string }[] = [
-  { mode: 'world-countries', icon: faEarthAsia, label: 'World Countries', description: 'Identify countries on a world map', dataFile: '/data/countries-110m.json', topologyKey: 'countries' },
-  { mode: 'india-states', icon: faMap, label: 'India States', description: 'Identify states & UTs of India', dataFile: '/data/india-states.json' },
-  { mode: 'india-rivers', icon: faCity, label: 'India Rivers', description: 'Locate rivers across India', dataFile: '/data/india-rivers-ne-10m.geojson' },
-  { mode: 'india-national-parks', icon: faTree, label: 'National Parks', description: 'Find national parks on the map', dataFile: '/data/india-national-parks.json' },
+  { mode: 'world-countries', icon: faEarthAsia, label: 'World Countries', description: 'Identify countries on a world map', dataFile: asset('data/countries-110m.json'), topologyKey: 'countries' },
+  { mode: 'india-states', icon: faMap, label: 'India States', description: 'Identify states & UTs of India', dataFile: asset('data/india-states.json') },
+  { mode: 'india-rivers', icon: faCity, label: 'India Rivers', description: 'Locate rivers across India', dataFile: asset('data/india-rivers-ne-10m.geojson') },
+  { mode: 'india-national-parks', icon: faTree, label: 'National Parks', description: 'Find national parks on the map', dataFile: asset('data/india-national-parks.json') },
 ]
 
 export function MapsArcade() {

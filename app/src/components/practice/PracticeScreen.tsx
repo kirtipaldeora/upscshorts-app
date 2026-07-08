@@ -23,6 +23,7 @@ import type { Question } from '@/utils/practiceUtils'
 import { QuizPlayer } from './QuizPlayer'
 import { CATEGORY_COLORS } from '@/constants/categories'
 import { TODAY, YESTERDAY, fmtFull, fmtShort } from '@/constants/categories'
+import { asset } from '@/utils/asset'
 
 interface PracticeScreenProps {
   onShowToast: (msg: string) => void
@@ -46,7 +47,7 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
   // Load PYQ data once
   useEffect(() => {
     if (!pyqReady) {
-      fetch('/data/pyq-data.json')
+      fetch(asset('data/pyq-data.json'))
         .then(r => r.json())
         .then(d => setPyqData(d))
         .catch(() => {})

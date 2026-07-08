@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">michi</string>
-    <string name="title_activity_main">michi</string>
-    <string name="package_name">com.michi.app</string>
-    <string name="custom_url_scheme">com.michi.app</string>
+    <string name="app_name">Penni</string>
+    <string name="title_activity_main">Penni</string>
+    <string name="package_name">com.penni.app</string>
+    <string name="custom_url_scheme">com.penni.app</string>
 </resources>

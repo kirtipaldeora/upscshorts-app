@@ -1,4 +1,4 @@
-package com.michi.app;
+package com.penni.app;
 
 import com.getcapacitor.BridgeActivity;
 
