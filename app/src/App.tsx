@@ -2,25 +2,26 @@ import { useState, useCallback, lazy, Suspense } from 'react'
 import { SplashScreen } from '@/components/layout/SplashScreen'
 import { Onboarding } from '@/components/layout/Onboarding'
 import { BottomNav } from '@/components/layout/BottomNav'
+import { PenniLoader } from '@/components/layout/PenniLoader'
 import { FeedScreen } from '@/components/feed/FeedScreen'
-import { ReviseScreen } from '@/components/revise/ReviseScreen'
-import { SearchScreen } from '@/components/search/SearchScreen'
-import { BookmarksScreen } from '@/components/bookmarks/BookmarksScreen'
-import { ProfileScreen } from '@/components/profile/ProfileScreen'
-import { PracticeScreen } from '@/components/practice/PracticeScreen'
-import { MainsScreen } from '@/components/practice/MainsScreen'
-import { SettingsScreen } from '@/components/settings/SettingsScreen'
-import { DeepDive } from '@/components/deep-dive/DeepDive'
-import { ImportSheet } from '@/components/upload/ImportSheet'
-import { MapsArcade } from '@/components/maps-arcade/MapsArcade'
-import { PYQVault } from '@/components/pyq-vault/PYQVault'
-import { Digest } from '@/components/feed/Digest'
 import { Toast, useToast } from '@/components/ui/Toast'
 import { useAppStore } from '@/stores/useAppStore'
 import type { MainsRecord } from '@/hooks/useMainsDB'
 
 // Heavy / seldom-used screens are code-split so they never bloat first load.
+const ReviseScreen = lazy(() => import('@/components/revise/ReviseScreen').then(module => ({ default: module.ReviseScreen })))
+const SearchScreen = lazy(() => import('@/components/search/SearchScreen').then(module => ({ default: module.SearchScreen })))
+const BookmarksScreen = lazy(() => import('@/components/bookmarks/BookmarksScreen').then(module => ({ default: module.BookmarksScreen })))
+const ProfileScreen = lazy(() => import('@/components/profile/ProfileScreen').then(module => ({ default: module.ProfileScreen })))
+const PracticeScreen = lazy(() => import('@/components/practice/PracticeScreen').then(module => ({ default: module.PracticeScreen })))
+const SettingsScreen = lazy(() => import('@/components/settings/SettingsScreen').then(module => ({ default: module.SettingsScreen })))
+const DeepDive = lazy(() => import('@/components/deep-dive/DeepDive').then(module => ({ default: module.DeepDive })))
+const Digest = lazy(() => import('@/components/feed/Digest').then(module => ({ default: module.Digest })))
+const ImportSheet = lazy(() => import('@/components/upload/ImportSheet').then(module => ({ default: module.ImportSheet })))
 const NewsGlobe = lazy(() => import('@/components/news-globe/NewsGlobe'))
+const MapsArcade = lazy(() => import('@/components/maps-arcade/MapsArcade').then(module => ({ default: module.MapsArcade })))
+const PYQVault = lazy(() => import('@/components/pyq-vault/PYQVault').then(module => ({ default: module.PYQVault })))
+const MainsScreen = lazy(() => import('@/components/practice/MainsScreen').then(module => ({ default: module.MainsScreen })))
 
 type AppPhase = 'splash' | 'onboarding' | 'main'
 
@@ -107,29 +108,51 @@ export default function App() {
               onOpenUpload={() => setUploadVisible(true)}
             />
           )}
-          {activeScreen === 'revise' && <ReviseScreen />}
-          {activeScreen === 'search' && <SearchScreen />}
-          {activeScreen === 'bookmarks' && <BookmarksScreen onShowToast={showToast} />}
+          {activeScreen === 'revise' && (
+            <Suspense fallback={<PenniLoader label="Opening revision" full />}>
+              <ReviseScreen />
+            </Suspense>
+          )}
+          {activeScreen === 'search' && (
+            <Suspense fallback={<PenniLoader label="Opening search" full />}>
+              <SearchScreen />
+            </Suspense>
+          )}
+          {activeScreen === 'bookmarks' && (
+            <Suspense fallback={<PenniLoader label="Opening bookmarks" full />}>
+              <BookmarksScreen onShowToast={showToast} />
+            </Suspense>
+          )}
           {activeScreen === 'practice' && (
-            <PracticeScreen
-              onShowToast={showToast}
-              onOpenPYQ={() => setOverlay('pyq-vault')}
-              onOpenMains={() => setOverlay('mains')}
-            />
+            <Suspense fallback={<PenniLoader label="Preparing practice" full />}>
+              <PracticeScreen
+                onShowToast={showToast}
+                onOpenPYQ={() => setOverlay('pyq-vault')}
+                onOpenMains={() => setOverlay('mains')}
+              />
+            </Suspense>
           )}
           {activeScreen === 'profile' && (
-            <ProfileScreen
-              onOpenSettings={() => setScreen('settings')}
-              onOpenMainsRecord={(rec) => setMainsRecordOpen(rec)}
-            />
+            <Suspense fallback={<PenniLoader label="Opening profile" full />}>
+              <ProfileScreen
+                onOpenSettings={() => setScreen('settings')}
+                onOpenMainsRecord={(rec) => setMainsRecordOpen(rec)}
+              />
+            </Suspense>
           )}
-          {activeScreen === 'maps' && <MapsArcade />}
+          {activeScreen === 'maps' && (
+            <Suspense fallback={<PenniLoader label="Loading map practice" full />}>
+              <MapsArcade />
+            </Suspense>
+          )}
           {activeScreen === 'settings' && (
-            <SettingsScreen
-              onClose={() => setScreen('profile')}
-              onShowToast={showToast}
-              onOpenImport={() => setUploadVisible(true)}
-            />
+            <Suspense fallback={<PenniLoader label="Opening settings" full />}>
+              <SettingsScreen
+                onClose={() => setScreen('profile')}
+                onShowToast={showToast}
+                onOpenImport={() => setUploadVisible(true)}
+              />
+            </Suspense>
           )}
         </div>
 
@@ -140,44 +163,66 @@ export default function App() {
       {/* ── Overlay screens (slide over the main app) ── */}
 
       {/* Deep Dive */}
-      <DeepDive onShowToast={showToast} />
+      {overlayScreen === 'deep-dive' && (
+        <Suspense fallback={<PenniLoader label="Opening Deep Dive" full />}>
+          <DeepDive onShowToast={showToast} />
+        </Suspense>
+      )}
 
       {/* Daily Digest */}
-      <Digest />
+      {overlayScreen === 'digest' && (
+        <Suspense fallback={<PenniLoader label="Preparing digest" full />}>
+          <Digest />
+        </Suspense>
+      )}
 
       {/* News Globe (3D world) */}
       {overlayScreen === 'news-globe' && (
-        <Suspense fallback={<div className="globe-screen"><div className="globe-empty">Loading globe…</div></div>}>
+        <Suspense fallback={<PenniLoader label="Opening News Globe" full />}>
           <NewsGlobe />
         </Suspense>
       )}
 
       {/* PYQ Vault */}
-      {overlayScreen === 'pyq-vault' && <PYQVault />}
+      {overlayScreen === 'pyq-vault' && (
+        <Suspense fallback={<PenniLoader label="Opening PYQ Vault" full />}>
+          <PYQVault />
+        </Suspense>
+      )}
 
       {/* Maps Arcade overlay entry, used from Revise and other cards */}
-      {overlayScreen === 'maps-arcade' && <MapsArcade />}
+      {overlayScreen === 'maps-arcade' && (
+        <Suspense fallback={<PenniLoader label="Loading map practice" full />}>
+          <MapsArcade />
+        </Suspense>
+      )}
 
       {/* Mains Screen */}
       {overlayScreen === 'mains' && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 500 }}>
-          <MainsScreen
-            onClose={() => setOverlay(null)}
-            onShowToast={showToast}
-            onOpenSettings={() => {
-              setOverlay(null)
-              setScreen('settings')
-            }}
-          />
+          <Suspense fallback={<PenniLoader label="Opening Mains" full />}>
+            <MainsScreen
+              onClose={() => setOverlay(null)}
+              onShowToast={showToast}
+              onOpenSettings={() => {
+                setOverlay(null)
+                setScreen('settings')
+              }}
+            />
+          </Suspense>
         </div>
       )}
 
       {/* Import sheet */}
-      <ImportSheet
-        visible={uploadVisible}
-        onClose={() => setUploadVisible(false)}
-        onShowToast={showToast}
-      />
+      {uploadVisible && (
+        <Suspense fallback={<PenniLoader label="Opening import" full />}>
+          <ImportSheet
+            visible={uploadVisible}
+            onClose={() => setUploadVisible(false)}
+            onShowToast={showToast}
+          />
+        </Suspense>
+      )}
 
       {/* Toast notifications */}
       <Toast message={toastMsg} onClear={clearToast} />

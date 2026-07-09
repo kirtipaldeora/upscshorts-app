@@ -23,6 +23,7 @@ import { usePracticeStore } from '@/stores/usePracticeStore'
 import { useBookmarkStore } from '@/stores/useBookmarkStore'
 import { useArticles } from '@/hooks/useArticles'
 import { useAllArticles } from '@/hooks/useAllArticles'
+import { PenniLoader } from '@/components/layout/PenniLoader'
 import {
   articleQs,
   allQs,
@@ -250,7 +251,7 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
           </button>
         </section>
 
-        {loading && <p className="pn-empty">Loading questions…</p>}
+        {loading && <div className="pn-empty"><PenniLoader label="Loading questions" /></div>}
       </div>
 
       {panel && (

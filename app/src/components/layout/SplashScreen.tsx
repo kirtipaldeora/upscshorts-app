@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { PenniLoader } from './PenniLoader'
 
 interface SplashScreenProps {
   onDone: () => void
@@ -19,16 +20,7 @@ export function SplashScreen({ onDone }: SplashScreenProps) {
 
   return (
     <div id="splash" className={exiting ? 'exit' : ''}>
-      {/* Logo box */}
-      <div className="slw">
-        <div className="sl">P</div>
-      </div>
-
-      {/* App name */}
-      <div className="st">
-        Penni
-        <span>.</span>
-      </div>
+      <PenniLoader label="Preparing your briefing" full />
     </div>
   )
 }

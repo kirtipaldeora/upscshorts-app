@@ -47,6 +47,13 @@ export default defineConfig({
       workbox: {
         // Cache GeoJSON and article data for offline use
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        globIgnores: [
+          '**/globe.gl-*.js',
+          '**/AtlasGlobe-*.js',
+          '**/MapsArcade-*.js',
+          '**/NewsGlobe-*.js',
+          '**/FeedCosmicGlobe-*.js',
+        ],
         runtimeCaching: [
           {
             urlPattern: /\/data\/articles\/.+\.json$/,

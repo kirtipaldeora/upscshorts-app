@@ -22,6 +22,7 @@ import {
 import type { Feature, FeatureCollection, Geometry } from 'geojson'
 import type { Topology } from 'topojson-specification'
 import { useAppStore } from '@/stores/useAppStore'
+import { PenniLoader } from '@/components/layout/PenniLoader'
 import { asset } from '@/utils/asset'
 import { EASE, gsap, reducedMotion } from '@/anim/animations'
 import {
@@ -1168,7 +1169,7 @@ export function MapsArcade() {
   }
 
   function renderOverlay() {
-    if (loading) return <div className="atlas-loading">Loading map data...</div>
+    if (loading) return <PenniLoader label="Loading map data" full />
     if (!loaded) return <div className="atlas-loading">Map data could not be loaded.</div>
     if (state.screen === 'home') return renderHome()
     if (state.screen === 'world-menu') return renderWorldMenu()
@@ -1204,7 +1205,7 @@ export function MapsArcade() {
 
       <div className={`atlas-stage ${useWorldGlobe ? 'atlas-stage-globe' : ''}`}>
         {loaded && useWorldGlobe ? (
-          <Suspense fallback={<div className="atlas-globe-loading">Spinning up globe...</div>}>
+          <Suspense fallback={<PenniLoader label="Spinning up globe" full />}>
             <AtlasGlobe
               view={currentView}
               mode={state.mode}

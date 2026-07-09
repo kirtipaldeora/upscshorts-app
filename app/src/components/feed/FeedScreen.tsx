@@ -6,6 +6,7 @@ import { useArticles } from '@/hooks/useArticles'
 import { useAllArticles } from '@/hooks/useAllArticles'
 import { useGsapReveal, useStaggerReveal } from '@/anim/animations'
 import { TopBar } from '@/components/layout/TopBar'
+import { PenniLoader } from '@/components/layout/PenniLoader'
 import { CATEGORY_COLORS } from '@/constants/categories'
 import { DateTabs } from './DateTabs'
 import { ViewToggle } from './ViewToggle'
@@ -104,9 +105,8 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
           }}
         >
           {loading && articles.length === 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 200, color: 'var(--on2)', fontSize: 13, fontWeight: 700, gap: 10 }}>
-              <i className="fas fa-circle-notch" style={{ animation: 'spin 1s linear infinite' }} />
-              Loading…
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 220 }}>
+              <PenniLoader label="Loading briefing" />
             </div>
           )}
           {!loading && articles.length === 0 && (
