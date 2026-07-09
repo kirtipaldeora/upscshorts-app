@@ -157,7 +157,7 @@ html.dark .penni-loader-mark{background:rgba(255,255,255,.9);box-shadow:0 18px 4
 .issue-date-button i{font-style:normal;font-size:10px;font-weight:800;color:var(--on3);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .issue-date-chevron{margin-left:auto;opacity:.65;transition:transform .18s ease}
 .issue-date-button.active .issue-date-chevron{transform:rotate(180deg)}
-.issue-date-menu{position:absolute;top:54px;left:20px;right:20px;max-width:430px;margin-inline:auto;border-radius:22px;border:1px solid var(--panel-border);background:color-mix(in srgb,var(--card) 94%,transparent);box-shadow:0 22px 60px rgba(31,36,51,.18),inset 0 1px 0 rgba(255,255,255,.28);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);padding:7px;display:flex;flex-direction:column;gap:5px;max-height:min(330px,52vh);overflow:auto;animation:calPop .18s cubic-bezier(.22,1,.36,1) both}
+.issue-date-menu{position:absolute;z-index:120;top:54px;left:20px;right:20px;max-width:430px;margin-inline:auto;border-radius:22px;border:1px solid var(--panel-border);background:color-mix(in srgb,var(--card) 94%,transparent);box-shadow:0 22px 60px rgba(31,36,51,.18),inset 0 1px 0 rgba(255,255,255,.28);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);padding:7px;display:flex;flex-direction:column;gap:5px;max-height:min(330px,52vh);overflow:auto;animation:calPop .18s cubic-bezier(.22,1,.36,1) both}
 .issue-date-option{height:48px;border:0;border-radius:16px;background:transparent;color:var(--ink);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 11px;cursor:pointer;text-align:left}
 .issue-date-option span{display:flex;flex-direction:column;line-height:1.05}
 .issue-date-option b{font-size:12.5px;font-weight:950;color:var(--ink)}
@@ -203,8 +203,10 @@ html.dark .penni-loader-mark{background:rgba(255,255,255,.9);box-shadow:0 18px 4
 
 .feed-card{background:var(--card);border:none;border-radius:26px;margin-bottom:12px;overflow:hidden;transition:transform .2s;box-shadow:var(--shadow-soft);animation:cardIn .5s cubic-bezier(.22,1,.36,1) both;color:var(--ink)}
 .feed-screen{isolation:isolate}
+html:not(.dark) .feed-screen-cosmic{--on:#25305b;--on2:rgba(37,48,91,.76);--on3:rgba(37,48,91,.54);--panel:rgba(255,255,255,.62);--panel2:rgba(255,255,255,.44);--panel-border:rgba(68,84,145,.24)}
 .feed-screen-cosmic:before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.04),transparent 28%,rgba(255,255,255,.03));mix-blend-mode:soft-light}
-.feed-screen-cosmic>.top-bar,.feed-screen-cosmic>.hero-head,.feed-screen-cosmic>.issue-date-wrap,.feed-screen-cosmic>.view-toggle,.feed-screen-cosmic>.feed-scroll{position:relative;z-index:2}
+.feed-screen-cosmic>.top-bar,.feed-screen-cosmic>.hero-head,.feed-screen-cosmic>.view-toggle,.feed-screen-cosmic>.feed-scroll{position:relative;z-index:2}
+.feed-screen-cosmic>.issue-date-wrap{position:relative;z-index:90}
 .feed-cosmic-backdrop{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:radial-gradient(circle at 62% 18%,rgba(104,143,238,.28),transparent 31%),radial-gradient(circle at 18% 70%,rgba(55,184,203,.22),transparent 35%),radial-gradient(ellipse at 48% 44%,rgba(151,118,218,.16),transparent 42%),linear-gradient(180deg,#e7f5ff 0%,#eef8ff 45%,#f9fbff 100%);contain:layout paint style}
 .feed-cosmic-backdrop:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.26) 43%,rgba(255,255,255,.56));z-index:5}
 html.dark .feed-cosmic-backdrop{background:radial-gradient(circle at 76% 14%,rgba(101,139,255,.28),transparent 32%),radial-gradient(circle at 12% 75%,rgba(73,223,219,.17),transparent 36%),linear-gradient(180deg,#06112c 0%,#0c1834 48%,#121a31 100%)}
