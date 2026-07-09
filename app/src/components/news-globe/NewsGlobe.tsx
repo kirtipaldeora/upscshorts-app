@@ -10,6 +10,7 @@ import { useAllArticles } from '@/hooks/useAllArticles'
 import { asset } from '@/utils/asset'
 import { CATEGORY_COLORS } from '@/constants/categories'
 import type { Article } from '@/types/article'
+import { DateTabs } from '@/components/feed/DateTabs'
 
 interface Story extends Article {
   lat: number
@@ -32,7 +33,7 @@ type GlobeWithHtml = GlobeInstance & {
  * (no satellite texture) so it stays fast; the whole component is lazy-loaded.
  */
 export default function NewsGlobe() {
-  const { articlesByDate, setActiveArticle, setDeepDiveReturnOverlay, setOverlay } = useAppStore()
+  const { selectedDate, getArticlesForDate, getAvailableDates, setActiveArticle, setDeepDiveReturnOverlay, setOverlay } = useAppStore()
   useAllArticles()
   const containerRef = useRef<HTMLDivElement>(null)
   const globeRef = useRef<GlobeInstance | null>(null)
@@ -40,12 +41,13 @@ export default function NewsGlobe() {
   const [ready, setReady] = useState(false)
 
   const stories = useMemo<Story[]>(() => {
-    return Object.values(articlesByDate)
-      .flat()
+    return getArticlesForDate(selectedDate)
       .filter((a) => a.location)
       .map((a) => ({ ...a, lat: a.location!.lat, lon: a.location!.lon, place: a.location!.place }))
-      .sort((a, b) => (a.date > b.date ? -1 : a.date < b.date ? 1 : a.headline.localeCompare(b.headline)))
-  }, [articlesByDate])
+      .sort((a, b) => a.headline.localeCompare(b.headline))
+  }, [getArticlesForDate, selectedDate])
+
+  const dates = getAvailableDates()
 
   // Initialise the globe once
   useEffect(() => {
@@ -100,7 +102,13 @@ export default function NewsGlobe() {
   // Markers + active ripple ring
   useEffect(() => {
     const w = globeRef.current
-    if (!w || !ready || !stories.length) return
+    if (!w || !ready) return
+    if (!stories.length) {
+      w.pointsData([])
+      w.ringsData([])
+      ;(w as GlobeWithHtml).htmlElementsData([])
+      return
+    }
     const activeId = stories[idx]?.id
     w.pointsData(stories as unknown as object[])
       .pointLat((d) => (d as Story).lat)
@@ -161,6 +169,14 @@ export default function NewsGlobe() {
       })
   }, [stories, idx, ready])
 
+  useEffect(() => {
+    setIdx(0)
+  }, [selectedDate])
+
+  useEffect(() => {
+    if (idx >= stories.length) setIdx(0)
+  }, [idx, stories.length])
+
   // Fly to the current story
   useEffect(() => {
     const w = globeRef.current
@@ -203,12 +219,13 @@ export default function NewsGlobe() {
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
         <h2>News <span>Globe</span></h2>
+        {dates.length > 0 && <DateTabs dates={dates} variant="globe" />}
       </div>
 
       <div ref={containerRef} className="globe-canvas" />
 
       {stories.length === 0 && (
-        <div className="globe-empty">Spinning up the globe…</div>
+        <div className="globe-empty">No mapped stories for this issue yet.</div>
       )}
 
       {cur && (

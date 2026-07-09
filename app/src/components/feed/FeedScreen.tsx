@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import type { CSSProperties } from 'react'
 import { useAppStore } from '@/stores/useAppStore'
 import { useArticles } from '@/hooks/useArticles'
+import { useAllArticles } from '@/hooks/useAllArticles'
 import { useGsapReveal, useStaggerReveal } from '@/anim/animations'
 import { TopBar } from '@/components/layout/TopBar'
 import { CATEGORY_COLORS } from '@/constants/categories'
@@ -18,6 +19,7 @@ interface FeedScreenProps {
 export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
   const { selectedDate, viewMode, getArticlesForDate, getAvailableDates } = useAppStore()
   const { loading } = useArticles(selectedDate)
+  useAllArticles()
 
   const dates = getAvailableDates()
   const articles = getArticlesForDate(selectedDate)

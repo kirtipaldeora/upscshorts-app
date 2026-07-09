@@ -133,12 +133,24 @@ html.dark {
 .hero-head{padding:4px 20px 12px;position:relative;z-index:2;flex-shrink:0;text-align:center}
 .hh-hi{font-size:12.5px;color:var(--on2);font-weight:700;margin-bottom:3px}
 .hh-title{font-size:27px;font-weight:900;letter-spacing:-.4px;line-height:1.08;color:var(--on)}
-.date-tabs{display:flex;gap:8px;padding:2px 20px 12px;flex-shrink:0;background:transparent;border-bottom:none;overflow-x:auto;scrollbar-width:none;position:relative;z-index:2;justify-content:flex-start}
-.date-tabs::-webkit-scrollbar{display:none}
-.date-tab{padding:9px 16px;font-size:12px;font-weight:800;color:var(--on2);white-space:nowrap;cursor:pointer;border:1px solid var(--panel-border);background:var(--panel2);backdrop-filter:blur(12px);border-radius:20px;transition:all .25s;position:relative;display:flex;flex-direction:column;align-items:center;line-height:1.25;letter-spacing:.3px}
-.date-tab.active{color:#4A4E8C;background:#fff;border-color:transparent;box-shadow:var(--shadow-soft)}
-.date-tab .dt-day{display:block;font-size:9px;font-weight:700;color:inherit;opacity:.6;text-transform:uppercase;letter-spacing:.6px}
-.date-tab .dt-dot{display:none}
+.issue-date-wrap{position:relative;z-index:45;display:flex;justify-content:center;padding:2px 20px 12px;flex-shrink:0}
+.issue-date-button{height:46px;max-width:min(430px,100%);width:100%;border-radius:18px;border:1px solid var(--panel-border);background:color-mix(in srgb,var(--panel) 82%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:var(--shadow-soft),inset 0 1px 0 rgba(255,255,255,.25);color:var(--on);display:flex;align-items:center;gap:11px;padding:0 13px;cursor:pointer;text-align:left;transition:transform .18s ease,background .18s ease,border-color .18s ease}
+.issue-date-button:active{transform:scale(.98)}
+.issue-date-button.active{background:var(--card);border-color:color-mix(in srgb,var(--yellow) 44%,var(--panel-border))}
+.issue-date-button svg{flex:0 0 auto}
+.issue-date-button span{min-width:0;display:flex;flex-direction:column;line-height:1.05}
+.issue-date-button b{font-size:12.5px;font-weight:950;color:var(--on)}
+.issue-date-button i{font-style:normal;font-size:10px;font-weight:800;color:var(--on3);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.issue-date-chevron{margin-left:auto;opacity:.65;transition:transform .18s ease}
+.issue-date-button.active .issue-date-chevron{transform:rotate(180deg)}
+.issue-date-menu{position:absolute;top:54px;left:20px;right:20px;max-width:430px;margin-inline:auto;border-radius:22px;border:1px solid var(--panel-border);background:color-mix(in srgb,var(--card) 94%,transparent);box-shadow:0 22px 60px rgba(31,36,51,.18),inset 0 1px 0 rgba(255,255,255,.28);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);padding:7px;display:flex;flex-direction:column;gap:5px;max-height:min(330px,52vh);overflow:auto;animation:calPop .18s cubic-bezier(.22,1,.36,1) both}
+.issue-date-option{height:48px;border:0;border-radius:16px;background:transparent;color:var(--ink);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 11px;cursor:pointer;text-align:left}
+.issue-date-option span{display:flex;flex-direction:column;line-height:1.05}
+.issue-date-option b{font-size:12.5px;font-weight:950;color:var(--ink)}
+.issue-date-option i{font-style:normal;font-size:10px;font-weight:800;color:var(--ink3);margin-top:5px;text-transform:uppercase;letter-spacing:.4px}
+.issue-date-option.active{background:color-mix(in srgb,var(--yellow) 32%,transparent)}
+.issue-date-option.active svg{color:var(--yellow-ink)}
+@keyframes calPop{from{opacity:0;transform:translateY(-6px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
 .view-toggle{display:flex;gap:6px;justify-content:center;padding:0 20px 10px;position:relative;z-index:2;flex-shrink:0}
 .view-toggle button{width:40px;height:34px;border-radius:13px;border:1px solid var(--panel-border);background:var(--panel2);backdrop-filter:blur(12px);color:var(--on2);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s}
 .view-toggle button.active{background:#fff;color:#4A4E8C;border-color:transparent;box-shadow:var(--shadow-soft)}
@@ -323,6 +335,16 @@ html.dark {
 .globe-header button{width:40px;height:40px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);backdrop-filter:blur(16px);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .globe-header h2{font-size:16px;font-weight:800;color:#fff}
 .globe-header h2 span{color:#9da2f2}
+.globe-date-wrap{margin-left:auto;padding:0;z-index:6;justify-content:flex-end;min-width:0;flex:1}
+.globe-date-wrap .issue-date-button{width:min(238px,100%);height:40px;border-radius:14px;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.14);box-shadow:none;color:#fff}
+.globe-date-wrap .issue-date-button.active{background:rgba(255,255,255,.14);border-color:rgba(157,162,242,.44)}
+.globe-date-wrap .issue-date-button b{color:#fff}
+.globe-date-wrap .issue-date-button i{color:rgba(255,255,255,.58)}
+.globe-date-wrap .issue-date-menu{top:48px;left:auto;right:0;width:min(288px,calc(100vw - 28px));background:rgba(18,20,44,.94);border-color:rgba(255,255,255,.14);box-shadow:0 24px 70px rgba(0,0,0,.55)}
+.globe-date-wrap .issue-date-option{width:100%;height:48px;border:0;background:transparent;border-radius:16px;color:#fff;justify-content:space-between}
+.globe-date-wrap .issue-date-option b{color:#fff}
+.globe-date-wrap .issue-date-option i{color:rgba(255,255,255,.55)}
+.globe-date-wrap .issue-date-option.active{background:rgba(157,162,242,.18)}
 .globe-canvas{position:absolute;inset:0;z-index:0}
 .globe-canvas canvas{display:block}
 .globe-empty{position:absolute;top:50%;left:0;right:0;text-align:center;color:rgba(255,255,255,.6);font-weight:700;font-size:13px;z-index:1}
