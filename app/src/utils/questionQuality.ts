@@ -112,6 +112,23 @@ function hasGoodAudioScript(article: Article): boolean {
     !hasAwkwardRawStyle
 }
 
+function hasGoodHinglishAudioScript(article: Article): boolean {
+  const script = article.audioScriptHi?.trim()
+  if (!script) return false
+  const words = script.split(/\s+/).filter(Boolean).length
+  const hasExamRelevance = /\b(upsc|prelims|mains|exam|static|current affairs)\b/i.test(script)
+  const hasHinglishFlow = /\b(chaliye|samajh|news|issue|answer|yaad|kyun|kaise|matlab|takeaway|mains)\b/i.test(script)
+  const hasTeaching = /\b(cause|effect|policy|rights|governance|economy|security|diplomacy|environment|social justice|constitutional|impact|risk|way forward)\b/i.test(script)
+  const hasFiller = /\b(welcome back|this is penni|gist, not the whole article|read the full deep dive|story\s+\d+|that was your briefing)\b/i.test(script)
+  return words >= 180 &&
+    words <= 1000 &&
+    !/<[^>]+>/.test(script) &&
+    hasExamRelevance &&
+    hasHinglishFlow &&
+    hasTeaching &&
+    !hasFiller
+}
+
 export function contentQualityIssues(data: ArticlesByDate): QuestionQualityIssue[] {
   const issues: QuestionQualityIssue[] = []
   Object.values(data).flat().forEach(article => {
@@ -149,6 +166,14 @@ export function contentQualityIssues(data: ArticlesByDate): QuestionQualityIssue
         headline: article.headline,
         field: 'audio',
         reason: 'Add a professionally rewritten Penni Explain audioScript of about 450-900 words with story flow, natural pacing, expanded abbreviations, and concrete mains-relevant teaching points.',
+      })
+    }
+    if (!hasGoodHinglishAudioScript(article)) {
+      issues.push({
+        articleId: article.id,
+        headline: article.headline,
+        field: 'audio',
+        reason: 'Add a natural Hinglish audioScriptHi version that teaches the same article to a UPSC aspirant without raw HTML, robotic labels, or literal translation.',
       })
     }
   })

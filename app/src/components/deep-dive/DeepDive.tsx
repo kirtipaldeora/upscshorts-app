@@ -10,7 +10,7 @@ import { CATEGORY_COLORS } from '@/constants/categories'
 import { articleQs } from '@/utils/practiceUtils'
 import type { MainsQuestion, Question } from '@/utils/practiceUtils'
 import { splitUPSCStem } from '@/utils/questionQuality'
-import { articleNarration } from '@/utils/narration'
+import { articleNarration, articleNarrationHi } from '@/utils/narration'
 import type { Article } from '@/types/article'
 import { QuizPlayer } from '@/components/practice/QuizPlayer'
 import { MainsDetail } from '@/components/practice/MainsDetail'
@@ -30,6 +30,9 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
   const [activeQuiz, setActiveQuiz] = useState<ActiveQuiz>(null)
   const [mainsOpen, setMainsOpen] = useState(false)
   const [readSpeed, setReadSpeed] = useState(1)
+  const [readLang, setReadLang] = useState<'en' | 'hi'>(() => {
+    try { return localStorage.getItem('penni-read-lang') === 'hi' ? 'hi' : 'en' } catch { return 'en' }
+  })
   const bodyRef = useRef<HTMLDivElement>(null)
 
   const visible = overlayScreen === 'deep-dive'
@@ -120,11 +123,29 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
     }
   }
 
-  function startArticleReading(article: Article, speed = readSpeed) {
-    return narration.speak(articleNarration(article), {
+  function startArticleReading(article: Article, speed = readSpeed, lang = readLang) {
+    const hiScript = lang === 'hi' ? articleNarrationHi(article) : null
+    return narration.speak(hiScript ?? articleNarration(article), {
+      lang: hiScript ? 'hi-IN' : 'en-IN',
       rate: BASE_READ_RATE * speed,
       pitch: speed > 1.25 ? 1.01 : 1.04,
     })
+  }
+
+  async function toggleReadLang() {
+    if (!a) return
+    await haptic()
+    const next = readLang === 'en' ? 'hi' : 'en'
+    if (next === 'hi' && !articleNarrationHi(a)) {
+      onShowToast('Hindi version not available for this article yet')
+      return
+    }
+    setReadLang(next)
+    try { localStorage.setItem('penni-read-lang', next) } catch { /* noop */ }
+    if (narration.speaking) {
+      narration.stop()
+      startArticleReading(a, readSpeed, next)
+    }
   }
 
   async function readArticle() {
@@ -205,6 +226,13 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
               <button className="dd-speed-btn" onClick={increaseReadSpeed} aria-label={`Reading speed ${readSpeed}x`}>
                 <FontAwesomeIcon icon={faGaugeHigh} />
                 {readSpeed}x
+              </button>
+              <button
+                className="dd-speed-btn"
+                onClick={toggleReadLang}
+                aria-label={readLang === 'hi' ? 'Switch narration to English' : 'Switch narration to Hindi'}
+              >
+                {readLang === 'hi' ? 'हिं' : 'EN'}
               </button>
             </div>
           </section>

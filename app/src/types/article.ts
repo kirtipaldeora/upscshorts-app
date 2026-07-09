@@ -40,6 +40,7 @@ export interface Article {
   whyItMatters: string
   deepDive: DeepDive
   audioScript?: string          // Optional Penni Explain narration script; fallback is generated in-app
+  audioScriptHi?: string        // Hinglish (Hindi-English classroom) narration variant
   prelimsQs?: PrelimQuestion[]   // Penni: article-level MCQ practice questions
   keyTerms?: string[]            // Optional glossary metadata from article imports
   location?: GeoLocation         // For the news globe: where the story is happening

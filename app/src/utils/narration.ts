@@ -139,6 +139,17 @@ function conceptBridge(article: Article): string {
   return ''
 }
 
+/**
+ * Hinglish narration — the classroom Hindi variant. Devanagari with English
+ * technical terms kept in Latin script; spoken with a hi-IN voice. Returns
+ * null when the article has no Hindi script (caller falls back to English).
+ */
+export function articleNarrationHi(article: Article): string | null {
+  const script = article.audioScriptHi?.trim()
+  if (!script) return null
+  return script.replace(/\s+/g, ' ').trim()
+}
+
 export function articleNarration(article: Article): string {
   if (hasPremiumNarrationScript(article)) {
     return addAnchorPacing(smoothForSpeech(article.audioScript ?? ''))

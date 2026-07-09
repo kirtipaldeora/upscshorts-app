@@ -67,13 +67,14 @@ Deep Dive writing rules:
 
 ## Audio Narration
 
-When converting a PDF or any source document into daily JSON, automatically generate an `audioScript` field for every article using [penni-narration-prompt.md](./penni-narration-prompt.md). This should be a full Penni Explain narration script, not a short feed summary.
+When converting a PDF or any source document into daily JSON, automatically generate both `audioScript` and `audioScriptHi` for every article using [penni-narration-prompt.md](./penni-narration-prompt.md). `audioScript` should be the natural Indian-English Penni Explain narration. `audioScriptHi` should be the Hinglish classroom version of the same script. Both should be full Penni Explain narration scripts, not short feed summaries.
 
 The narration system must transform robotic text-to-speech into a premium Indian editorial listening experience. Never send raw article text to the speech engine. First rewrite it as a spoken script, as if an experienced Indian news anchor or documentary narrator is explaining an important UPSC news item. Think DD News, All India Radio News, Rajya Sabha TV discussions, BBC World Service, and The Economist audio edition. Do not sound like Google Translate, robotic TTS, monotone AI, YouTube clickbait, or theatrical drama.
 
 Audio script requirements:
 
 - Write in natural Indian-English news-reader style, as if a calm reporter is explaining the story to a UPSC aspirant.
+- Also write `audioScriptHi` in natural Hinglish: Hindi-English mixed classroom narration, not literal translation. Preserve the same facts, analysis and takeaway while making the flow sound like an Indian UPSC mentor explaining the issue aloud.
 - The tone should be calm, confident, intelligent, natural, professional, conversational, authoritative, and educational.
 - Rewrite newspaper grammar into spoken English before reading. Break long sentences and use commas, pauses, paragraph breaks, and sentence rhythm.
 - Use pacing intentionally. Short pauses are encouraged before important facts or transitions.
@@ -94,6 +95,7 @@ Audio script requirements:
 - Avoid filler like "this is Penni", "here is the gist", "not the whole article", "read the full Deep Dive", "story one", or generic outros.
 - Use varied spoken transitions only where they sound human: "The important part is...", "For UPSC preparation...", "Keep this linked with...".
 - Do not add facts not present in the article/deep dive.
+- Every imported/generated article should pass this minimum audio check: English script present, Hinglish script present, no raw HTML, no mechanical labels, no syllabus-tag dumping, and enough teaching depth to explain why the news matters for Mains.
 
 The app's article reader auto-builds a short spoken script from headline, summary, why-it-matters, key terms and selected Deep Dive points so that the spoken version stays UPSC-focused and does not become a mechanical full-article readout.
 
