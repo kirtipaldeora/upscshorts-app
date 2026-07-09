@@ -1,6 +1,7 @@
-import { useMemo } from 'react'
+import { lazy, Suspense, useMemo } from 'react'
 import type { CSSProperties } from 'react'
 import { useAppStore } from '@/stores/useAppStore'
+import { usePracticeStore } from '@/stores/usePracticeStore'
 import { useArticles } from '@/hooks/useArticles'
 import { useAllArticles } from '@/hooks/useAllArticles'
 import { useGsapReveal, useStaggerReveal } from '@/anim/animations'
@@ -11,6 +12,8 @@ import { ViewToggle } from './ViewToggle'
 import { FeedCard } from './FeedCard'
 import { DeckView } from './DeckCard'
 
+const FeedCosmicBackdrop = lazy(() => import('./FeedCosmicBackdrop').then(module => ({ default: module.FeedCosmicBackdrop })))
+
 interface FeedScreenProps {
   onShowToast: (msg: string) => void
   onOpenUpload: () => void
@@ -18,6 +21,7 @@ interface FeedScreenProps {
 
 export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
   const { selectedDate, viewMode, getArticlesForDate, getAvailableDates } = useAppStore()
+  const { settings } = usePracticeStore()
   const { loading } = useArticles(selectedDate)
   useAllArticles()
 
@@ -45,6 +49,7 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
 
   return (
     <div
+      className={`feed-screen ${settings.feedCosmicBackdrop ? 'feed-screen-cosmic' : ''}`}
       style={{
         position: 'absolute',
         inset: 0,
@@ -55,6 +60,11 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
         animation: 'scrIn 0.35s cubic-bezier(0.22,1,0.36,1)',
       }}
     >
+      {settings.feedCosmicBackdrop && (
+        <Suspense fallback={null}>
+          <FeedCosmicBackdrop />
+        </Suspense>
+      )}
       <TopBar />
 
       {/* Hero header — characters rise in on load */}

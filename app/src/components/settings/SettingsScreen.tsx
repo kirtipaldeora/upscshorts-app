@@ -15,6 +15,7 @@ import {
   faArrowRotateLeft,
   faShieldHalved,
   faChevronRight,
+  faGlobe,
 } from '@fortawesome/free-solid-svg-icons'
 import { usePracticeStore } from '@/stores/usePracticeStore'
 import { useThemeStore } from '@/stores/useThemeStore'
@@ -25,6 +26,10 @@ interface SettingsScreenProps {
   onClose: () => void
   onShowToast: (msg: string) => void
   onOpenImport?: () => void
+}
+
+type DeviceOrientationWithPermission = typeof DeviceOrientationEvent & {
+  requestPermission?: () => Promise<'granted' | 'denied'>
 }
 
 export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsScreenProps) {
@@ -80,6 +85,15 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
     onShowToast('Backup exported')
   }
 
+  async function toggleFeedBackdrop() {
+    const next = !settings.feedCosmicBackdrop
+    if (next && typeof window !== 'undefined' && 'DeviceOrientationEvent' in window) {
+      const orientation = window.DeviceOrientationEvent as DeviceOrientationWithPermission
+      try { await orientation.requestPermission?.() } catch { /* motion remains optional */ }
+    }
+    saveSettings({ feedCosmicBackdrop: next })
+  }
+
   return (
     <div className="screen active" style={{ animation: 'scrIn 0.35s cubic-bezier(0.22,1,0.36,1)' }}>
       <div className="screen-header">
@@ -119,6 +133,20 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
               className={`toggle ${theme === 'dark' ? 'on' : ''}`}
               onClick={e => { e.stopPropagation(); toggle() }}
               aria-label="Toggle dark mode"
+            />
+          </div>
+          <div className="setting-item" onClick={toggleFeedBackdrop}>
+            <div className="setting-left">
+              <FontAwesomeIcon icon={faGlobe} style={{ width: 14 }} />
+              <span>Animated feed backdrop</span>
+            </div>
+            <button
+              className={`toggle ${settings.feedCosmicBackdrop ? 'on' : ''}`}
+              onClick={e => {
+                e.stopPropagation()
+                void toggleFeedBackdrop()
+              }}
+              aria-label="Toggle animated feed backdrop"
             />
           </div>
           <div className="setting-item" style={{ flexWrap: 'wrap', gap: 8 }}>

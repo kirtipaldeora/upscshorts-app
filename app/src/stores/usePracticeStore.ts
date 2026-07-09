@@ -30,6 +30,7 @@ export interface PracticeSettings {
   remind: boolean
   key: string
   name: string
+  feedCosmicBackdrop: boolean
 }
 
 export interface PyqItem {
@@ -57,10 +58,10 @@ function loadStats(): PracticeStats {
 
 function loadSettings(): PracticeSettings {
   try {
-    return Object.assign({ target: 10, remind: false, key: '', name: '' },
+    return Object.assign({ target: 10, remind: false, key: '', name: '', feedCosmicBackdrop: true },
       JSON.parse(localStorage.getItem('u4set') || '{}'))
   } catch {
-    return { target: 10, remind: false, key: '', name: '' }
+    return { target: 10, remind: false, key: '', name: '', feedCosmicBackdrop: true }
   }
 }
 
