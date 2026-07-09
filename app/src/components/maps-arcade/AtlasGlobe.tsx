@@ -4,6 +4,7 @@ import Globe from 'globe.gl'
 import type { GlobeInstance } from 'globe.gl'
 import { gsap, reducedMotion } from '@/anim/animations'
 import type { AtlasCountry, AtlasMode, AtlasPhase, AtlasView } from './MapSVG'
+import type { WorldPhysicalFeature } from './MapsArcade'
 
 type GlobeGeoJsonGeometry = { type: string; coordinates: number[] }
 
@@ -35,6 +36,18 @@ type GlobeWithLayers = GlobeInstance & {
   htmlAltitude: (fn: (d: object) => number) => GlobeWithLayers
   htmlElement: (fn: (d: object) => HTMLElement) => GlobeWithLayers
   htmlElementVisibilityModifier: (fn: (el: HTMLElement, visible: boolean) => void) => GlobeWithLayers
+  pathsData: (data: object[]) => GlobeWithLayers
+  pathPoints: (fn: (d: object) => [number, number][]) => GlobeWithLayers
+  pathPointLat: (fn: (p: [number, number]) => number) => GlobeWithLayers
+  pathPointLng: (fn: (p: [number, number]) => number) => GlobeWithLayers
+  pathPointAlt: (fn: (p: [number, number]) => number) => GlobeWithLayers
+  pathLabel: (fn: (d: object) => string) => GlobeWithLayers
+  pathColor: (fn: (d: object) => string | string[]) => GlobeWithLayers
+  pathStroke: (fn: (d: object) => number) => GlobeWithLayers
+  pathDashLength: (fn: (d: object) => number) => GlobeWithLayers
+  pathDashGap: (fn: (d: object) => number) => GlobeWithLayers
+  pathDashAnimateTime: (fn: (d: object) => number) => GlobeWithLayers
+  onPathClick: (fn: (d: object) => void) => GlobeWithLayers
 }
 
 interface AtlasGlobeProps {
@@ -42,6 +55,8 @@ interface AtlasGlobeProps {
   mode: AtlasMode
   phase: AtlasPhase
   countries: AtlasCountry[]
+  physicalFeatures: WorldPhysicalFeature[]
+  physicalKind: 'river' | 'mountain' | null
   activeContinent: string | null
   targetId: string | number | null
   chosenId: string | number | null
@@ -60,6 +75,17 @@ interface GlobeMarker {
   label: string
   name: string
   kind: 'target' | 'chosen' | 'hint'
+}
+
+interface PhysicalNode {
+  id: string
+  featureId: string
+  lat: number
+  lng: number
+  label: string
+  name: string
+  primary?: boolean
+  kind: 'river-node' | 'mountain-node' | 'target' | 'chosen' | 'hint'
 }
 
 const COUNTRY_PALETTE = [
@@ -110,11 +136,23 @@ function countryFill(country: AtlasCountry): string {
   return COUNTRY_PALETTE[Math.abs(country.id * 11 + country.name.length * 7) % COUNTRY_PALETTE.length]
 }
 
+function featureMidpoint(feature: WorldPhysicalFeature): [number, number] {
+  if (feature.labelPoint) return feature.labelPoint
+  return feature.coordinates[Math.floor(feature.coordinates.length / 2)] ?? [0, 0]
+}
+
+function physicalColor(feature: WorldPhysicalFeature, active: boolean, selected: boolean): string {
+  if (feature.kind === 'river') return selected ? '#5fe4ff' : active ? '#44c7f4' : '#2f8bad'
+  return selected ? '#ffd36d' : active ? '#f3b13f' : '#a87930'
+}
+
 export function AtlasGlobe({
   view,
   mode,
   phase,
   countries,
+  physicalFeatures,
+  physicalKind,
   activeContinent,
   targetId,
   chosenId,
@@ -130,6 +168,12 @@ export function AtlasGlobe({
       return { ...country, lat, lng }
     })
   }, [countries])
+
+  const visiblePhysical = useMemo(() => {
+    return physicalKind
+      ? physicalFeatures.filter(feature => feature.kind === physicalKind && (!activeContinent || feature.continent === activeContinent))
+      : []
+  }, [activeContinent, physicalFeatures, physicalKind])
 
   useEffect(() => {
     const el = wrapRef.current
@@ -203,11 +247,16 @@ export function AtlasGlobe({
   useEffect(() => {
     const globe = globeRef.current
     if (!globe) return
+    const isPhysical = view === 'world-physical'
     const answerable = phase === 'playing' && mode === 'locate' && view === 'continent'
+    const physicalAnswerable = phase === 'playing' && mode === 'locate' && isPhysical
     const target = globeCountries.find(c => String(c.id) === String(targetId))
     const chosen = globeCountries.find(c => String(c.id) === String(chosenId))
+    const targetPhysical = visiblePhysical.find(feature => String(feature.id) === String(targetId))
+    const chosenPhysical = visiblePhysical.find(feature => String(feature.id) === String(chosenId))
 
     const countryColor = (country: GlobeCountry) => {
+      if (isPhysical) return 'rgba(55,103,83,0.5)'
       const isTarget = String(country.id) === String(targetId)
       const isChosen = String(country.id) === String(chosenId)
       if (phase === 'answered') {
@@ -225,6 +274,7 @@ export function AtlasGlobe({
       .polygonCapColor((d) => countryColor(d as GlobeCountry))
       .polygonSideColor((d) => {
         const country = d as GlobeCountry
+        if (isPhysical) return 'rgba(11,42,46,0.34)'
         return view === 'continent' && activeContinent && country.continent !== activeContinent
           ? 'rgba(28,48,58,0.18)'
           : 'rgba(12,42,52,0.62)'
@@ -232,11 +282,12 @@ export function AtlasGlobe({
       .polygonStrokeColor((d) => {
         const country = d as GlobeCountry
         const isAnswer = String(country.id) === String(targetId) || String(country.id) === String(chosenId)
-        return isAnswer ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.24)'
+        return isAnswer ? 'rgba(255,255,255,0.9)' : isPhysical ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.24)'
       })
       .polygonAltitude((d) => {
         const country = d as GlobeCountry
         const isAnswer = String(country.id) === String(targetId) || String(country.id) === String(chosenId)
+        if (isPhysical) return 0.006
         if (phase === 'answered' && isAnswer) return 0.055
         if (phase === 'playing' && mode === 'name' && String(country.id) === String(targetId)) return 0.045
         return view === 'continent' && activeContinent && country.continent !== activeContinent ? 0.004 : 0.018
@@ -249,8 +300,32 @@ export function AtlasGlobe({
       })
       .showPointerCursor((kind, d) => {
         const country = d as GlobeCountry | undefined
+        if (kind === 'path' && physicalAnswerable) return true
         return kind === 'polygon' && Boolean(answerable && country?.continent === activeContinent)
       })
+
+    const pathGlobe = globe as GlobeWithLayers
+    pathGlobe.pathsData(isPhysical ? visiblePhysical as unknown as object[] : [])
+    pathGlobe.pathPoints((d: object) => (d as WorldPhysicalFeature).coordinates)
+    pathGlobe.pathPointLat((p) => p[1])
+    pathGlobe.pathPointLng((p) => p[0])
+    pathGlobe.pathPointAlt(() => physicalKind === 'mountain' ? 0.034 : 0.026)
+    pathGlobe.pathLabel(() => '')
+    pathGlobe.pathColor((d: object) => {
+      const feature = d as WorldPhysicalFeature
+      const isTarget = String(feature.id) === String(targetId)
+      const isChosen = String(feature.id) === String(chosenId)
+      const selected = phase === 'answered' && (isTarget || isChosen)
+      const active = phase !== 'playing' || (mode === 'name' && isTarget)
+      return physicalColor(feature, active, selected)
+    })
+    pathGlobe.pathStroke((d: object) => (d as WorldPhysicalFeature).kind === 'mountain' ? 3.4 : 4.2)
+    pathGlobe.pathDashLength((d: object) => (d as WorldPhysicalFeature).kind === 'river' ? 0.72 : 0.34)
+    pathGlobe.pathDashGap((d: object) => (d as WorldPhysicalFeature).kind === 'river' ? 0.14 : 0.08)
+    pathGlobe.pathDashAnimateTime((d: object) => reducedMotion() ? 0 : (d as WorldPhysicalFeature).kind === 'river' ? 2400 : 4200)
+    pathGlobe.onPathClick((d: object) => {
+      if (physicalAnswerable) onAnswer((d as WorldPhysicalFeature).id)
+    })
 
     const markers: GlobeMarker[] = []
     if (phase === 'playing' && mode === 'name' && target) {
@@ -261,6 +336,95 @@ export function AtlasGlobe({
     }
     if (phase === 'answered' && chosen && String(chosen.id) !== String(targetId)) {
       markers.push({ id: `chosen-${chosen.id}`, lat: chosen.lat, lng: chosen.lng, label: 'Your pick', name: chosen.name, kind: 'chosen' })
+    }
+
+    if (isPhysical) {
+      const physicalNodes: PhysicalNode[] = visiblePhysical.flatMap(feature => {
+        const [lng, lat] = featureMidpoint(feature)
+        const mainNode: PhysicalNode = {
+          id: `node-${feature.id}`,
+          featureId: feature.id,
+          lat,
+          lng,
+          label: feature.kind === 'river' ? 'River' : 'Range',
+          name: phase === 'browse' || phase === 'learn' || phase === 'results' ? feature.name : '',
+          primary: true,
+          kind: feature.kind === 'river' ? 'river-node' : 'mountain-node',
+        }
+        if (feature.kind === 'river') return [mainNode]
+        return [
+          mainNode,
+          ...feature.coordinates.map(([ridgeLng, ridgeLat], ridgeIndex) => ({
+            id: `ridge-${feature.id}-${ridgeIndex}`,
+            featureId: feature.id,
+            lat: ridgeLat,
+            lng: ridgeLng,
+            label: 'Ridge',
+            name: '',
+            kind: 'mountain-node' as const,
+          })),
+        ]
+      })
+      const feedbackNodes: PhysicalNode[] = []
+      if (phase === 'playing' && mode === 'name' && targetPhysical) {
+        const [lng, lat] = featureMidpoint(targetPhysical)
+        feedbackNodes.push({ id: `hint-${targetPhysical.id}`, featureId: targetPhysical.id, lat, lng, label: 'Highlighted', name: 'Which feature?', kind: 'hint' })
+      }
+      if (phase === 'answered' && targetPhysical) {
+        const [lng, lat] = featureMidpoint(targetPhysical)
+        feedbackNodes.push({ id: `target-${targetPhysical.id}`, featureId: targetPhysical.id, lat, lng, label: 'Answer', name: targetPhysical.name, kind: 'target' })
+      }
+      if (phase === 'answered' && chosenPhysical && String(chosenPhysical.id) !== String(targetId)) {
+        const [lng, lat] = featureMidpoint(chosenPhysical)
+        feedbackNodes.push({ id: `chosen-${chosenPhysical.id}`, featureId: chosenPhysical.id, lat, lng, label: 'Your pick', name: chosenPhysical.name, kind: 'chosen' })
+      }
+
+      globe
+        .pointsData(feedbackNodes as unknown as object[])
+        .pointLat((d) => (d as PhysicalNode).lat)
+        .pointLng((d) => (d as PhysicalNode).lng)
+        .pointColor((d) => (d as PhysicalNode).kind === 'chosen' ? '#f05f73' : (d as PhysicalNode).kind === 'hint' ? '#f4b63f' : '#35c88c')
+        .pointAltitude(() => 0.08)
+        .pointRadius(() => 0.46)
+        .pointsMerge(false)
+        .ringsData((feedbackNodes.length ? feedbackNodes : phase === 'playing' && mode === 'name' && targetPhysical ? [{ ...(() => {
+          const [lng, lat] = featureMidpoint(targetPhysical)
+          return { id: `ring-${targetPhysical.id}`, featureId: targetPhysical.id, lat, lng, label: '', name: '', kind: 'hint' as const }
+        })() }] : []) as unknown as object[])
+        .ringLat((d) => (d as PhysicalNode).lat)
+        .ringLng((d) => (d as PhysicalNode).lng)
+        .ringColor((d: object) => {
+          const node = d as PhysicalNode
+          const color = node.kind === 'chosen' ? '240,95,115' : node.kind === 'target' ? '53,200,140' : physicalKind === 'river' ? '68,199,244' : '243,177,63'
+          return (t: number) => `rgba(${color},${1 - t})`
+        })
+        .ringMaxRadius(() => physicalKind === 'river' ? 5.4 : 4.4)
+        .ringPropagationSpeed(2.1)
+        .ringRepeatPeriod(950)
+        .htmlElementsData([...physicalNodes, ...feedbackNodes] as unknown as object[])
+        .htmlLat((d) => (d as PhysicalNode).lat)
+        .htmlLng((d) => (d as PhysicalNode).lng)
+        .htmlAltitude(() => 0.13)
+        .htmlElement((d) => {
+          const node = d as PhysicalNode
+          const button = document.createElement('button')
+          button.type = 'button'
+          button.className = `atlas-physical-node ${node.kind} ${node.primary ? 'primary' : ''}`
+          button.disabled = !physicalAnswerable || node.kind === 'target' || node.kind === 'chosen' || node.kind === 'hint'
+          button.onclick = () => {
+            if (physicalAnswerable) onAnswer(node.featureId)
+          }
+          const symbol = node.kind === 'mountain-node' ? '▲' : ''
+          button.innerHTML = node.kind === 'target' || node.kind === 'chosen' || node.kind === 'hint'
+            ? `<span>${node.label}</span><b>${shortName(node.name)}</b>`
+            : `<i>${symbol}</i>${node.name ? `<em>${shortName(node.name)}</em>` : ''}`
+          return button
+        })
+        .htmlElementVisibilityModifier((el, visible) => {
+          el.style.opacity = visible ? '1' : '0'
+          el.style.pointerEvents = visible ? 'auto' : 'none'
+        })
+      return
     }
 
     globe
@@ -296,12 +460,27 @@ export function AtlasGlobe({
         el.style.opacity = visible ? '1' : '0'
         el.style.pointerEvents = 'none'
       })
-  }, [activeContinent, chosenId, globeCountries, mode, onAnswer, phase, targetId, view])
+  }, [activeContinent, chosenId, globeCountries, mode, onAnswer, phase, physicalKind, targetId, view, visiblePhysical])
 
   useEffect(() => {
     const globe = globeRef.current
     if (!globe) return
     const target = globeCountries.find(c => String(c.id) === String(targetId))
+    if (view === 'world-physical') {
+      const point = activeContinent && CONTINENT_POV[activeContinent]
+        ? [CONTINENT_POV[activeContinent].lng, CONTINENT_POV[activeContinent].lat] as [number, number]
+        : physicalKind === 'river'
+          ? [18, 10] as [number, number]
+          : [58, 24] as [number, number]
+      const key = [view, physicalKind, activeContinent ?? 'all'].filter(Boolean).join(':')
+      if (povKeyRef.current === key) return
+      povKeyRef.current = key
+      const continentAltitude = activeContinent
+        ? Math.max((CONTINENT_POV[activeContinent]?.altitude ?? 1) + 0.62, 1.42)
+        : 1.95
+      globe.pointOfView({ lat: point[1], lng: point[0], altitude: continentAltitude }, reducedMotion() ? 0 : 1000)
+      return
+    }
     const shouldFlyToCountry = Boolean(target && (phase === 'answered' || (phase === 'playing' && mode === 'name')))
     const key = shouldFlyToCountry
       ? [view, activeContinent, mode, phase, targetId, chosenId].filter(Boolean).join(':')
@@ -318,7 +497,7 @@ export function AtlasGlobe({
       return
     }
     globe.pointOfView({ lat: 22, lng: 78, altitude: 1.55 }, reducedMotion() ? 0 : 900)
-  }, [activeContinent, chosenId, globeCountries, mode, phase, targetId, view])
+  }, [activeContinent, chosenId, globeCountries, mode, phase, physicalKind, targetId, view, visiblePhysical])
 
   return (
     <div className="atlas-globe-surface">

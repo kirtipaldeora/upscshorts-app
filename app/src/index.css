@@ -2655,6 +2655,21 @@ html.dark .bg-blobs i { opacity: .34; }
 .atlas-globe-badge b{display:block;min-width:68px;max-width:132px;padding:7px 9px;border-radius:12px;background:rgba(255,255,255,.95);border:1px solid rgba(255,255,255,.88);color:#102842;font-size:10px;font-weight:950;text-align:center;line-height:1.15}
 .atlas-globe-badge.chosen span{background:#ffdde2;color:#8f2131}
 .atlas-globe-badge.hint span{background:#fff0c9;color:#80530a}
+.atlas-physical-node{transform:translate(-50%,-50%);border:none;background:transparent;color:#fff;display:flex;align-items:center;gap:5px;filter:drop-shadow(0 8px 16px rgba(0,0,0,.34));cursor:pointer;pointer-events:auto}
+.atlas-physical-node:disabled{cursor:default}
+.atlas-physical-node i{width:12px;height:12px;border-radius:50%;display:block;background:#58dfff;box-shadow:0 0 0 5px rgba(88,223,255,.16),0 0 18px rgba(88,223,255,.68);font-style:normal}
+.atlas-physical-node.river-node i{animation:atlasPulse 1.9s ease-in-out infinite}
+.atlas-physical-node.mountain-node i{width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:13px solid #f3b13f;border-radius:0;background:transparent;box-shadow:none;filter:drop-shadow(0 0 9px rgba(243,177,63,.75));animation:atlasPeak 2.6s ease-in-out infinite}
+.atlas-physical-node.mountain-node.primary i{border-left-width:9px;border-right-width:9px;border-bottom-width:16px}
+.atlas-physical-node em{font-style:normal;font-size:10px;font-weight:950;color:#173047;background:rgba(255,255,255,.92);border:1px solid rgba(255,255,255,.78);border-radius:999px;padding:4px 8px;white-space:nowrap}
+.atlas-physical-node:not(.primary) em{display:none}
+.atlas-physical-node.target,.atlas-physical-node.chosen,.atlas-physical-node.hint{transform:translate(-50%,-100%);flex-direction:column;gap:3px}
+.atlas-physical-node.target span,.atlas-physical-node.chosen span,.atlas-physical-node.hint span{font-size:8px;font-weight:950;letter-spacing:.8px;text-transform:uppercase;border-radius:999px;padding:3px 7px;background:#dff8eb;color:#146344}
+.atlas-physical-node.chosen span{background:#ffdde2;color:#8f2131}
+.atlas-physical-node.hint span{background:#fff0c9;color:#80530a}
+.atlas-physical-node.target b,.atlas-physical-node.chosen b,.atlas-physical-node.hint b{display:block;min-width:76px;max-width:142px;padding:7px 9px;border-radius:12px;background:rgba(255,255,255,.96);border:1px solid rgba(255,255,255,.88);color:#102842;font-size:10px;font-weight:950;text-align:center;line-height:1.15}
+@keyframes atlasPulse{0%,100%{scale:1;opacity:.92}50%{scale:1.28;opacity:1}}
+@keyframes atlasPeak{0%,100%{translate:0 0}50%{translate:0 -4px}}
 @keyframes atlasDrift{0%,100%{translate:0 0}50%{translate:0 -5px}}
 .atlas-overlay{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;pointer-events:none;padding:16px}
 .atlas-panel,.atlas-results{width:min(860px,100%);max-height:calc(100% - 24px);overflow:auto;pointer-events:auto;background:rgba(255,255,255,.86);border:1px solid rgba(255,255,255,.9);border-radius:24px;box-shadow:0 22px 60px rgba(22,43,58,.2);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:18px}
@@ -2678,9 +2693,9 @@ html.dark .atlas-panel,html.dark .atlas-results{background:rgba(21,35,47,.84);bo
 .atlas-india-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
 .atlas-india-card{min-height:126px;border:1px solid rgba(255,255,255,.72);background:linear-gradient(145deg,rgba(255,255,255,.94),rgba(255,255,255,.72));border-radius:22px;padding:16px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:13px;text-align:left;color:var(--ink);box-shadow:0 18px 42px rgba(22,43,58,.13);cursor:pointer;position:relative;overflow:hidden}
 .atlas-india-card:before{content:"";position:absolute;inset:auto -20% -55% 12%;height:96px;border-radius:999px;background:var(--card-glow);filter:blur(18px);opacity:.42;pointer-events:none}
-.atlas-india-card.river{--card-glow:#5cbde8}.atlas-india-card.parks{--card-glow:#5fc889}
+.atlas-india-card.river{--card-glow:#5cbde8}.atlas-india-card.parks{--card-glow:#5fc889}.atlas-india-card.mountains{--card-glow:#f1b34d}
 .atlas-india-card>i{width:48px;height:48px;border-radius:17px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.76);box-shadow:inset 0 0 0 1px rgba(255,255,255,.7);color:var(--acc);font-style:normal;position:relative;z-index:1}
-.atlas-india-card.river>i{color:#2b87bf}.atlas-india-card.parks>i{color:#27865f}
+.atlas-india-card.river>i{color:#2b87bf}.atlas-india-card.parks>i{color:#27865f}.atlas-india-card.mountains>i{color:#a86910}
 .atlas-india-card span{position:relative;z-index:1;display:flex;flex-direction:column;gap:4px;min-width:0}
 .atlas-india-card b{font-size:17px;font-weight:950;color:var(--ink);letter-spacing:0}
 .atlas-india-card em{font-style:normal;font-size:11.5px;font-weight:800;color:var(--ink3);line-height:1.35}

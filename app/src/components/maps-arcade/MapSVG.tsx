@@ -3,7 +3,7 @@ import * as d3 from 'd3'
 import type { Feature, FeatureCollection, Geometry } from 'geojson'
 import { gsap, reducedMotion } from '@/anim/animations'
 
-export type AtlasView = 'world' | 'continent' | 'india' | 'river-system' | 'parks'
+export type AtlasView = 'world' | 'continent' | 'world-physical' | 'india' | 'river-system' | 'parks'
 export type AtlasMode = 'locate' | 'name'
 export type AtlasPhase = 'browse' | 'playing' | 'answered' | 'results' | 'learn'
 

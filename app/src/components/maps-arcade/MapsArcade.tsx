@@ -38,9 +38,9 @@ import {
 
 const AtlasGlobe = lazy(() => import('./AtlasGlobe').then(module => ({ default: module.AtlasGlobe })))
 
-type Screen = 'home' | 'world-menu' | 'india-menu' | 'river-menu' | 'park-menu' | 'park-learn' | 'setup' | 'play' | 'results'
+type Screen = 'home' | 'world-menu' | 'physical-menu' | 'world-river-menu' | 'india-menu' | 'river-menu' | 'park-menu' | 'park-learn' | 'setup' | 'play' | 'results'
 type AppKind = 'world' | 'india' | null
-type Category = 'countries' | 'rivers' | 'parks' | null
+type Category = 'countries' | 'world-rivers' | 'mountains' | 'rivers' | 'parks' | null
 
 interface AtlasState {
   screen: Screen
@@ -102,7 +102,19 @@ interface QuizItem {
   continent?: string
   state?: string
   region?: string
+  kind?: 'river' | 'mountain'
   source?: { type: string; name: string; place: string }
+}
+
+export interface WorldPhysicalFeature {
+  id: string
+  name: string
+  kind: 'river' | 'mountain'
+  continent: string
+  region: string
+  clue: string
+  coordinates: [number, number][]
+  labelPoint?: [number, number]
 }
 
 interface ParkRegion {
@@ -134,6 +146,40 @@ const CONT_DATA: Record<string, [number, string][]> = {
 
 const RIVER_SYSTEMS = [
   { key: 'ganga_ref', name: 'Ganga River System', color: '#2d72c4', blurb: 'Ganga, Yamuna and key UPSC tributaries' },
+]
+
+const WORLD_PHYSICAL_FEATURES: WorldPhysicalFeature[] = [
+  { id: 'wr-nile', name: 'Nile', kind: 'river', continent: 'Africa', region: 'North-East Africa', clue: 'Flows north through Sudan and Egypt to the Mediterranean Sea', coordinates: [[29.9, -3.4], [31.8, 0.4], [32.7, 4.7], [31.6, 8.4], [32.5, 12.1], [31.8, 16.1], [31.2, 20.2], [30.7, 24.3], [31.2, 27.2], [30.4, 31.2]], labelPoint: [31.7, 17.0] },
+  { id: 'wr-congo', name: 'Congo', kind: 'river', continent: 'Africa', region: 'Central Africa', clue: 'Large equatorial basin river crossing the Congo rainforest', coordinates: [[28.8, -11.8], [26.2, -8.9], [23.6, -5.6], [21.3, -2.3], [18.6, 0.0], [16.5, -0.5], [15.3, -2.7], [14.2, -4.8], [12.4, -6.0]], labelPoint: [18.3, -2.2] },
+  { id: 'wr-niger', name: 'Niger', kind: 'river', continent: 'Africa', region: 'West Africa', clue: 'Forms a great arc through Mali and Nigeria before reaching the Gulf of Guinea', coordinates: [[-10.7, 9.6], [-8.2, 11.1], [-5.7, 13.4], [-3.4, 16.4], [1.4, 16.8], [4.2, 14.1], [6.6, 12.2], [7.4, 9.6], [6.4, 5.4]], labelPoint: [1.6, 14.8] },
+  { id: 'wr-zambezi', name: 'Zambezi', kind: 'river', continent: 'Africa', region: 'Southern Africa', clue: 'Flows east across southern Africa and includes Victoria Falls', coordinates: [[24.3, -11.4], [22.8, -13.2], [23.2, -15.4], [25.8, -17.8], [28.8, -17.9], [31.0, -16.5], [33.8, -17.2], [36.2, -18.6]], labelPoint: [29.0, -17.7] },
+  { id: 'wr-amazon', name: 'Amazon', kind: 'river', continent: 'South America', region: 'South America', clue: 'Crosses the equatorial rainforest from the Andes to the Atlantic', coordinates: [[-75.2, -5.0], [-73.5, -4.6], [-70.2, -4.1], [-66.1, -3.8], [-62.2, -3.2], [-58.5, -2.9], [-54.6, -2.4], [-51.2, -1.6], [-49.5, -1.3]], labelPoint: [-61.2, -3.2] },
+  { id: 'wr-parana', name: 'Parana', kind: 'river', continent: 'South America', region: 'Brazil-Paraguay-Argentina', clue: 'A major south-flowing river system of the La Plata basin', coordinates: [[-47.5, -20.1], [-50.8, -22.4], [-53.7, -24.0], [-54.8, -25.7], [-56.3, -27.3], [-58.6, -30.0], [-59.7, -32.7], [-58.4, -34.3]], labelPoint: [-55.7, -27.0] },
+  { id: 'wr-orinoco', name: 'Orinoco', kind: 'river', continent: 'South America', region: 'Venezuela and Colombia', clue: 'Drains northern South America into the Atlantic', coordinates: [[-66.1, 2.4], [-67.8, 4.2], [-67.2, 6.2], [-65.4, 7.5], [-63.6, 8.1], [-61.4, 8.8], [-60.7, 9.6]], labelPoint: [-65.2, 7.2] },
+  { id: 'wr-sao-francisco', name: 'Sao Francisco', kind: 'river', continent: 'South America', region: 'Eastern Brazil', clue: 'Important river of eastern Brazil flowing to the Atlantic', coordinates: [[-46.2, -20.3], [-44.2, -17.8], [-43.5, -14.7], [-42.1, -11.8], [-40.8, -9.8], [-37.7, -10.5]], labelPoint: [-42.7, -14.2] },
+  { id: 'wr-yangtze', name: 'Yangtze', kind: 'river', continent: 'Asia', region: 'China', clue: 'China’s longest river, flowing east to the East China Sea', coordinates: [[91.2, 33.4], [95.2, 32.2], [99.8, 30.9], [103.2, 29.5], [106.6, 29.6], [110.4, 30.1], [114.3, 30.6], [118.8, 31.4], [121.5, 31.2]], labelPoint: [108.2, 30.1] },
+  { id: 'wr-yellow', name: 'Yellow River', kind: 'river', continent: 'Asia', region: 'Northern China', clue: 'The Huang He makes a broad bend through the North China region', coordinates: [[96.2, 35.2], [100.4, 36.2], [104.2, 36.6], [106.5, 39.2], [110.2, 40.4], [112.8, 37.7], [116.0, 36.0], [119.2, 37.7]], labelPoint: [109.4, 39.3] },
+  { id: 'wr-mekong', name: 'Mekong', kind: 'river', continent: 'Asia', region: 'South-East Asia', clue: 'Flows from the Tibetan Plateau through mainland South-East Asia', coordinates: [[94.9, 33.2], [97.4, 29.6], [99.4, 25.5], [100.4, 22.0], [101.6, 20.8], [103.0, 18.1], [104.2, 16.2], [105.5, 13.4], [106.8, 9.8]], labelPoint: [102.8, 18.2] },
+  { id: 'wr-ganga-brahmaputra', name: 'Ganga-Brahmaputra', kind: 'river', continent: 'Asia', region: 'Indian subcontinent', clue: 'The Himalayan-fed river system draining into the Bay of Bengal', coordinates: [[78.7, 30.1], [79.8, 28.0], [81.8, 25.5], [85.1, 25.6], [88.1, 24.1], [91.2, 24.0], [92.7, 25.0], [91.0, 23.2], [90.4, 22.5]], labelPoint: [87.5, 24.8] },
+  { id: 'wr-indus', name: 'Indus', kind: 'river', continent: 'Asia', region: 'Tibet-Pakistan-Arabian Sea', clue: 'Flows from the Tibetan region through Pakistan to the Arabian Sea', coordinates: [[81.7, 31.1], [78.2, 33.4], [75.3, 34.5], [72.4, 33.0], [71.4, 30.3], [69.6, 27.8], [68.2, 25.2], [67.4, 24.1]], labelPoint: [71.5, 30.2] },
+  { id: 'wr-danube', name: 'Danube', kind: 'river', continent: 'Europe', region: 'Central and Eastern Europe', clue: 'Flows across Europe into the Black Sea', coordinates: [[8.2, 48.0], [10.2, 48.4], [12.5, 48.2], [14.6, 48.1], [16.4, 48.2], [19.0, 47.5], [21.2, 45.8], [24.8, 44.3], [27.8, 45.2], [29.6, 45.2]], labelPoint: [18.7, 47.0] },
+  { id: 'wr-volga', name: 'Volga', kind: 'river', continent: 'Europe', region: 'Russia', clue: 'Europe’s longest river, draining into the Caspian Sea', coordinates: [[33.0, 57.2], [36.0, 56.8], [38.4, 57.6], [42.1, 56.5], [45.9, 55.8], [48.4, 53.2], [46.8, 50.2], [46.3, 48.7], [47.8, 46.3]], labelPoint: [45.4, 53.6] },
+  { id: 'wr-rhine', name: 'Rhine', kind: 'river', continent: 'Europe', region: 'Western Europe', clue: 'Flows from the Alps toward the North Sea', coordinates: [[8.7, 46.6], [8.2, 47.6], [7.6, 48.6], [7.8, 49.8], [6.9, 50.8], [6.2, 51.7], [4.7, 52.1]], labelPoint: [7.2, 50.0] },
+  { id: 'wr-dnieper', name: 'Dnieper', kind: 'river', continent: 'Europe', region: 'Eastern Europe', clue: 'Flows south through Belarus and Ukraine to the Black Sea', coordinates: [[33.4, 55.9], [31.6, 53.6], [30.5, 51.5], [30.5, 50.4], [31.1, 49.0], [32.4, 47.5], [32.3, 46.5]], labelPoint: [31.0, 50.0] },
+  { id: 'wr-mississippi', name: 'Mississippi-Missouri', kind: 'river', continent: 'North America', region: 'Central United States', clue: 'A major drainage system of the central United States', coordinates: [[-111.2, 45.9], [-106.0, 44.8], [-101.4, 43.2], [-96.6, 41.3], [-92.4, 39.4], [-90.2, 35.0], [-91.1, 32.1], [-90.1, 29.1]], labelPoint: [-94.5, 38.2] },
+  { id: 'wr-mackenzie', name: 'Mackenzie', kind: 'river', continent: 'North America', region: 'North-West Canada', clue: 'Flows north-west through Canada to the Arctic Ocean', coordinates: [[-117.2, 55.1], [-116.2, 58.4], [-118.6, 61.0], [-121.1, 63.7], [-123.2, 66.1], [-134.8, 68.8]], labelPoint: [-121.2, 63.4] },
+  { id: 'wr-st-lawrence', name: 'St. Lawrence', kind: 'river', continent: 'North America', region: 'Great Lakes to Atlantic', clue: 'Connects the Great Lakes system with the Atlantic', coordinates: [[-83.0, 42.3], [-79.2, 43.2], [-76.5, 44.2], [-73.6, 45.5], [-70.2, 47.1], [-64.5, 49.0]], labelPoint: [-73.5, 45.8] },
+  { id: 'wr-colorado', name: 'Colorado', kind: 'river', continent: 'North America', region: 'Western United States', clue: 'Carves the Grand Canyon and drains toward the Gulf of California', coordinates: [[-105.8, 40.4], [-108.8, 39.1], [-111.5, 37.2], [-112.1, 36.1], [-114.5, 34.3], [-114.8, 32.2]], labelPoint: [-111.7, 36.5] },
+  { id: 'wr-yukon', name: 'Yukon', kind: 'river', continent: 'North America', region: 'Alaska and Canada', clue: 'Flows across Yukon and Alaska to the Bering Sea', coordinates: [[-134.6, 60.7], [-137.4, 62.2], [-141.0, 64.1], [-146.3, 65.0], [-151.2, 64.7], [-164.5, 62.6]], labelPoint: [-146.0, 64.3] },
+  { id: 'wr-murray-darling', name: 'Murray-Darling', kind: 'river', continent: 'Oceania', region: 'South-East Australia', clue: 'Australia’s major river basin across the south-east', coordinates: [[148.2, -26.2], [147.6, -29.0], [146.0, -31.5], [144.6, -34.2], [142.5, -34.9], [139.0, -35.5]], labelPoint: [145.2, -33.2] },
+  { id: 'wr-sepik', name: 'Sepik', kind: 'river', continent: 'Oceania', region: 'Papua New Guinea', clue: 'One of Papua New Guinea’s major rivers flowing to the Bismarck Sea', coordinates: [[141.0, -4.4], [142.6, -4.0], [144.2, -4.1], [145.6, -4.2], [146.6, -3.9]], labelPoint: [144.2, -4.0] },
+  { id: 'mt-himalayas', name: 'Himalayas', kind: 'mountain', continent: 'Asia', region: 'Asia', clue: 'The young fold mountain arc north of the Indian subcontinent', coordinates: [[72.8, 35.5], [77.1, 34.1], [81.2, 30.7], [85.3, 28.2], [89.4, 27.8], [95.0, 28.7]], labelPoint: [84.8, 29.6] },
+  { id: 'mt-andes', name: 'Andes', kind: 'mountain', continent: 'South America', region: 'South America', clue: 'The long western mountain chain of South America', coordinates: [[-77.8, 8.4], [-76.2, -5.2], [-72.4, -15.8], [-70.2, -25.1], [-70.8, -34.4], [-72.4, -45.1]], labelPoint: [-72.2, -22.0] },
+  { id: 'mt-rockies', name: 'Rocky Mountains', kind: 'mountain', continent: 'North America', region: 'North America', clue: 'Major western mountain system of North America', coordinates: [[-121.0, 55.5], [-116.8, 50.7], [-113.4, 45.2], [-109.8, 40.4], [-106.0, 36.4], [-105.0, 32.4]], labelPoint: [-112.0, 43.0] },
+  { id: 'mt-alps', name: 'Alps', kind: 'mountain', continent: 'Europe', region: 'Europe', clue: 'Arc-shaped European range across France, Switzerland, Italy and Austria', coordinates: [[5.9, 45.6], [7.5, 46.0], [9.4, 46.4], [11.2, 46.6], [13.4, 47.0]], labelPoint: [9.4, 46.5] },
+  { id: 'mt-atlas', name: 'Atlas Mountains', kind: 'mountain', continent: 'Africa', region: 'North Africa', clue: 'Mountain system across Morocco, Algeria and Tunisia', coordinates: [[-9.6, 31.0], [-6.2, 32.0], [-2.4, 34.2], [2.6, 35.3], [8.4, 35.4]], labelPoint: [-2.4, 34.1] },
+  { id: 'mt-urals', name: 'Ural Mountains', kind: 'mountain', continent: 'Europe', region: 'Russia', clue: 'North-south range often used as a Europe-Asia boundary', coordinates: [[59.4, 67.8], [58.8, 62.4], [59.8, 57.5], [59.2, 53.2], [58.0, 50.0]], labelPoint: [59.2, 57.0] },
+  { id: 'mt-great-dividing', name: 'Great Dividing Range', kind: 'mountain', continent: 'Oceania', region: 'Australia', clue: 'Eastern Australian highland chain', coordinates: [[145.6, -16.7], [150.0, -24.0], [151.5, -31.5], [148.2, -37.2]], labelPoint: [150.4, -28.0] },
 ]
 
 const RIVER_TRACES: (Omit<AtlasRiver, 'geometry'> & { coordinates: [number, number][] })[] = [
@@ -374,7 +420,9 @@ export function MapsArcade() {
   const currentView: AtlasView = state.screen === 'home' || state.screen === 'world-menu'
     ? 'world'
     : state.app === 'world'
-      ? 'continent'
+      ? state.category === 'countries'
+        ? 'continent'
+        : 'world-physical'
       : state.category === 'rivers'
         ? 'river-system'
         : state.category === 'parks'
@@ -401,6 +449,12 @@ export function MapsArcade() {
     ? normalizeStateName(state.target.state)
     : null
   const useWorldGlobe = currentView === 'world' || currentView === 'continent'
+    || currentView === 'world-physical'
+  const physicalKind = state.category === 'world-rivers'
+    ? 'river'
+    : state.category === 'mountains'
+      ? 'mountain'
+      : null
 
   function patch(patchState: Partial<AtlasState>) {
     setState(prev => ({ ...prev, ...patchState }))
@@ -416,6 +470,16 @@ export function MapsArcade() {
 
   function currentPool(): QuizItem[] {
     if (!loaded) return []
+    if (state.app === 'world' && state.category === 'world-rivers') {
+      return WORLD_PHYSICAL_FEATURES
+        .filter(feature => feature.kind === 'river' && (!state.continent || feature.continent === state.continent))
+        .map(feature => ({ id: feature.id, name: feature.name, region: feature.region, kind: feature.kind }))
+    }
+    if (state.app === 'world' && state.category === 'mountains') {
+      return WORLD_PHYSICAL_FEATURES
+        .filter(feature => feature.kind === 'mountain')
+        .map(feature => ({ id: feature.id, name: feature.name, region: feature.region, kind: feature.kind }))
+    }
     if (state.app === 'world' && state.continent) {
       return (countriesByContinent[state.continent] ?? []).map(c => ({ id: c.id, name: c.name, continent: c.continent }))
     }
@@ -439,6 +503,8 @@ export function MapsArcade() {
       })
       return String((stateFeature?.properties as { NAME_1?: string } | undefined)?.NAME_1 ?? id)
     }
+    const physical = WORLD_PHYSICAL_FEATURES.find(feature => feature.id === idStr)
+    if (physical) return physical.name
     const river = loaded.rivers.find(r => String(r.id) === idStr)
     if (river) return river.name
     const country = loaded.countries.find(c => String(c.id) === idStr)
@@ -455,6 +521,10 @@ export function MapsArcade() {
         { id: normalizeStateName(item.state ?? ''), name: item.state ?? '' },
         ...shuffle(pool).slice(0, 2).map(s => ({ id: normalizeStateName(s), name: s })),
       ])
+    }
+    if (state.app === 'world' && (state.category === 'world-rivers' || state.category === 'mountains')) {
+      const pool = currentPool().filter(p => String(p.id) !== String(item.id))
+      return shuffle([item, ...shuffle(pool).slice(0, 2)]).map(p => ({ id: p.id, name: p.name }))
     }
     const pool = currentPool().filter(p => String(p.id) !== String(item.id))
     return shuffle([item, ...shuffle(pool).slice(0, 2)]).map(p => ({ id: p.id, name: p.name }))
@@ -502,6 +572,10 @@ export function MapsArcade() {
         { id: normalizeStateName(item.state ?? ''), name: item.state ?? '' },
         ...shuffle(pool).slice(0, 2).map(s => ({ id: normalizeStateName(s), name: s })),
       ])
+    }
+    if (state.app === 'world' && (state.category === 'world-rivers' || state.category === 'mountains')) {
+      const pool = sourcePool.filter(p => String(p.id) !== String(item.id))
+      return shuffle([item, ...shuffle(pool).slice(0, 2)]).map(p => ({ id: p.id, name: p.name }))
     }
     const pool = sourcePool.filter(p => String(p.id) !== String(item.id))
     return shuffle([item, ...shuffle(pool).slice(0, 2)]).map(p => ({ id: p.id, name: p.name }))
@@ -560,6 +634,8 @@ export function MapsArcade() {
         }
         const river = loaded.rivers.find(r => String(r.id) === idStr)
         if (river) return river.name
+        const physical = WORLD_PHYSICAL_FEATURES.find(feature => feature.id === idStr)
+        if (physical) return physical.name
         const country = loaded.countries.find(c => String(c.id) === idStr)
         return country?.name ?? null
       })()
@@ -647,7 +723,11 @@ export function MapsArcade() {
         ? `Hint: ${state.target.state}`
         : state.category === 'rivers'
           ? `Hint: flows through ${state.target.region}`
-          : `Hint: starts with ${state.target.name[0]}`
+          : state.category === 'world-rivers'
+            ? `Hint: ${state.target.region}`
+            : state.category === 'mountains'
+              ? `Hint: ${state.target.region}`
+              : `Hint: starts with ${state.target.name[0]}`
       patch({ hintsLeft: state.hintsLeft - 1, hintUsed: true })
       showToast({ kind: 'hint', text }, 2200)
       return
@@ -672,6 +752,8 @@ export function MapsArcade() {
   }
 
   function topicTitle() {
+    if (state.app === 'world' && state.category === 'world-rivers') return state.continent ? `${state.continent} Rivers` : 'World Rivers'
+    if (state.app === 'world' && state.category === 'mountains') return 'Mountains and Ranges'
     if (state.app === 'world') return state.continent ?? 'World Mapping'
     if (state.category === 'rivers') return RIVER_SYSTEMS.find(s => s.key === state.riverSystem)?.name ?? 'India Rivers'
     if (state.category === 'parks') return loaded?.parkRegions.find(r => r.key === state.parkRegion)?.name ? cleanRegionName(loaded.parkRegions.find(r => r.key === state.parkRegion)!.name) : 'National Parks'
@@ -698,7 +780,9 @@ export function MapsArcade() {
       return
     }
     if (state.screen === 'setup') {
-      if (state.app === 'world') patch({ screen: 'world-menu', continent: null, toast: null })
+      if (state.app === 'world' && state.category === 'world-rivers') patch({ screen: 'world-river-menu', continent: null, toast: null })
+      else if (state.app === 'world' && state.category === 'mountains') patch({ screen: 'physical-menu', continent: null, toast: null })
+      else if (state.app === 'world') patch({ screen: 'world-menu', continent: null, toast: null })
       else if (state.category === 'rivers') patch({ screen: 'river-menu', toast: null })
       else patch({ screen: 'park-menu', toast: null })
       return
@@ -707,7 +791,11 @@ export function MapsArcade() {
       patch({ screen: 'india-menu', category: null, riverSystem: null, parkRegion: null, toast: null })
       return
     }
-    if (state.screen === 'world-menu' || state.screen === 'india-menu') {
+    if (state.screen === 'world-river-menu') {
+      patch({ screen: 'physical-menu', continent: null, toast: null })
+      return
+    }
+    if (state.screen === 'world-menu' || state.screen === 'physical-menu' || state.screen === 'india-menu') {
       setState(INITIAL)
     }
   }
@@ -717,7 +805,11 @@ export function MapsArcade() {
       ? riverItems(loaded?.rivers ?? rivers, next.riverSystem ?? null).length
       : next.category === 'parks'
         ? parkItems(loaded?.parks ?? [], next.parkRegion ?? null).length
-        : (countriesByContinent[next.continent ?? ''] ?? []).length
+        : next.category === 'world-rivers'
+          ? WORLD_PHYSICAL_FEATURES.filter(feature => feature.kind === 'river' && (!next.continent || feature.continent === next.continent)).length
+          : next.category === 'mountains'
+            ? WORLD_PHYSICAL_FEATURES.filter(feature => feature.kind === 'mountain').length
+            : (countriesByContinent[next.continent ?? ''] ?? []).length
     patch({
       ...next,
       screen: 'setup',
@@ -743,6 +835,11 @@ export function MapsArcade() {
           <button onClick={() => patch({ app: 'world', screen: 'world-menu', category: 'countries' })}>
             <FontAwesomeIcon icon={faEarthAsia} />
             <span><b>World Mapping</b><i>Countries by continent</i></span>
+            <FontAwesomeIcon icon={faChevronRight} />
+          </button>
+          <button onClick={() => patch({ app: 'world', screen: 'physical-menu', category: null })}>
+            <FontAwesomeIcon icon={faMountainSun} />
+            <span><b>Physical Features</b><i>Rivers and mountain chains on a globe</i></span>
             <FontAwesomeIcon icon={faChevronRight} />
           </button>
           <button onClick={() => patch({ app: 'india', screen: 'india-menu' })}>
@@ -773,6 +870,70 @@ export function MapsArcade() {
               </button>
             )
           })}
+        </div>
+      </div>
+    )
+  }
+
+  function renderPhysicalMenu() {
+    const riverCount = WORLD_PHYSICAL_FEATURES.filter(feature => feature.kind === 'river').length
+    const mountainCount = WORLD_PHYSICAL_FEATURES.filter(feature => feature.kind === 'mountain').length
+    return (
+      <div ref={panelRef} className="atlas-panel atlas-india-panel">
+        <div className="atlas-panel-head">
+          <span>World Physical Features</span>
+          <h3>Choose the layer</h3>
+          <p>Trace rivers and mountain chains directly on the globe.</p>
+        </div>
+        <div className="atlas-india-grid">
+          <button className="atlas-india-card river world-river" onClick={() => patch({ app: 'world', category: 'world-rivers', continent: null, screen: 'world-river-menu' })}>
+            <i><FontAwesomeIcon icon={faWater} /></i>
+            <span><b>World Rivers</b><em>{riverCount} rivers · practice by continent</em></span>
+            <FontAwesomeIcon icon={faChevronRight} />
+          </button>
+          <button className="atlas-india-card mountains" onClick={() => openSetup({ app: 'world', category: 'mountains', continent: null })}>
+            <i><FontAwesomeIcon icon={faMountainSun} /></i>
+            <span><b>Mountains</b><em>{mountainCount} range chains with ridge markers</em></span>
+            <FontAwesomeIcon icon={faChevronRight} />
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  function renderWorldRiverMenu() {
+    const continents = ORDER
+      .map(name => ({
+        name,
+        count: WORLD_PHYSICAL_FEATURES.filter(feature => feature.kind === 'river' && feature.continent === name).length,
+      }))
+      .filter(item => item.count > 0)
+    const totalRivers = WORLD_PHYSICAL_FEATURES.filter(feature => feature.kind === 'river').length
+    return (
+      <div ref={panelRef} className="atlas-panel">
+        <div className="atlas-panel-head">
+          <span>World Rivers</span>
+          <h3>Practice by continent</h3>
+          <p>Each round keeps the globe framed on the continent so it feels like a quiz, not a guided tour.</p>
+        </div>
+        <div className="atlas-park-overview">
+          <div>
+            <span>Full river drill</span>
+            <b>All Continents</b>
+            <em>{totalRivers} river trajectories</em>
+          </div>
+          <button onClick={() => openSetup({ app: 'world', category: 'world-rivers', continent: null })}>
+            Practice all
+            <FontAwesomeIcon icon={faChevronRight} />
+          </button>
+        </div>
+        <div className="atlas-list-grid">
+          {continents.map(item => (
+            <button key={item.name} onClick={() => openSetup({ app: 'world', category: 'world-rivers', continent: item.name })}>
+              <i style={{ background: CONT_COLOR[item.name] }} />
+              <span><b>{item.name}</b><em>{item.count} rivers visible together</em></span>
+            </button>
+          ))}
         </div>
       </div>
     )
@@ -1000,7 +1161,7 @@ export function MapsArcade() {
         <div className="atlas-result-actions">
           {state.wrongList.length > 0 && <button onClick={() => startQuiz(state.wrongList)}>Practice missed</button>}
           <button onClick={() => startQuiz()}><FontAwesomeIcon icon={faArrowRotateRight} /> Restart</button>
-          <button onClick={() => patch({ screen: state.category === 'rivers' ? 'river-menu' : state.category === 'parks' ? 'park-menu' : 'world-menu', toast: null })}>Choose topic</button>
+          <button onClick={() => patch({ screen: state.category === 'rivers' ? 'river-menu' : state.category === 'parks' ? 'park-menu' : state.category === 'world-rivers' ? 'world-river-menu' : state.category === 'mountains' ? 'physical-menu' : 'world-menu', continent: state.category === 'world-rivers' ? null : state.continent, toast: null })}>Choose topic</button>
         </div>
       </div>
     )
@@ -1011,6 +1172,8 @@ export function MapsArcade() {
     if (!loaded) return <div className="atlas-loading">Map data could not be loaded.</div>
     if (state.screen === 'home') return renderHome()
     if (state.screen === 'world-menu') return renderWorldMenu()
+    if (state.screen === 'physical-menu') return renderPhysicalMenu()
+    if (state.screen === 'world-river-menu') return renderWorldRiverMenu()
     if (state.screen === 'india-menu') return renderIndiaMenu()
     if (state.screen === 'river-menu') return renderRiverMenu()
     if (state.screen === 'park-menu') return renderParkMenu()
@@ -1047,6 +1210,8 @@ export function MapsArcade() {
               mode={state.mode}
               phase={phase}
               countries={loaded.countries}
+              physicalFeatures={WORLD_PHYSICAL_FEATURES}
+              physicalKind={physicalKind}
               activeContinent={state.continent}
               targetId={mapTargetId}
               chosenId={state.chosenId}
