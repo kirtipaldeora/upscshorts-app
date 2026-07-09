@@ -1,12 +1,16 @@
 import { useState, useRef, useEffect } from 'react'
+import type { CSSProperties } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft, faArrowRight, faShareAlt, faPenFancy, faCircle, faDumbbell, faPlay, faCloudArrowUp, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faArrowRight, faShareAlt, faPenFancy, faCircle, faDumbbell, faPlay, faCloudArrowUp, faChevronLeft, faChevronRight, faStop, faVolumeHigh, faGaugeHigh } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
 import { useHaptic } from '@/hooks/useHaptic'
+import { useNarration } from '@/hooks/useNarration'
 import { gsap, reducedMotion, DUR, EASE } from '@/anim/animations'
 import { CATEGORY_COLORS } from '@/constants/categories'
 import { articleQs } from '@/utils/practiceUtils'
 import type { MainsQuestion, Question } from '@/utils/practiceUtils'
+import { splitUPSCStem } from '@/utils/questionQuality'
+import { articleNarration } from '@/utils/narration'
 import type { Article } from '@/types/article'
 import { QuizPlayer } from '@/components/practice/QuizPlayer'
 import { MainsDetail } from '@/components/practice/MainsDetail'
@@ -16,30 +20,16 @@ interface DeepDiveProps {
 }
 
 type ActiveQuiz = { title: string; questions: Question[] } | null
-
-function splitPrelimsStem(stem: string) {
-  const whichMatch = stem.match(/\bWhich of\b/i)
-  const questionStart = whichMatch?.index ?? -1
-  const setup = questionStart >= 0 ? stem.slice(0, questionStart).trim() : stem.trim()
-  const ask = questionStart >= 0 ? stem.slice(questionStart).trim() : ''
-  const firstStatement = setup.search(/\b1\.\s+/)
-
-  if (firstStatement < 0) {
-    return { lead: setup, statements: [] as string[], ask }
-  }
-
-  const lead = setup.slice(0, firstStatement).trim()
-  const statementText = setup.slice(firstStatement).trim()
-  const statements = Array.from(statementText.matchAll(/\d+\.\s+(.+?)(?=\s+\d+\.\s+|$)/g), m => m[1].trim())
-
-  return { lead, statements, ask }
-}
+const READ_SPEEDS = [1, 1.25, 1.5, 1.75]
+const BASE_READ_RATE = 0.88
 
 export function DeepDive({ onShowToast }: DeepDiveProps) {
   const { activeArticle, setActiveArticle, setDeepDiveReturnOverlay, setOverlay, overlayScreen, deepDiveReturnOverlay, articlesByDate, getArticlesForDate, setScreen } = useAppStore()
   const haptic = useHaptic()
+  const narration = useNarration()
   const [activeQuiz, setActiveQuiz] = useState<ActiveQuiz>(null)
   const [mainsOpen, setMainsOpen] = useState(false)
+  const [readSpeed, setReadSpeed] = useState(1)
   const bodyRef = useRef<HTMLDivElement>(null)
 
   const visible = overlayScreen === 'deep-dive'
@@ -60,18 +50,20 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
   useEffect(() => {
     bodyRef.current?.scrollTo({ top: 0 })
     setReadProgress(0)
+    narration.stop()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [a?.id])
 
   // Sections settle in softly when an article opens or changes
   useEffect(() => {
     const el = bodyRef.current
     if (!el || !visible || !a || reducedMotion()) return
-    const kids = el.querySelectorAll(':scope > *')
-    if (!kids.length) return
-    const tween = gsap.fromTo(kids,
-      { opacity: 0, y: 14 },
-      { opacity: 1, y: 0, duration: DUR.md, ease: EASE.out, stagger: 0.05, clearProps: 'transform,opacity' })
-    return () => { tween.kill() }
+    const ctx = gsap.context(() => {
+      gsap.fromTo('.dd-reader-hero > *, .dd-meta-row > *',
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: DUR.md, ease: EASE.expo, stagger: 0.055, clearProps: 'transform,opacity' })
+    }, el)
+    return () => ctx.revert()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [a?.id, visible])
 
@@ -91,7 +83,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
   }
   const prelimQuestions = a?.prelimsQs ?? []
   const previewPrelims = prelimQuestions[0]
-  const previewStem = previewPrelims ? splitPrelimsStem(previewPrelims.q) : null
+  const previewStem = previewPrelims ? splitUPSCStem(previewPrelims.q) : null
   const articleMainsQuestion: MainsQuestion | null = a?.deepDive.possibleMainsQuestion ? {
     id: `ma-${a.id}`,
     q: a.deepDive.possibleMainsQuestion,
@@ -101,6 +93,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
 
   async function handleClose() {
     await haptic()
+    narration.stop()
     setMainsOpen(false)
     if (deepDiveReturnOverlay) {
       setOverlay(deepDiveReturnOverlay)
@@ -127,6 +120,36 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
     }
   }
 
+  function startArticleReading(article: Article, speed = readSpeed) {
+    return narration.speak(articleNarration(article), {
+      rate: BASE_READ_RATE * speed,
+      pitch: speed > 1.25 ? 1.01 : 1.04,
+    })
+  }
+
+  async function readArticle() {
+    if (!a) return
+    await haptic()
+    if (narration.speaking) {
+      narration.stop()
+      return
+    }
+    const ok = startArticleReading(a)
+    if (!ok) onShowToast('Voice reading is not supported on this device')
+  }
+
+  async function increaseReadSpeed() {
+    if (!a) return
+    await haptic()
+    const currentIndex = READ_SPEEDS.indexOf(readSpeed)
+    const nextSpeed = READ_SPEEDS[(currentIndex + 1) % READ_SPEEDS.length]
+    setReadSpeed(nextSpeed)
+    narration.setVoiceOptions({
+      rate: BASE_READ_RATE * nextSpeed,
+      pitch: nextSpeed > 1.25 ? 1.01 : 1.04,
+    })
+  }
+
   const col = a ? CATEGORY_COLORS[a.category] : '#9DBCE8'
 
   const fdf = (d: string) => {
@@ -137,15 +160,16 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
     })
   }
 
-  function startPrelimsPractice() {
+  async function startPrelimsPractice() {
     if (!a) return
+    await haptic()
     const allArticles = Object.values(articlesByDate).flat()
     const qs = articleQs(allArticles).filter(q => q.aid === a.id)
     if (qs.length) setActiveQuiz({ title: 'Article Practice', questions: qs })
   }
 
   return (
-    <div id="deep-dive" className={visible ? 'active' : ''}>
+    <div id="deep-dive" className={visible ? 'active' : ''} style={{ '--cat': col } as CSSProperties}>
       {/* Header */}
       <div className="dd-header">
         <button onClick={handleClose} aria-label="Back">
@@ -161,8 +185,32 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
       {/* Body */}
       {a && (
         <div className="dd-body" ref={bodyRef} onScroll={onBodyScroll}>
+          <section className="dd-reader-hero">
+            <span>Reader briefing</span>
+            <h1>{a.headline}</h1>
+            <p>{a.summary}</p>
+            <div className="dd-read-controls">
+              <button
+                className={`dd-read-btn ${narration.speaking ? 'on' : ''}`}
+                onClick={readArticle}
+                style={{ '--read-progress': `${narration.progress}%` } as CSSProperties}
+                aria-label={narration.speaking ? `Stop reading, ${Math.round(narration.progress)} percent read` : 'Read article'}
+              >
+                <span className="dd-read-fill" aria-hidden="true" />
+                <span className="dd-read-label">
+                  <FontAwesomeIcon icon={narration.speaking ? faStop : faVolumeHigh} />
+                  {narration.speaking ? `${Math.round(narration.progress)}% read` : 'Read article'}
+                </span>
+              </button>
+              <button className="dd-speed-btn" onClick={increaseReadSpeed} aria-label={`Reading speed ${readSpeed}x`}>
+                <FontAwesomeIcon icon={faGaugeHigh} />
+                {readSpeed}x
+              </button>
+            </div>
+          </section>
+
           {/* Metadata tags */}
-          <div style={{ display: 'flex', gap: 6, marginBottom: 18, flexWrap: 'wrap', alignItems: 'center' }}>
+          <div className="dd-meta-row" style={{ display: 'flex', gap: 6, marginBottom: 18, flexWrap: 'wrap', alignItems: 'center' }}>
             <span
               className="tag tag-cat"
               style={{
@@ -194,6 +242,11 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
 
           <div className="dd-divider"></div>
 
+          <section className="dd-why-panel">
+            <span>Why it matters for UPSC</span>
+            <p>{a.whyItMatters}</p>
+          </section>
+
           {/* Expected Mains Question */}
           <div>
             <div className="dd-section-title">
@@ -204,7 +257,10 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
             {articleMainsQuestion && (
               <button
                 className="pn-btn dd-mains-eval-btn"
-                onClick={() => setMainsOpen(true)}
+                onClick={async () => {
+                  await haptic()
+                  setMainsOpen(true)
+                }}
               >
                 <FontAwesomeIcon icon={faCloudArrowUp} style={{ marginRight: 8 }} />
                 Upload answer for evaluation
@@ -214,7 +270,11 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
 
           {/* Prelims Practice */}
           {previewPrelims && previewStem && (
-            <div style={{ marginTop: 20 }}>
+            <div className="dd-practice-gate" style={{ marginTop: 20 }}>
+              <div className="dd-practice-unlock">
+                <span>Practice unlocked</span>
+                <b>{prelimQuestions.length} prelims questions</b>
+              </div>
               <div className="dd-section-title">
                 <FontAwesomeIcon icon={faDumbbell} style={{ marginRight: 6 }} />
                 Prelims Practice

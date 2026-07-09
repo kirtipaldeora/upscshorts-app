@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFileImport, faCircleCheck, faCircleNotch } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
 import type { ArticlesByDate } from '@/types/article'
+import { contentQualityIssues } from '@/utils/questionQuality'
 
 interface ImportSheetProps {
   visible: boolean
@@ -31,9 +32,16 @@ export function ImportSheet({ visible, onClose, onShowToast }: ImportSheetProps)
       const text = await file.text()
       const data: ArticlesByDate = JSON.parse(text)
       const count = Object.values(data).flat().length
+      const qualityIssues = contentQualityIssues(data)
       mergeArticles(data)
       setAddedCount(count)
       setPhase('success')
+      if (qualityIssues.length > 0) {
+        const prelims = qualityIssues.filter(issue => issue.field === 'prelims').length
+        const deepDive = qualityIssues.filter(issue => issue.field === 'deepDive').length
+        const audio = qualityIssues.filter(issue => issue.field === 'audio').length
+        onShowToast(`Quality check: ${prelims} prelims, ${deepDive} deep dives, ${audio} audio scripts need improvement`)
+      }
     } catch {
       setPhase('idle')
       onShowToast('Invalid JSON file')
@@ -90,7 +98,7 @@ export function ImportSheet({ visible, onClose, onShowToast }: ImportSheetProps)
         <div style={{ width: 40, height: 5, borderRadius: 3, background: 'var(--border)', margin: '0 auto 18px' }} />
 
         <h3 style={{ fontSize: 17, fontWeight: 800, marginBottom: 3, color: 'var(--ink)' }}>Import Content</h3>
-        <p style={{ fontSize: 12, marginBottom: 14, color: 'var(--ink2)' }}>Add a shorts JSON file to update your feed</p>
+        <p style={{ fontSize: 12, marginBottom: 14, color: 'var(--ink2)' }}>Add a generated JSON with shorts, Deep Dives, questions, and Penni Explain scripts</p>
 
         {phase === 'idle' && (
           <>
@@ -114,9 +122,9 @@ export function ImportSheet({ visible, onClose, onShowToast }: ImportSheetProps)
               <FontAwesomeIcon icon={faFileImport} style={{ fontSize: 28, color: 'var(--ink3)', marginBottom: 8, display: 'block' }} />
               <p style={{ color: 'var(--ink2)', fontSize: 13, fontWeight: 600 }}>
                 Tap to select or <strong style={{ color: 'var(--acc)' }}>drag & drop</strong> a{' '}
-                <span style={{ color: 'var(--acc)', fontWeight: 800 }}>shorts JSON</span> file
+                <span style={{ color: 'var(--acc)', fontWeight: 800 }}>Penni JSON</span> file
               </p>
-              <p style={{ fontSize: 11, marginTop: 4, color: 'var(--ink3)' }}>Articles are added to their dates automatically</p>
+              <p style={{ fontSize: 11, marginTop: 4, color: 'var(--ink3)' }}>Every article should include a Penni Explain audioScript</p>
             </div>
             <input ref={fileRef} type="file" accept=".json,application/json" style={{ display: 'none' }} onChange={handleFileChange} />
           </>

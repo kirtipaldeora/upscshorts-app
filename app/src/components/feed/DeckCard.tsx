@@ -6,6 +6,7 @@ import { CATEGORY_COLORS, CATEGORY_ICONS, fmtShort } from '@/constants/categorie
 import { useBookmarkStore } from '@/stores/useBookmarkStore'
 import { useAppStore } from '@/stores/useAppStore'
 import { useHaptic } from '@/hooks/useHaptic'
+import { burstElement, popElement } from '@/anim/animations'
 
 interface DeckViewProps {
   articles: Article[]
@@ -49,7 +50,10 @@ export function DeckView({ articles, onShowToast }: DeckViewProps) {
 
   async function handleBookmark(e: React.MouseEvent, id: string) {
     e.stopPropagation()
+    popElement(e.currentTarget)
     await haptic()
+    const article = articles.find(item => item.id === id)
+    if (article && !isBookmarked(id)) burstElement(e.currentTarget, CATEGORY_COLORS[article.category])
     toggle(id)
     onShowToast(isBookmarked(id) ? 'Bookmark removed' : 'Bookmarked!')
   }
@@ -126,11 +130,12 @@ export function DeckView({ articles, onShowToast }: DeckViewProps) {
           }
 
           const cardStyle: React.CSSProperties = {
+            '--cat': catColor,
             transform: transformStr,
             opacity: opacityVal,
             zIndex: zIndexVal,
             pointerEvents: Math.abs(d) > 2 ? 'none' : 'auto',
-          }
+          } as React.CSSProperties
 
           const formattedDate = fmtShort(a.date).toUpperCase()
 
@@ -138,6 +143,7 @@ export function DeckView({ articles, onShowToast }: DeckViewProps) {
             <div
               key={a.id}
               className={`deck-card ${isCenter ? 'is-center' : 'is-side'}`}
+              data-feed-article={a.id}
               style={cardStyle}
               onClick={() => handleCardClick(i)}
             >

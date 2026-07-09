@@ -6,6 +6,7 @@ import { faBookmark as faBookmarkReg } from '@fortawesome/free-regular-svg-icons
 import { usePracticeStore } from '@/stores/usePracticeStore'
 import { pulseCorrect, shakeWrong } from '@/anim/animations'
 import type { Question } from '@/utils/practiceUtils'
+import { splitUPSCStem } from '@/utils/questionQuality'
 
 interface QuizPlayerProps {
   title: string
@@ -85,6 +86,7 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
 
   const bm = questionBookmarks.includes(q.id)
   const progress = Math.round(((idx + (answered ? 1 : 0)) / total) * 100)
+  const structuredStem = splitUPSCStem(q.q)
 
   return (
     <div className="quiz-overlay">
@@ -116,7 +118,17 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
         </div>
 
         {/* Question */}
-        <div className="qz-q">{q.q}</div>
+        <div className={`qz-q ${structuredStem.statements.length ? 'structured' : ''}`}>
+          {structuredStem.statements.length ? (
+            <>
+              {structuredStem.lead && <p>{structuredStem.lead}</p>}
+              <ol>
+                {structuredStem.statements.map((statement, i) => <li key={i}>{statement}</li>)}
+              </ol>
+              {structuredStem.ask && <p className="qz-ask">{structuredStem.ask}</p>}
+            </>
+          ) : q.q}
+        </div>
 
         {/* Options */}
         <div className="qz-opts">

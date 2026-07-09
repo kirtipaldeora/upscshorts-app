@@ -31,25 +31,27 @@
             "Neither 1 nor 2"
           ],
           "answer": 2,
-          "explanation": "Gadgil (2011) proposed a near-whole-Ghats ESA in three zones; Kasturirangan (2013) diluted it to about 37%."
+          "explanation": "Statement 1 is correct: the Gadgil Committee recommended treating almost the entire Western Ghats as ecologically sensitive, with graded zones of regulation. Statement 2 is also correct: the Kasturirangan Committee later reduced the proposed ESA to about 37%, reflecting a more selective approach."
         },
         {
-          "q": "The National Disaster Response Force (NDRF) and the NDMA were established under which law?",
+          "q": "With reference to disaster-management institutions in India, consider the following statements: 1. The National Disaster Response Force (NDRF) was constituted under the Disaster Management Act, 2005. 2. The National Disaster Management Authority (NDMA) is chaired by the Prime Minister. Which of the statements given above is/are correct?",
           "options": [
-            "Environment (Protection) Act, 1986",
-            "Disaster Management Act, 2005",
-            "National Security Act, 1980",
-            "Epidemic Diseases Act, 1897"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "Both were created under the Disaster Management Act, 2005; the NDMA is chaired by the Prime Minister."
+          "answer": 2,
+          "explanation": "Both statements are correct. The DM Act, 2005 created the statutory framework for NDMA and NDRF; NDMA is chaired by the Prime Minister.",
+          "ref": "Disaster Management Act, 2005"
         }
       ],
       "location": {
         "lat": 11.6,
         "lon": 76.13,
         "place": "Wayanad, Kerala"
-      }
+      },
+      "audioScript": "Penni Explain. Let's understand this news not as a newspaper report, but as a UPSC Mains case study. At first glance, this appears to be a landslide caused by heavy monsoon rainfall in Wayanad, Kerala. But if we stop there, we miss the real lesson. The rainfall triggered the collapse, but unsafe construction practices and weak enforcement turned it into a disaster. The tunnel was under construction in a landslide-prone part of the Western Ghats. During excavation, large quantities of mud and rock were removed from the tunnel. This excavated material, often called spoil, was reportedly dumped in large heaps near the construction site. Now think about what happens during the monsoon. Rainwater continuously enters these loose piles of soil. The soil becomes heavier, loses strength, and can collapse under its own weight. That is what appears to have happened here. The collapsing debris blocked the tunnel entrance and trapped workers inside. Now ask yourself an important question. Was rainfall alone responsible? The answer is no. The District Collector, who also heads the District Disaster Management Authority, had reportedly directed that work be stopped and the dumped soil be removed because it was unsafe. If those directions had been followed properly, the impact of heavy rainfall may have been reduced. This is why the Kerala government described the incident as a man-made disaster. Notice the shift in understanding. Initially, it looks like a geography story. But for the Union Public Service Commission, it is equally a working of government and disaster management story. One of the most useful ideas here is that natural hazards do not automatically become disasters. A disaster happens when a hazard meets exposure and vulnerability. In this case, heavy rainfall was the hazard. The workers and tunnel site were exposed. Unsafe spoil dumping and poor compliance created vulnerability. When these three came together, lives were lost. Now connect this with the Western Ghats. Moist winds from the Arabian Sea rise when they hit the Ghats. As the air rises, it cools and produces very heavy rain. This is called orographic rainfall. Heavy rainfall saturates mountain slopes. Once the soil is saturated, gravity can trigger landslides, especially where slopes have been cut for roads, tunnels, quarrying, or construction. So, in your understanding, never say landslides happen only because of rain. The better answer is that landslides often happen because natural rainfall interacts with human disturbance. This case also reminds us of the Chooralmala landslides of twenty twenty-four, which occurred close to this region and caused massive loss of life. That makes the lesson sharper. In fragile ecological zones, repeated warnings are not abstract paperwork. They are signals that should change how projects are planned and monitored. The Western Ghats are a UNESCO World Heritage landscape and one of the world's richest biodiversity regions. But they are also home to people, roads, plantations, tourism, and infrastructure projects. That is why the real challenge is not development versus environment. The real challenge is safer development. For mains, remember three points from this case. First, disaster management is not only rescue after tragedy. It is risk reduction before tragedy. Second, district-level authorities matter because they are closest to the site and can prevent local risks from becoming disasters. Third, ecological warnings must be enforced, not merely recorded. The committees on the Western Ghats also matter here. The Gadgil Committee recommended strong ecological protection across much of the Ghats. The Kasturirangan Committee later suggested a more limited protected area. The debate is still important because it asks a difficult question: how do we protect fragile mountains without ignoring local livelihoods and development needs? So the final takeaway is this. Wayanad is not just a story of rain and mud. It is a lesson in how unscientific construction, ignored warnings, fragile geography, and weak enforcement can convert a weather event into a human tragedy."
     },
     {
       "id": "ca080726-02",
@@ -73,22 +75,24 @@
       ],
       "prelimsQs": [
         {
-          "q": "The Strait of Hormuz, frequently in the news as an oil chokepoint, lies between:",
+          "q": "With reference to the Strait of Hormuz, consider the following statements: 1. It connects the Persian Gulf with the Gulf of Oman. 2. It separates Iran from Oman/UAE. 3. It lies between Yemen and Djibouti. Which of the statements given above are correct?",
           "options": [
-            "Iran and Oman/UAE",
-            "Yemen and Djibouti",
-            "Egypt and Saudi Arabia",
-            "Oman and Pakistan"
+            "1 and 2 only",
+            "2 and 3 only",
+            "1 and 3 only",
+            "1, 2 and 3"
           ],
           "answer": 0,
-          "explanation": "The Strait of Hormuz lies between Iran and Oman/UAE and carries about 20% of the world's oil trade."
+          "explanation": "Statements 1 and 2 are correct: the Strait of Hormuz connects the Persian Gulf with the Gulf of Oman and lies between Iran and Oman/UAE. Statement 3 is incorrect because the Yemen-Djibouti chokepoint is Bab-el-Mandeb, not Hormuz.",
+          "ref": "West Asian oil chokepoints"
         }
       ],
       "location": {
         "lat": 26.57,
         "lon": 56.25,
         "place": "Strait of Hormuz"
-      }
+      },
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is India's Economic Prospects After the West Asian Crisis. With the US and Iran agreeing a 14-point preliminary MoU to end the West Asian crisis and reopen the Strait of Hormuz, crude prices are set to normalise lower. Economists C. Rangarajan and D.K. Srivastava argue India must recalibrate its economic strategy for 2026-27, build strategic reserves and diversify energy sources. Now, why is this important for UPSC? Monsoon, oil-price and energy-security shocks feeding into growth, fiscal deficit and CAD are core GS 3 Economy — the Hormuz chokepoint is Prelims-worthy. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-03",
@@ -112,22 +116,24 @@
       ],
       "prelimsQs": [
         {
-          "q": "The 97th Constitutional Amendment Act, 2011 is associated with:",
+          "q": "With reference to cooperative societies in India, consider the following statements: 1. The 97th Constitutional Amendment Act inserted Part IXB into the Constitution. 2. The amendment added the right to form cooperative societies under Article 19(1)(c). Which of the statements given above is/are correct?",
           "options": [
-            "Goods and Services Tax",
-            "Cooperative societies",
-            "Panchayati Raj institutions",
-            "The anti-defection law"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "It made forming cooperatives a fundamental right under Article 19(1)(c) and inserted Article 43B (DPSP) and Part IX-B."
+          "answer": 2,
+          "explanation": "Both statements are correct. The 97th Amendment constitutionalised cooperative societies through Part IXB and expanded Article 19(1)(c).",
+          "ref": "97th Constitutional Amendment Act, 2011"
         }
       ],
       "location": {
         "lat": 22.55,
         "lon": 72.96,
         "place": "Anand, Gujarat"
-      }
+      },
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is Ministry of Cooperation at 5 Years: A Worker-Centric Model. Marking five years of the Ministry of Cooperation (created 6 July 2021), an editorial argues the cooperative model offers a worker-centric alternative to hyper-competitive capitalism and must expand beyond agriculture into services. PACS can now run 25+ activities, new multi-State cooperatives have been set up, and a National Cooperation Policy is being drafted. Now, why is this important for UPSC? Cooperatives, 'Sahkar se Samriddhi' and the Centre-State balance are a growing GS 3 economy and GS 2 governance focus; the 97th Amendment and PACS structure are Prelims staples. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-04",
@@ -151,22 +157,24 @@
       ],
       "prelimsQs": [
         {
-          "q": "ECTA, sometimes seen in the news, is an interim free-trade agreement between India and:",
+          "q": "With reference to India-Australia economic relations, consider the following statements: 1. ECTA is an interim free-trade agreement between India and Australia. 2. It was negotiated as a step towards a more comprehensive economic cooperation agreement. Which of the statements given above is/are correct?",
           "options": [
-            "The UAE",
-            "Australia",
-            "The European Union",
-            "The United Kingdom"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "The India-Australia Economic Cooperation and Trade Agreement (ECTA) came into force in 2022."
+          "answer": 2,
+          "explanation": "Both statements are correct. The India-Australia Economic Cooperation and Trade Agreement is an interim FTA and part of the broader CECA track.",
+          "ref": "India-Australia ECTA"
         }
       ],
       "location": {
         "lat": -35.28,
         "lon": 149.13,
         "place": "Canberra, Australia"
-      }
+      },
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is Beyond Three Cs: The New Lexicon of India–Australia Ties. As PM Modi makes his third visit to Australia, the partnership is maturing beyond the old 'three Cs' (Commonwealth, Cricket, Curry) and 'three Ds' (Democracy, Diaspora, Dosti) to new Ds of Development and Defence and Es of Energy and Education, with a $100 bn trade target by 2030 and defence as the fastest-growing area. Now, why is this important for UPSC? India–Australia ties, the Quad and Indo-Pacific supply chains are perennial GS 2 IR themes; ECTA and critical-mineral cooperation are topical. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-05",
@@ -190,33 +198,36 @@
       ],
       "prelimsQs": [
         {
-          "q": "The name 'BrahMos' is derived from:",
+          "q": "With reference to the BrahMos missile, consider the following statements: 1. Its name is derived from the Brahmaputra and Moskva rivers. 2. It is a supersonic cruise missile developed through India-Russia cooperation. Which of the statements given above is/are correct?",
           "options": [
-            "The Brahmani and Mosel rivers",
-            "The Brahmaputra and Moskva rivers",
-            "The cities of Brahma and Moscow",
-            "The Brahmagiri hills and Mostar"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "BrahMos blends the names of the Brahmaputra (India) and Moskva (Russia) rivers."
+          "answer": 2,
+          "explanation": "Both statements are correct. BrahMos combines Brahmaputra and Moskva and is an India-Russia supersonic cruise missile programme.",
+          "ref": "BrahMos basics"
         },
         {
-          "q": "The original 290 km range of BrahMos was capped because of India's obligations under the:",
+          "q": "With reference to BrahMos range and export controls, consider the following statements: 1. The original range of about 290 km reflected the Missile Technology Control Regime threshold. 2. India became a member of the MTCR in 2016, enabling development of longer-range variants. Which of the statements given above is/are correct?",
           "options": [
-            "Wassenaar Arrangement",
-            "Missile Technology Control Regime (MTCR)",
-            "Nuclear Suppliers Group",
-            "Australia Group"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "MTCR norms capped the range at 290 km; after India joined the MTCR in 2016, longer-range variants became possible."
+          "answer": 2,
+          "explanation": "Both statements are correct. The 300-km MTCR threshold shaped the original export-sensitive range; India joined MTCR in 2016.",
+          "ref": "MTCR and BrahMos"
         }
       ],
       "location": {
         "lat": -6.21,
         "lon": 106.85,
         "place": "Jakarta, Indonesia"
-      }
+      },
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is PM Modi's Indonesia Visit: BrahMos Export, Two-State Solution. On the first leg (Indonesia) of a three-nation tour, PM Modi and President Prabowo Subianto oversaw 14 agreements, including deals to export the BrahMos supersonic cruise missile and Astra Mk-1 air-to-air missiles to Indonesia. Modi backed a two-state solution and announced an IIM-Bangalore campus at the Singhasari SEZ, Malang. Now, why is this important for UPSC? India as a defence exporter, ASEAN centrality and Indo-Pacific chokepoints are core GS 2 IR and GS 3 defence themes; BrahMos and MTCR are Prelims-worthy. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-06",
@@ -240,17 +251,19 @@
       ],
       "prelimsQs": [
         {
-          "q": "Which of the following lists the Padma Awards in correct descending order of precedence?",
+          "q": "With reference to the Padma Awards, consider the following statements: 1. The order of precedence is Padma Vibhushan, Padma Bhushan and Padma Shri. 2. These awards are for distinguished service and do not amount to titles under Article 18 when used as decorations. Which of the statements given above is/are correct?",
           "options": [
-            "Padma Shri > Padma Bhushan > Padma Vibhushan",
-            "Padma Vibhushan > Padma Bhushan > Padma Shri",
-            "Padma Bhushan > Padma Vibhushan > Padma Shri",
-            "Padma Vibhushan > Padma Shri > Padma Bhushan"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "The order is Padma Vibhushan > Padma Bhushan > Padma Shri; the Bharat Ratna is the highest civilian award overall."
+          "answer": 2,
+          "explanation": "Both statements are correct. The Padma awards follow that order of precedence and are national honours, not hereditary or titular prefixes.",
+          "ref": "Padma Awards; Article 18"
         }
-      ]
+      ],
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is 'Bridge Man of India' Girish Bharadwaj Passes Away. Girish Bharadwaj, the 'Bridge Man of India', died on 7 July 2026 at Sullia, Karnataka, aged 76. A mechanical-engineering graduate who chose rural service, he built over 140 low-cost suspension (hanging) footbridges across four States, providing last-mile rural connectivity, and was awarded the Padma Shri in 2017. Now, why is this important for UPSC? A clean example of appropriate (frugal) technology for rural connectivity, plus Padma-award precedence — useful for GS 1 society and Prelims. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-07",
@@ -274,17 +287,19 @@
       ],
       "prelimsQs": [
         {
-          "q": "Out-of-pocket expenditure (OOPE) in health financing refers to:",
+          "q": "With reference to out-of-pocket expenditure (OOPE) in health, consider the following statements: 1. It refers to health spending borne directly by households at the point of care. 2. High OOPE can push vulnerable households into poverty and reduce timely access to care. Which of the statements given above is/are correct?",
           "options": [
-            "The government's health budget",
-            "Health spending borne directly by households at the point of care",
-            "Insurance-company payouts",
-            "Foreign aid for the health sector"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "OOPE is direct household spending on health at the point of use — a key impoverishment risk in India."
+          "answer": 2,
+          "explanation": "Both statements are correct. OOPE is direct household payment for health services and is a major cause of health-related financial distress.",
+          "ref": "Health financing basics"
         }
-      ]
+      ],
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is Linking Women's Incomes and Healthcare. New research links rising female labour-force participation with the shift to chronic diseases, arguing that raising women's incomes changes household health investment. Studying India's 2018 EPF reform, female-led beneficiary households cut overall healthcare spending ~11.6% while spending more on nutrition and fitness. Now, why is this important for UPSC? Women's empowerment, health financing and preventive health converge here — a fresh GS 1/GS 2 angle linking employment policy to public health. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-08",
@@ -308,17 +323,19 @@
       ],
       "prelimsQs": [
         {
-          "q": "PM E-DRIVE is the successor to which earlier central scheme for electric mobility?",
+          "q": "With reference to electric-mobility schemes in India, consider the following statements: 1. PM E-DRIVE succeeded the earlier FAME scheme. 2. Such schemes support adoption of electric vehicles and charging infrastructure rather than subsidising fossil-fuel vehicles. Which of the statements given above is/are correct?",
           "options": [
-            "FAME",
-            "UDAY",
-            "SATAT",
-            "PLI"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 0,
-          "explanation": "PM E-DRIVE succeeds the FAME (Faster Adoption and Manufacturing of Electric Vehicles) scheme."
+          "answer": 2,
+          "explanation": "Both statements are correct. PM E-DRIVE is the successor framework after FAME and focuses on EV adoption and related infrastructure.",
+          "ref": "PM E-DRIVE; FAME"
         }
-      ]
+      ],
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is India's EV Transition Cannot Ignore Retrofitment. With the West Asia crisis exposing India's over-85% crude-import dependence, analysts argue that vehicle retrofitment — converting existing internal-combustion vehicles to electric — must be mainstreamed alongside new-EV sales. Over 30 crore ICE vehicles are already on the road while EVs are just 8.5% of new sales. Now, why is this important for UPSC? Transport decarbonisation, the circular economy and energy security are core GS 3; retrofitment is an under-discussed policy lever. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-09",
@@ -342,17 +359,19 @@
       ],
       "prelimsQs": [
         {
-          "q": "Government Securities (G-Secs) are best described as:",
+          "q": "With reference to Government Securities (G-Secs), consider the following statements: 1. They are tradable sovereign debt instruments issued to finance government borrowing. 2. Institutional investors such as insurance companies are important participants in the G-Sec market. Which of the statements given above is/are correct?",
           "options": [
-            "Equity shares issued by public-sector undertakings",
-            "Tradable sovereign debt instruments used to finance the fiscal deficit",
-            "Foreign-currency bonds issued by the RBI",
-            "Concessional loans from multilateral banks"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "G-Secs are tradable sovereign debt (dated securities and T-bills), the 'risk-free' benchmark for pricing other debt."
+          "answer": 2,
+          "explanation": "Both statements are correct. G-Secs are sovereign debt instruments, and long-term institutional investors such as insurers hold large pools of such securities.",
+          "ref": "G-Sec market"
         }
-      ]
+      ],
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is How India's Life Insurance Sector Funds Government Expenditure. Life insurers are the largest domestic funders of government borrowing, since premiums are reinvested for decades in government securities. Life insurers hold close to a quarter of outstanding central G-Secs; LIC alone holds ~19% (₹20.2 lakh crore), making the sector's health a matter of fiscal stability. Now, why is this important for UPSC? Government borrowing, financial markets and the insurance sector's macro role are a nuanced GS 3 Economy theme; G-Secs and D-SII are Prelims-worthy. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-10",
@@ -376,33 +395,36 @@
       ],
       "prelimsQs": [
         {
-          "q": "Under the Constitution, disputes relating to the waters of inter-State rivers are dealt with under:",
+          "q": "With reference to inter-State river water disputes, consider the following statements: 1. Article 262 empowers Parliament to provide for adjudication of disputes relating to inter-State rivers. 2. Parliament may by law exclude the jurisdiction of courts over such disputes. Which of the statements given above is/are correct?",
           "options": [
-            "Article 131",
-            "Article 262",
-            "Article 263",
-            "Article 356"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "Article 262 empowers Parliament to legislate (the ISRWD Act, 1956) and can bar the jurisdiction of courts in such disputes."
+          "answer": 2,
+          "explanation": "Both statements are correct. Article 262 specifically enables adjudication by law and exclusion of court jurisdiction.",
+          "ref": "Article 262"
         },
         {
-          "q": "The river Narmada originates at:",
+          "q": "With reference to the river Narmada, consider the following statements: 1. It originates from the Amarkantak plateau. 2. It is one of the major west-flowing peninsular rivers draining into the Arabian Sea. Which of the statements given above is/are correct?",
           "options": [
-            "Amarkantak",
-            "Mahabaleshwar",
-            "Trimbak",
-            "Amravati"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 0,
-          "explanation": "The Narmada rises at Amarkantak in Madhya Pradesh and flows west into the Arabian Sea through a rift valley."
+          "answer": 2,
+          "explanation": "Both statements are correct. The Narmada rises near Amarkantak and is a major west-flowing peninsular river. Unlike the Ganga-Brahmaputra system, it drains westwards into the Arabian Sea, making it important for map-based UPSC questions.",
+          "ref": "Indian river systems"
         }
       ],
       "location": {
         "lat": 21.83,
         "lon": 73.75,
         "place": "Sardar Sarovar, Gujarat"
-      }
+      },
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is Four States Sign Pact on Narmada (Sardar Sarovar) Dues. The four Narmada Award beneficiary States — Gujarat, MP, Maharashtra and Rajasthan — signed a one-time settlement resolving long-pending payment issues over the Sardar Sarovar Project, in the presence of Amit Shah and C.R. Patil. It showcases cooperative federalism in resolving a decades-old inter-State water dispute without litigation. Now, why is this important for UPSC? Inter-State water disputes, cooperative federalism and the constitutional scheme (Article 262, ISRWD Act) are core GS 2 polity and GS 1 geography. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-11",
@@ -426,22 +448,24 @@
       ],
       "prelimsQs": [
         {
-          "q": "Under the RTI Act, 2005, a 'public authority' includes a body that is:",
+          "q": "With reference to the RTI Act, 2005, consider the following statements: 1. A body established by the Constitution, a law, or government notification can be a public authority. 2. A non-government body substantially financed by government can also fall within the definition of public authority. Which of the statements given above is/are correct?",
           "options": [
-            "Only a ministry of the Union government",
-            "Established by the Constitution, a law, a notification, or substantially government-financed",
-            "Any registered private trust",
-            "Only bodies wholly owned by the State"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "Section 2(h) covers bodies established by the Constitution/law/notification or substantially financed by the government."
+          "answer": 2,
+          "explanation": "Both statements are correct. Section 2(h) includes bodies created by law/notification and substantially government-financed non-government bodies.",
+          "ref": "RTI Act, Section 2(h)"
         }
       ],
       "location": {
         "lat": 26.79,
         "lon": 82.19,
         "place": "Ayodhya, UP"
-      }
+      },
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is Ram Temple Trust: SIT Finds Donation Pilferage; CEO Post Created. A UP-government SIT found prima facie proof of theft and pilferage during donation-counting at the Shri Ram Janmabhoomi Teerth Kshetra. The Trust accepted resignations and will appoint a CEO for the first time. The CIC has held the Trust is not a 'public authority' under the RTI Act, highlighting a transparency gap. Now, why is this important for UPSC? Transparency, RTI's 'public authority' definition and temple-governance models are a topical GS 2 governance case study. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-12",
@@ -465,22 +489,24 @@
       ],
       "prelimsQs": [
         {
-          "q": "Under the Prohibition of Child Marriage Act, 2006, the minimum age of marriage is:",
+          "q": "With reference to the Prohibition of Child Marriage Act, 2006, consider the following statements: 1. The minimum age of marriage is 21 years for men and 18 years for women. 2. Child marriages are generally voidable at the option of the contracting party who was a child. Which of the statements given above is/are correct?",
           "options": [
-            "18 for both men and women",
-            "21 for men and 18 for women",
-            "21 for both men and women",
-            "18 for men and 21 for women"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "The PCMA sets 21 for men and 18 for women; a child marriage is voidable at the option of a party who was a minor."
+          "answer": 2,
+          "explanation": "Both statements are correct. PCMA keeps the age at 21/18 and treats most child marriages as voidable, with certain aggravated cases void.",
+          "ref": "PCMA, 2006"
         }
       ],
       "location": {
         "lat": 25.44,
         "lon": 81.85,
         "place": "Prayagraj, UP"
-      }
+      },
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is HC Upholds Uniform Legal Marriage Age for All Religions. The Allahabad High Court held that the minimum marriage age under the PCMA, 2006 applies to all citizens irrespective of religion, and that the Muslim personal-law principle of puberty as the marriageable age cannot override the central law. It agreed with the Kerala HC that personal law cannot dilute PCMA or POCSO. Now, why is this important for UPSC? Personal law versus secular statute, child protection and the Uniform Civil Code debate are a conceptually clean GS 2 polity theme. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-13",
@@ -504,17 +530,19 @@
       ],
       "prelimsQs": [
         {
-          "q": "The right to privacy was unanimously declared a fundamental right under Article 21 in which case?",
+          "q": "With reference to informational privacy in India, consider the following statements: 1. The Supreme Court recognised privacy as a fundamental right in K.S. Puttaswamy v. Union of India. 2. The judgment located privacy within the guarantees of life, liberty and dignity under Part III. Which of the statements given above is/are correct?",
           "options": [
-            "ADM Jabalpur v. Shivkant Shukla",
-            "K.S. Puttaswamy v. Union of India",
-            "Maneka Gandhi v. Union of India",
-            "Kesavananda Bharati v. State of Kerala"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "The 2017 nine-judge Bench in K.S. Puttaswamy held privacy to be a fundamental right under Article 21."
+          "answer": 2,
+          "explanation": "Both statements are correct. Puttaswamy (2017) unanimously recognised privacy as a fundamental right grounded in Part III, especially Article 21.",
+          "ref": "K.S. Puttaswamy judgment"
         }
-      ]
+      ],
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is WhatsApp 'Username' Debate Brings Informational Privacy to the Fore. A debate has arisen over WhatsApp's optional 'username' feature: WhatsApp says it enhances privacy by hiding phone numbers, while MeitY fears it could enable cybercrime — both invoking informational privacy. The episode illustrates balancing individual privacy, corporate innovation and state security under the Puttaswamy framework. Now, why is this important for UPSC? Privacy as a fundamental right, the proportionality test and the DPDP Act are high-yield GS 2 polity and GS 3 cyber themes. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-14",
@@ -538,17 +566,19 @@
       ],
       "prelimsQs": [
         {
-          "q": "The Bar Council of India is a statutory body constituted under the:",
+          "q": "With reference to the Bar Council of India, consider the following statements: 1. It is a statutory body constituted under the Advocates Act, 1961. 2. It has functions relating to standards of legal education and regulation of the legal profession. Which of the statements given above is/are correct?",
           "options": [
-            "Advocates Act, 1961",
-            "Legal Services Authorities Act, 1987",
-            "Contempt of Courts Act, 1971",
-            "Judges (Inquiry) Act, 1968"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 0,
-          "explanation": "The BCI is created under the Advocates Act, 1961 and regulates legal education and the legal profession."
+          "answer": 2,
+          "explanation": "Both statements are correct. The BCI is established under the Advocates Act and regulates professional standards as well as legal education norms.",
+          "ref": "Advocates Act, 1961"
         }
-      ]
+      ],
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is Independence of the Bar is Crucial for the Rule of Law: SC. The Supreme Court held that the independence of the Bar is as vital as judicial independence and is the foundation of the rule of law. It proposed a full-time 'National Legal Academy', directed the Bar Council of India to audit disciplinary mechanisms, and called pendency the greatest challenge to justice delivery. Now, why is this important for UPSC? The legal profession, self-regulation and the rule of law (a Basic Structure feature) are a clean GS 2 judiciary theme. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-15",
@@ -572,17 +602,19 @@
       ],
       "prelimsQs": [
         {
-          "q": "The proposed Index of Services Production (ISP) will draw primarily on:",
+          "q": "With reference to the proposed Index of Services Production (ISP), consider the following statements: 1. It is intended to improve high-frequency measurement of services-sector activity. 2. GST data is expected to be a key input for constructing the index. Which of the statements given above is/are correct?",
           "options": [
-            "Income-tax returns",
-            "GST data",
-            "Census data",
-            "RBI household surveys"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "The committee recommends GST data as the ISP's major source, which is why it covers only the GST-registered formal sector."
+          "answer": 2,
+          "explanation": "Both statements are correct. ISP aims to capture services activity more regularly, with GST data serving as a major administrative data source.",
+          "ref": "Index of Services Production"
         }
-      ]
+      ],
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is New Index of Services Production (ISP) to Rely on GST Data. The technical committee designing India's new Index of Services Production (ISP) recommends it rely heavily on GST data, supplemented by administrative data and the ASISSE survey. The first release is on 29 July 2026 — India's first attempt to periodically quantify formal services-sector production, akin to the IIP for industry. Now, why is this important for UPSC? National income statistics, the services sector and GST-based data are a topical GS 3 economy theme; the formal-only coverage is a key nuance. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-16",
@@ -606,17 +638,19 @@
       ],
       "prelimsQs": [
         {
-          "q": "The Gross Enrolment Ratio (GER) can exceed 100% because:",
+          "q": "With reference to Gross Enrolment Ratio (GER), consider the following statements: 1. It can exceed 100% because it includes over-age and under-age students enrolled at a given level. 2. It is calculated against the population of the official age group for that level of education. Which of the statements given above is/are correct?",
           "options": [
-            "Every child is counted twice",
-            "It includes over-age and under-age enrolments against the official age group",
-            "It counts teachers as well as students",
-            "Private-school students are excluded"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "GER divides all students enrolled at a level by the official school-age population, so over/under-age enrolment can push it above 100%."
+          "answer": 2,
+          "explanation": "Both statements are correct. GER compares total enrolment at a level, regardless of age, with the official age-group population.",
+          "ref": "UDISE+; education indicators"
         }
-      ]
+      ],
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is School Dropout Rate Falls Across Key Stages: UDISE+ Report. The UDISE+ report for 2025-26 shows falling dropouts and gains in enrolment, retention, teacher strength and infrastructure. Secondary dropout dipped from 8.2% to 7.0%, secondary GER rose to 71.7%, and women are now 54.9% of all teachers — broadly aligning with NEP 2020 targets. Now, why is this important for UPSC? Education indicators, UDISE+, GER and NEP 2020 are recurring GS 2 governance and human-development themes. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-17",
@@ -640,22 +674,24 @@
       ],
       "prelimsQs": [
         {
-          "q": "In strategic commentary, 'G2' usually refers to a hypothetical duopoly of:",
+          "q": "With reference to strategic commentary on the Indo-Pacific, consider the following statements: 1. The term G2 usually refers to a hypothetical US-China duopoly in global affairs. 2. A G-Minus 2 approach implies building issue-based coalitions without allowing the US-China rivalry alone to define the regional order. Which of the statements given above is/are correct?",
           "options": [
-            "India and China",
-            "The US and China",
-            "The US and Russia",
-            "The EU and China"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "'G2' denotes a US-China condominium managing global and Asian affairs — an outcome India seeks to avoid."
+          "answer": 2,
+          "explanation": "Both statements are correct. G2 commonly denotes a US-China condominium, while G-Minus 2 stresses agency for other Indo-Pacific actors.",
+          "ref": "Indo-Pacific strategic vocabulary"
         }
       ],
       "location": {
         "lat": 28.61,
         "lon": 77.21,
         "place": "New Delhi"
-      }
+      },
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is For the Indo-Pacific, a 'G-Minus 2' Strategy. C. Raja Mohan frames PM Modi's eastward tour (Indonesia, Australia, New Zealand) as a 'G-Minus Two' approach — Asian powers deepening cooperation among themselves rather than resigning to a US-China condominium (G2), especially amid Trump discarding 'Indo-Pacific' terminology. The aim is to de-risk, not decouple, from China. Now, why is this important for UPSC? Great-power competition, strategic autonomy and minilaterals are central GS 2 IR themes with fresh framing. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-18",
@@ -679,22 +715,24 @@
       ],
       "prelimsQs": [
         {
-          "q": "A key advantage of Synthetic Aperture Radar (SAR) over electro-optical sensors is that SAR:",
+          "q": "With reference to Synthetic Aperture Radar (SAR), consider the following statements: 1. It uses active microwave signals rather than relying only on reflected sunlight. 2. It can image the Earth through cloud cover and during night-time. Which of the statements given above is/are correct?",
           "options": [
-            "Produces natural colour images",
-            "Can image through clouds and at night",
-            "Requires no power source",
-            "Works only in daylight"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "SAR is an active microwave sensor that images day and night and through clouds, unlike EO sensors that need daylight and clear skies."
+          "answer": 2,
+          "explanation": "Both statements are correct. SAR is an active radar system and is valuable for all-weather, day-night Earth observation.",
+          "ref": "SAR remote sensing"
         }
       ],
       "location": {
         "lat": 12.97,
         "lon": 77.59,
         "place": "Bengaluru"
-      }
+      },
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is Contact Lost with Mission Drishti — World's First OptoSAR Satellite. Bengaluru start-up GalaxEye lost contact with Mission Drishti — described as the world's first OptoSAR satellite and India's largest privately developed Earth-observation satellite — after an anomaly following a geomagnetic solar storm. It fused electro-optical and SAR sensors on a single platform for all-weather, high-detail imaging. Now, why is this important for UPSC? Private space, SAR vs EO sensors and space weather are core GS 3 S&T; GalaxEye reflects the post-2020 opening of India's space sector. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-19",
@@ -718,17 +756,19 @@
       ],
       "prelimsQs": [
         {
-          "q": "The glomeruli, referred to in health reporting on kidney disease, are the functional filtering units of the:",
+          "q": "With reference to glomeruli in human kidneys, consider the following statements: 1. They are microscopic filtering units involved in removing waste from blood. 2. Damage to glomeruli can contribute to chronic kidney disease and protein leakage in urine. Which of the statements given above is/are correct?",
           "options": [
-            "Liver",
-            "Kidneys",
-            "Lungs",
-            "Pancreas"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "Glomeruli are the kidneys' tiny filtering units; their damage (e.g. IgA nephropathy) is a major cause of kidney failure."
+          "answer": 2,
+          "explanation": "Both statements are correct. Glomeruli filter blood in the kidneys; their damage is central to several kidney diseases.",
+          "ref": "Kidney physiology"
         }
-      ]
+      ],
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is Finerenone Slows Kidney Disease in Patients Without Diabetes. Three global studies show finerenone — earlier used mainly in diabetes-related kidney disease — can help a much broader group of chronic kidney disease patients, including those without diabetes, by blocking inflammation and scarring. Costs are expected to fall after patent expiry in 2028. Now, why is this important for UPSC? Health, clinical research and drug affordability (patent expiry, generics) are recurring GS 3 S&T themes. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-20",
@@ -752,22 +792,24 @@
       ],
       "prelimsQs": [
         {
-          "q": "The Delhi Ridge is the northern extension of which mountain range?",
+          "q": "With reference to the Delhi Ridge, consider the following statements: 1. It is the northern extension of the Aravalli Range. 2. It functions as an important ecological buffer and green lung for Delhi. Which of the statements given above is/are correct?",
           "options": [
-            "Vindhya Range",
-            "Aravalli Range",
-            "Satpura Range",
-            "Shivalik Range"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "The Delhi Ridge is the tail end of the Aravallis, acting as the city's green lung and a barrier against desert dust."
+          "answer": 2,
+          "explanation": "Both statements are correct. The Delhi Ridge is part of the Aravalli system and has major ecological significance for the city.",
+          "ref": "Delhi Ridge; Aravalli Range"
         }
       ],
       "location": {
         "lat": 28.65,
         "lon": 77.22,
         "place": "Delhi Ridge"
-      }
+      },
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is Delhi Ridge to be Revived with Legal Protection; 70 Lakh Trees. Home Minister Amit Shah launched the Delhi Ridge Rejuvenation Campaign and a 'Mission 70 Lakh Plantation' drive, pledging to develop 6,300 hectares of Ridge into forest over four years with legal protection. Delhi has now declared 5,000 hectares as forest land after three decades without a final notification. Now, why is this important for UPSC? Urban ecology, the Aravallis and forest law (Indian Forest Act) are recurring GS 3 environment themes. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-21",
@@ -791,17 +833,19 @@
       ],
       "prelimsQs": [
         {
-          "q": "Which of the following is true of a Non-Banking Financial Company (NBFC)?",
+          "q": "With reference to Non-Banking Financial Companies (NBFCs), consider the following statements: 1. They cannot accept demand deposits like banks. 2. Many NBFCs are regulated by the Reserve Bank of India. Which of the statements given above is/are correct?",
           "options": [
-            "It can accept demand deposits like a bank",
-            "It cannot accept demand deposits and lacks a full banking licence",
-            "It is regulated by SEBI",
-            "It is barred from lending against gold"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "NBFCs offer credit but cannot accept demand deposits and lack a full banking licence; they are regulated by the RBI."
+          "answer": 2,
+          "explanation": "Both statements are correct. NBFCs do not have a full banking licence to accept demand deposits, and RBI regulates major NBFC categories.",
+          "ref": "NBFC regulation"
         }
-      ]
+      ],
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is NBFC Gold-Loan Growth: Price Surge Fuels a Boom. Gold loans have become the fastest-growing segment of retail credit for NBFCs, driven by record-high gold prices. NBFC gold-loan outstanding surged 69.9% year-on-year to ₹3.29 lakh crore, aiding financial inclusion — but rising loan roll-overs ('ever-greening') warrant close RBI supervision. Now, why is this important for UPSC? NBFCs, financial inclusion and RBI regulation (LTV, priority-sector lending) are staple GS 3 economy topics. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-22",
@@ -825,22 +869,24 @@
       ],
       "prelimsQs": [
         {
-          "q": "The New Development Bank, associated with BRICS, is headquartered at:",
+          "q": "With reference to the New Development Bank (NDB), consider the following statements: 1. It was established by BRICS countries. 2. It is headquartered in Shanghai. Which of the statements given above is/are correct?",
           "options": [
-            "Beijing",
-            "Shanghai",
-            "New Delhi",
-            "Moscow"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "The NDB is headquartered in Shanghai; BRICS also operates a Contingent Reserve Arrangement."
+          "answer": 2,
+          "explanation": "Both statements are correct. The New Development Bank was created by BRICS countries to finance infrastructure and sustainable development projects. Its headquarters is in Shanghai, which is a frequently tested static-current linkage.",
+          "ref": "BRICS; NDB"
         }
       ],
       "location": {
         "lat": 26.14,
         "lon": 91.74,
         "place": "Guwahati, Assam"
-      }
+      },
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is BRICS Nations Adopt Guwahati Declaration on Drug Trafficking. The BRICS nations adopted the Guwahati Declaration, reaffirming cooperation to combat illicit drug trafficking and related transnational organised crime. Members flagged synthetic drugs, precursor-chemical diversion and misuse of virtual assets, and India cited a three-year road map through the NCB. Now, why is this important for UPSC? BRICS membership and expansion, global governance and internal security (drug trafficking) are recurring GS 2/GS 3 themes. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-23",
@@ -864,17 +910,19 @@
       ],
       "prelimsQs": [
         {
-          "q": "'Crowding out', in the context of government finances, refers to:",
+          "q": "With reference to crowding out in public finance, consider the following statements: 1. It can occur when government borrowing absorbs financial resources that may otherwise be available for private investment. 2. It is more likely to be discussed in contexts of high fiscal deficits and constrained savings. Which of the statements given above is/are correct?",
           "options": [
-            "Excess demand for public services",
-            "Government spending reducing resources available for private/productive investment",
-            "Rural-to-urban migration",
-            "Over-subscription of a bond issue"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "Crowding out is when high government or subsidy spending reduces the resources available for productive private investment."
+          "answer": 2,
+          "explanation": "Both statements are correct. Crowding out refers to public borrowing/spending reducing space for private or productive investment.",
+          "ref": "Fiscal policy concepts"
         }
-      ]
+      ],
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is The Safety Net and the Trade-Off: Women's Cash-Transfer Schemes. Unconditional cash-transfer schemes for women are proliferating across States. In 2025-26, 12 States were estimated to spend ₹1.68 lakh crore on such transfers. An EAC-PM paper finds they raised consumption and savings, but the RBI warns they risk crowding out investment. Now, why is this important for UPSC? Welfare schemes, State finances and fiscal prudence are a topical GS 2 governance and GS 3 economy debate. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-24",
@@ -898,22 +946,24 @@
       ],
       "prelimsQs": [
         {
-          "q": "Under the Indian Forest Act, 1927, in which category are activities permitted unless specifically prohibited?",
+          "q": "With reference to forest categories under the Indian Forest Act, 1927, consider the following statements: 1. In a Protected Forest, activities are generally permitted unless specifically prohibited. 2. In a Reserved Forest, activities are generally prohibited unless specifically permitted. Which of the statements given above is/are correct?",
           "options": [
-            "Reserved Forest",
-            "Protected Forest",
-            "National Park",
-            "Wildlife Sanctuary"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "In a Protected Forest, activities are allowed unless prohibited; in a Reserved Forest they are banned unless expressly permitted."
+          "answer": 2,
+          "explanation": "Both statements are correct. Protected Forests and Reserved Forests differ in the default rule regarding permitted activities.",
+          "ref": "Indian Forest Act, 1927"
         }
       ],
       "location": {
         "lat": 26.2,
         "lon": 92.94,
         "place": "Assam"
-      }
+      },
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is Eight Wildlife Sanctuaries, 281 Reserve Forests Encroached in Assam. Assam's Forest Minister told the Assembly that eight wildlife sanctuaries and 281 reserve forests are under encroachment, presenting data on illegal occupation and human-elephant conflict. The State has evicted squatters from 25,588 hectares, but balancing conservation with rehabilitation remains a challenge. Now, why is this important for UPSC? Forest governance, protected-area categories and human-wildlife conflict are recurring GS 3 environment themes. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-25",
@@ -937,22 +987,24 @@
       ],
       "prelimsQs": [
         {
-          "q": "Article 5 of the NATO treaty embodies the principle of:",
+          "q": "With reference to Article 5 of the North Atlantic Treaty, consider the following statements: 1. It embodies the principle of collective defence among NATO members. 2. It treats an armed attack against one or more members as an attack against all. Which of the statements given above is/are correct?",
           "options": [
-            "Non-alignment",
-            "Collective defence — an attack on one member is an attack on all",
-            "Nuclear no-first-use",
-            "Freedom of navigation"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "Article 5 is NATO's collective-defence clause: an armed attack on one member is treated as an attack on all members."
+          "answer": 2,
+          "explanation": "Both statements are correct. Article 5 is NATO's collective-defence clause: an armed attack on one or more members is treated as an attack on all. This makes it central to questions on alliance politics and transatlantic security.",
+          "ref": "NATO Article 5"
         }
       ],
       "location": {
         "lat": 39.93,
         "lon": 32.85,
         "place": "Ankara, Turkey"
-      }
+      },
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is NATO Flaunts Arms Deals as Trump Targets European Allies. At a summit in Ankara, NATO leaders unveiled arms deals worth at least $50 billion to signal higher defence spending, even as President Trump said he felt 'let down' by European allies and renewed his push to control Greenland. The US also moved to lift 2020 sanctions on Turkey over its S-400 purchase. Now, why is this important for UPSC? NATO, transatlantic strains and CAATSA-type sanctions (relevant to India's S-400) are topical GS 2 IR themes. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
       "id": "ca080726-26",
@@ -976,22 +1028,24 @@
       ],
       "prelimsQs": [
         {
-          "q": "The Central Bureau of Investigation (CBI) derives its powers from which law?",
+          "q": "With reference to the Central Bureau of Investigation (CBI), consider the following statements: 1. It derives its police powers from the Delhi Special Police Establishment Act, 1946. 2. General consent of a State is normally relevant for CBI investigation within that State, unless directed by constitutional courts. Which of the statements given above is/are correct?",
           "options": [
-            "The CBI Act, 1963",
-            "The Delhi Special Police Establishment Act, 1946",
-            "The Police Act, 1861",
-            "The NIA Act, 2008"
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
           ],
-          "answer": 1,
-          "explanation": "The CBI has no dedicated statute of its own; it functions under the Delhi Special Police Establishment Act, 1946."
+          "answer": 2,
+          "explanation": "Both statements are correct. CBI functions through the DSPE Act framework; State consent is normally needed, subject to court-directed investigations.",
+          "ref": "DSPE Act; CBI jurisdiction"
         }
       ],
       "location": {
         "lat": 10.96,
         "lon": 78.08,
         "place": "Karur, Tamil Nadu"
-      }
+      },
+      "audioScript": "Namaskar. In today's Penni current affairs short, the story is SC Refuses DMK Plea Against TVK Remarks on Karur Stampede. The Supreme Court refused a DMK plea seeking to bar TVK leaders from statements linking rivals to the Karur stampede, saying such a bar could amount to an injunction on free speech. It advised countering 'speech with more speech', reinforcing a robust reading of Article 19(1)(a). Now, why is this important for UPSC? Free speech, reasonable restrictions and judicial reluctance to grant prior restraint are a clean GS 2 polity theme. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     }
   ]
 }

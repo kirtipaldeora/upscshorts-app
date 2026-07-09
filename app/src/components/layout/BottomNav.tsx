@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faHouse,
@@ -8,6 +9,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore, type Screen } from '@/stores/useAppStore'
 import { useHaptic } from '@/hooks/useHaptic'
+import { EASE, gsap, popElement, reducedMotion } from '@/anim/animations'
 
 interface NavItem {
   screen?: Screen
@@ -19,6 +21,7 @@ interface NavItem {
 export function BottomNav() {
   const { activeScreen, setScreen } = useAppStore()
   const haptic = useHaptic()
+  const navRef = useRef<HTMLElement>(null)
 
   const items: NavItem[] = [
     { screen: 'feed',     icon: faHouse,      label: 'Feed' },
@@ -37,8 +40,31 @@ export function BottomNav() {
     }
   }
 
+  useEffect(() => {
+    const nav = navRef.current
+    if (!nav || reducedMotion()) return
+    const tween = gsap.fromTo(nav,
+      { opacity: 0, y: 18, scale: 0.96, xPercent: -50 },
+      { opacity: 1, y: 0, scale: 1, xPercent: -50, duration: 0.48, ease: EASE.expo, clearProps: 'opacity' })
+    return () => { tween.kill() }
+  }, [])
+
+  useEffect(() => {
+    const nav = navRef.current
+    if (!nav || reducedMotion()) return
+    const active = nav.querySelector('.nav-item.active')
+    popElement(active)
+    if (active) {
+      gsap.fromTo(active.querySelector('svg'),
+        { y: 4, rotate: -8 },
+        { y: 0, rotate: 0, duration: 0.42, ease: EASE.micro, clearProps: 'transform' })
+    }
+  }, [activeScreen])
+
   return (
     <nav
+      ref={navRef}
+      className="bottom-nav-motion"
       style={{
         position: 'absolute',
         bottom: 'calc(16px + env(safe-area-inset-bottom))',

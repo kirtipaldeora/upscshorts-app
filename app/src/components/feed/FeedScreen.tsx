@@ -1,7 +1,10 @@
+import { useMemo } from 'react'
+import type { CSSProperties } from 'react'
 import { useAppStore } from '@/stores/useAppStore'
 import { useArticles } from '@/hooks/useArticles'
 import { useGsapReveal, useStaggerReveal } from '@/anim/animations'
 import { TopBar } from '@/components/layout/TopBar'
+import { CATEGORY_COLORS } from '@/constants/categories'
 import { DateTabs } from './DateTabs'
 import { ViewToggle } from './ViewToggle'
 import { FeedCard } from './FeedCard'
@@ -18,6 +21,21 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
 
   const dates = getAvailableDates()
   const articles = getArticlesForDate(selectedDate)
+  const briefing = useMemo(() => {
+    const categories = new Map<string, number>()
+    const gs = new Set<string>()
+    articles.forEach(article => {
+      categories.set(article.category, (categories.get(article.category) ?? 0) + 1)
+      gs.add(article.gsPaper)
+    })
+    const topCategory = [...categories.entries()].sort((a, b) => b[1] - a[1])[0]
+    return {
+      topCategory: topCategory?.[0] ?? 'Briefing',
+      topCategoryCount: topCategory?.[1] ?? 0,
+      gsCount: gs.size,
+      accent: topCategory ? CATEGORY_COLORS[topCategory[0] as keyof typeof CATEGORY_COLORS] : 'var(--acc)',
+    }
+  }, [articles])
 
   // Motion: hero settles in, list cards stagger upward on date/view change
   const heroRef = useGsapReveal<HTMLDivElement>([])
@@ -45,6 +63,11 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
             <span className="hero-ch" aria-hidden="true" key={i}>{ch}</span>
           ))}
         </h2>
+        <div className="briefing-rail" style={{ '--rail': briefing.accent } as CSSProperties}>
+          <span><b>{articles.length}</b> stories</span>
+          <span><b>{briefing.gsCount}</b> GS areas</span>
+          <span><i />{briefing.topCategoryCount ? `${briefing.topCategory} leads` : 'Ready when imported'}</span>
+        </div>
       </div>
 
       {/* Date tabs */}

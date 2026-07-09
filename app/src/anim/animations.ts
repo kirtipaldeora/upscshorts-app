@@ -116,6 +116,22 @@ export function popElement(el: Element | null) {
   gsap.fromTo(el, { scale: 0.75 }, { scale: 1, duration: 0.4, ease: EASE.micro, clearProps: 'scale' })
 }
 
+export function burstElement(el: Element | null, color = 'var(--yellow)') {
+  if (!el || reducedMotion() || typeof document === 'undefined') return
+  const rect = (el as HTMLElement).getBoundingClientRect()
+  const burst = document.createElement('span')
+  burst.className = 'motion-burst'
+  Object.assign(burst.style, {
+    left: `${rect.left + rect.width / 2}px`,
+    top: `${rect.top + rect.height / 2}px`,
+    '--burst': color,
+  } as unknown as CSSStyleDeclaration)
+  document.body.appendChild(burst)
+  gsap.fromTo(burst,
+    { opacity: 0.8, scale: 0.25 },
+    { opacity: 0, scale: 1.7, duration: 0.5, ease: 'power2.out', onComplete: () => burst.remove() })
+}
+
 export function pulseCorrect(el: Element | null) {
   if (!el || reducedMotion()) return
   gsap.fromTo(el, { scale: 0.985 }, { scale: 1, duration: 0.45, ease: EASE.micro, clearProps: 'scale' })

@@ -1,12 +1,12 @@
+import type { CSSProperties, MouseEvent } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBookmark as faBookmarkSolid, faShareAlt, faExpand } from '@fortawesome/free-solid-svg-icons'
-import { faBookmark as faBookmarkRegular } from '@fortawesome/free-solid-svg-icons'
 import type { Article } from '@/types/article'
 import { CATEGORY_COLORS, CATEGORY_ICONS, fmtShort } from '@/constants/categories'
 import { useBookmarkStore } from '@/stores/useBookmarkStore'
 import { useAppStore } from '@/stores/useAppStore'
 import { useHaptic } from '@/hooks/useHaptic'
-import { popElement } from '@/anim/animations'
+import { burstElement, popElement } from '@/anim/animations'
 
 interface FeedCardProps {
   article: Article
@@ -22,15 +22,16 @@ export function FeedCard({ article, animationDelay = 0, onShowToast }: FeedCardP
   const catColor = CATEGORY_COLORS[article.category]
   const catIcon = CATEGORY_ICONS[article.category]
 
-  async function handleBookmark(e: React.MouseEvent) {
+  async function handleBookmark(e: MouseEvent) {
     e.stopPropagation()
     popElement(e.currentTarget)
+    if (!bookmarked) burstElement(e.currentTarget, catColor)
     await haptic()
     toggle(article.id)
     onShowToast(bookmarked ? 'Bookmark removed' : 'Bookmarked!')
   }
 
-  async function handleShare(e: React.MouseEvent) {
+  async function handleShare(e: MouseEvent) {
     e.stopPropagation()
     await haptic()
     try {
@@ -43,7 +44,8 @@ export function FeedCard({ article, animationDelay = 0, onShowToast }: FeedCardP
     }
   }
 
-  function openDeepDive() {
+  async function openDeepDive() {
+    await haptic()
     setActiveArticle(article)
     setOverlay('deep-dive')
   }
@@ -51,8 +53,11 @@ export function FeedCard({ article, animationDelay = 0, onShowToast }: FeedCardP
   return (
     <div
       className="feed-card"
+      data-category={article.category}
+      data-feed-article={article.id}
       onClick={openDeepDive}
       style={{
+        '--cat': catColor,
         background: 'var(--card)',
         borderRadius: 26,
         marginBottom: 12,
@@ -62,7 +67,7 @@ export function FeedCard({ article, animationDelay = 0, onShowToast }: FeedCardP
         color: 'var(--ink)',
         cursor: 'pointer',
         animation: `cardIn 0.5s cubic-bezier(0.22,1,0.36,1) ${animationDelay}ms both`,
-      }}
+      } as CSSProperties}
     >
       <div className="card-body" style={{ padding: 20 }}>
         {/* Tags */}
@@ -184,7 +189,10 @@ export function FeedCard({ article, animationDelay = 0, onShowToast }: FeedCardP
           </button>
 
           <button
-            onClick={openDeepDive}
+            onClick={(e) => {
+              e.stopPropagation()
+              openDeepDive()
+            }}
             className="btn-deep"
             style={{
               marginLeft: 'auto',
