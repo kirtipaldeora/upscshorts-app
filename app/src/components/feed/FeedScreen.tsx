@@ -10,6 +10,7 @@ import { DateTabs } from './DateTabs'
 import { ViewToggle } from './ViewToggle'
 import { FeedCard } from './FeedCard'
 import { DeckView } from './DeckCard'
+import { FeedEmptyState } from './FeedEmptyState'
 
 const FeedCosmicBackdrop = lazy(() => import('./FeedCosmicBackdrop').then(module => ({ default: module.FeedCosmicBackdrop })))
 
@@ -101,12 +102,7 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
             </div>
           )}
           {!loading && articles.length === 0 && (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '60%', color: 'var(--on2)', gap: 12 }}>
-              <i className="fas fa-newspaper" style={{ fontSize: 36, opacity: 0.5 }} />
-              <p style={{ fontSize: 13, textAlign: 'center', maxWidth: 240, lineHeight: 1.5, fontWeight: 700 }}>
-                No articles for this date.<br />Import a JSON file to add content.
-              </p>
-            </div>
+            <FeedEmptyState date={selectedDate} animate={settings.feedCosmicBackdrop} />
           )}
           {articles.map((a, i) => (
             <FeedCard
@@ -131,9 +127,7 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
           {articles.length > 0 ? (
             <DeckView articles={articles} onShowToast={onShowToast} />
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--on2)', fontSize: 13, fontWeight: 700 }}>
-              No articles for this date.
-            </div>
+            <FeedEmptyState date={selectedDate} animate={settings.feedCosmicBackdrop} />
           )}
         </div>
       )}

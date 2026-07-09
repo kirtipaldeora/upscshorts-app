@@ -4,7 +4,6 @@ import type { ArticlesByDate } from '@/types/article'
 import { asset } from '@/utils/asset'
 
 const LS_KEY = 'u4ct' // original localStorage key for cached articles
-const BUNDLED_FALLBACK_DATE = '2026-07-07'
 
 function loadFromLS(): ArticlesByDate {
   try {
@@ -30,7 +29,7 @@ function saveToLS(data: ArticlesByDate) {
  * 3. Architecture is ready for remote fetch — just swap the URL.
  */
 export function useArticles(date: string) {
-  const { setArticlesByDate, mergeArticles, articlesByDate, setSelectedDate } = useAppStore()
+  const { setArticlesByDate, mergeArticles, articlesByDate } = useAppStore()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const hydrated = useRef(false)
@@ -64,26 +63,7 @@ export function useArticles(date: string) {
           return r.json() as Promise<ArticlesByDate>
         })
 
-    // When the device's date has no briefing, fall back to the newest available
-    // day (from the manifest), not a hard-coded old date — so users always land
-    // on the latest current affairs regardless of their clock.
-    const fetchLatestFallback = () =>
-      fetch(asset('data/articles/index.json'), { signal: controller.signal })
-        .then((r) => (r.ok ? (r.json() as Promise<{ dates?: string[] }>) : null))
-        .catch(() => null)
-        .then((manifest) => {
-          const latest = manifest?.dates?.slice().sort().reverse()[0] ?? BUNDLED_FALLBACK_DATE
-          return fetchArticles(latest).then((data) => {
-            setSelectedDate(latest)
-            return data
-          })
-        })
-
     fetchArticles(date)
-      .catch((e: Error) => {
-        if (e.name === 'AbortError') throw e
-        return fetchLatestFallback()
-      })
       .then((r) => {
         mergeArticles(r)
         // Persist merged state back to localStorage
@@ -96,7 +76,7 @@ export function useArticles(date: string) {
       .finally(() => setLoading(false))
 
     return () => controller.abort()
-  }, [date, articlesByDate, mergeArticles, setSelectedDate])
+  }, [date, articlesByDate, mergeArticles])
 
   return { loading, error }
 }
