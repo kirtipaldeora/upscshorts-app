@@ -121,3 +121,10 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 app/android
+
+# Penni news pipeline run dumps are reproducible local audit artifacts
+content-pipeline/runs/
+
+# local scratch
+tmp/
+michi/

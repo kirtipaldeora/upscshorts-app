@@ -2529,6 +2529,62 @@ html.dark .bg-blobs i { opacity: .34; }
   font-size: 11px;
   font-weight: 950;
 }
+/* "GS areas" doubles as a toggle: group the feed by GS subject */
+.briefing-gs-toggle {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 30px;
+  padding: 0 11px;
+  border-radius: 999px;
+  border: 1px solid var(--panel-border);
+  background: color-mix(in srgb, var(--panel) 72%, transparent);
+  color: var(--on2);
+  font-size: 10.5px;
+  font-weight: 850;
+  cursor: pointer;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  transition: transform .15s ease, background .2s ease, border-color .2s ease, color .2s ease;
+}
+.briefing-gs-toggle:active { transform: scale(.95); }
+.briefing-gs-toggle.on {
+  background: var(--acc);
+  border-color: var(--acc);
+  color: #fff;
+}
+.briefing-gs-toggle.on b { color: #fff; }
+.feed-gs-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 2px 8px;
+}
+.feed-gs-divider span {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 11px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--acc) 16%, transparent);
+  color: var(--acc);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: .2px;
+}
+.feed-gs-divider i {
+  font-style: normal;
+  font-size: 10.5px;
+  font-weight: 800;
+  color: var(--on2);
+}
+.feed-gs-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--panel-border);
+}
 .briefing-rail i {
   width: 7px;
   height: 7px;

@@ -29,10 +29,11 @@ function saveToLS(data: ArticlesByDate) {
  * 3. Architecture is ready for remote fetch — just swap the URL.
  */
 export function useArticles(date: string) {
-  const { setArticlesByDate, mergeArticles, articlesByDate } = useAppStore()
+  const { setArticlesByDate, mergeArticles } = useAppStore()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const hydrated = useRef(false)
+  const fetchedDates = useRef(new Set<string>())
 
   // Step 1: Hydrate from localStorage on first mount
   useEffect(() => {
@@ -48,9 +49,11 @@ export function useArticles(date: string) {
   // Step 2: Fetch the per-date JSON if not already in store
   useEffect(() => {
     if (!date) return
-    // Skip only when this date is already hydrated with practice questions.
-    // Older cached article payloads did not include prelimsQs/keyTerms.
-    if (articlesByDate[date]?.some((article) => (article.prelimsQs ?? []).length > 0)) return
+    // Always refresh each viewed date once per app session. LocalStorage is
+    // only an instant placeholder; otherwise deployed news packs can be masked
+    // by an older cached copy that already had generated questions.
+    if (fetchedDates.current.has(date)) return
+    fetchedDates.current.add(date)
 
     const controller = new AbortController()
     setLoading(true)
@@ -76,7 +79,7 @@ export function useArticles(date: string) {
       .finally(() => setLoading(false))
 
     return () => controller.abort()
-  }, [date, articlesByDate, mergeArticles])
+  }, [date, mergeArticles])
 
   return { loading, error }
 }

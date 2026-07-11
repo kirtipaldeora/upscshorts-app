@@ -190,10 +190,6 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
     startQuiz(activePackIsToday ? 'Daily Current MCQ' : `${dateLabel(activePackDate)} Current MCQ`, qs)
   }
 
-  function startPyqSet() {
-    startQuiz('PYQ Practice', seededPick(pyqQuestions, Math.min(10, pyqQuestions.length), `pyq-${Date.now()}`))
-  }
-
   if (activeQuiz) {
     return (
       <QuizPlayer
@@ -256,13 +252,13 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
               </span>
               <strong>Start</strong>
             </button>
-            <button className="test-mode-card" onClick={startPyqSet}>
+            <button className="test-mode-card" onClick={() => { setPanel(null); onOpenPYQ() }}>
               <FontAwesomeIcon icon={faScroll} />
               <span>
-                <b>PYQ Practice</b>
+                <b>PYQ Vault</b>
                 <i>{pyqQuestions.length} UPSC prelims questions</i>
               </span>
-              <strong>{Math.min(10, pyqQuestions.length)}Q</strong>
+              <strong>Open</strong>
             </button>
             <button className="test-mode-card" onClick={() => setPanel('subjects')}>
               <FontAwesomeIcon icon={faLayerGroup} />

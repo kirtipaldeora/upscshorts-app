@@ -20,7 +20,7 @@ interface FeedScreenProps {
 }
 
 export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
-  const { selectedDate, viewMode, getArticlesForDate, getAvailableDates } = useAppStore()
+  const { selectedDate, viewMode, getArticlesForDate, getAvailableDates, gsFocus, cycleGsFocus, getFocusableGsPapers } = useAppStore()
   const { settings } = usePracticeStore()
   const { loading } = useArticles(selectedDate)
   useAllArticles()
@@ -71,7 +71,17 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
         </h2>
         <div className="briefing-rail">
           <span><b>{articles.length}</b> stories</span>
-          <span><b>{briefing.gsCount}</b> GS areas</span>
+          {getFocusableGsPapers(selectedDate).length > 0 && (
+            <button
+              type="button"
+              className={`briefing-gs-toggle ${gsFocus ? 'on' : ''}`}
+              onClick={cycleGsFocus}
+              aria-pressed={!!gsFocus}
+              title={gsFocus ? `Showing ${gsFocus} only — tap for next GS paper` : 'Filter feed by GS paper'}
+            >
+              {gsFocus ? <><b>{gsFocus}</b> only</> : <><b>{briefing.gsCount}</b> GS areas</>}
+            </button>
+          )}
         </div>
       </div>
 

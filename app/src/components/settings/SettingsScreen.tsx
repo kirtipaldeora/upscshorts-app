@@ -20,6 +20,7 @@ import {
   faGlobe,
   faRightFromBracket,
   faClock,
+  faNewspaper,
 } from '@fortawesome/free-solid-svg-icons'
 import { usePracticeStore } from '@/stores/usePracticeStore'
 import { useThemeStore } from '@/stores/useThemeStore'
@@ -28,6 +29,7 @@ import { useBookmarkStore } from '@/stores/useBookmarkStore'
 import { useAuthStore, type StudentProfile } from '@/stores/useAuthStore'
 import { ProfileMascot } from '@/components/auth/ProfileMascot'
 import { TODAY } from '@/constants/categories'
+import { NEWS_SOURCES } from '@/constants/sources'
 import { EASE, gsap, reducedMotion } from '@/anim/animations'
 
 interface SettingsScreenProps {
@@ -43,7 +45,7 @@ type DeviceOrientationWithPermission = typeof DeviceOrientationEvent & {
 export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsScreenProps) {
   const { settings, stats, saveSettings } = usePracticeStore()
   const { theme, toggle } = useThemeStore()
-  const { articlesByDate, setArticlesByDate } = useAppStore()
+  const { articlesByDate, setArticlesByDate, sourceFilter, toggleSource } = useAppStore()
   const { clearAll } = useBookmarkStore()
   const { user, profile, isGuest, signOut, saveProfile } = useAuthStore()
   const [contentToolsOpen, setContentToolsOpen] = useState(false)
@@ -69,6 +71,13 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
       void updateStudentProfile({ gsFocus: next.map(item => item.replace('GS', 'GS ')) }, true)
     }
     onShowToast(`${g} ${next.includes(g) ? 'enabled' : 'disabled'}`)
+  }
+
+  function handleToggleSource(key: (typeof NEWS_SOURCES)[number]['key']) {
+    const turningOn = !sourceFilter[key]
+    toggleSource(key)
+    const label = NEWS_SOURCES.find(s => s.key === key)?.label ?? key
+    onShowToast(`${label} articles ${turningOn ? 'shown' : 'hidden'}`)
   }
 
   function setDailyTarget(target: number) {
@@ -246,6 +255,25 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
               ))}
             </div>
           </div>
+        </div>
+
+        {/* News sources */}
+        <div className="setting-group settings-panel">
+          <div className="setting-group-title">News sources</div>
+          {NEWS_SOURCES.map(src => (
+            <div key={src.key} className="setting-item" onClick={() => handleToggleSource(src.key)}>
+              <div className="setting-left">
+                <FontAwesomeIcon icon={faNewspaper} style={{ width: 14 }} />
+                <span>{src.label}</span>
+              </div>
+              <button
+                className={`toggle ${sourceFilter[src.key] ? 'on' : ''}`}
+                onClick={e => { e.stopPropagation(); handleToggleSource(src.key) }}
+                aria-label={`Toggle ${src.label} articles`}
+              />
+            </div>
+          ))}
+          <p className="pn-note">Hide or show feed articles by where they were reported. Stories covered by several sources stay visible while any of their sources is on.</p>
         </div>
 
         {/* Daily practice */}
