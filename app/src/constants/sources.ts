@@ -1,7 +1,7 @@
 // News source registry: powers the per-source feed toggles and maps each
 // article's free-form `source` string onto a toggleable source key.
 
-export type SourceKey = 'hindu' | 'ie' | 'pib' | 'prs' | 'airdd'
+export type SourceKey = 'hindu' | 'ie' | 'pib' | 'rbi' | 'mea' | 'prs' | 'airdd'
 
 export interface NewsSource {
   key: SourceKey
@@ -13,6 +13,8 @@ export const NEWS_SOURCES: NewsSource[] = [
   { key: 'hindu', label: 'The Hindu', match: /\bhindu\b/i },
   { key: 'ie', label: 'Indian Express', match: /indian express|\bie\b/i },
   { key: 'pib', label: 'PIB', match: /\bpib\b|press information bureau/i },
+  { key: 'rbi', label: 'RBI', match: /\brbi\b|reserve bank/i },
+  { key: 'mea', label: 'MEA', match: /\bmea\b|ministry of external affairs/i },
   { key: 'prs', label: 'PRS India', match: /\bprs\b/i },
   { key: 'airdd', label: 'AIR / DD News', match: /\bair\b|\bdd\b|akashvani|doordarshan|news ?on ?air/i },
 ]
@@ -23,6 +25,8 @@ export const DEFAULT_SOURCE_FILTER: SourceFilter = {
   hindu: true,
   ie: true,
   pib: true,
+  rbi: true,
+  mea: true,
   prs: true,
   airdd: true,
 }

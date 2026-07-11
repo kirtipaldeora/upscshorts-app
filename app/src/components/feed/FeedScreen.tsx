@@ -1,5 +1,9 @@
-import { lazy, Suspense, useMemo } from 'react'
+import { lazy, Suspense, useMemo, useState, useEffect, useRef } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
+import type { SourceFocus } from '@/stores/useAppStore'
+import { isSourceVisible, sourceKeysFor } from '@/constants/sources'
 import { usePracticeStore } from '@/stores/usePracticeStore'
 import { useArticles } from '@/hooks/useArticles'
 import { useAllArticles } from '@/hooks/useAllArticles'
@@ -20,13 +24,74 @@ interface FeedScreenProps {
 }
 
 export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
-  const { selectedDate, viewMode, getArticlesForDate, getAvailableDates, gsFocus, cycleGsFocus, getFocusableGsPapers } = useAppStore()
+  const { selectedDate, setSelectedDate, viewMode, getArticlesForDate, getAvailableDates, sourceFocus, setSourceFocus, gsFocus, setGsFocus, getFocusableGsPapers } = useAppStore()
   const { settings } = usePracticeStore()
   const { loading } = useArticles(selectedDate)
   useAllArticles()
 
   const dates = getAvailableDates()
   const articles = getArticlesForDate(selectedDate)
+  const focusablePapers = getFocusableGsPapers(selectedDate)
+  const [sourceMenuOpen, setSourceMenuOpen] = useState(false)
+  const [gsMenuOpen, setGsMenuOpen] = useState(false)
+
+  // Story count per GS paper for the dropdown — the feed as it stands but
+  // ignoring the GS-focus itself, so counts don't collapse to the focused paper.
+  const gsCounts = useMemo(() => {
+    const s = useAppStore.getState()
+    const day = (s.articlesByDate[selectedDate] ?? [])
+      .filter(a => s.gsFilter[a.gsPaper])
+      .filter(a => isSourceVisible(a.source, s.sourceFilter))
+      .filter(a => !s.categoryFilter || a.category === s.categoryFilter)
+    const counts: Record<string, number> = {}
+    for (const a of day) counts[a.gsPaper] = (counts[a.gsPaper] ?? 0) + 1
+    return counts
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate, articles.length, gsFocus])
+
+  const sourceOptions: { key: SourceFocus; label: string; short: string; tone: string }[] = [
+    { key: null, label: 'All sources', short: 'All', tone: 'all' },
+    { key: 'hindu', label: 'The Hindu', short: 'TH', tone: 'hindu' },
+    { key: 'ie', label: 'Indian Express', short: 'IE', tone: 'ie' },
+    { key: 'govt', label: 'Govt & official', short: 'Govt', tone: 'govt' },
+  ]
+  const sourceCounts = useMemo(() => {
+    const s = useAppStore.getState()
+    const day = (s.articlesByDate[selectedDate] ?? [])
+      .filter(a => s.gsFilter[a.gsPaper])
+      .filter(a => isSourceVisible(a.source, s.sourceFilter))
+      .filter(a => !s.categoryFilter || a.category === s.categoryFilter)
+    const counts = { all: day.length, hindu: 0, ie: 0, govt: 0 }
+    for (const a of day) {
+      const keys = sourceKeysFor(a.source)
+      if (keys.includes('hindu')) counts.hindu += 1
+      if (keys.includes('ie')) counts.ie += 1
+      if (keys.some(k => ['pib', 'rbi', 'mea', 'prs', 'airdd'].includes(k))) counts.govt += 1
+    }
+    return counts
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate, articles.length, sourceFocus])
+  const activeSource = sourceOptions.find(option => option.key === sourceFocus) ?? sourceOptions[0]
+
+  // If the feed opens on a date that has no pack yet (e.g. today's hasn't been
+  // generated), fall back to the most recent date that actually has stories.
+  const autoDatePicked = useRef(false)
+  useEffect(() => {
+    if (autoDatePicked.current) return
+    if (dates.length > 0 && !dates.includes(selectedDate)) {
+      autoDatePicked.current = true
+      setSelectedDate(dates[0])
+    }
+  }, [dates, selectedDate, setSelectedDate])
+
+  function chooseGs(paper: typeof gsFocus) {
+    setGsFocus(paper)
+    setGsMenuOpen(false)
+  }
+  function chooseSource(source: SourceFocus) {
+    setSourceFocus(source)
+    setSourceMenuOpen(false)
+  }
   const briefing = useMemo(() => {
     const gs = new Set<string>()
     articles.forEach(article => {
@@ -70,17 +135,82 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
           ))}
         </h2>
         <div className="briefing-rail">
-          <span><b>{articles.length}</b> stories</span>
-          {getFocusableGsPapers(selectedDate).length > 0 && (
+          <div className="briefing-source-dd">
             <button
               type="button"
-              className={`briefing-gs-toggle ${gsFocus ? 'on' : ''}`}
-              onClick={cycleGsFocus}
-              aria-pressed={!!gsFocus}
-              title={gsFocus ? `Showing ${gsFocus} only — tap for next GS paper` : 'Filter feed by GS paper'}
+              className={`briefing-source-toggle ${activeSource.tone}`}
+              onClick={() => setSourceMenuOpen(o => !o)}
+              aria-haspopup="listbox"
+              aria-expanded={sourceMenuOpen}
             >
-              {gsFocus ? <><b>{gsFocus}</b> only</> : <><b>{briefing.gsCount}</b> GS areas</>}
+              <span className={`source-logo ${activeSource.tone}`}>{activeSource.short}</span>
+              <b>{activeSource.label}</b>
+              <i>{articles.length}</i>
+              <FontAwesomeIcon icon={faChevronDown} className={`briefing-gs-caret ${sourceMenuOpen ? 'open' : ''}`} />
             </button>
+            {sourceMenuOpen && (
+              <>
+                <div className="briefing-gs-scrim" onClick={() => setSourceMenuOpen(false)} />
+                <div className="briefing-source-menu" role="listbox">
+                  {sourceOptions.map(option => {
+                    const countKey = option.key ?? 'all'
+                    return (
+                      <button
+                        key={option.tone}
+                        role="option"
+                        aria-selected={sourceFocus === option.key}
+                        className={sourceFocus === option.key ? 'on' : ''}
+                        onClick={() => chooseSource(option.key)}
+                      >
+                        <span className={`source-logo ${option.tone}`}>{option.short}</span>
+                        <b>{option.label}</b>
+                        <i>{sourceCounts[countKey]}</i>
+                      </button>
+                    )
+                  })}
+                </div>
+              </>
+            )}
+          </div>
+          {focusablePapers.length > 0 && (
+            <div className="briefing-gs-dd">
+              <button
+                type="button"
+                className={`briefing-gs-toggle ${gsFocus ? 'on' : ''}`}
+                onClick={() => setGsMenuOpen(o => !o)}
+                aria-haspopup="listbox"
+                aria-expanded={gsMenuOpen}
+              >
+                {gsFocus ? <><b>{gsFocus}</b> only</> : <><b>{briefing.gsCount}</b> GS areas</>}
+                <FontAwesomeIcon icon={faChevronDown} className={`briefing-gs-caret ${gsMenuOpen ? 'open' : ''}`} />
+              </button>
+              {gsMenuOpen && (
+                <>
+                  <div className="briefing-gs-scrim" onClick={() => setGsMenuOpen(false)} />
+                  <div className="briefing-gs-menu" role="listbox">
+                    <button
+                      role="option"
+                      aria-selected={!gsFocus}
+                      className={!gsFocus ? 'on' : ''}
+                      onClick={() => chooseGs(null)}
+                    >
+                      All GS areas<i>{focusablePapers.reduce((n, p) => n + (gsCounts[p] ?? 0), 0)}</i>
+                    </button>
+                    {focusablePapers.map(p => (
+                      <button
+                        key={p}
+                        role="option"
+                        aria-selected={gsFocus === p}
+                        className={gsFocus === p ? 'on' : ''}
+                        onClick={() => chooseGs(p)}
+                      >
+                        {p}<i>{gsCounts[p] ?? 0}</i>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
           )}
         </div>
       </div>

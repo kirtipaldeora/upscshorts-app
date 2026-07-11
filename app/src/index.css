@@ -2529,12 +2529,14 @@ html.dark .bg-blobs i { opacity: .34; }
   font-size: 11px;
   font-weight: 950;
 }
-/* "GS areas" doubles as a toggle: group the feed by GS subject */
+/* "GS areas" is a dropdown that filters the feed to one GS paper */
+.briefing-source-dd,
+.briefing-gs-dd { position: relative; flex: none; }
+.briefing-source-toggle,
 .briefing-gs-toggle {
-  flex: none;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   height: 30px;
   padding: 0 11px;
   border-radius: 999px;
@@ -2548,6 +2550,11 @@ html.dark .bg-blobs i { opacity: .34; }
   -webkit-backdrop-filter: var(--glass-blur);
   transition: transform .15s ease, background .2s ease, border-color .2s ease, color .2s ease;
 }
+.briefing-source-toggle{padding:0 9px 0 7px;max-width:min(230px,78vw)}
+.briefing-source-toggle b{font-size:11px;font-weight:950;color:var(--on);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:116px}
+.briefing-source-toggle i{font-style:normal;min-width:20px;height:20px;border-radius:999px;background:color-mix(in srgb,var(--on) 8%,transparent);display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:950;color:var(--on2)}
+.briefing-source-toggle:active{transform:scale(.95)}
+.briefing-gs-toggle b { color: var(--on); font-size: 11px; font-weight: 950; }
 .briefing-gs-toggle:active { transform: scale(.95); }
 .briefing-gs-toggle.on {
   background: var(--acc);
@@ -2555,36 +2562,67 @@ html.dark .bg-blobs i { opacity: .34; }
   color: #fff;
 }
 .briefing-gs-toggle.on b { color: #fff; }
-.feed-gs-divider {
+.briefing-gs-caret { font-size: 8px; opacity: .7; transition: transform .2s ease; }
+.briefing-gs-caret.open { transform: rotate(180deg); }
+.briefing-gs-scrim { position: fixed; inset: 0; z-index: 40; }
+.briefing-source-menu,
+.briefing-gs-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 41;
+  min-width: 168px;
+  padding: 6px;
+  border-radius: 16px;
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  box-shadow: 0 18px 44px rgba(0,0,0,.22);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  animation: gsMenuIn .16s cubic-bezier(.22,1,.36,1);
+  text-align: left;
+}
+.briefing-source-menu{min-width:220px}
+@keyframes gsMenuIn { from { opacity: 0; transform: translateY(-6px) scale(.98); } to { opacity: 1; transform: none; } }
+.briefing-source-menu button,
+.briefing-gs-menu button {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin: 14px 2px 8px;
+  justify-content: space-between;
+  width: 100%;
+  height: 34px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--on);
+  font-size: 12px;
+  font-weight: 850;
+  cursor: pointer;
 }
-.feed-gs-divider span {
-  display: inline-flex;
-  align-items: center;
-  height: 24px;
-  padding: 0 11px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--acc) 16%, transparent);
-  color: var(--acc);
-  font-size: 11px;
-  font-weight: 950;
-  letter-spacing: .2px;
-}
-.feed-gs-divider i {
+.briefing-source-menu button{height:42px;gap:9px;justify-content:flex-start}
+.briefing-source-menu button b{flex:1;min-width:0;font-size:12px;font-weight:900;color:var(--on);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.briefing-source-menu button i{font-style:normal;font-size:10.5px;font-weight:950;color:var(--on2);min-width:22px;text-align:right}
+.briefing-source-menu button:hover,
+.briefing-gs-menu button:hover { background: color-mix(in srgb, var(--on) 7%, transparent); }
+.briefing-source-menu button.on,
+.briefing-gs-menu button.on { background: color-mix(in srgb, var(--acc) 15%, transparent); color: var(--acc); }
+.briefing-source-menu button.on b,
+.briefing-source-menu button.on i{color:var(--acc)}
+.source-logo{width:28px;height:28px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;flex:none;font-size:9px;font-weight:1000;letter-spacing:.2px;border:1px solid rgba(255,255,255,.48);box-shadow:inset 0 1px 0 rgba(255,255,255,.45)}
+.source-logo.all{background:linear-gradient(135deg,#edf2ff,#dff8f5);color:#20315f}
+.source-logo.hindu{background:linear-gradient(135deg,#f8f1e6,#e8d4b4);color:#4c2609}
+.source-logo.ie{background:linear-gradient(135deg,#fff0e7,#ffcfb3);color:#8a2a12}
+.source-logo.govt{background:linear-gradient(135deg,#e8f7ee,#c9ebd6);color:#174b2b;font-size:8px}
+.briefing-gs-menu button i {
   font-style: normal;
   font-size: 10.5px;
   font-weight: 800;
   color: var(--on2);
+  min-width: 18px;
+  text-align: right;
 }
-.feed-gs-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--panel-border);
-}
+.briefing-gs-menu button.on i { color: var(--acc); }
 .briefing-rail i {
   width: 7px;
   height: 7px;

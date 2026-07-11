@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import type { Article, ArticlesByDate, GSFilter } from '@/types/article'
 import { TODAY } from '@/constants/categories'
-import { isSourceVisible, loadSourceFilter, saveSourceFilter, type SourceFilter, type SourceKey } from '@/constants/sources'
+import { isSourceVisible, loadSourceFilter, saveSourceFilter, sourceKeysFor, type SourceFilter, type SourceKey } from '@/constants/sources'
 
 export type Screen =
   | 'feed'
@@ -14,6 +14,7 @@ export type Screen =
   | 'settings'
 
 export type ViewMode = 'deck' | 'list'
+export type SourceFocus = null | 'hindu' | 'ie' | 'govt'
 
 export type OverlayScreen =
   | null
@@ -52,10 +53,12 @@ interface AppStore {
   // ─── News source toggles ──────────────────────────────────
   sourceFilter: SourceFilter
   toggleSource: (key: SourceKey) => void
+  sourceFocus: SourceFocus
+  setSourceFocus: (source: SourceFocus) => void
 
-  // ─── GS focus: cycle the feed through one GS paper at a time ─
-  gsFocus: keyof GSFilter | null      // null = show all
-  cycleGsFocus: () => void
+  // ─── GS focus: feed shows only this GS paper (null = all) ────
+  gsFocus: keyof GSFilter | null
+  setGsFocus: (p: keyof GSFilter | null) => void
   getFocusableGsPapers: (date: string) => (keyof GSFilter)[]
 
   // ─── Deep dive ───────────────────────────────────────────────
@@ -95,7 +98,7 @@ export const useAppStore = create<AppStore>()((set, get) => ({
 
   // Feed state
   selectedDate: TODAY,
-  setSelectedDate: (d) => set({ selectedDate: d }),
+  setSelectedDate: (d) => set({ selectedDate: d, gsFocus: null }),
   viewMode: (localStorage.getItem('u4view') as ViewMode) || 'deck',
   setViewMode: (v) => {
     try {
@@ -118,6 +121,8 @@ export const useAppStore = create<AppStore>()((set, get) => ({
       saveSourceFilter(next)
       return { sourceFilter: next }
     }),
+  sourceFocus: null,
+  setSourceFocus: (source) => set({ sourceFocus: source, gsFocus: null }),
 
   // GS focus (feed shows only this GS paper; cycles through the papers that
   // actually have stories that day, then back to "all")
@@ -134,14 +139,7 @@ export const useAppStore = create<AppStore>()((set, get) => ({
     )
     return papers.filter((p) => present.has(p))
   },
-  cycleGsFocus: () =>
-    set((s) => {
-      const focusable = get().getFocusableGsPapers(s.selectedDate)
-      if (focusable.length === 0) return { gsFocus: null }
-      const cycle: (keyof GSFilter | null)[] = [null, ...focusable]
-      const idx = cycle.findIndex((p) => p === s.gsFocus)
-      return { gsFocus: cycle[(idx + 1) % cycle.length] }
-    }),
+  setGsFocus: (p) => set({ gsFocus: p }),
 
   // Deep dive
   activeArticle: null,
@@ -151,12 +149,20 @@ export const useAppStore = create<AppStore>()((set, get) => ({
 
   // Helpers
   getArticlesForDate: (date) => {
-    const { articlesByDate, gsFilter, categoryFilter, sourceFilter, gsFocus } = get()
+    const { articlesByDate, gsFilter, categoryFilter, sourceFilter, sourceFocus, gsFocus } = get()
     let articles = articlesByDate[date] ?? []
     // Apply GS filter
     articles = articles.filter((a) => gsFilter[a.gsPaper])
     // Apply news source toggles
     articles = articles.filter((a) => isSourceVisible(a.source, sourceFilter))
+    // Apply quick source focus from the feed dropdown.
+    if (sourceFocus) {
+      articles = articles.filter((a) => {
+        const keys = sourceKeysFor(a.source)
+        if (sourceFocus === 'govt') return keys.some(k => ['pib', 'rbi', 'mea', 'prs', 'airdd'].includes(k))
+        return keys.includes(sourceFocus)
+      })
+    }
     // Apply category filter
     if (categoryFilter) {
       articles = articles.filter((a) => a.category === categoryFilter)

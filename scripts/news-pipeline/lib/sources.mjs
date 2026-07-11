@@ -9,6 +9,8 @@ export const SOURCE_LABELS = {
   hindu: 'The Hindu',
   ie: 'Indian Express',
   pib: 'PIB',
+  rbi: 'RBI',
+  mea: 'MEA',
   prs: 'PRS India',
   airdd: 'AIR / DD News',
 }
@@ -21,6 +23,8 @@ const HINDU_PAPER = date => `https://www.thehindu.com/todays-paper/${date}/th_ch
 const HINDU_SITEMAP = 'https://www.thehindu.com/sitemap/update/all.xml'
 const IE_SITEMAP = 'https://indianexpress.com/news-sitemap.xml'
 const PIB_ALL_RELEASES = 'https://www.pib.gov.in/AllRelease.aspx?reg=3&lang=1'
+const RBI_PRESS_RSS = 'https://www.rbi.org.in/pressreleases_rss.xml'
+const MEA_LISTING = 'https://www.mea.gov.in/FrontEnd/FetchPublicationListingData'
 const PRS_BLOG = 'https://prsindia.org/theprsblog'
 const DD_FEEDS = [
   'https://ddnews.gov.in/category/national/feed/',
@@ -33,6 +37,28 @@ function withinLastHours(iso, hours) {
   if (!iso) return true // undated items pass; the LLM filter judges them
   const t = Date.parse(iso)
   return Number.isFinite(t) ? Date.now() - t <= hours * 3600_000 : true
+}
+
+function dateFromIsoIst(iso) {
+  if (!iso) return null
+  const t = Date.parse(iso)
+  if (!Number.isFinite(t)) return null
+  return new Date(t + 5.5 * 3600_000).toISOString().slice(0, 10)
+}
+
+function dayMonthYear(date) {
+  const [y, m, d] = date.split('-')
+  return `${d}/${m}/${y}`
+}
+
+function matchesDateOrWindow(iso, { date, hours }) {
+  if (!iso) return true
+  if (date) return dateFromIsoIst(iso) === date || iso.slice(0, 10) === date
+  return withinLastHours(iso, hours)
+}
+
+function looksEnglish(text) {
+  return !/[\u0900-\u097F\u0980-\u09FF\u0A00-\u0A7F\u0B80-\u0BFF\u0C00-\u0C7F]/.test(text)
 }
 
 const HINDU_DESK_LABEL = {
@@ -103,14 +129,14 @@ async function fetchHindu(hours, date) {
   }
 }
 
-async function fetchIndianExpress(hours) {
+async function fetchIndianExpress(hours, date) {
   const xml = await fetchText(IE_SITEMAP)
   const items = []
   for (const block of xmlBlocks(xml, 'url')) {
     const loc = xmlValues(block, 'loc')[0]
     const title = xmlValues(block, 'news:title')[0]
     const pub = xmlValues(block, 'news:publication_date')[0]
-    if (!loc || !withinLastHours(pub, hours)) continue
+    if (!loc || !matchesDateOrWindow(pub, { date, hours })) continue
     const segs = new URL(loc).pathname.split('/').filter(Boolean)
     items.push({
       sourceKey: 'ie',
@@ -124,10 +150,11 @@ async function fetchIndianExpress(hours) {
   return items
 }
 
-async function fetchPIB() {
-  // Day-wise English (reg=3 national, lang=1 English). The page lists today's
-  // releases as anchors carrying PRID identifiers.
-  const html = await fetchText(PIB_ALL_RELEASES)
+async function fetchPIB(date) {
+  // Day-wise English (reg=3 national, lang=1 English). The page lists releases
+  // as anchors carrying PRID identifiers; the date query is accepted by PIB.
+  const url = date ? `${PIB_ALL_RELEASES}&date=${date}` : PIB_ALL_RELEASES
+  const html = await fetchText(url)
   const items = []
   const seen = new Set()
   const re = /<a[^>]*PRID=(\d+)[^>]*>([^<]{15,220})<\/a>/g
@@ -143,33 +170,105 @@ async function fetchPIB() {
       sourceLabel: 'PIB',
       title,
       url: `https://www.pib.gov.in/PressReleasePage.aspx?PRID=${prid}`,
-      publishedAt: istDateString(),
+      publishedAt: date || istDateString(),
       section: 'press-release',
     })
   }
   return items
 }
 
-async function fetchPRS() {
+async function fetchRBI(hours, date) {
+  const xml = await fetchText(RBI_PRESS_RSS)
+  const items = []
+  for (const block of xmlBlocks(xml, 'item')) {
+    const title = xmlValues(block, 'title')[0]
+    const link = xmlValues(block, 'link')[0]
+    const pub = xmlValues(block, 'pubDate')[0]
+    const pubIso = pub ? new Date(pub).toISOString() : null
+    if (!title || !link || !matchesDateOrWindow(pubIso, { date, hours })) continue
+    items.push({
+      sourceKey: 'rbi',
+      sourceLabel: 'RBI',
+      title,
+      url: link,
+      publishedAt: pubIso,
+      section: 'press-release',
+    })
+  }
+  return items
+}
+
+async function fetchMEA(date) {
+  const target = date || istDateString()
+  const ddmmyyyy = dayMonthYear(target)
+  const params = new URLSearchParams({
+    publicationId: '51',
+    KeywordName: '',
+    SortBy: 'new',
+    page: '1',
+    PageSize: '50',
+    DateRange: `${ddmmyyyy} - ${ddmmyyyy}`,
+    IsInternalMEA: 'false',
+    PLngId: '1',
+  })
+  const html = await fetchText(`${MEA_LISTING}?${params}`, {
+    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+  })
+  const items = []
+  const seen = new Set()
+  const re = /<a[^>]+href="([^"]*press-releases\?dtl\/[^"]+)"[^>]*>([\s\S]*?)<\/a>/g
+  let m
+  while ((m = re.exec(html))) {
+    const href = m[1]
+    if (seen.has(href)) continue
+    seen.add(href)
+    const title = decodeEntities(m[2].replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim()
+    if (!title) continue
+    items.push({
+      sourceKey: 'mea',
+      sourceLabel: 'MEA',
+      title,
+      url: href.startsWith('http') ? href : `https://www.mea.gov.in${href}`,
+      publishedAt: target,
+      section: 'press-release',
+    })
+  }
+  return items
+}
+
+function parsePrsDate(label) {
+  const t = Date.parse(label)
+  return Number.isFinite(t) ? new Date(t + 5.5 * 3600_000).toISOString().slice(0, 10) : null
+}
+
+async function fetchPRS(hours, date) {
   // PRS has no reliable feed; scrape the blog listing. Low volume, so
-  // undated entries are fine — the dedupe step drops ones already covered.
+  // we parse the visible author/date row and keep only fresh dated posts.
   const html = await fetchText(PRS_BLOG)
   const items = []
   const seen = new Set()
-  const re = /<a[^>]+href="(\/theprsblog\/[^"#?]+)"[^>]*>([\s\S]{10,250}?)<\/a>/g
+  const rowRe = /<div class="views-row[\s\S]*?(?=<div class="views-row|<\/div>\s*<\/div>\s*<\/div>\s*<\/div>\s*$)/g
+  const rows = html.match(rowRe) || []
   let m
-  while ((m = re.exec(html))) {
+  for (const row of rows) {
+    m = row.match(/<h3[^>]*>\s*<a[^>]+href="(\/theprsblog\/[^"#?]+)"[^>]*>([\s\S]*?)<\/a>/)
+    if (!m) continue
     const href = m[1]
     const title = decodeEntities(m[2].replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim()
     if (!title || title.length < 12 || seen.has(href)) continue
     if (/^(?:(?:january|february|march|april|may|june|july|august|september|october|november|december),?\s+\d{4}\s*)+$/i.test(title)) continue
+    const dateMatch = row.match(/-\s*([A-Z][a-z]+ \d{1,2}, \d{4})/)
+    const publishedAt = parsePrsDate(dateMatch?.[1] || '')
+    if (!matchesDateOrWindow(publishedAt, { date, hours })) continue
+    if (title.split(/\s+/).length < 4) continue
+    if (!/\b(bill|act|budget|sector|loss|parliament|policy|scheme|rbi|power|law|court|committee|ordinance|state|india|governance|finance|tax|election|health|education|women|climate|water)\b/i.test(title)) continue
     seen.add(href)
     items.push({
       sourceKey: 'prs',
       sourceLabel: 'PRS India',
       title,
       url: `https://prsindia.org${href}`,
-      publishedAt: null,
+      publishedAt,
       section: 'legislative-analysis',
     })
     if (items.length >= 12) break
@@ -177,7 +276,7 @@ async function fetchPRS() {
   return items
 }
 
-async function fetchAirDd(hours) {
+async function fetchAirDd(hours, date) {
   const items = []
   const feeds = [...DD_FEEDS, AIR_FEED]
   for (const feed of feeds) {
@@ -189,7 +288,8 @@ async function fetchAirDd(hours) {
         const link = xmlValues(block, 'link')[0]
         const pub = xmlValues(block, 'pubDate')[0]
         const pubIso = pub ? new Date(pub).toISOString() : null
-        if (!title || !link || !withinLastHours(pubIso, hours)) continue
+        if (!title || !link || !matchesDateOrWindow(pubIso, { date, hours })) continue
+        if (!looksEnglish(title)) continue
         items.push({
           sourceKey: 'airdd',
           sourceLabel: label,
@@ -209,10 +309,12 @@ async function fetchAirDd(hours) {
 export async function fetchAllSources({ hours = 26, date = istDateString() } = {}) {
   const jobs = [
     ['hindu', () => fetchHindu(hours, date)],
-    ['ie', () => fetchIndianExpress(hours)],
-    ['pib', () => fetchPIB()],
-    ['prs', () => fetchPRS()],
-    ['airdd', () => fetchAirDd(hours)],
+    ['ie', () => fetchIndianExpress(hours, date)],
+    ['pib', () => fetchPIB(date)],
+    ['rbi', () => fetchRBI(hours, date)],
+    ['mea', () => fetchMEA(date)],
+    ['prs', () => fetchPRS(hours, date)],
+    ['airdd', () => fetchAirDd(hours, date)],
   ]
   const all = []
   await Promise.all(jobs.map(async ([key, job]) => {

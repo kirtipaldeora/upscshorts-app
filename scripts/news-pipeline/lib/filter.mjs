@@ -9,8 +9,8 @@ import { callLLM, extractJson } from './llm.mjs'
 const DROP_SECTIONS = /\b(sport|sports|cricket|football|hockey|tennis|ipl|entertainment|movies|music|lifestyle|life-style|horoscope|astrology|web-stories|photos|videos|gallery|puzzle|crossword|recipes|food|travel|fashion|television|trending|viral|celebrity|bollywood|hollywood|books|art|events)\b/i
 const DROP_TITLES = /\b(box office|teaser|trailer|horoscope|zodiac|recipe|celebrity|match report|wins by \d|century|wicket|test match|t20|odi|world cup|grand slam|film review|movie review|red carpet|answer practice|practice question|weekly quiz|upsc mains answer practice)\b/i
 // City desk stories are usually hyperlocal, but keep ones with governance signals.
-const CITY_SECTION = /news\/cities|article\/cities/i
-const CITY_KEEP = /\b(high court|supreme court|policy|scheme|pollution|metro rail|flood|climate|heritage|unesco|epidemic|dengue|infrastructure|smart city|slum|housing|water crisis|governance)\b/i
+const LOCAL_SECTION = /news\/cities|article\/cities|\/states\/|TH_Regional|regional/i
+const REGIONAL_KEEP = /\b(high court|supreme court|policy|scheme|pollution|metro rail|flood|climate|heritage|unesco|epidemic|dengue|infrastructure|smart city|slum|housing|water crisis|governance|federal|tribal|forest|wildlife|disaster|landslide|cyclone|ethics|corruption|audit|cag|public health|education|reservation|panchayat|municipal|urban|rural|agriculture|farmer|livelihood|social justice|law and order)\b/i
 
 // Ceremonial PIB releases (greetings, tributes, trophies) are noise; actual
 // policy releases (schemes, cabinet decisions, reports) survive.
@@ -21,7 +21,7 @@ export function heuristicPrefilter(items) {
     const hay = `${item.section} ${item.url}`
     if (DROP_SECTIONS.test(hay)) return false
     if (DROP_TITLES.test(item.title)) return false
-    if (CITY_SECTION.test(hay) && !CITY_KEEP.test(item.title)) return false
+    if (LOCAL_SECTION.test(hay) && !REGIONAL_KEEP.test(`${item.title} ${item.summary || ''}`)) return false
     if (item.sourceKey === 'pib' && PIB_CEREMONIAL.test(item.title)) return false
     return true
   })
@@ -32,7 +32,8 @@ const FILTER_SYSTEM = `You are a UPSC Civil Services current-affairs curator for
 const CATEGORIES = ['Polity', 'Economy', 'International Relations', 'Environment', 'Science and Tech', 'Governance', 'Social Issues', 'Security', 'Ethics', 'Schemes', 'Reports and Indices']
 
 const CATEGORY_RULES = [
-  ['International Relations', 'GS 2', /\b(quad|aukus|g20|brics|united nations|unsc|foreign minister|bilateral|strategic partnership|summit|treaty|iran|israel|china|pakistan|nepal|bangladesh|sri lanka|myanmar|maldives|indian ocean|indo-pacific|strait|hormuz|gulf|asean|european union|wto|imf|world bank)\b/i],
+  ['Ethics', 'GS 4', /\b(ethics|integrity|probity|accountability|conflict of interest|whistleblower|corruption|bribe|public trust|moral|transparency|civil service values|misconduct|negligence|cover-up|audit irregularit)\b/i],
+  ['International Relations', 'GS 2', /\b(quad|aukus|g20|brics|united nations|unsc|foreign minister|bilateral|strategic partnership|summit|treaty|iran|israel|china|pakistan|nepal|bangladesh|sri lanka|myanmar|maldives|indian ocean|indo-pacific|strait|hormuz|gulf|asean|european union|wto|imf|world bank|diaspora|embassy|geopolitic|foreign policy)\b/i],
   ['Polity', 'GS 2', /\b(supreme court|high court|constitution|constitutional|article \d+|parliament|bill|act|ordinance|election commission|governor|federal|federalism|judgment|tribunal|delimitation|reservation)\b/i],
   ['Governance', 'GS 2', /\b(governance|cabinet|ministry|policy|mission|scheme|portal|digital public infrastructure|service delivery|local bodies|panchayat|municipal|transparency|accountability|ombudsman)\b/i],
   ['Economy', 'GS 3', /\b(rbi|inflation|gdp|fiscal|monetary|tax|gst|exports?|imports?|trade deficit|current account|budget|bank|sebi|market|manufacturing|coal gasification|semiconductor|supply chain|critical minerals|logistics|investment)\b/i],
@@ -57,9 +58,11 @@ function fallbackScoreItem(item) {
   }
 
   let score = 5
+  if (/\b(editorial|opinion|lead|ideas|explained)\b/i.test(hay)) score += 2
+  if (LOCAL_SECTION.test(`${item.section} ${item.url}`) && REGIONAL_KEEP.test(hay)) score += 1
   if (item.sourceKey === 'pib') score += 1
   if (/\b(supreme court|constitution|cabinet|mission|scheme|rbi|inflation|climate|defence|drdo|isro|quad|unsc|critical minerals|semiconductor|strait|piracy|green hydrogen)\b/i.test(hay)) score += 2
-  if (/\b(answer practice|explained|opinion|editorial|quiz|today in politics|live updates)\b/i.test(hay)) score -= 3
+  if (/\b(answer practice|quiz|today in politics|live updates)\b/i.test(hay)) score -= 3
   if (/\b(commission|launches?|approves?|notifies?|releases?|inaugurates?|joint declaration|summit|judgment|flight-test|responds to piracy)\b/i.test(hay)) score += 1
   if (item.sourceKey === 'ie' && /answer practice|upsc mains/i.test(hay)) score = 1
 
@@ -136,7 +139,7 @@ export async function llmScore(items, { engine = 'auto', batchSize = 60, concurr
 // Collapse same-event coverage across papers into one story with merged sources.
 // A per-source cap keeps one prolific source (usually PIB) from crowding out
 // the papers' analysis pieces.
-export function clusterEvents(scoredItems, { minScore = 6, maxStories = 18, maxPerSource = 6 } = {}) {
+export function clusterEvents(scoredItems, { minScore = 6, maxStories = 18, maxPerSource = 8 } = {}) {
   const clusters = new Map()
   for (const item of scoredItems) {
     if (item.score < minScore) continue
@@ -145,12 +148,16 @@ export function clusterEvents(scoredItems, { minScore = 6, maxStories = 18, maxP
     else clusters.get(key).members.push(item)
   }
   const perSource = {}
+  const sourceCap = (key) => key === 'pib' ? 5 : key === 'airdd' ? 3 : maxPerSource
   return [...clusters.values()]
-    .sort((a, b) => b.score - a.score)
+    .sort((a, b) => {
+      const sourceWeight = (x) => x.members[0].sourceKey === 'hindu' || x.members[0].sourceKey === 'ie' ? 0.35 : x.members[0].sourceKey === 'pib' ? -0.25 : 0
+      return (b.score + sourceWeight(b)) - (a.score + sourceWeight(a))
+    })
     .filter(c => {
       const primary = c.members[0].sourceKey
       perSource[primary] = (perSource[primary] || 0) + 1
-      return perSource[primary] <= maxPerSource
+      return perSource[primary] <= sourceCap(primary)
     })
     .slice(0, maxStories)
     .map(c => ({
