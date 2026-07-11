@@ -57,11 +57,11 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
   }, [selectedDate, articles.length, gsFocus, sourceFocus])
 
   const sourceOptions: { key: SourceFocus; label: string; short: string; tone: string; logo: string }[] = [
-    { key: null, label: 'All sources', short: 'All', tone: 'all', logo: '/source-logos/all.svg' },
-    { key: 'hindu', label: 'The Hindu', short: 'TH', tone: 'hindu', logo: '/source-logos/the-hindu.svg' },
-    { key: 'ie', label: 'Indian Express', short: 'IE', tone: 'ie', logo: '/source-logos/indian-express.svg' },
-    { key: 'pib', label: 'PIB', short: 'PIB', tone: 'pib', logo: '/source-logos/pib.svg' },
-    { key: 'govt', label: 'Govt sources', short: 'Govt', tone: 'govt', logo: '/source-logos/govt.svg' },
+    { key: null, label: 'All sources', short: 'All', tone: 'all', logo: '/source-logos/all.png' },
+    { key: 'hindu', label: 'The Hindu', short: 'TH', tone: 'hindu', logo: '/source-logos/the-hindu.png' },
+    { key: 'ie', label: 'Indian Express', short: 'IE', tone: 'ie', logo: '/source-logos/indian-express.png' },
+    { key: 'pib', label: 'PIB', short: 'PIB', tone: 'pib', logo: '/source-logos/pib.png' },
+    { key: 'govt', label: 'Govt sources', short: 'Govt', tone: 'govt', logo: '/source-logos/govt.png' },
   ]
   const sourceCounts = useMemo(() => {
     const s = useAppStore.getState()
