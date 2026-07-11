@@ -110,6 +110,9 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
   const activePackDate = articlesByDate[TODAY]?.length ? TODAY : (availableDates[0] ?? selectedDate)
   const todayArticles = articlesByDate[activePackDate] ?? []
   const todayQuestions = allArticleQuestions.filter(q => todayArticles.some(a => a.id === q.aid))
+  const activePackIsToday = activePackDate === TODAY
+  const activePackTitle = activePackIsToday ? "Today's Current Affairs" : 'Latest Current Affairs Pack'
+  const activePackMeta = activePackIsToday ? "Today's newspaper pack" : `${fmtFull(activePackDate)} newspaper pack`
 
   const weakSubjects = Object.entries(subs)
     .map(([subject, total]) => {
@@ -206,9 +209,9 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
 
         <section className="today-pack-card">
           <div>
-            <span>Today&apos;s Current Affairs</span>
+            <span>{activePackTitle}</span>
             <h3>{todayArticles.length} articles · {todayQuestions.length} questions</h3>
-            <p>{fmtFull(activePackDate)} · {Math.min(todayDay.n, todayArticles.length)} read · Today&apos;s newspaper pack</p>
+            <p>{fmtFull(activePackDate)} · {Math.min(todayDay.n, todayArticles.length)} read · {activePackMeta}</p>
           </div>
           <button onClick={() => setPanel('articles')}>Continue</button>
         </section>

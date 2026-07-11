@@ -281,41 +281,45 @@ html.dark .feed-cosmic-ring{border-color:rgba(159,198,255,.22);box-shadow:inset 
 .feed-empty-card>span{display:block;font-size:9.5px;font-weight:950;letter-spacing:.8px;text-transform:uppercase;color:var(--on2);margin-bottom:5px}
 .feed-empty-card h3{font-size:18px;font-weight:950;color:var(--on);letter-spacing:0;line-height:1.12;margin-bottom:6px}
 .feed-empty-card p{font-size:12px;font-weight:760;color:var(--on2);line-height:1.45;max-width:220px;margin:0 auto}
-.feed-empty-penni-orbit{position:absolute;left:50%;top:50%;width:118px;height:118px;translate:-50% -50%;border-radius:50%;animation:penniOrbit 6.8s linear infinite;z-index:3;pointer-events:none}
-.feed-empty-penni{position:absolute;left:50%;top:-14px;width:38px;height:45px;translate:-50% 0;scale:.68;transform-origin:50% 100%}
+.feed-empty-penni-orbit{position:absolute;left:50%;top:50%;width:148px;height:148px;translate:-50% -50%;border-radius:50%;z-index:3;pointer-events:none;perspective:240px}
+.feed-empty-penni{position:absolute;left:50%;top:50%;translate:-50% -50%;transform-origin:50% 100%;will-change:transform,opacity}
 .feed-empty-state.static .feed-empty-orbit{rotate:18deg}
 .feed-empty-state.static .feed-empty-orbit.orbit-two{rotate:-18deg}
-.feed-empty-state.static .feed-empty-penni-orbit{rotate:-28deg;animation:none}
+.feed-empty-state.static .feed-empty-penni{translate:-50% -50%;transform:translate(58px,-18px) scale(.24)}
 html:not(.dark) .feed-empty-state:before{background:radial-gradient(circle,rgba(116,154,230,.18),transparent 64%)}
 .penni-character{position:relative;width:54px;height:64px;display:block;isolation:isolate;transform-origin:50% 100%;filter:drop-shadow(0 10px 16px rgba(25,34,69,.16))}
+.penni-character.feed-empty-penni{position:absolute;left:50%;top:50%;translate:-50% -50%;scale:.18}
 .penni-character span{position:absolute;display:block}
 .penni-shadow{left:8px;right:4px;bottom:1px;height:8px;border-radius:50%;background:rgba(24,31,54,.16);filter:blur(2px);animation:penniShadow .52s ease-in-out infinite alternate}
-.penni-hair-back{left:13px;top:4px;width:30px;height:31px;border-radius:16px 16px 13px 13px;background:linear-gradient(145deg,#191720,#343044);box-shadow:inset -7px -3px 0 rgba(255,255,255,.06);z-index:1}
-.penni-head{left:15px;top:8px;width:26px;height:27px;border-radius:48% 48% 52% 52%;background:linear-gradient(160deg,#ffe0c4,#f5b98f);z-index:3;overflow:hidden}
-.penni-fringe{left:-2px;top:-3px;width:30px;height:13px;border-radius:12px 12px 9px 9px;background:linear-gradient(145deg,#181720,#2f2b3e);clip-path:polygon(0 0,100% 0,100% 70%,74% 54%,54% 88%,34% 58%,13% 82%,0 62%)}
-.penni-eye{top:15px;width:3px;height:4px;border-radius:50%;background:#312a37}
-.penni-eye.eye-left{left:8px}
-.penni-eye.eye-right{right:8px}
-.penni-smile{left:10px;top:19px;width:7px;height:4px;border-bottom:1.5px solid rgba(93,54,68,.72);border-radius:0 0 8px 8px}
-.penni-body{left:15px;top:34px;width:28px;height:22px;border-radius:9px 9px 8px 8px;background:linear-gradient(145deg,#f25151,#a51f2d);z-index:2;overflow:hidden}
-.penni-body:after{content:"";position:absolute;left:0;right:0;bottom:0;height:7px;background:#2e345e;border-radius:8px 8px 0 0}
-.penni-strap{left:4px;top:-2px;width:3px;height:30px;border-radius:999px;background:rgba(255,230,201,.84);rotate:-23deg}
-.penni-bag{right:-4px;top:10px;width:12px;height:14px;border-radius:5px 5px 6px 6px;background:linear-gradient(145deg,#f2b84d,#b86f2e);box-shadow:inset 0 1px 0 rgba(255,255,255,.34)}
-.penni-arm{top:36px;width:7px;height:18px;border-radius:8px;background:#f5b98f;transform-origin:50% 3px;z-index:1}
-.penni-arm.arm-back{left:10px;animation:penniArmBack .52s ease-in-out infinite alternate}
-.penni-arm.arm-front{right:8px;animation:penniArmFront .52s ease-in-out infinite alternate}
-.penni-leg{top:53px;width:7px;height:17px;border-radius:8px;background:#283052;transform-origin:50% 2px;z-index:1}
+.penni-ponytail{left:1px;top:5px;width:24px;height:15px;border-radius:80% 20% 82% 18%;background:linear-gradient(145deg,#140f18,#4a3037);rotate:-20deg;transform-origin:100% 50%;z-index:1;animation:penniPony .52s ease-in-out infinite alternate}
+.penni-hair-back{left:15px;top:4px;width:29px;height:30px;border-radius:16px 15px 13px 13px;background:linear-gradient(145deg,#140f18,#4a3037);box-shadow:inset -6px -3px 0 rgba(255,255,255,.08);z-index:1}
+.penni-head{left:18px;top:9px;width:24px;height:25px;border-radius:48% 48% 52% 52%;background:linear-gradient(160deg,#ffe0c4,#f0a884);z-index:3;overflow:hidden}
+.penni-fringe{left:-2px;top:-3px;width:29px;height:13px;border-radius:12px 12px 9px 9px;background:linear-gradient(145deg,#18141d,#3b2b33);clip-path:polygon(0 0,100% 0,100% 72%,77% 48%,58% 88%,38% 56%,15% 82%,0 62%)}
+.penni-cheek{left:3px;top:17px;width:6px;height:4px;border-radius:50%;background:rgba(236,86,99,.35);filter:blur(.2px)}
+.penni-eye{top:14px;width:4px;height:5px;border-radius:50%;background:#2d2630;box-shadow:inset 1px 1px 0 rgba(255,255,255,.8)}
+.penni-eye.eye-left{left:7px}
+.penni-eye.eye-right{right:7px}
+.penni-mouth{right:6px;top:19px;width:6px;height:5px;border-radius:50%;background:#7f2737}
+.penni-body{left:14px;top:34px;width:29px;height:20px;border-radius:8px 9px 5px 6px;background:linear-gradient(145deg,#ff9a98,#d24b61 62%,#ab2d49);z-index:2;rotate:-7deg;overflow:visible}
+.penni-shirt-light{left:5px;top:4px;width:15px;height:3px;border-radius:999px;background:rgba(255,216,206,.5);rotate:-8deg}
+.penni-shorts{left:5px;top:16px;width:22px;height:10px;border-radius:3px 3px 6px 6px;background:#17243d;clip-path:polygon(0 0,100% 0,88% 100%,54% 82%,15% 100%)}
+.penni-arm{top:36px;width:7px;height:20px;border-radius:8px;background:#f0a884;transform-origin:50% 3px;z-index:1}
+.penni-arm.arm-back{left:9px;animation:penniArmBack .52s ease-in-out infinite alternate}
+.penni-arm.arm-front{right:8px;animation:penniArmFront .52s ease-in-out infinite alternate;z-index:4}
+.penni-snack{right:-5px;bottom:-3px;width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 50% 28%,#fff 0 30%,#f6c34b 32% 70%,#e88928 72% 100%);box-shadow:inset -2px -2px 0 rgba(120,73,32,.18),0 0 0 1px rgba(100,58,28,.08)}
+.penni-snack:after{content:"";position:absolute;left:5px;top:-2px;width:2px;height:2px;border-radius:50%;background:#f2bd3b;box-shadow:4px 2px 0 #f2bd3b,-3px 3px 0 #f2bd3b}
+.penni-leg{top:51px;width:7px;height:19px;border-radius:8px;background:#d79072;transform-origin:50% 2px;z-index:1}
 .penni-leg.leg-back{left:18px;animation:penniLegBack .52s ease-in-out infinite alternate}
-.penni-leg.leg-front{right:13px;animation:penniLegFront .52s ease-in-out infinite alternate}
-.penni-leg:after{content:"";position:absolute;left:-1px;bottom:-2px;width:10px;height:5px;border-radius:999px;background:#fcf3de}
+.penni-leg.leg-front{right:11px;animation:penniLegFront .52s ease-in-out infinite alternate}
+.penni-leg:after{content:"";position:absolute;left:-2px;bottom:-3px;width:13px;height:6px;border-radius:999px;background:#d84a85;box-shadow:inset 0 -2px 0 rgba(35,24,36,.3)}
 @keyframes penniArmFront{from{rotate:28deg}to{rotate:-24deg}}
 @keyframes penniArmBack{from{rotate:-30deg}to{rotate:22deg}}
 @keyframes penniLegFront{from{rotate:-30deg}to{rotate:28deg}}
 @keyframes penniLegBack{from{rotate:24deg}to{rotate:-26deg}}
 @keyframes penniShadow{from{scale:.9 1;opacity:.12}to{scale:1.08 1;opacity:.2}}
-@keyframes penniOrbit{to{rotate:360deg}}
+@keyframes penniPony{from{rotate:-32deg}to{rotate:-6deg}}
 @media(prefers-reduced-motion:reduce){
-  .penni-arm,.penni-leg,.penni-shadow,.feed-empty-penni-orbit{animation:none!important}
+  .penni-arm,.penni-leg,.penni-shadow{animation:none!important}
 }
 .card-accent{display:none}
 .card-body{padding:20px}
