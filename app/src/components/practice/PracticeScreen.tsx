@@ -8,6 +8,7 @@ import {
   faCalendarDay,
   faChartLine,
   faChevronRight,
+  faCoins,
   faDice,
   faDumbbell,
   faFlagCheckered,
@@ -58,6 +59,18 @@ const GS_GROUPS = [
   { name: 'Optional', subjects: ['Anthropology', 'Schemes', 'Reports and Indices'] },
 ]
 
+function xpToStartLevel(level: number) {
+  let total = 0
+  for (let l = 1; l < level; l++) total += 250 + (l - 1) * 100
+  return total
+}
+
+function levelFromXp(xp: number) {
+  let level = 1
+  while (xp >= xpToStartLevel(level + 1)) level++
+  return level
+}
+
 export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: PracticeScreenProps) {
   const { articlesByDate, selectedDate, setScreen } = useAppStore()
   const { stats, settings, pyqData, pyqReady, setPyqData } = usePracticeStore()
@@ -89,9 +102,15 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
   const pct = Math.min(100, Math.round((todayDay.n / Math.max(settings.target, 1)) * 100))
   const remaining = Math.max(settings.target - todayDay.n, 0)
   const correctAnswers = Object.values(stats.a).filter(([correct]) => correct === 1).length
-  const xp = correctAnswers * 10 + Object.keys(stats.d).length * 15 + stats.badges.length * 30
-  const level = Math.max(1, Math.floor(xp / 250) + 1)
-  const nextLevelXp = level * 250
+  const attemptedAnswers = Object.keys(stats.a).length
+  const activeDays = Object.keys(stats.d).length
+  const xp = correctAnswers * 15 + attemptedAnswers * 5 + activeDays * 25 + stats.streak.count * 20 + stats.badges.length * 50
+  const level = levelFromXp(xp)
+  const levelStartXp = xpToStartLevel(level)
+  const nextLevelXp = xpToStartLevel(level + 1)
+  const xpIntoLevel = xp - levelStartXp
+  const xpForNextLevel = nextLevelXp - levelStartXp
+  const credits = correctAnswers * 3 + attemptedAnswers + activeDays * 10 + stats.streak.count * 12 + stats.badges.length * 25
   const goalLabel = settings.target <= 10 ? 'Relaxed goal' : settings.target <= 20 ? 'Focused goal' : 'Intensive goal'
   const dailyBaseQuestions = dailySet(allArticles, pyqData, settings.target, TODAY)
   const dailyBaseIds = new Set(dailyBaseQuestions.map(q => q.id))
@@ -198,7 +217,10 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
       <div className="screen-body practice-body practice-journey" style={{ paddingBottom: 'calc(110px + env(safe-area-inset-bottom))' }}>
         <section className="mission-hero">
           <div className="mission-copy">
-            <span className="mission-kicker">Today&apos;s Mission · {goalLabel}</span>
+            <div className="mission-topline">
+              <span className="mission-kicker">Today&apos;s Mission · {goalLabel}</span>
+              <span className="mission-credit-pill"><FontAwesomeIcon icon={faCoins} /> {credits}</span>
+            </div>
             <h3>{todayDay.n} / {settings.target} questions</h3>
             <p>{remaining > 0 ? `${remaining} questions remaining. Penni has prepared the next set for you.` : 'Mission complete. Excellent consistency today.'}</p>
           </div>
@@ -210,8 +232,8 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
 
           <div className="mission-stats">
             <div><b>{stats.streak.count}</b><span>day streak</span></div>
-            <div><b>+{xp}</b><span>XP · Level {level}</span></div>
-            <div><b>{nextLevelXp}</b><span>next level</span></div>
+            <div><b>{xp}</b><span>XP · Level {level}</span></div>
+            <div><b>{Math.max(0, xpForNextLevel - xpIntoLevel)}</b><span>to Level {level + 1}</span></div>
           </div>
 
           <button className="mission-cta" onClick={() => startQuiz(remaining > 0 ? 'Daily Practice' : 'Mission Review', missionQuestions)}>

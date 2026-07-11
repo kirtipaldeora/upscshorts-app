@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import type { CSSProperties } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faXmark,
@@ -27,6 +26,7 @@ interface QuizPlayerProps {
 
 type AnsweredState = { picked: number; correct: boolean } | null
 type TestAnswer = { picked: number | null; correct: boolean; skipped: boolean }
+type RewardBurst = { id: number; text: string; combo: number; xp: number } | null
 
 export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlayerProps) {
   const { settings, recordAnswer, toggleQbm, questionBookmarks } = usePracticeStore()
@@ -35,6 +35,11 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
   const [answered, setAnswered] = useState<AnsweredState>(null)
   const [done, setDone] = useState(false)
   const [reviewMode, setReviewMode] = useState(false)
+  const [explanationOpen, setExplanationOpen] = useState(false)
+  const [combo, setCombo] = useState(0)
+  const [earnedXp, setEarnedXp] = useState(0)
+  const [earnedCredits, setEarnedCredits] = useState(0)
+  const [rewardBurst, setRewardBurst] = useState<RewardBurst>(null)
   const [startedAt, setStartedAt] = useState(Date.now())
   const [elapsedMs, setElapsedMs] = useState(0)
 
@@ -45,7 +50,27 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
     if (answered) return
     const correct = i === q.answer
     setAnswered({ picked: i, correct })
+    setExplanationOpen(false)
     setAnswers(prev => ({ ...prev, [idx]: { picked: i, correct, skipped: false } }))
+    if (correct) {
+      const nextCombo = combo + 1
+      const bonus = nextCombo >= 3 ? 5 : 0
+      const xpGain = 15 + bonus
+      setCombo(nextCombo)
+      setEarnedXp(value => value + xpGain)
+      setEarnedCredits(value => value + 3 + (nextCombo >= 3 ? 1 : 0))
+      if (nextCombo >= 2) {
+        setRewardBurst({
+          id: Date.now(),
+          combo: nextCombo,
+          xp: xpGain,
+          text: nextCombo >= 5 ? 'Brilliant streak' : nextCombo >= 3 ? 'Combo bonus' : 'Nice chain',
+        })
+        window.setTimeout(() => setRewardBurst(null), 1250)
+      }
+    } else {
+      setCombo(0)
+    }
     recordAnswer(q.id, correct, q.subject, settings.target, onShowToast)
     // Feedback motion after the correct/wrong classes render
     requestAnimationFrame(() => {
@@ -58,10 +83,11 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
     if (idx + 1 >= total) { finish(); return }
     setIdx(i => i + 1)
     setAnswered(null)
+    setExplanationOpen(false)
   }
 
   function retry() {
-    setIdx(0); setAnswers({}); setAnswered(null); setDone(false); setReviewMode(false); setStartedAt(Date.now()); setElapsedMs(0)
+    setIdx(0); setAnswers({}); setAnswered(null); setDone(false); setReviewMode(false); setExplanationOpen(false); setCombo(0); setEarnedXp(0); setEarnedCredits(0); setRewardBurst(null); setStartedAt(Date.now()); setElapsedMs(0)
   }
 
   function finish() {
@@ -72,8 +98,10 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
   function skip() {
     if (answered) return
     setAnswers(prev => ({ ...prev, [idx]: { picked: null, correct: false, skipped: true } }))
+    setCombo(0)
     if (idx + 1 >= total) { finish(); return }
     setIdx(i => i + 1)
+    setExplanationOpen(false)
   }
 
   function formatTime(ms: number) {
@@ -127,7 +155,7 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
     return (
       <div className="quiz-overlay">
         <div className="quiz-header">
-          <button className="icon-btn" onClick={onClose} aria-label="Close">
+          <button className="qz-close" onClick={onClose} aria-label="Close">
             <FontAwesomeIcon icon={faXmark} />
           </button>
           <span className="qz-title">{title}</span>
@@ -141,6 +169,10 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
                 <h3>Total Marks</h3>
                 <div className={`qz-marks ${marks >= maxMarks * 0.5 ? 'good' : 'low'}`}>{Number(marks.toFixed(2))}<span>/{maxMarks}</span></div>
                 <p>{pct >= 80 ? 'Excellent control. Keep building speed.' : pct >= 50 ? 'Good attempt. Review errors before the next set.' : "One test does not define you. Review, retry, improve."}</p>
+                <div className="qz-reward-summary">
+                  <span>+{earnedXp} XP</span>
+                  <span>+{earnedCredits} credits</span>
+                </div>
                 <div className="qz-score-metrics">
                   <div><FontAwesomeIcon icon={faClock} /><span>Time Taken</span><b>{formatTime(elapsedMs)}</b></div>
                   <div><FontAwesomeIcon icon={faBullseye} /><span>Accuracy</span><b>{accuracy}%</b></div>
@@ -198,22 +230,38 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
   }
 
   const bm = questionBookmarks.includes(q.id)
-  const progress = Math.round(((idx + (answered ? 1 : 0)) / total) * 100)
   const structuredStem = splitUPSCStem(q.q)
 
   return (
     <div className="quiz-overlay">
       {/* Header */}
       <div className="quiz-header">
-        <button className="icon-btn" onClick={onClose} aria-label="Close test">
+        <button className="qz-close" onClick={onClose} aria-label="Close test">
           <FontAwesomeIcon icon={faXmark} />
         </button>
         <span className="qz-title">{title}</span>
         <span className="qz-cnt">{idx + 1}<i>/{total}</i></span>
       </div>
 
-      {/* Progress bar */}
-      <div className="qz-progress"><span style={{ width: `${progress}%` }} /></div>
+      {rewardBurst && (
+        <div key={rewardBurst.id} className="qz-reward-burst">
+          <b>{rewardBurst.text}</b>
+          <span>{rewardBurst.combo} correct in a row · +{rewardBurst.xp} XP</span>
+        </div>
+      )}
+
+      <div className="qz-timeline" aria-label={`Question ${idx + 1} of ${total}`}>
+        {questions.map((item, i) => {
+          const state = answers[i]
+          const cls = [
+            i === idx ? 'current' : '',
+            state?.correct ? 'ok' : '',
+            state && !state.correct && !state.skipped ? 'no' : '',
+            state?.skipped ? 'skip' : '',
+          ].filter(Boolean).join(' ')
+          return <span key={item.id} className={cls} title={`Question ${i + 1}`} />
+        })}
+      </div>
 
       {/* Body */}
       <div className="quiz-body">
@@ -221,6 +269,7 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
         <div className="qz-meta">
           {q.subject && <span className="pv-tag subject">{q.subject}</span>}
           {q.srcLabel && <span className="qz-src">{q.srcLabel}</span>}
+          {earnedXp > 0 && <span className={`qz-live-xp ${combo >= 2 ? 'hot' : ''}`}>+{earnedXp} XP</span>}
           <button
             className={`qz-bm ${bm ? 'on' : ''}`}
             onClick={() => toggleQbm(q.id, onShowToast)}
@@ -274,10 +323,16 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
 
         {/* Explanation */}
         {answered && (
-          <div className={`qz-exp show ${answered.correct ? 'ok' : 'no'}`}>
-            <b>{answered.correct ? 'Correct' : 'Not quite'}</b>
-            <p>{q.explanation}{q.ref ? ` (${q.ref})` : ''}</p>
-          </div>
+          explanationOpen ? (
+            <div className={`qz-exp show ${answered.correct ? 'ok' : 'no'}`}>
+              <b>{answered.correct ? 'Correct' : 'Not quite'}</b>
+              <p>{q.explanation}{q.ref ? ` (${q.ref})` : ''}</p>
+            </div>
+          ) : (
+            <button className={`qz-reveal-exp ${answered.correct ? 'ok' : 'no'}`} onClick={() => setExplanationOpen(true)}>
+              {answered.correct ? 'Correct answer saved' : 'Answer checked'} · Reveal explanation
+            </button>
+          )
         )}
       </div>
 
