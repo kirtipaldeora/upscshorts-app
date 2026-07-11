@@ -5,6 +5,13 @@ import {
   faChevronRight,
   faFilePen,
   faArrowLeft,
+  faBookOpen,
+  faBookmark,
+  faBullseye,
+  faFire,
+  faDumbbell,
+  faXmark,
+  faCheck,
 } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
 import { useBookmarkStore } from '@/stores/useBookmarkStore'
@@ -12,6 +19,10 @@ import { usePracticeStore } from '@/stores/usePracticeStore'
 import { idbAll } from '@/hooks/useMainsDB'
 import type { MainsRecord } from '@/hooks/useMainsDB'
 import { useHaptic } from '@/hooks/useHaptic'
+import { useAuthStore } from '@/stores/useAuthStore'
+import { PROFILE_MASCOTS, ProfileMascot } from '@/components/auth/ProfileMascot'
+import { TODAY } from '@/constants/categories'
+import { EASE, gsap, reducedMotion } from '@/anim/animations'
 
 interface ProfileScreenProps {
   onOpenSettings: () => void
@@ -23,37 +34,54 @@ export function ProfileScreen({ onOpenSettings, onOpenMainsRecord }: ProfileScre
     setScreen,
   } = useAppStore()
   const { bookmarkedIds } = useBookmarkStore()
-  const { stats, settings } = usePracticeStore()
+  const { stats, settings, saveSettings } = usePracticeStore()
+  const { profile, isGuest, user, saveProfile } = useAuthStore()
   const haptic = useHaptic()
   const [mainsRecs, setMainsRecs] = useState<MainsRecord[]>([])
+  const [editOpen, setEditOpen] = useState(false)
+  const [draft, setDraft] = useState(() => profile)
 
   const totalBookmarks = bookmarkedIds.length
-
-  // Practice stats
   const attempted = Object.keys(stats.a).length
-  const correct = Object.values(stats.a).filter(x => x[0] === 1).length
-  const accuracy = attempted ? Math.round(correct / attempted * 100) : 0
   const streakCount = stats.streak.count
-  const displayName = settings.name || 'UPSC Aspirant'
-
-  // Subject-wise accuracy
-  const subs: Record<string, { n: number; c: number }> = {}
-  Object.values(stats.a).forEach(x => {
-    if (x[2]) {
-      const s = subs[x[2]] ?? { n: 0, c: 0 }
-      s.n++; if (x[0]) s.c++
-      subs[x[2]] = s
-    }
-  })
-  const subRows = Object.keys(subs).sort((a, b) => subs[b].n - subs[a].n).slice(0, 8)
+  const todayDone = stats.d[TODAY]?.n ?? 0
+  const target = settings.target || profile?.dailyTarget || 10
+  const targetPct = Math.min(100, Math.round((todayDone / Math.max(1, target)) * 100))
+  const displayName = isGuest ? 'Guest Aspirant' : profile?.name || settings.name || 'UPSC Aspirant'
+  const profileLine = isGuest ? 'Guest mode - local only' : [profile?.targetExam, profile?.prepStage].filter(Boolean).join(' · ') || 'Civil Services Aspirant'
 
   // Load mains records
   useEffect(() => {
     idbAll().then(recs => setMainsRecs(recs.sort((a, b) => b.ts - a.ts)))
   }, [])
 
+  useEffect(() => {
+    setDraft(profile)
+  }, [profile])
+
+  useEffect(() => {
+    if (reducedMotion()) return
+    const ctx = gsap.context(() => {
+      gsap.fromTo('.account-hero,.account-panel,.account-action-row,.account-list-card',
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.54, ease: EASE.expo, stagger: 0.06, clearProps: 'transform,opacity' })
+      gsap.fromTo('.account-progress i',
+        { scaleX: 0, transformOrigin: 'left center' },
+        { scaleX: 1, duration: 0.8, ease: EASE.expo, delay: 0.14, clearProps: 'transform' })
+    })
+    return () => ctx.revert()
+  }, [targetPct])
+
   async function handleBack() {
     await haptic(); setScreen('feed')
+  }
+
+  async function handleSaveAccount() {
+    if (!draft) return
+    await haptic()
+    await saveProfile(draft)
+    saveSettings({ name: draft.name || 'UPSC Aspirant' })
+    setEditOpen(false)
   }
 
   return (
@@ -69,92 +97,159 @@ export function ProfileScreen({ onOpenSettings, onOpenMainsRecord }: ProfileScre
         </button>
       </div>
 
-      {/* Body */}
       <div className="screen-body">
-        {/* Profile Card */}
-        <div className="profile-card">
-          <div className="profile-avatar">{displayName[0].toUpperCase()}</div>
+        <div className="account-hero">
+          <div className="account-hero-top">
+            <ProfileMascot id={profile?.mascotId} size="lg" />
+            <button onClick={() => {
+              if (isGuest || !profile) onOpenSettings()
+              else setEditOpen(true)
+            }}>
+              {isGuest ? 'Sign in' : 'Edit account'}
+              <FontAwesomeIcon icon={faChevronRight} />
+            </button>
+          </div>
+          <span>{isGuest ? 'Preview account' : 'Penni account'}</span>
           <h3>{displayName}</h3>
-          <p>Civil Services Aspirant</p>
-          <div className="profile-stats">
-            <div className="profile-stat">
-              <div className="ps-num">{attempted}</div>
-              <div className="ps-label">Attempted</div>
+          <p>{profileLine}</p>
+        </div>
+
+        <div className="account-panel">
+          <div className="account-panel-head">
+            <div>
+              <span>Today’s target</span>
+              <b>{todayDone} / {target} questions</b>
             </div>
-            <div className="profile-stat">
-              <div className="ps-num">{accuracy}%</div>
-              <div className="ps-label">Accuracy</div>
-            </div>
-            <div className="profile-stat">
-              <div className="ps-num">{streakCount}🔥</div>
-              <div className="ps-label">Streak</div>
-            </div>
-            <div className="profile-stat">
-              <div className="ps-num">{totalBookmarks}</div>
-              <div className="ps-label">Saved</div>
-            </div>
+            <strong>{targetPct}%</strong>
+          </div>
+          <div className="account-progress"><i style={{ width: `${targetPct}%` }} /></div>
+          <p>{todayDone >= target ? 'Target complete. Use revision to protect the streak.' : `${Math.max(0, target - todayDone)} questions left to finish today cleanly.`}</p>
+          <button onClick={() => { void haptic(); setScreen('practice') }}>
+            <FontAwesomeIcon icon={faDumbbell} />
+            {todayDone ? 'Continue practice' : 'Start practice'}
+          </button>
+        </div>
+
+        <div className="account-action-row">
+          <div>
+            <FontAwesomeIcon icon={faFire} />
+            <b>{streakCount}</b>
+            <span>streak</span>
+          </div>
+          <div onClick={() => setScreen('bookmarks')}>
+            <FontAwesomeIcon icon={faBookmark} />
+            <b>{totalBookmarks}</b>
+            <span>saved</span>
+          </div>
+          <div onClick={() => setScreen('practice')}>
+            <FontAwesomeIcon icon={faBullseye} />
+            <b>{attempted}</b>
+            <span>attempted</span>
           </div>
         </div>
 
-        {/* Subject-wise accuracy */}
-        {subRows.length > 0 && (
-          <div className="setting-group">
-            <div className="setting-group-title">Subject-wise accuracy</div>
-            <div className="pn-subwrap">
-              {subRows.map(s => {
-                const p = Math.round(subs[s].c / subs[s].n * 100)
-                return (
-                  <div key={s} className="pn-subrow">
-                    <span>{s}</span>
-                    <div className="pn-bar small"><i style={{ width: `${p}%` }} /></div>
-                    <b>{p}%</b>
-                  </div>
-                )
-              })}
-            </div>
+        <div className="account-list-card">
+          <div className="account-list-head">
+            <FontAwesomeIcon icon={faFilePen} />
+            <span>Mains evaluations</span>
+            <button onClick={() => setScreen('practice')}>Practice</button>
           </div>
-        )}
-
-        {/* Mains evaluations */}
-        <div className="setting-group">
-          <div className="setting-group-title">Mains Evaluations</div>
           {mainsRecs.length === 0 ? (
-            <p className="pn-empty">No evaluated answers yet — try Mains practice.</p>
+            <p className="pn-empty">No evaluated answers yet. Try one short Mains answer after practice.</p>
           ) : (
-            mainsRecs.map(r => (
-              <div key={r.ts} className="setting-item" onClick={() => onOpenMainsRecord(r)} style={{ cursor: 'pointer' }}>
-                <div className="setting-left">
-                  <FontAwesomeIcon icon={faFilePen} style={{ width: 14 }} />
-                  <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 190 }}>
-                    {r.qtext}
-                  </span>
-                </div>
-                <span style={{ fontSize: 12, fontWeight: 900, color: 'var(--acc)' }}>
-                  {r.eval ? `${r.eval.score}/${r.eval.max_score}` : '…'}
-                </span>
-              </div>
+            mainsRecs.slice(0, 3).map(r => (
+              <button key={r.ts} onClick={() => onOpenMainsRecord(r)}>
+                <span>{r.qtext}</span>
+                <b>{r.eval ? `${r.eval.score}/${r.eval.max_score}` : 'Open'}</b>
+              </button>
             ))
           )}
         </div>
 
-        {/* App settings link */}
-        <div className="setting-group">
-          <div className="setting-group-title">App</div>
-          <div className="setting-item" onClick={onOpenSettings} style={{ cursor: 'pointer' }}>
-            <div className="setting-left">
-              <FontAwesomeIcon icon={faGear} style={{ width: 14 }} />
-              <span>Settings</span>
-            </div>
+        <div className="account-list-card compact">
+          <button onClick={() => setScreen('revise')}>
+            <span><FontAwesomeIcon icon={faBookOpen} /> Revision loop</span>
+            <FontAwesomeIcon icon={faChevronRight} />
+          </button>
+          <button onClick={onOpenSettings}>
+            <span><FontAwesomeIcon icon={faGear} /> Settings</span>
             <FontAwesomeIcon icon={faChevronRight} style={{ color: 'var(--ink3)', fontSize: 11 }} />
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div style={{ textAlign: 'center', padding: '16px 16px 24px', color: 'var(--on2)', fontSize: 11, fontWeight: 700 }}>
-          Built for UPSC aspirants<br />
-          <span style={{ color: 'var(--yellow)' }}>Penni</span>
+          </button>
         </div>
       </div>
+
+      {editOpen && draft && (
+        <div className="account-edit-overlay" role="dialog" aria-modal="true" aria-label="Edit account">
+          <div className="account-edit-sheet">
+            <div className="account-edit-head">
+              <div>
+                <span>Penni account</span>
+                <b>Edit profile</b>
+              </div>
+              <button onClick={() => setEditOpen(false)} aria-label="Close edit account">
+                <FontAwesomeIcon icon={faXmark} />
+              </button>
+            </div>
+
+            <div className="account-edit-mascots">
+              {PROFILE_MASCOTS.map(mascot => (
+                <button
+                  key={mascot.id}
+                  className={draft.mascotId === mascot.id ? 'active' : ''}
+                  onClick={() => setDraft(prev => prev ? { ...prev, mascotId: mascot.id } : prev)}
+                  aria-label={`Choose ${mascot.name}`}
+                >
+                  <ProfileMascot id={mascot.id} size="sm" selected={draft.mascotId === mascot.id} />
+                </button>
+              ))}
+            </div>
+
+            <div className="account-edit-grid">
+              <label>
+                <span>Name</span>
+                <input value={draft.name} onChange={e => setDraft({ ...draft, name: e.target.value })} />
+              </label>
+              <label>
+                <span>{user?.method === 'phone' ? 'Verified phone' : 'Phone'}</span>
+                <input value={draft.phone} disabled={user?.method === 'phone'} onChange={e => setDraft({ ...draft, phone: e.target.value })} />
+              </label>
+              <label>
+                <span>Attempt</span>
+                <input value={draft.attemptYear} inputMode="numeric" onChange={e => setDraft({ ...draft, attemptYear: e.target.value })} />
+              </label>
+              <label>
+                <span>Exam</span>
+                <select value={draft.targetExam} onChange={e => setDraft({ ...draft, targetExam: e.target.value })}>
+                  {['CSE 2027', 'CSE 2028', 'CSE 2029', 'State PCS', 'Exploring UPSC'].map(item => <option key={item}>{item}</option>)}
+                </select>
+              </label>
+              <label>
+                <span>Stage</span>
+                <select value={draft.prepStage} onChange={e => setDraft({ ...draft, prepStage: e.target.value })}>
+                  {['Foundation', 'Prelims focused', 'Mains focused', 'Interview stage'].map(item => <option key={item}>{item}</option>)}
+                </select>
+              </label>
+              <label>
+                <span>Language</span>
+                <select value={draft.language} onChange={e => setDraft({ ...draft, language: e.target.value as typeof draft.language })}>
+                  <option value="english">english</option>
+                  <option value="hinglish">hinglish</option>
+                  <option value="hindi">hindi</option>
+                </select>
+              </label>
+              <label className="wide">
+                <span>Optional subject</span>
+                <input value={draft.optionalSubject} placeholder="Optional, if decided" onChange={e => setDraft({ ...draft, optionalSubject: e.target.value })} />
+              </label>
+            </div>
+
+            <button className="account-edit-save" onClick={() => void handleSaveAccount()}>
+              <FontAwesomeIcon icon={faCheck} />
+              Save account
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

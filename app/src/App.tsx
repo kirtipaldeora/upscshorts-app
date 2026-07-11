@@ -1,11 +1,14 @@
-import { useState, useCallback, lazy, Suspense } from 'react'
+import { useState, useCallback, useEffect, lazy, Suspense } from 'react'
 import { SplashScreen } from '@/components/layout/SplashScreen'
-import { Onboarding } from '@/components/layout/Onboarding'
 import { BottomNav } from '@/components/layout/BottomNav'
 import { PenniLoader } from '@/components/layout/PenniLoader'
 import { FeedScreen } from '@/components/feed/FeedScreen'
+import { PenniLogin } from '@/components/auth/PenniLogin'
+import { StudentProfileForm } from '@/components/auth/StudentProfileForm'
 import { Toast, useToast } from '@/components/ui/Toast'
 import { useAppStore } from '@/stores/useAppStore'
+import { useAuthStore } from '@/stores/useAuthStore'
+import { usePracticeStore } from '@/stores/usePracticeStore'
 import type { MainsRecord } from '@/hooks/useMainsDB'
 
 // Heavy / seldom-used screens are code-split so they never bloat first load.
@@ -23,7 +26,7 @@ const MapsArcade = lazy(() => import('@/components/maps-arcade/MapsArcade').then
 const PYQVault = lazy(() => import('@/components/pyq-vault/PYQVault').then(module => ({ default: module.PYQVault })))
 const MainsScreen = lazy(() => import('@/components/practice/MainsScreen').then(module => ({ default: module.MainsScreen })))
 
-type AppPhase = 'splash' | 'onboarding' | 'main'
+type AppPhase = 'splash' | 'auth' | 'profile' | 'main'
 
 function getInitialPhase(): AppPhase {
   return 'splash'
@@ -34,31 +37,52 @@ export default function App() {
   const [uploadVisible, setUploadVisible] = useState(false)
   const [mainsRecordOpen, setMainsRecordOpen] = useState<MainsRecord | null>(null)
   const { activeScreen, overlayScreen, setOverlay, setScreen } = useAppStore()
+  const { user, profile, isGuest, bootstrap } = useAuthStore()
+  const { settings } = usePracticeStore()
   const { message: toastMsg, show: showToast, clear: clearToast } = useToast()
 
-  const handleSplashDone = useCallback(() => {
-    try {
-      const u4ob = localStorage.getItem('u4ob')
-      if (u4ob === '1' || u4ob === 'true') {
-        setPhase('main')
-      } else {
-        setPhase('onboarding')
-      }
-    } catch {
-      setPhase('onboarding')
-    }
+  const handleSplashDone = useCallback(async () => {
+    await bootstrap()
+    const state = useAuthStore.getState()
+    setPhase(state.isGuest ? 'main' : state.user ? (state.profile ? 'main' : 'profile') : 'auth')
+  }, [bootstrap])
+
+  const handleAuthenticated = useCallback(() => {
+    const state = useAuthStore.getState()
+    setPhase(state.isGuest ? 'main' : state.profile ? 'main' : 'profile')
   }, [])
 
-  const handleOnboardingDone = useCallback(() => {
-    setPhase('main')
-  }, [])
+  useEffect(() => {
+    if (phase !== 'main' || !settings.remind) return
+    const [hourRaw, minuteRaw] = (settings.reminderTime || '19:00').split(':')
+    const hour = Number(hourRaw)
+    const minute = Number(minuteRaw)
+    if (!Number.isFinite(hour) || !Number.isFinite(minute)) return
+    const now = new Date()
+    const next = new Date()
+    next.setHours(hour, minute, 0, 0)
+    if (next <= now) next.setDate(next.getDate() + 1)
+    const timeout = window.setTimeout(() => {
+      showToast('Penni reminder: review a few mistakes before you close today.')
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('Penni revision reminder', {
+          body: 'Review mistakes or finish today’s practice target.',
+        })
+      }
+    }, Math.min(next.getTime() - now.getTime(), 2147483647))
+    return () => window.clearTimeout(timeout)
+  }, [phase, settings.remind, settings.reminderTime, showToast])
 
   if (phase === 'splash') {
     return <SplashScreen onDone={handleSplashDone} />
   }
 
-  if (phase === 'onboarding') {
-    return <Onboarding onDone={handleOnboardingDone} />
+  if (phase === 'auth' || (!user && !isGuest)) {
+    return <PenniLogin onAuthenticated={handleAuthenticated} />
+  }
+
+  if (!isGuest && (phase === 'profile' || !profile)) {
+    return <StudentProfileForm onComplete={() => setPhase('main')} />
   }
 
   return (

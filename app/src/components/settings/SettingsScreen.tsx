@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faArrowLeft,
@@ -15,12 +16,19 @@ import {
   faArrowRotateLeft,
   faShieldHalved,
   faChevronRight,
+  faChevronDown,
   faGlobe,
+  faRightFromBracket,
+  faClock,
 } from '@fortawesome/free-solid-svg-icons'
 import { usePracticeStore } from '@/stores/usePracticeStore'
 import { useThemeStore } from '@/stores/useThemeStore'
 import { useAppStore } from '@/stores/useAppStore'
 import { useBookmarkStore } from '@/stores/useBookmarkStore'
+import { useAuthStore, type StudentProfile } from '@/stores/useAuthStore'
+import { ProfileMascot } from '@/components/auth/ProfileMascot'
+import { TODAY } from '@/constants/categories'
+import { EASE, gsap, reducedMotion } from '@/anim/animations'
 
 interface SettingsScreenProps {
   onClose: () => void
@@ -33,10 +41,18 @@ type DeviceOrientationWithPermission = typeof DeviceOrientationEvent & {
 }
 
 export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsScreenProps) {
-  const { settings, saveSettings } = usePracticeStore()
+  const { settings, stats, saveSettings } = usePracticeStore()
   const { theme, toggle } = useThemeStore()
   const { articlesByDate, setArticlesByDate } = useAppStore()
   const { clearAll } = useBookmarkStore()
+  const { user, profile, isGuest, signOut, saveProfile } = useAuthStore()
+  const [contentToolsOpen, setContentToolsOpen] = useState(false)
+  const [dangerOpen, setDangerOpen] = useState(false)
+  const settingsRef = useRef<HTMLDivElement>(null)
+  const profileName = isGuest ? 'Guest mode' : profile?.name || user?.name || 'Signed in student'
+  const profileMethod = isGuest ? 'not signed in' : user?.method ?? 'local'
+  const todayDone = stats.d[TODAY]?.n ?? 0
+  const targetPct = Math.min(100, Math.round((todayDone / Math.max(1, settings.target)) * 100))
   const gsFilter = (() => {
     try { return JSON.parse(localStorage.getItem('u4gs') || '["GS1","GS2","GS3"]') as string[] }
     catch { return ['GS1', 'GS2', 'GS3'] }
@@ -49,7 +65,37 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
   function toggleGs(g: string) {
     const next = gsFilter.includes(g) ? gsFilter.filter(x => x !== g) : [...gsFilter, g]
     saveGs(next)
+    if (profile && !isGuest) {
+      void updateStudentProfile({ gsFocus: next.map(item => item.replace('GS', 'GS ')) }, true)
+    }
     onShowToast(`${g} ${next.includes(g) ? 'enabled' : 'disabled'}`)
+  }
+
+  function setDailyTarget(target: number) {
+    saveSettings({ target })
+    if (profile && !isGuest) void updateStudentProfile({ dailyTarget: target }, true)
+  }
+
+  function setReminderTime(reminderTime: string) {
+    saveSettings({ reminderTime })
+    onShowToast(`Reminder set for ${reminderTime}`)
+  }
+
+  async function enableReminder(next: boolean) {
+    if (next && 'Notification' in window && Notification.permission === 'default') {
+      await Notification.requestPermission()
+    }
+    saveSettings({ remind: next })
+    onShowToast(next ? `Revision nudge on at ${settings.reminderTime || '19:00'}` : 'Revision nudge off')
+  }
+
+  function testReminder() {
+    onShowToast('Penni reminder: review a few mistakes before you close today.')
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification('Penni revision reminder', {
+        body: 'Review mistakes or finish today’s practice target.',
+      })
+    }
   }
 
   function handleReset() {
@@ -76,6 +122,23 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
     }
   }
 
+  async function handleSignOut() {
+    const message = isGuest ? 'Return to login and connect Penni?' : 'Sign out of Penni on this device?'
+    if (window.confirm(message)) {
+      await signOut()
+      window.location.reload()
+    }
+  }
+
+  async function updateStudentProfile(patch: Partial<StudentProfile>, silent = false) {
+    if (!profile || isGuest) return
+    const next = { ...profile, ...patch }
+    await saveProfile(next)
+    if (patch.name) saveSettings({ name: patch.name })
+    if (patch.dailyTarget) saveSettings({ target: patch.dailyTarget })
+    if (!silent) onShowToast('Profile updated')
+  }
+
   function handleBackupContent() {
     const blob = new Blob([JSON.stringify(articlesByDate, null, 1)], { type: 'application/json' })
     const a = document.createElement('a')
@@ -94,6 +157,17 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
     saveSettings({ feedCosmicBackdrop: next })
   }
 
+  useEffect(() => {
+    const root = settingsRef.current
+    if (!root || reducedMotion()) return
+    const ctx = gsap.context(() => {
+      gsap.fromTo('.settings-panel,.settings-rhythm-card,.settings-collapsible',
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 0.46, ease: EASE.expo, stagger: 0.045, clearProps: 'transform,opacity' })
+    }, root)
+    return () => ctx.revert()
+  }, [])
+
   return (
     <div className="screen active" style={{ animation: 'scrIn 0.35s cubic-bezier(0.22,1,0.36,1)' }}>
       <div className="screen-header">
@@ -102,27 +176,33 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
         </button>
         <h2>Settings</h2>
       </div>
-      <div className="screen-body" style={{ paddingBottom: 'calc(110px + env(safe-area-inset-bottom))' }}>
+      <div ref={settingsRef} className="screen-body" style={{ paddingBottom: 'calc(110px + env(safe-area-inset-bottom))' }}>
 
         {/* Account */}
-        <div className="setting-group">
+        <div className="setting-group settings-panel">
           <div className="setting-group-title">Account</div>
           <div className="setting-item">
             <div className="setting-left">
-              <FontAwesomeIcon icon={faUser} style={{ width: 14 }} />
-              <span>Display name</span>
+              <ProfileMascot id={profile?.mascotId} size="sm" />
+              <span>{profileName}</span>
             </div>
-            <input
-              className="pn-inp"
-              defaultValue={settings.name}
-              placeholder="Aspirant"
-              onChange={e => saveSettings({ name: e.target.value })}
-            />
+            <span style={{ fontSize: 11, fontWeight: 900, color: 'var(--ink3)' }}>
+              {profileMethod}
+            </span>
+          </div>
+          {isGuest && (
+            <p className="pn-note">Guest mode keeps practice local on this device. Sign in to create a profile and sync progress.</p>
+          )}
+          <div className="setting-item" onClick={() => void handleSignOut()}>
+            <div className="setting-left">
+              <FontAwesomeIcon icon={isGuest ? faUser : faRightFromBracket} style={{ width: 14, color: isGuest ? 'var(--acc)' : '#E36D6D' }} />
+              <span style={{ color: isGuest ? 'var(--acc)' : '#E36D6D' }}>{isGuest ? 'Sign in to sync' : 'Sign out'}</span>
+            </div>
           </div>
         </div>
 
         {/* Preferences */}
-        <div className="setting-group">
+        <div className="setting-group settings-panel">
           <div className="setting-group-title">Preferences</div>
           <div className="setting-item" onClick={toggle}>
             <div className="setting-left">
@@ -169,40 +249,52 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
         </div>
 
         {/* Daily practice */}
-        <div className="setting-group">
+        <div className="setting-group settings-panel">
           <div className="setting-group-title">Daily practice</div>
-          <div className="setting-item">
-            <div className="setting-left">
-              <FontAwesomeIcon icon={faBullseye} style={{ width: 14 }} />
-              <span>Daily question target</span>
+          <div className="settings-rhythm-card">
+            <div className="settings-rhythm-top">
+              <FontAwesomeIcon icon={faBullseye} />
+              <div>
+                <span>Today’s progress</span>
+                <b>{todayDone} / {settings.target} questions</b>
+              </div>
+              <strong>{targetPct}%</strong>
             </div>
-            <div className="pn-step">
-              <button onClick={() => saveSettings({ target: Math.max(5, settings.target - 5) })}>−</button>
-              <b>{settings.target}</b>
-              <button onClick={() => saveSettings({ target: Math.min(50, settings.target + 5) })}>+</button>
+            <div className="settings-rhythm-bar"><i style={{ width: `${targetPct}%` }} /></div>
+            <div className="settings-target-row">
+              <span>Daily target</span>
+              <div className="pn-step">
+                <button onClick={() => setDailyTarget(Math.max(5, settings.target - 5))}>-</button>
+                <b>{settings.target}</b>
+                <button onClick={() => setDailyTarget(Math.min(50, settings.target + 5))}>+</button>
+              </div>
             </div>
-          </div>
-          <div className="setting-item" onClick={() => {
-            const next = !settings.remind
-            saveSettings({ remind: next })
-            if (next && 'Notification' in window && Notification.permission === 'default') {
-              Notification.requestPermission()
-            }
-          }}>
-            <div className="setting-left">
-              <FontAwesomeIcon icon={faBell} style={{ width: 14 }} />
-              <span>Revision reminder (7 pm, app open)</span>
+            <div className="settings-reminder-row">
+              <div>
+                <FontAwesomeIcon icon={faClock} />
+                <span>Revision nudge</span>
+              </div>
+              <input
+                type="time"
+                value={settings.reminderTime || '19:00'}
+                onChange={e => setReminderTime(e.target.value)}
+                aria-label="Reminder time"
+              />
+              <button
+                className={`toggle ${settings.remind ? 'on' : ''}`}
+                onClick={() => void enableReminder(!settings.remind)}
+                aria-label="Toggle revision reminder"
+              />
             </div>
-            <button
-              className={`toggle ${settings.remind ? 'on' : ''}`}
-              onClick={e => e.stopPropagation()}
-              aria-label="Toggle reminder"
-            />
+            <button className="settings-test-nudge" onClick={testReminder}>
+              <FontAwesomeIcon icon={faBell} />
+              Test nudge
+            </button>
           </div>
         </div>
 
         {/* AI evaluation */}
-        <div className="setting-group">
+        <div className="setting-group settings-panel">
           <div className="setting-group-title">AI evaluation (Mains)</div>
           <div className="setting-item">
             <div className="setting-left">
@@ -228,47 +320,64 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
         </div>
 
         {/* Data & privacy */}
-        <div className="setting-group">
+        <div className="setting-group settings-panel">
           <div className="setting-group-title">Data &amp; privacy</div>
-          {onOpenImport && (
-            <div className="setting-item" onClick={onOpenImport}>
-              <div className="setting-left">
-                <FontAwesomeIcon icon={faFileImport} style={{ width: 14 }} />
-                <span>Import content JSON</span>
-              </div>
-              <FontAwesomeIcon icon={faChevronRight} style={{ color: 'var(--ink3)', fontSize: 11 }} />
-            </div>
-          )}
-          <div className="setting-item" onClick={handleBackupContent}>
-            <div className="setting-left">
-              <FontAwesomeIcon icon={faFileExport} style={{ width: 14 }} />
-              <span>Backup all content (JSON)</span>
-            </div>
-          </div>
-          <div className="setting-item" onClick={handleClearBookmarks}>
-            <div className="setting-left">
-              <FontAwesomeIcon icon={faTrash} style={{ width: 14, color: '#E36D6D' }} />
-              <span style={{ color: '#E36D6D' }}>Clear bookmarks</span>
-            </div>
-          </div>
-          <div className="setting-item" onClick={handleResetContent}>
-            <div className="setting-left">
-              <FontAwesomeIcon icon={faRotate} style={{ width: 14, color: '#E36D6D' }} />
-              <span style={{ color: '#E36D6D' }}>Reset content</span>
-            </div>
-          </div>
-          <div className="setting-item" onClick={handleReset}>
-            <div className="setting-left">
-              <FontAwesomeIcon icon={faArrowRotateLeft} style={{ width: 14, color: '#E36D6D' }} />
-              <span style={{ color: '#E36D6D' }}>Reset app</span>
-            </div>
-          </div>
           <div className="setting-item" onClick={() => window.open('/privacy.html', '_blank')}>
             <div className="setting-left">
               <FontAwesomeIcon icon={faShieldHalved} style={{ width: 14 }} />
               <span>Privacy policy</span>
             </div>
             <FontAwesomeIcon icon={faChevronRight} style={{ color: 'var(--ink3)', fontSize: 11 }} />
+          </div>
+
+          <div className={`settings-collapsible ${contentToolsOpen ? 'open' : ''}`}>
+            <button className="settings-collapse-head" onClick={() => setContentToolsOpen(value => !value)}>
+              <div className="setting-left">
+                <FontAwesomeIcon icon={faFileImport} style={{ width: 14 }} />
+                <span>Content tools</span>
+              </div>
+              <FontAwesomeIcon icon={faChevronDown} />
+            </button>
+            {contentToolsOpen && (
+              <div className="settings-collapse-body">
+                {onOpenImport && (
+                  <button onClick={onOpenImport}>
+                    <FontAwesomeIcon icon={faFileImport} />
+                    Import content JSON
+                  </button>
+                )}
+                <button onClick={handleBackupContent}>
+                  <FontAwesomeIcon icon={faFileExport} />
+                  Backup content
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className={`settings-collapsible danger ${dangerOpen ? 'open' : ''}`}>
+            <button className="settings-collapse-head" onClick={() => setDangerOpen(value => !value)}>
+              <div className="setting-left">
+                <FontAwesomeIcon icon={faTrash} style={{ width: 14, color: '#E36D6D' }} />
+                <span>Reset and cleanup</span>
+              </div>
+              <FontAwesomeIcon icon={faChevronDown} />
+            </button>
+            {dangerOpen && (
+              <div className="settings-collapse-body">
+                <button onClick={handleClearBookmarks}>
+                  <FontAwesomeIcon icon={faTrash} />
+                  Clear bookmarks
+                </button>
+                <button onClick={handleResetContent}>
+                  <FontAwesomeIcon icon={faRotate} />
+                  Reset content
+                </button>
+                <button onClick={handleReset}>
+                  <FontAwesomeIcon icon={faArrowRotateLeft} />
+                  Reset app
+                </button>
+              </div>
+            )}
           </div>
         </div>
 

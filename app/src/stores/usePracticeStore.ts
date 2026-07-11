@@ -28,6 +28,7 @@ export interface PracticeStats {
 export interface PracticeSettings {
   target: number
   remind: boolean
+  reminderTime: string
   key: string
   name: string
   feedCosmicBackdrop: boolean
@@ -58,10 +59,10 @@ function loadStats(): PracticeStats {
 
 function loadSettings(): PracticeSettings {
   try {
-    return Object.assign({ target: 10, remind: false, key: '', name: '', feedCosmicBackdrop: true },
+    return Object.assign({ target: 10, remind: false, reminderTime: '19:00', key: '', name: '', feedCosmicBackdrop: true },
       JSON.parse(localStorage.getItem('u4set') || '{}'))
   } catch {
-    return { target: 10, remind: false, key: '', name: '', feedCosmicBackdrop: true }
+    return { target: 10, remind: false, reminderTime: '19:00', key: '', name: '', feedCosmicBackdrop: true }
   }
 }
 
