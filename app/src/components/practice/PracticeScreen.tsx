@@ -5,6 +5,7 @@ import {
   faArrowLeft,
   faBookmark,
   faBookOpen,
+  faCalendarDay,
   faChartLine,
   faChevronRight,
   faDice,
@@ -14,6 +15,7 @@ import {
   faMagnifyingGlass,
   faPenFancy,
   faPlay,
+  faClipboardList,
   faRotateLeft,
   faScroll,
   faXmark,
@@ -162,6 +164,17 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
     return known
   }
 
+  function startDailyCurrent() {
+    const qs = todayQuestions.length
+      ? seededPick(todayQuestions, Math.min(settings.target, todayQuestions.length), `daily-current-${activePackDate}`)
+      : missionQuestions
+    startQuiz(activePackIsToday ? 'Daily Current MCQ' : `${dateLabel(activePackDate)} Current MCQ`, qs)
+  }
+
+  function startPyqSet() {
+    startQuiz('PYQ Practice', seededPick(pyqQuestions, Math.min(10, pyqQuestions.length), `pyq-${Date.now()}`))
+  }
+
   if (activeQuiz) {
     return (
       <QuizPlayer
@@ -207,49 +220,77 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
           </button>
         </section>
 
-        <section className="today-pack-card">
-          <div>
-            <span>{activePackTitle}</span>
-            <h3>{todayArticles.length} articles · {todayQuestions.length} questions</h3>
-            <p>{fmtFull(activePackDate)} · {Math.min(todayDay.n, todayArticles.length)} read · {activePackMeta}</p>
+        <section className="test-hub">
+          <div className="test-hub-head">
+            <span>Choose a test mode</span>
+            <p>Daily current affairs, PYQs, subject practice and mocks are separated so you know exactly what you are starting.</p>
           </div>
-          <button onClick={() => setPanel('articles')}>Continue</button>
+          <div className="test-mode-grid">
+            <button className="test-mode-card primary" onClick={startDailyCurrent}>
+              <FontAwesomeIcon icon={faCalendarDay} />
+              <span>
+                <b>Daily Current MCQ</b>
+                <i>{todayQuestions.length} questions · {fmtFull(activePackDate)}</i>
+              </span>
+              <strong>Start</strong>
+            </button>
+            <button className="test-mode-card" onClick={startPyqSet}>
+              <FontAwesomeIcon icon={faScroll} />
+              <span>
+                <b>PYQ Practice</b>
+                <i>{pyqQuestions.length} UPSC prelims questions</i>
+              </span>
+              <strong>{Math.min(10, pyqQuestions.length)}Q</strong>
+            </button>
+            <button className="test-mode-card" onClick={() => setPanel('subjects')}>
+              <FontAwesomeIcon icon={faLayerGroup} />
+              <span>
+                <b>Subject Practice</b>
+                <i>{Object.keys(subs).length} subjects · GS-wise</i>
+              </span>
+              <strong>Open</strong>
+            </button>
+            <button className="test-mode-card" onClick={() => setPanel('random')}>
+              <FontAwesomeIcon icon={faClipboardList} />
+              <span>
+                <b>Mock Test</b>
+                <i>Mixed bank · choose size</i>
+              </span>
+              <strong>{pool.length}Q</strong>
+            </button>
+          </div>
         </section>
 
-        <section>
-          <div className="journey-title"><span>Revision</span></div>
-          <div className="review-grid">
-            <button onClick={() => startQuiz('Review Mistakes', mistakes)}>
-              <FontAwesomeIcon icon={faRotateLeft} />
-              <b>{mistakes.length}</b>
-              <span>mistakes</span>
-            </button>
-            <button onClick={() => startQuiz('Bookmarked Questions', bmQs)}>
-              <FontAwesomeIcon icon={faBookmark} />
-              <b>{bmQs.length}</b>
-              <span>bookmarks</span>
-            </button>
-            <button onClick={() => weakSubjects[0] ? startQuiz(`Weak Subject · ${weakSubjects[0].subject}`, pool.filter(q => q.subject === weakSubjects[0].subject && stats.a[q.id]?.[0] === 0)) : onShowToast('No weak subjects yet')}>
-              <FontAwesomeIcon icon={faChartLine} />
-              <b>{weakSubjects[0]?.subject ?? 'Clear'}</b>
-              <span>{weakSubjects[0] ? `${weakSubjects[0].wrong} weak` : 'weak areas'}</span>
-            </button>
-            <button onClick={() => startQuiz('Recently Revised', seededPick(pool.filter(q => stats.a[q.id]), Math.min(10, Object.keys(stats.a).length), `recent-${TODAY}`))}>
-              <FontAwesomeIcon icon={faBookOpen} />
-              <b>{Object.keys(stats.a).length}</b>
-              <span>recently revised</span>
-            </button>
-          </div>
+        <section className="test-secondary-grid">
+          <button onClick={() => setPanel('articles')}>
+            <FontAwesomeIcon icon={faBookOpen} />
+            <span><b>Article drills</b><i>{todayArticles.length} articles</i></span>
+          </button>
+          <button onClick={() => setPanel('previous')}>
+            <FontAwesomeIcon icon={faCalendarDay} />
+            <span><b>Previous days</b><i>{availableDates.length} packs</i></span>
+          </button>
+          <button onClick={() => startQuiz('Review Mistakes', mistakes)}>
+            <FontAwesomeIcon icon={faRotateLeft} />
+            <span><b>Mistake review</b><i>{mistakes.length} questions</i></span>
+          </button>
+          <button onClick={() => startQuiz('Bookmarked Questions', bmQs)}>
+            <FontAwesomeIcon icon={faBookmark} />
+            <span><b>Bookmarks</b><i>{bmQs.length} saved</i></span>
+          </button>
+          <button onClick={() => weakSubjects[0] ? startQuiz(`Weak Subject · ${weakSubjects[0].subject}`, pool.filter(q => q.subject === weakSubjects[0].subject && stats.a[q.id]?.[0] === 0)) : onShowToast('No weak subjects yet')}>
+            <FontAwesomeIcon icon={faChartLine} />
+            <span><b>Weak area</b><i>{weakSubjects[0]?.subject ?? 'No weak subject yet'}</i></span>
+          </button>
+          <button onClick={() => { setPanel(null); onOpenMains() }}>
+            <FontAwesomeIcon icon={faPenFancy} />
+            <span><b>Mains practice</b><i>{mainsLeft > 0 ? `${mainsLeft} evaluations left` : 'Daily limit used'}</i></span>
+          </button>
         </section>
 
-        <section className="practice-library-card">
-          <div>
-            <span>Practice Library</span>
-            <h3>Explore subjects, PYQs, mock tests and older packs</h3>
-            <p>Use this when you want to choose manually. Daily learning stays guided.</p>
-          </div>
+        <section className="practice-library-card compact">
           <button onClick={() => setPanel('library')}>
-            Open Library
+            More practice tools
             <FontAwesomeIcon icon={faChevronRight} />
           </button>
         </section>

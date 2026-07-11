@@ -1,7 +1,17 @@
 import { useState } from 'react'
 import type { CSSProperties } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faXmark, faCheck, faArrowRight, faBookmark as faBookmarkSolid } from '@fortawesome/free-solid-svg-icons'
+import {
+  faXmark,
+  faCheck,
+  faArrowRight,
+  faBookmark as faBookmarkSolid,
+  faClock,
+  faBullseye,
+  faDownload,
+  faShareNodes,
+  faRotateLeft,
+} from '@fortawesome/free-solid-svg-icons'
 import { faBookmark as faBookmarkReg } from '@fortawesome/free-regular-svg-icons'
 import { usePracticeStore } from '@/stores/usePracticeStore'
 import { pulseCorrect, shakeWrong } from '@/anim/animations'
@@ -16,13 +26,17 @@ interface QuizPlayerProps {
 }
 
 type AnsweredState = { picked: number; correct: boolean } | null
+type TestAnswer = { picked: number | null; correct: boolean; skipped: boolean }
 
 export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlayerProps) {
   const { settings, recordAnswer, toggleQbm, questionBookmarks } = usePracticeStore()
   const [idx, setIdx] = useState(0)
-  const [score, setScore] = useState(0)
+  const [answers, setAnswers] = useState<Record<number, TestAnswer>>({})
   const [answered, setAnswered] = useState<AnsweredState>(null)
   const [done, setDone] = useState(false)
+  const [reviewMode, setReviewMode] = useState(false)
+  const [startedAt, setStartedAt] = useState(Date.now())
+  const [elapsedMs, setElapsedMs] = useState(0)
 
   const q = questions[idx]
   const total = questions.length
@@ -30,8 +44,8 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
   function pickAnswer(i: number) {
     if (answered) return
     const correct = i === q.answer
-    if (correct) setScore(s => s + 1)
     setAnswered({ picked: i, correct })
+    setAnswers(prev => ({ ...prev, [idx]: { picked: i, correct, skipped: false } }))
     recordAnswer(q.id, correct, q.subject, settings.target, onShowToast)
     // Feedback motion after the correct/wrong classes render
     requestAnimationFrame(() => {
@@ -41,16 +55,73 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
   }
 
   function next() {
-    if (idx + 1 >= total) { setDone(true); return }
+    if (idx + 1 >= total) { finish(); return }
     setIdx(i => i + 1)
     setAnswered(null)
   }
 
   function retry() {
-    setIdx(0); setScore(0); setAnswered(null); setDone(false)
+    setIdx(0); setAnswers({}); setAnswered(null); setDone(false); setReviewMode(false); setStartedAt(Date.now()); setElapsedMs(0)
   }
 
-  const pct = total > 0 ? Math.round(score / total * 100) : 0
+  function finish() {
+    setElapsedMs(Date.now() - startedAt)
+    setDone(true)
+  }
+
+  function skip() {
+    if (answered) return
+    setAnswers(prev => ({ ...prev, [idx]: { picked: null, correct: false, skipped: true } }))
+    if (idx + 1 >= total) { finish(); return }
+    setIdx(i => i + 1)
+  }
+
+  function formatTime(ms: number) {
+    const seconds = Math.max(0, Math.round(ms / 1000))
+    const mm = String(Math.floor(seconds / 60)).padStart(2, '0')
+    const ss = String(seconds % 60).padStart(2, '0')
+    return `${mm}:${ss}`
+  }
+
+  function downloadAnswers() {
+    const lines = questions.map((item, i) => {
+      const answer = answers[i]
+      const picked = answer?.picked === null || answer?.picked === undefined ? 'Skipped' : item.options[answer.picked]
+      return [
+        `Q${i + 1}. ${item.q}`,
+        `Your answer: ${picked}`,
+        `Correct answer: ${item.options[item.answer]}`,
+        `Explanation: ${item.explanation}`,
+      ].join('\n')
+    })
+    const blob = new Blob([lines.join('\n\n---\n\n')], { type: 'text/plain' })
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = `${title.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}-answers.txt`
+    link.click()
+    URL.revokeObjectURL(link.href)
+  }
+
+  async function shareMarks() {
+    const text = `I scored ${marksText} in ${title} on Penni with ${accuracy}% accuracy.`
+    if (navigator.share) {
+      await navigator.share({ title: 'Penni scorecard', text }).catch(() => {})
+    } else {
+      await navigator.clipboard?.writeText(text).catch(() => {})
+      onShowToast('Score copied')
+    }
+  }
+
+  const answerList = questions.map((item, i) => answers[i] ?? { picked: null, correct: false, skipped: false })
+  const correctCount = answerList.filter(a => a.correct).length
+  const incorrectCount = answerList.filter(a => !a.correct && !a.skipped).length
+  const skippedCount = answerList.filter(a => a.skipped).length
+  const attemptedCount = correctCount + incorrectCount
+  const accuracy = attemptedCount ? Math.round((correctCount / attemptedCount) * 100) : 0
+  const pct = total > 0 ? Math.round(correctCount / total * 100) : 0
+  const marks = correctCount * 2 - incorrectCount * (2 / 3)
+  const maxMarks = total * 2
+  const marksText = `${Number(marks.toFixed(2))} / ${maxMarks}`
 
   if (done) {
     return (
@@ -62,23 +133,65 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
           <span className="qz-title">{title}</span>
           <span style={{ width: 38 }} />
         </div>
-        <div className="quiz-body qz-result">
-          <div className="qz-ring" style={{ '--p': pct } as CSSProperties}>
-            <div className="qz-ring-inner">
-              <b>{pct}<i>%</i></b>
-              <span>{score} / {total}</span>
-            </div>
-          </div>
-          <h3 className="qz-result-title">
-            {pct >= 80 ? 'Outstanding! 🏆' : pct >= 50 ? 'Solid effort 💪' : 'Keep at it 📚'}
-          </h3>
-          <p className="qz-result-sub">
-            {pct >= 80 ? 'You have a strong grip on this set.' : pct >= 50 ? 'Review the ones you missed and go again.' : 'Revision wins — retry to lock it in.'}
-          </p>
-          <div className="qz-result-actions">
-            <button className="pn-btn" onClick={retry}>Retry test</button>
-            <button className="pn-btn ghost" onClick={onClose}>Done</button>
-          </div>
+        <div className="quiz-body qz-result modern">
+          {!reviewMode ? (
+            <>
+              <div className="qz-score-card">
+                <span className="qz-flag">Scorecard</span>
+                <h3>Total Marks</h3>
+                <div className={`qz-marks ${marks >= maxMarks * 0.5 ? 'good' : 'low'}`}>{Number(marks.toFixed(2))}<span>/{maxMarks}</span></div>
+                <p>{pct >= 80 ? 'Excellent control. Keep building speed.' : pct >= 50 ? 'Good attempt. Review errors before the next set.' : "One test does not define you. Review, retry, improve."}</p>
+                <div className="qz-score-metrics">
+                  <div><FontAwesomeIcon icon={faClock} /><span>Time Taken</span><b>{formatTime(elapsedMs)}</b></div>
+                  <div><FontAwesomeIcon icon={faBullseye} /><span>Accuracy</span><b>{accuracy}%</b></div>
+                </div>
+              </div>
+
+              <div className="qz-breakdown">
+                <h4>Total MCQs: {total}</h4>
+                <div>
+                  <span>Correct<b>{correctCount}</b><i>+{correctCount * 2} marks</i></span>
+                  <span>Incorrect<b>{incorrectCount}</b><i>-{Number((incorrectCount * (2 / 3)).toFixed(2))} marks</i></span>
+                  <span>Skipped<b>{skippedCount}</b><i>-</i></span>
+                </div>
+              </div>
+
+              <div className="qz-export-card">
+                <button onClick={downloadAnswers}><FontAwesomeIcon icon={faDownload} /><span><b>Download answers</b><i>Get a clean answer file</i></span></button>
+                <button onClick={() => void shareMarks()}><FontAwesomeIcon icon={faShareNodes} /><span><b>Share your marks</b><i>Copy or share scorecard</i></span></button>
+              </div>
+
+              <div className="qz-result-actions horizontal">
+                <button className="pn-btn ghost" onClick={() => setReviewMode(true)}>Review Answers</button>
+                <button className="pn-btn" onClick={onClose}>Continue</button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="qz-review-head">
+                <button onClick={() => setReviewMode(false)}><FontAwesomeIcon icon={faArrowRight} /> Scorecard</button>
+                <h3>Review Answers</h3>
+              </div>
+              <div className="qz-review-list">
+                {questions.map((item, i) => {
+                  const answer = answerList[i]
+                  return (
+                    <div key={item.id} className={`qz-review-item ${answer.correct ? 'ok' : answer.skipped ? 'skip' : 'no'}`}>
+                      <span>Q{i + 1} · {item.subject}</span>
+                      <b>{item.q}</b>
+                      <p>Your answer: {answer.skipped || answer.picked === null ? 'Skipped' : item.options[answer.picked]}</p>
+                      <p>Correct answer: {item.options[item.answer]}</p>
+                      <em>{item.explanation}</em>
+                    </div>
+                  )
+                })}
+              </div>
+              <div className="qz-result-actions horizontal">
+                <button className="pn-btn ghost" onClick={retry}><FontAwesomeIcon icon={faRotateLeft} /> Retry</button>
+                <button className="pn-btn" onClick={onClose}>Done</button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     )
@@ -176,7 +289,10 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
             <FontAwesomeIcon icon={faArrowRight} style={{ marginLeft: 8 }} />
           </button>
         ) : (
-          <div className="qz-hint">Tap an option to answer</div>
+          <div className="qz-foot-actions">
+            <button onClick={skip}>Skip</button>
+            <span>Tap an option to answer</span>
+          </div>
         )}
       </div>
     </div>
