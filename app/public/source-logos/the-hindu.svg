@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="The Hindu">
+  <rect width="64" height="64" rx="18" fill="#f5eadb"/>
+  <path d="M14 18h36M20 18v28M32 18v28M44 18v28M16 46h32" fill="none" stroke="#4b260e" stroke-width="5" stroke-linecap="round"/>
+  <text x="32" y="37" text-anchor="middle" font-family="Georgia, serif" font-size="15" font-weight="700" fill="#4b260e">TH</text>
+</svg>

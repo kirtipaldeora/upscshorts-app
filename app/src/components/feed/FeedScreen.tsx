@@ -42,18 +42,26 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
     const day = (s.articlesByDate[selectedDate] ?? [])
       .filter(a => s.gsFilter[a.gsPaper])
       .filter(a => isSourceVisible(a.source, s.sourceFilter))
+      .filter(a => {
+        if (!sourceFocus) return true
+        const keys = sourceKeysFor(a.source)
+        if (sourceFocus === 'pib') return keys.includes('pib')
+        if (sourceFocus === 'govt') return keys.some(k => ['rbi', 'mea', 'prs', 'airdd'].includes(k))
+        return keys.includes(sourceFocus)
+      })
       .filter(a => !s.categoryFilter || a.category === s.categoryFilter)
     const counts: Record<string, number> = {}
     for (const a of day) counts[a.gsPaper] = (counts[a.gsPaper] ?? 0) + 1
     return counts
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedDate, articles.length, gsFocus])
+  }, [selectedDate, articles.length, gsFocus, sourceFocus])
 
-  const sourceOptions: { key: SourceFocus; label: string; short: string; tone: string }[] = [
-    { key: null, label: 'All sources', short: 'All', tone: 'all' },
-    { key: 'hindu', label: 'The Hindu', short: 'TH', tone: 'hindu' },
-    { key: 'ie', label: 'Indian Express', short: 'IE', tone: 'ie' },
-    { key: 'govt', label: 'Govt & official', short: 'Govt', tone: 'govt' },
+  const sourceOptions: { key: SourceFocus; label: string; short: string; tone: string; logo: string }[] = [
+    { key: null, label: 'All sources', short: 'All', tone: 'all', logo: '/source-logos/all.svg' },
+    { key: 'hindu', label: 'The Hindu', short: 'TH', tone: 'hindu', logo: '/source-logos/the-hindu.svg' },
+    { key: 'ie', label: 'Indian Express', short: 'IE', tone: 'ie', logo: '/source-logos/indian-express.svg' },
+    { key: 'pib', label: 'PIB', short: 'PIB', tone: 'pib', logo: '/source-logos/pib.svg' },
+    { key: 'govt', label: 'Govt sources', short: 'Govt', tone: 'govt', logo: '/source-logos/govt.svg' },
   ]
   const sourceCounts = useMemo(() => {
     const s = useAppStore.getState()
@@ -61,12 +69,13 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
       .filter(a => s.gsFilter[a.gsPaper])
       .filter(a => isSourceVisible(a.source, s.sourceFilter))
       .filter(a => !s.categoryFilter || a.category === s.categoryFilter)
-    const counts = { all: day.length, hindu: 0, ie: 0, govt: 0 }
+    const counts = { all: day.length, hindu: 0, ie: 0, pib: 0, govt: 0 }
     for (const a of day) {
       const keys = sourceKeysFor(a.source)
       if (keys.includes('hindu')) counts.hindu += 1
       if (keys.includes('ie')) counts.ie += 1
-      if (keys.some(k => ['pib', 'rbi', 'mea', 'prs', 'airdd'].includes(k))) counts.govt += 1
+      if (keys.includes('pib')) counts.pib += 1
+      if (keys.some(k => ['rbi', 'mea', 'prs', 'airdd'].includes(k))) counts.govt += 1
     }
     return counts
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -127,7 +136,7 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
       <TopBar />
 
       {/* Hero header — characters rise in on load */}
-      <div ref={heroRef} className="hero-head" style={{ padding: '4px 20px 12px', position: 'relative', zIndex: 2, flexShrink: 0, textAlign: 'center' }}>
+      <div ref={heroRef} className="hero-head" style={{ padding: '4px 20px 12px', position: 'relative', zIndex: 120, flexShrink: 0, textAlign: 'center' }}>
         <p className="hero-sub" style={{ fontSize: 12.5, color: 'var(--on2)', fontWeight: 700, marginBottom: 3 }}>Hello, aspirant 👋</p>
         <h2 aria-label="Daily Briefing" style={{ fontSize: 27, fontWeight: 900, letterSpacing: -0.4, lineHeight: 1.08, color: 'var(--on)' }}>
           {'Daily Briefing'.split('').map((ch, i) => (
@@ -139,11 +148,14 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
             <button
               type="button"
               className={`briefing-source-toggle ${activeSource.tone}`}
-              onClick={() => setSourceMenuOpen(o => !o)}
+              onClick={() => {
+                setGsMenuOpen(false)
+                setSourceMenuOpen(o => !o)
+              }}
               aria-haspopup="listbox"
               aria-expanded={sourceMenuOpen}
             >
-              <span className={`source-logo ${activeSource.tone}`}>{activeSource.short}</span>
+              <span className={`source-logo ${activeSource.tone}`}><img src={activeSource.logo} alt="" /></span>
               <b>{activeSource.label}</b>
               <i>{articles.length}</i>
               <FontAwesomeIcon icon={faChevronDown} className={`briefing-gs-caret ${sourceMenuOpen ? 'open' : ''}`} />
@@ -162,7 +174,7 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
                         className={sourceFocus === option.key ? 'on' : ''}
                         onClick={() => chooseSource(option.key)}
                       >
-                        <span className={`source-logo ${option.tone}`}>{option.short}</span>
+                        <span className={`source-logo ${option.tone}`}><img src={option.logo} alt="" /></span>
                         <b>{option.label}</b>
                         <i>{sourceCounts[countKey]}</i>
                       </button>
@@ -177,7 +189,10 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
               <button
                 type="button"
                 className={`briefing-gs-toggle ${gsFocus ? 'on' : ''}`}
-                onClick={() => setGsMenuOpen(o => !o)}
+                onClick={() => {
+                  setSourceMenuOpen(false)
+                  setGsMenuOpen(o => !o)
+                }}
                 aria-haspopup="listbox"
                 aria-expanded={gsMenuOpen}
               >

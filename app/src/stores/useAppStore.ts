@@ -14,7 +14,7 @@ export type Screen =
   | 'settings'
 
 export type ViewMode = 'deck' | 'list'
-export type SourceFocus = null | 'hindu' | 'ie' | 'govt'
+export type SourceFocus = null | 'hindu' | 'ie' | 'pib' | 'govt'
 
 export type OverlayScreen =
   | null
@@ -128,12 +128,19 @@ export const useAppStore = create<AppStore>()((set, get) => ({
   // actually have stories that day, then back to "all")
   gsFocus: null,
   getFocusableGsPapers: (date) => {
-    const { articlesByDate, gsFilter, categoryFilter, sourceFilter } = get()
+    const { articlesByDate, gsFilter, categoryFilter, sourceFilter, sourceFocus } = get()
     const papers = (['GS 1', 'GS 2', 'GS 3', 'GS 4'] as (keyof GSFilter)[])
     const present = new Set(
       (articlesByDate[date] ?? [])
         .filter((a) => gsFilter[a.gsPaper])
         .filter((a) => isSourceVisible(a.source, sourceFilter))
+        .filter((a) => {
+          if (!sourceFocus) return true
+          const keys = sourceKeysFor(a.source)
+          if (sourceFocus === 'pib') return keys.includes('pib')
+          if (sourceFocus === 'govt') return keys.some(k => ['rbi', 'mea', 'prs', 'airdd'].includes(k))
+          return keys.includes(sourceFocus)
+        })
         .filter((a) => !categoryFilter || a.category === categoryFilter)
         .map((a) => a.gsPaper),
     )
@@ -159,7 +166,8 @@ export const useAppStore = create<AppStore>()((set, get) => ({
     if (sourceFocus) {
       articles = articles.filter((a) => {
         const keys = sourceKeysFor(a.source)
-        if (sourceFocus === 'govt') return keys.some(k => ['pib', 'rbi', 'mea', 'prs', 'airdd'].includes(k))
+        if (sourceFocus === 'pib') return keys.includes('pib')
+        if (sourceFocus === 'govt') return keys.some(k => ['rbi', 'mea', 'prs', 'airdd'].includes(k))
         return keys.includes(sourceFocus)
       })
     }

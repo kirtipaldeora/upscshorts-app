@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Government sources">
+  <rect width="64" height="64" rx="18" fill="#e8f7ee"/>
+  <path d="M18 29h28M22 29v17M32 29v17M42 29v17M17 47h30" fill="none" stroke="#174b2b" stroke-width="5" stroke-linecap="round"/>
+  <path d="M32 12 17 23h30L32 12Z" fill="#2f8f58"/>
+  <circle cx="32" cy="22" r="3" fill="#e8f7ee"/>
+</svg>

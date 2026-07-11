@@ -1886,6 +1886,11 @@ html.dark .today-pack-card{background:linear-gradient(160deg,rgba(255,255,255,.1
 .test-mode-card i{font-style:normal;font-size:11px;font-weight:750;color:var(--ink3);line-height:1.25}
 .test-mode-card.primary i{color:rgba(61,42,9,.7)}
 .test-mode-card strong{font-size:11px;font-weight:950;color:var(--acc);background:rgba(255,255,255,.52);border-radius:999px;padding:6px 9px;white-space:nowrap}
+/* Dark mode: the semi-white icon tile and action pill wash out the light-blue
+   accent. Turn them into dark-translucent chips so the accent stays readable
+   (light mode is untouched). */
+html.dark .test-mode-card>svg{background:rgba(255,255,255,.10);box-shadow:inset 0 1px 0 rgba(255,255,255,.14)}
+html.dark .test-mode-card strong{background:rgba(255,255,255,.12);color:var(--on)}
 .test-mode-card.primary strong{color:var(--yellow-ink)}
 .test-secondary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:12px}
 .test-secondary-grid button{min-height:70px;border:1px solid var(--glass-border);border-radius:20px;background:var(--card);box-shadow:var(--shadow-soft);color:var(--ink);padding:11px;display:flex;align-items:center;gap:10px;text-align:left;cursor:pointer}
@@ -2508,7 +2513,7 @@ html.dark .bg-blobs i { opacity: .34; }
   padding-bottom: 1px;
 }
 .briefing-rail::-webkit-scrollbar { display: none; }
-.briefing-rail span {
+.briefing-rail > span {
   flex: none;
   display: inline-flex;
   align-items: center;
@@ -2564,14 +2569,17 @@ html.dark .bg-blobs i { opacity: .34; }
 .briefing-gs-toggle.on b { color: #fff; }
 .briefing-gs-caret { font-size: 8px; opacity: .7; transition: transform .2s ease; }
 .briefing-gs-caret.open { transform: rotate(180deg); }
-.briefing-gs-scrim { position: fixed; inset: 0; z-index: 40; }
+.briefing-gs-scrim { position: fixed; inset: 0; z-index: 110; }
 .briefing-source-menu,
 .briefing-gs-menu {
   position: absolute;
-  top: calc(100% + 6px);
+  top: calc(100% + 7px);
   left: 0;
-  z-index: 41;
+  right: auto;
+  z-index: 130;
   min-width: 168px;
+  width: 246px;
+  margin: 0;
   padding: 6px;
   border-radius: 16px;
   border: 1px solid var(--panel-border);
@@ -2583,6 +2591,7 @@ html.dark .bg-blobs i { opacity: .34; }
   text-align: left;
 }
 .briefing-source-menu{min-width:220px}
+.briefing-gs-menu{left:auto;right:0;width:176px}
 @keyframes gsMenuIn { from { opacity: 0; transform: translateY(-6px) scale(.98); } to { opacity: 1; transform: none; } }
 .briefing-source-menu button,
 .briefing-gs-menu button {
@@ -2609,10 +2618,12 @@ html.dark .bg-blobs i { opacity: .34; }
 .briefing-gs-menu button.on { background: color-mix(in srgb, var(--acc) 15%, transparent); color: var(--acc); }
 .briefing-source-menu button.on b,
 .briefing-source-menu button.on i{color:var(--acc)}
-.source-logo{width:28px;height:28px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;flex:none;font-size:9px;font-weight:1000;letter-spacing:.2px;border:1px solid rgba(255,255,255,.48);box-shadow:inset 0 1px 0 rgba(255,255,255,.45)}
+.source-logo{width:28px;height:28px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;flex:none;font-size:9px;font-weight:1000;letter-spacing:.2px;border:1px solid rgba(255,255,255,.48);box-shadow:inset 0 1px 0 rgba(255,255,255,.45);overflow:hidden}
+.source-logo img{width:100%;height:100%;display:block;object-fit:cover}
 .source-logo.all{background:linear-gradient(135deg,#edf2ff,#dff8f5);color:#20315f}
 .source-logo.hindu{background:linear-gradient(135deg,#f8f1e6,#e8d4b4);color:#4c2609}
 .source-logo.ie{background:linear-gradient(135deg,#fff0e7,#ffcfb3);color:#8a2a12}
+.source-logo.pib{background:linear-gradient(135deg,#e7f4ff,#d1e8ff);color:#1f4c7e}
 .source-logo.govt{background:linear-gradient(135deg,#e8f7ee,#c9ebd6);color:#174b2b;font-size:8px}
 .briefing-gs-menu button i {
   font-style: normal;
@@ -2623,7 +2634,7 @@ html.dark .bg-blobs i { opacity: .34; }
   text-align: right;
 }
 .briefing-gs-menu button.on i { color: var(--acc); }
-.briefing-rail i {
+.briefing-rail > i {
   width: 7px;
   height: 7px;
   border-radius: 50%;
@@ -3193,6 +3204,25 @@ html.dark .atlas-panel,html.dark .atlas-results{background:rgba(21,35,47,.84);bo
 .atlas-zoom{position:absolute;right:12px;bottom:calc(86px + env(safe-area-inset-bottom));z-index:7;display:flex;flex-direction:column;gap:7px}
 .atlas-zoom button{width:38px;height:38px;border:none;border-radius:14px;background:rgba(255,255,255,.92);color:var(--ink);box-shadow:var(--shadow-soft);display:flex;align-items:center;justify-content:center;cursor:pointer}
 .atlas-loading{pointer-events:auto;background:rgba(255,255,255,.9);border-radius:20px;padding:18px;font-size:13px;font-weight:900;color:var(--ink);box-shadow:var(--shadow-soft)}
+/* These Maps overlays have fixed white backgrounds and sit on the always-dark
+   globe in BOTH themes, so their text must be dark in both — the --on / --ink
+   tokens otherwise flip near-white in dark mode and vanish (e.g. the country
+   name on the "Find on the map" card, and the Hint/Skip control labels).
+   Pinning dark text is identical to the current light-mode look. */
+.atlas-controls button,
+.atlas-choice-row button,
+.atlas-zoom button,
+.atlas-toast,
+.atlas-loading,
+.atlas-question h3,
+.atlas-question p{color:#1f2433}
+.atlas-question span,
+.atlas-combo b{color:#3f52c9}
+.atlas-question.ok span,
+.atlas-toast.correct{color:#1a8f5a}
+.atlas-question.no span,
+.atlas-toast.wrong{color:#c0392b}
+.atlas-toast.hint{color:#3f52c9}
 @media(max-width:640px){
   .atlas-stage{margin:0 6px 6px;border-radius:21px}
   .atlas-overlay{padding:10px}
