@@ -136,15 +136,15 @@ export function PenniLogin({ onAuthenticated }: PenniLoginProps) {
         </div>
         <div className="login-value-copy">
           <span className="login-app-mark">P</span>
-          <h1>Your UPSC,<br />remembered</h1>
-          <p>Briefings, maps, practice and revision synced into one calm daily system.</p>
+          <h1>Learn with Penni</h1>
+          <p>Daily news, maps and practice.</p>
         </div>
       </div>
 
       <div className="login-sheet">
         <div className="login-sheet-head">
           <h2>Start with Penni</h2>
-          <p>Sync your practice, notes, bookmarks and daily progress.</p>
+          <p>Save your progress across devices.</p>
         </div>
 
         <div className="login-actions">
