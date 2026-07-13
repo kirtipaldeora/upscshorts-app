@@ -577,19 +577,28 @@ html:not(.dark) .feed-empty-state:before{background:radial-gradient(circle,rgba(
 .dd-section-map::-webkit-scrollbar{display:none}
 .dd-section-map a{flex:none;display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 11px;border-radius:999px;background:color-mix(in srgb,var(--card) 86%,transparent);border:1px solid var(--glass-border);box-shadow:inset 0 1px 0 rgba(255,255,255,.32);color:var(--ink2);font-size:11px;font-weight:900;text-decoration:none;white-space:nowrap}
 .dd-section-map a b{color:var(--cat,var(--acc));font-size:10px;font-weight:950}
-.dd-note-section{position:relative;overflow:hidden;border:1px solid var(--glass-border);border-radius:24px;background:linear-gradient(145deg,color-mix(in srgb,var(--card) 94%,transparent),color-mix(in srgb,var(--panel) 58%,transparent));box-shadow:var(--shadow-soft),inset 0 1px 0 rgba(255,255,255,.28);padding:16px}
+.dd-note-section{position:relative;overflow:hidden;border:1px solid var(--glass-border);border-radius:24px;background:linear-gradient(145deg,color-mix(in srgb,var(--card) 94%,transparent),color-mix(in srgb,var(--panel) 58%,transparent));box-shadow:var(--shadow-soft),inset 0 1px 0 rgba(255,255,255,.28);padding:0}
 .dd-note-section::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cat,var(--acc));opacity:.85}
 .dd-note-section::after{content:"";position:absolute;right:-56px;top:-58px;width:130px;height:130px;border-radius:999px;background:color-mix(in srgb,var(--note-accent,var(--cat,var(--acc))) 14%,transparent);filter:blur(22px);pointer-events:none}
+.dd-note-section[open]{padding-bottom:16px}
+.dd-note-section summary{list-style:none}
+.dd-note-section summary::-webkit-details-marker{display:none}
 .dd-note-section.tone-summary{--note-accent:var(--yellow)}
 .dd-note-section.tone-exam{--note-accent:var(--acc)}
 .dd-note-section.tone-concept{--note-accent:var(--teal)}
 .dd-note-section.tone-practice{--note-accent:#8b7cf6}
 .dd-note-section.tone-map{--note-accent:#55c99b}
 .dd-note-section.tone-revision{--note-accent:#ffb23f}
-.dd-note-head{position:relative;z-index:1;display:grid;grid-template-columns:36px 1fr;gap:10px;align-items:center;margin-bottom:11px}
+.dd-note-head{position:relative;z-index:1;display:grid;grid-template-columns:36px 1fr;gap:10px;align-items:center;padding:16px;cursor:pointer}
 .dd-note-head span{width:36px;height:36px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--note-accent,var(--cat,var(--acc))) 16%,transparent);border:1px solid color-mix(in srgb,var(--note-accent,var(--cat,var(--acc))) 28%,transparent);color:var(--note-accent,var(--cat,var(--acc)));font-size:11px;font-weight:950}
 .dd-note-head h3{margin:0;color:var(--ink);font-size:16px;font-weight:950;line-height:1.18;letter-spacing:-.1px}
-.dd-note-body{position:relative;z-index:1;color:var(--ink2);font-size:14px;line-height:1.72;font-weight:680}
+.dd-note-head p{margin:3px 0 0;color:var(--ink3);font-size:11px;font-weight:850;line-height:1.25}
+.dd-note-head i{grid-column:2;display:block;margin-top:-3px;color:var(--ink3);font-style:normal;font-size:12px;font-weight:700;line-height:1.38}
+.dd-note-head>div{min-width:0;padding-right:36px}
+.dd-note-section[open] .dd-note-head i{display:none}
+.dd-note-head::after{content:"+";position:absolute;right:16px;top:17px;width:28px;height:28px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:var(--card2);border:1px solid var(--border);color:var(--ink2);font-size:18px;font-weight:850;line-height:1;transition:transform .18s ease,background .18s ease}
+.dd-note-section[open] .dd-note-head::after{content:"−";background:color-mix(in srgb,var(--note-accent,var(--cat,var(--acc))) 12%,transparent);color:var(--note-accent,var(--cat,var(--acc)))}
+.dd-note-body{position:relative;z-index:1;color:var(--ink2);font-size:14px;line-height:1.72;font-weight:680;padding:0 16px}
 .dd-note-body>*:first-child{margin-top:0}
 .dd-note-body>*:last-child{margin-bottom:0}
 .dd-note-body p{margin:0 0 12px}
@@ -607,6 +616,12 @@ html:not(.dark) .feed-empty-state:before{background:radial-gradient(circle,rgba(
 .dd-note-body .dd-flow{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
 .dd-note-body .dd-flow span,.dd-note-body .dd-flow .node{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:999px;background:var(--card2);padding:8px 10px;color:var(--ink);font-size:11.5px;font-weight:900;line-height:1.2}
 .dd-note-body .dd-flow span:not(:last-child)::after{content:"→";margin-left:8px;color:var(--note-accent,var(--cat,var(--acc)))}
+@media(max-width:420px){
+  .dd-note-head{grid-template-columns:32px 1fr;padding:14px}
+  .dd-note-head span{width:32px;height:32px;border-radius:12px;font-size:10px}
+  .dd-note-head h3{font-size:15px}
+  .dd-note-body{padding:0 14px;font-size:13.5px}
+}
 /* Up Next card (end of article) */
 .dd-upnext{display:block;width:100%;text-align:left;margin-top:8px;padding:16px 18px;border-radius:20px;border:1px solid var(--panel-border);background:var(--panel);cursor:pointer;transition:transform .12s ease}
 .dd-upnext:active{transform:scale(.985)}

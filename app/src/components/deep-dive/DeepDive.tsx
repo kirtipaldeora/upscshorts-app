@@ -31,6 +31,34 @@ interface DiveSection {
   tone: string
 }
 
+const PROFESSIONAL_SECTION_TITLES: Record<number, { title: string; subtitle: string }> = {
+  1: { title: 'Executive Summary', subtitle: 'The exam-ready takeaway' },
+  2: { title: 'Core Issue', subtitle: 'What the topic is really about' },
+  3: { title: 'Event Timeline', subtitle: 'What happened and in what order' },
+  4: { title: 'Significance', subtitle: 'Why it matters for India and UPSC' },
+  5: { title: 'Background Context', subtitle: 'Static base and assumed knowledge' },
+  6: { title: 'Syllabus Linkage', subtitle: 'Where it fits in preparation' },
+  7: { title: 'Value Addition', subtitle: 'Extra points beyond the article' },
+  8: { title: 'Exam Relevance', subtitle: 'Prelims, Mains, Essay and Interview angles' },
+  9: { title: 'Prelims Facts', subtitle: 'Compact factual notes' },
+  10: { title: 'Mains Framework', subtitle: 'Issue, arguments and way forward' },
+  11: { title: 'Interlinkages', subtitle: 'How the topic connects across GS papers' },
+  12: { title: 'Map Work', subtitle: 'Locations to remember' },
+  13: { title: 'PYQ Pattern', subtitle: 'How UPSC has treated similar themes' },
+  14: { title: 'Memory Aid', subtitle: 'Simple recall hooks' },
+  15: { title: 'Common Pitfalls', subtitle: 'Mistakes to avoid' },
+  16: { title: 'Quick Revision', subtitle: 'Last-minute recall points' },
+}
+
+const DEFAULT_OPEN_SECTIONS = new Set([1, 2, 4, 10, 16])
+
+function professionalSectionMeta(section: DiveSection) {
+  return PROFESSIONAL_SECTION_TITLES[section.number] ?? {
+    title: section.title,
+    subtitle: 'Detailed notes',
+  }
+}
+
 function sectionTone(title: string, number: number) {
   const key = title.toLowerCase()
   if (number === 1 || key.includes('summary')) return 'summary'
@@ -42,12 +70,17 @@ function sectionTone(title: string, number: number) {
   return 'default'
 }
 
-function shortSectionTitle(title: string) {
-  return title
-    .replace(/^Explain Like I'?m a UPSC Aspirant$/i, 'Explain')
-    .replace(/^Connect With Static UPSC Syllabus$/i, 'Static')
-    .replace(/^Things NOT Mentioned In The Article.*$/i, 'Extra')
-    .replace(/^Previous UPSC Questions$/i, 'PYQs')
+function shortSectionTitle(section: DiveSection) {
+  const meta = professionalSectionMeta(section)
+  return meta.title
+}
+
+function sectionPreview(body: string) {
+  return body
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 130)
 }
 
 function parseDeepDiveSections(explanation: string): DiveSection[] {
@@ -322,25 +355,30 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
                 {deepDiveSections.map(section => (
                   <a key={section.number} href={`#dd-sec-${section.number}`}>
                     <b>{String(section.number).padStart(2, '0')}</b>
-                    {shortSectionTitle(section.title)}
+                    {shortSectionTitle(section)}
                   </a>
                 ))}
               </nav>
               {deepDiveSections.map(section => (
-                <section
+                <details
                   key={section.number}
                   id={`dd-sec-${section.number}`}
                   className={`dd-note-section tone-${section.tone}`}
+                  open={DEFAULT_OPEN_SECTIONS.has(section.number)}
                 >
-                  <div className="dd-note-head">
+                  <summary className="dd-note-head">
                     <span>{String(section.number).padStart(2, '0')}</span>
-                    <h3>{section.title}</h3>
-                  </div>
+                    <div>
+                      <h3>{professionalSectionMeta(section).title}</h3>
+                      <p>{professionalSectionMeta(section).subtitle}</p>
+                    </div>
+                    <i>{sectionPreview(section.body)}...</i>
+                  </summary>
                   <div
                     className="dd-note-body"
                     dangerouslySetInnerHTML={{ __html: section.body }}
                   />
-                </section>
+                </details>
               ))}
             </div>
           ) : (
