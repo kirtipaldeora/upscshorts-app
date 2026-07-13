@@ -2506,9 +2506,12 @@ html.dark .bg-blobs i { opacity: .34; }
 .briefing-rail {
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: 7px;
-  overflow-x: auto;
-  scrollbar-width: none;
+  /* Must stay visible so the source / GS dropdown menus can overflow the rail.
+     (overflow-x:auto would force overflow-y to clip and hide the menus.) */
+  overflow: visible;
   margin-top: 12px;
   padding-bottom: 1px;
 }
