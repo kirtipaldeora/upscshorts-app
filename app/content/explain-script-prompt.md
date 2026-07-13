@@ -168,6 +168,19 @@ DO NOT: read the article line by line; summarise paragraphs; sound like a news a
 
 ---
 
+## TTS-SAFE FORMATTING (applies to audioScript and audioScriptHi)
+
+The script is read aloud by a text-to-speech engine, not a human narrator. Write so any TTS voice pronounces it correctly the first time, with no editing needed afterward:
+
+* Expand every acronym in full the first time it appears, then you may use the short form: "Reserve Bank of India" before "RBI", "Minimum Support Price" before "MSP", "Line of Actual Control" before "L A C". Never introduce an acronym cold.
+* Never use "SC" or "ST" as shorthand — always say "Supreme Court" or "Scheduled Castes" / "Scheduled Tribes" in full, since the short form is genuinely ambiguous and a wrong guess teaches a false fact.
+* Write currency and numbers the way a newsreader would say them: "rupees thirty-seven thousand five hundred crore", not "₹37,500 cr". Say "percent", never "%". Say "and", never "&".
+* Avoid semicolons, colons, em dashes, and parentheticals — they read as confusing pauses. Use short, separate sentences instead.
+* Keep sentences under ~22 words on average. Long, clause-stacked sentences make TTS pacing sound rushed or robotic.
+* Do not use markdown, bullet points, numbering, or section labels inside the script — it must be one continuous spoken paragraph flow.
+
+---
+
 ## OUTPUT STYLE
 
 Produce only a continuous narration script.

@@ -21,6 +21,8 @@ import {
   faRightFromBracket,
   faClock,
   faNewspaper,
+  faMicrophone,
+  faPlay,
 } from '@fortawesome/free-solid-svg-icons'
 import { usePracticeStore } from '@/stores/usePracticeStore'
 import { useThemeStore } from '@/stores/useThemeStore'
@@ -30,7 +32,10 @@ import { useAuthStore, type StudentProfile } from '@/stores/useAuthStore'
 import { ProfileMascot } from '@/components/auth/ProfileMascot'
 import { TODAY } from '@/constants/categories'
 import { NEWS_SOURCES } from '@/constants/sources'
+import { useNarration, listNarrationVoices } from '@/hooks/useNarration'
 import { EASE, gsap, reducedMotion } from '@/anim/animations'
+
+const VOICE_PREVIEW_TEXT = 'Let’s understand this news the way a UPSC mentor would explain it in class.'
 
 interface SettingsScreenProps {
   onClose: () => void
@@ -48,6 +53,8 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
   const { articlesByDate, setArticlesByDate, sourceFilter, toggleSource } = useAppStore()
   const { clearAll } = useBookmarkStore()
   const { user, profile, isGuest, signOut, saveProfile } = useAuthStore()
+  const previewNarration = useNarration()
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>(() => listNarrationVoices())
   const [contentToolsOpen, setContentToolsOpen] = useState(false)
   const [dangerOpen, setDangerOpen] = useState(false)
   const settingsRef = useRef<HTMLDivElement>(null)
@@ -166,6 +173,22 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
     saveSettings({ feedCosmicBackdrop: next })
   }
 
+  function chooseVoice(voiceURI: string) {
+    saveSettings({ voiceURI })
+    const label = voices.find(v => v.voiceURI === voiceURI)?.name ?? 'Default voice'
+    onShowToast(`Narration voice set to ${label}`)
+  }
+
+  function previewVoice(voiceURI: string) {
+    const voice = voices.find(v => v.voiceURI === voiceURI)
+    previewNarration.speak(VOICE_PREVIEW_TEXT, {
+      lang: voice?.lang || 'en-IN',
+      rate: 0.88,
+      pitch: 1.04,
+      voiceURI,
+    })
+  }
+
   useEffect(() => {
     const root = settingsRef.current
     if (!root || reducedMotion()) return
@@ -175,6 +198,15 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
         { opacity: 1, y: 0, duration: 0.46, ease: EASE.expo, stagger: 0.045, clearProps: 'transform,opacity' })
     }, root)
     return () => ctx.revert()
+  }, [])
+
+  // Most browsers populate the voice list asynchronously after first load.
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.speechSynthesis) return
+    const refresh = () => setVoices(listNarrationVoices())
+    refresh()
+    window.speechSynthesis.addEventListener('voiceschanged', refresh)
+    return () => window.speechSynthesis.removeEventListener('voiceschanged', refresh)
   }, [])
 
   return (
@@ -274,6 +306,42 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
             </div>
           ))}
           <p className="pn-note">Hide or show feed articles by where they were reported. Stories covered by several sources stay visible while any of their sources is on.</p>
+        </div>
+
+        {/* Narration voice */}
+        <div className="setting-group settings-panel">
+          <div className="setting-group-title">Penni Explain narration</div>
+          {voices.length === 0 ? (
+            <p className="pn-note">
+              <FontAwesomeIcon icon={faMicrophone} style={{ marginRight: 6 }} />
+              No narration voices found on this device yet. Reopen Settings after the page finishes loading.
+            </p>
+          ) : (
+            <div className="voice-picker-list">
+              {voices.map(voice => {
+                const active = settings.voiceURI === voice.voiceURI
+                return (
+                  <div key={voice.voiceURI} className={`voice-picker-row ${active ? 'on' : ''}`}>
+                    <button className="voice-picker-select" onClick={() => chooseVoice(voice.voiceURI)}>
+                      <FontAwesomeIcon icon={faMicrophone} />
+                      <span>
+                        <b>{voice.name}</b>
+                        <i>{voice.lang}</i>
+                      </span>
+                    </button>
+                    <button
+                      className="voice-picker-preview"
+                      onClick={() => previewVoice(voice.voiceURI)}
+                      aria-label={`Preview ${voice.name}`}
+                    >
+                      <FontAwesomeIcon icon={faPlay} />
+                    </button>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+          <p className="pn-note">Tap a voice to use it for Penni Explain narration, or the play icon to hear a preview first. Voice quality depends on what your device has installed.</p>
         </div>
 
         {/* Daily practice */}

@@ -4,6 +4,7 @@ interface SpeakOptions {
   lang?: string
   rate?: number
   pitch?: number
+  voiceURI?: string
   onItemStart?: (index: number) => void
   onDone?: () => void
 }
@@ -34,9 +35,19 @@ function splitText(text: string, itemIndex = 0, startOffset = 0, totalLength = t
   return chunks
 }
 
-function preferredVoice(lang: string): SpeechSynthesisVoice | null {
+function preferredVoice(lang: string, voiceURI?: string): SpeechSynthesisVoice | null {
   if (typeof window === 'undefined' || !window.speechSynthesis) return null
   const voices = window.speechSynthesis.getVoices()
+  // A voice the student explicitly picked in Settings wins outright — this is
+  // the single biggest audible-quality lever Web Speech offers, since device
+  // voice packs vary wildly and the "first en-IN match" default is often the
+  // flattest-sounding one available. Only apply it when its language family
+  // matches what's being read (an English pick shouldn't be forced onto the
+  // Hindi narration track, and vice versa).
+  if (voiceURI) {
+    const chosen = voices.find(voice => voice.voiceURI === voiceURI)
+    if (chosen && chosen.lang.slice(0, 2).toLowerCase() === lang.slice(0, 2).toLowerCase()) return chosen
+  }
   const exact = voices.find(voice => voice.lang.toLowerCase() === lang.toLowerCase())
   if (exact) return exact
   return voices.find(voice => voice.lang.toLowerCase() === 'en-in') ??
@@ -45,12 +56,27 @@ function preferredVoice(lang: string): SpeechSynthesisVoice | null {
     null
 }
 
+/**
+ * Lists narration-suitable system voices (English + Hindi variants), for the
+ * Settings voice picker. Voice lists load asynchronously on most browsers, so
+ * callers should re-invoke on the `voiceschanged` event if this returns empty.
+ */
+export function listNarrationVoices(): SpeechSynthesisVoice[] {
+  if (typeof window === 'undefined' || !window.speechSynthesis) return []
+  return window.speechSynthesis.getVoices()
+    .filter(voice => /^(en|hi)/i.test(voice.lang))
+    .sort((a, b) => {
+      const rank = (v: SpeechSynthesisVoice) => (v.lang.toLowerCase() === 'en-in' ? 0 : v.lang.toLowerCase() === 'hi-in' ? 1 : v.lang.toLowerCase().startsWith('en') ? 2 : 3)
+      return rank(a) - rank(b) || a.name.localeCompare(b.name)
+    })
+}
+
 export function useNarration() {
   const [speaking, setSpeaking] = useState(false)
   const [progress, setProgress] = useState(0)
   const [supported, setSupported] = useState(() => typeof window !== 'undefined' && 'speechSynthesis' in window)
   const queueRef = useRef<QueueChunk[]>([])
-  const optionsRef = useRef({ lang: 'en-IN', rate: 0.88, pitch: 1.04 })
+  const optionsRef = useRef({ lang: 'en-IN', rate: 0.88, pitch: 1.04, voiceURI: undefined as string | undefined })
   const callbacksRef = useRef<Pick<SpeakOptions, 'onItemStart' | 'onDone'>>({})
   const currentItemRef = useRef<number | null>(null)
 
@@ -80,7 +106,7 @@ export function useNarration() {
     utterance.lang = opts.lang
     utterance.rate = opts.rate
     utterance.pitch = opts.pitch
-    const voice = preferredVoice(opts.lang)
+    const voice = preferredVoice(opts.lang, opts.voiceURI)
     if (voice) utterance.voice = voice
     utterance.onstart = () => {
       setProgress(next.total > 0 ? Math.min(99, (next.start / next.total) * 100) : 0)
@@ -117,6 +143,7 @@ export function useNarration() {
       lang: options.lang ?? 'en-IN',
       rate: options.rate ?? 0.88,
       pitch: options.pitch ?? 1.04,
+      voiceURI: options.voiceURI,
     }
     callbacksRef.current = { onItemStart: options.onItemStart, onDone: options.onDone }
     currentItemRef.current = null
@@ -146,6 +173,7 @@ export function useNarration() {
       lang: options.lang ?? 'en-IN',
       rate: options.rate ?? 0.88,
       pitch: options.pitch ?? 1.04,
+      voiceURI: options.voiceURI,
     }
     callbacksRef.current = { onItemStart: options.onItemStart, onDone: options.onDone }
     currentItemRef.current = null
@@ -161,6 +189,7 @@ export function useNarration() {
       lang: options.lang ?? optionsRef.current.lang,
       rate: options.rate ?? optionsRef.current.rate,
       pitch: options.pitch ?? optionsRef.current.pitch,
+      voiceURI: options.voiceURI ?? optionsRef.current.voiceURI,
     }
   }, [])
 

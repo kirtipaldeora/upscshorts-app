@@ -32,6 +32,7 @@ export interface PracticeSettings {
   key: string
   name: string
   feedCosmicBackdrop: boolean
+  voiceURI: string   // preferred system TTS voice for Penni Explain narration
 }
 
 export interface PyqItem {
@@ -57,12 +58,13 @@ function loadStats(): PracticeStats {
   }
 }
 
+const DEFAULT_SETTINGS: PracticeSettings = { target: 10, remind: false, reminderTime: '19:00', key: '', name: '', feedCosmicBackdrop: true, voiceURI: '' }
+
 function loadSettings(): PracticeSettings {
   try {
-    return Object.assign({ target: 10, remind: false, reminderTime: '19:00', key: '', name: '', feedCosmicBackdrop: true },
-      JSON.parse(localStorage.getItem('u4set') || '{}'))
+    return Object.assign({ ...DEFAULT_SETTINGS }, JSON.parse(localStorage.getItem('u4set') || '{}'))
   } catch {
-    return { target: 10, remind: false, reminderTime: '19:00', key: '', name: '', feedCosmicBackdrop: true }
+    return { ...DEFAULT_SETTINGS }
   }
 }
 

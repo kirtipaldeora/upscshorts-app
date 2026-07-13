@@ -15,24 +15,92 @@ function stripHtml(value: string): string {
     .trim()
 }
 
+// Acronyms with no natural spoken pronunciation — read letter-by-letter so
+// the voice doesn't guess at them as an invented word.
+const SPELL_OUT = ['BRICS', 'NDMA', 'NDRF', 'FATF', 'OECD', 'ASEAN', 'SAARC', 'BIMSTEC', 'SCO', 'ICJ', 'ICC', 'NPT', 'CTBT', 'MTCR', 'SEBI', 'TRAI', 'IRDAI', 'PFRDA', 'CCI', 'CAG', 'ECI', 'PMLA', 'IBC', 'NPA', 'MSME', 'PLI', 'DBT', 'PDS', 'CSR', 'FDI', 'FPI', 'FRBM', 'GAAR', 'SDG', 'SDGs', 'WMO', 'IPCC', 'ISRO', 'DRDO', 'IAF', 'BSF', 'CRPF', 'ITBP', 'NSA', 'NSG', 'RAW', 'FCRA', 'POCSO', 'NHRC', 'NCRB', 'NFHS']
+
+// Acronyms that read naturally once expanded into words.
+const EXPAND_WORDS: [RegExp, string][] = [
+  [/\bUPSC\b/g, 'Union Public Service Commission'],
+  [/\bNIA\b/g, 'National Investigation Agency'],
+  [/\bCBI\b/g, 'Central Bureau of Investigation'],
+  [/\bGDP\b/g, 'Gross Domestic Product'],
+  [/\bEVs\b/g, 'electric vehicles'],
+  [/\bEV\b/g, 'electric vehicle'],
+  [/\bAI\b/g, 'artificial intelligence'],
+  [/\bNATO\b/g, 'North Atlantic Treaty Organization'],
+  [/\bRTI\b/g, 'Right to Information'],
+  [/\bUAPA\b/g, 'Unlawful Activities Prevention Act'],
+  [/\bRBI\b/g, 'Reserve Bank of India'],
+  [/\bMSP\b/g, 'Minimum Support Price'],
+  [/\bGST\b/g, 'Goods and Services Tax'],
+  [/\bFTA\b/g, 'Free Trade Agreement'],
+  [/\bMOU\b/g, 'memorandum of understanding'],
+  [/\bWHO\b/g, 'World Health Organization'],
+  [/\bIMF\b/g, 'International Monetary Fund'],
+  [/\bWTO\b/g, 'World Trade Organization'],
+  [/\bILO\b/g, 'International Labour Organization'],
+  [/\bUNESCO\b/g, 'United Nations Educational, Scientific and Cultural Organization'],
+  [/\bUNICEF\b/g, 'United Nations Children’s Fund'],
+  [/\bUNHCR\b/g, 'UN Refugee Agency'],
+  [/\bUNSC\b/g, 'UN Security Council'],
+  [/\bUNGA\b/g, 'UN General Assembly'],
+  [/\bMGNREGA\b/g, 'the rural jobs guarantee scheme, MGNREGA'],
+  [/\bLAC\b/g, 'Line of Actual Control'],
+  [/\bLOC\b/g, 'Line of Control'],
+  [/\bPSUs\b/g, 'public sector companies'],
+  [/\bPSU\b/g, 'public sector company'],
+  [/\bPPP\b/g, 'public-private partnership'],
+  [/\bNABARD\b/g, 'National Bank for Agriculture and Rural Development'],
+]
+
+// Currency, symbols and punctuation some TTS engines skip or mispronounce —
+// spell them out so every voice reads them the same, correct way.
+function normalizeSymbolsForSpeech(value: string): string {
+  return value
+    .replace(/₹\s?/g, 'rupees ')
+    .replace(/\bRs\.?\s?/g, 'rupees ')
+    .replace(/(\d)\s?%/g, '$1 percent')
+    .replace(/&/g, 'and')
+    .replace(/[–—]/g, ', ')
+    .replace(/\bapprox\.?\b/gi, 'approximately')
+    .replace(/\betc\.?\b/gi, 'and so on')
+    .replace(/\bvs\.?\b/gi, 'versus')
+}
+
+// "SC" means Supreme Court in a judicial sentence but Scheduled Castes in a
+// reservation/social-justice one. Guessing wrong teaches a false fact, so
+// resolve from nearby context and fall back to spelling it out — neutral,
+// never incorrect — when neither context is clear.
+function expandSC(value: string): string {
+  return value
+    .replace(/\bSC\s*\/\s*ST\b/g, 'Scheduled Castes and Scheduled Tribes')
+    .replace(/\b(the\s+)?SC\b/g, (match, thePrefix: string | undefined, offset: number, full: string) => {
+      const windowText = full.slice(Math.max(0, offset - 60), offset + 60)
+      if (/\b(court|judgment|verdict|bench|ruling|justice|judges?|petition|plea|quashed|upheld|struck down)\b/i.test(windowText)) {
+        return thePrefix ? 'the Supreme Court' : 'Supreme Court'
+      }
+      if (/\b(reservation|caste|quota|communit(?:y|ies)|categor(?:y|ies)|backward|scheduled tribe)\b/i.test(windowText)) {
+        return 'Scheduled Castes'
+      }
+      return 'S C'
+    })
+}
+
 function cleanForSpeech(value: string): string {
-  return stripHtml(value)
-    .replace(/\bGS\s*([1-4])\b/g, 'G S $1')
-    .replace(/\bUPSC\b/g, 'Union Public Service Commission')
-    .replace(/\bNIA\b/g, 'National Investigation Agency')
-    .replace(/\bCBI\b/g, 'Central Bureau of Investigation')
-    .replace(/\bGDP\b/g, 'Gross Domestic Product')
-    .replace(/\bEV\b/g, 'electric vehicle')
-    .replace(/\bAI\b/g, 'artificial intelligence')
-    .replace(/\bNATO\b/g, 'North Atlantic Treaty Organization')
-    .replace(/\bBRICS\b/g, 'B R I C S')
-    .replace(/\bRTI\b/g, 'Right to Information')
-    .replace(/\bUAPA\b/g, 'Unlawful Activities Prevention Act')
-    .replace(/\bRBI\b/g, 'Reserve Bank of India')
-    .replace(/\bSC\b/g, 'Scheduled Castes')
-    .replace(/\bST\b/g, 'Scheduled Tribes')
+  let out = normalizeSymbolsForSpeech(stripHtml(value))
+  out = out.replace(/\bGS\s*([1-4])\b/g, 'G S $1')
+  for (const [pattern, replacement] of EXPAND_WORDS) out = out.replace(pattern, replacement)
+  out = expandSC(out)
+  out = out.replace(/\bST\b/g, 'Scheduled Tribes')
+  for (const acronym of SPELL_OUT) {
+    out = out.replace(new RegExp(`\\b${acronym}\\b`, 'g'), acronym.split('').join(' '))
+  }
+  return out
     .replace(/\bArticle\s+21\b/gi, 'Article twenty one')
     .replace(/\bArticle\s+19\b/gi, 'Article nineteen')
+    .replace(/\bArticle\s+370\b/gi, 'Article three seventy')
+    .replace(/\bArticle\s+356\b/gi, 'Article three fifty six')
 }
 
 function smoothForSpeech(value: string): string {

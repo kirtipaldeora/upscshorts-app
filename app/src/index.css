@@ -1646,6 +1646,52 @@ html.dark .pn-quota.out { background: rgba(227,109,109,0.15); color: #f0a3a3; }
 }
 .pn-gschip.on { background: var(--yellow); color: var(--yellow-ink); }
 
+/* ─── Narration voice picker ─────────────────────────────────── */
+.voice-picker-list { display: flex; flex-direction: column; gap: 6px; }
+.voice-picker-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 16px;
+  background: var(--card2);
+  padding: 4px;
+}
+.voice-picker-row.on { background: color-mix(in srgb, var(--acc) 14%, var(--card2)); }
+.voice-picker-select {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+}
+.voice-picker-select > svg { color: var(--ink3); flex: none; }
+.voice-picker-row.on .voice-picker-select > svg { color: var(--acc); }
+.voice-picker-select span { display: flex; flex-direction: column; min-width: 0; gap: 1px; }
+.voice-picker-select b { font-size: 13px; font-weight: 850; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.voice-picker-row.on .voice-picker-select b { color: var(--acc); }
+.voice-picker-select i { font-style: normal; font-size: 10.5px; font-weight: 700; color: var(--ink3); }
+.voice-picker-preview {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  border: none;
+  background: var(--panel);
+  color: var(--acc);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-right: 4px;
+}
+.voice-picker-preview:active { transform: scale(.92); }
+
 /* ─── Subject-wise accuracy bars ─────────────────────────────── */
 .pn-subwrap { display: flex; flex-direction: column; gap: 8px; padding: 4px 0; }
 .pn-subrow { display: flex; align-items: center; gap: 10px; }

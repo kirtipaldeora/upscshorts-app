@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faArrowRight, faShareAlt, faPenFancy, faCircle, faDumbbell, faPlay, faCloudArrowUp, faChevronLeft, faChevronRight, faStop, faVolumeHigh, faGaugeHigh } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
+import { usePracticeStore } from '@/stores/usePracticeStore'
 import { useHaptic } from '@/hooks/useHaptic'
 import { useNarration } from '@/hooks/useNarration'
 import { gsap, reducedMotion, DUR, EASE } from '@/anim/animations'
@@ -25,6 +26,7 @@ const BASE_READ_RATE = 0.88
 
 export function DeepDive({ onShowToast }: DeepDiveProps) {
   const { activeArticle, setActiveArticle, setDeepDiveReturnOverlay, setOverlay, overlayScreen, deepDiveReturnOverlay, articlesByDate, getArticlesForDate, setScreen } = useAppStore()
+  const { settings } = usePracticeStore()
   const haptic = useHaptic()
   const narration = useNarration()
   const [activeQuiz, setActiveQuiz] = useState<ActiveQuiz>(null)
@@ -129,6 +131,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
       lang: hiScript ? 'hi-IN' : 'en-IN',
       rate: BASE_READ_RATE * speed,
       pitch: speed > 1.25 ? 1.01 : 1.04,
+      voiceURI: settings.voiceURI || undefined,
     })
   }
 
