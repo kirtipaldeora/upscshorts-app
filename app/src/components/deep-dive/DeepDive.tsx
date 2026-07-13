@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import type { CSSProperties } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faArrowRight, faShareAlt, faPenFancy, faCircle, faDumbbell, faPlay, faCloudArrowUp, faChevronLeft, faChevronRight, faStop, faVolumeHigh, faGaugeHigh } from '@fortawesome/free-solid-svg-icons'
@@ -23,6 +23,53 @@ interface DeepDiveProps {
 type ActiveQuiz = { title: string; questions: Question[] } | null
 const READ_SPEEDS = [1, 1.25, 1.5, 1.75]
 const BASE_READ_RATE = 0.88
+
+interface DiveSection {
+  number: number
+  title: string
+  body: string
+  tone: string
+}
+
+function sectionTone(title: string, number: number) {
+  const key = title.toLowerCase()
+  if (number === 1 || key.includes('summary')) return 'summary'
+  if (key.includes('important') || key.includes('perspective')) return 'exam'
+  if (key.includes('background') || key.includes('static') || key.includes('not mentioned')) return 'concept'
+  if (key.includes('prelims') || key.includes('mains') || key.includes('previous')) return 'practice'
+  if (key.includes('maps')) return 'map'
+  if (key.includes('revision') || key.includes('memory') || key.includes('mistakes')) return 'revision'
+  return 'default'
+}
+
+function shortSectionTitle(title: string) {
+  return title
+    .replace(/^Explain Like I'?m a UPSC Aspirant$/i, 'Explain')
+    .replace(/^Connect With Static UPSC Syllabus$/i, 'Static')
+    .replace(/^Things NOT Mentioned In The Article.*$/i, 'Extra')
+    .replace(/^Previous UPSC Questions$/i, 'PYQs')
+}
+
+function parseDeepDiveSections(explanation: string): DiveSection[] {
+  const html = explanation.replace(/\n/g, '<br>')
+  const pattern = /<p>\s*<strong>\s*(\d+)\.\s*([^<:]+?):?\s*<\/strong>\s*([\s\S]*?)(?=<p>\s*<strong>\s*\d+\.\s*[^<:]+?:?\s*<\/strong>|$)/gi
+  const sections: DiveSection[] = []
+  let match: RegExpExecArray | null
+
+  while ((match = pattern.exec(html)) !== null) {
+    const number = Number(match[1])
+    const title = match[2].trim()
+    const body = match[3].trim()
+    sections.push({
+      number,
+      title,
+      body: body.startsWith('<p') ? body : `<p>${body}`,
+      tone: sectionTone(title, number),
+    })
+  }
+
+  return sections.length >= 4 ? sections : []
+}
 
 export function DeepDive({ onShowToast }: DeepDiveProps) {
   const { activeArticle, setActiveArticle, setDeepDiveReturnOverlay, setOverlay, overlayScreen, deepDiveReturnOverlay, articlesByDate, getArticlesForDate, setScreen } = useAppStore()
@@ -175,6 +222,9 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
   }
 
   const col = a ? CATEGORY_COLORS[a.category] : '#9DBCE8'
+  const deepDiveSections = useMemo(() => {
+    return a ? parseDeepDiveSections(a.deepDive.explanation) : []
+  }, [a])
 
   const fdf = (d: string) => {
     return new Date(d).toLocaleDateString('en-IN', {
@@ -266,10 +316,39 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
           </div>
 
           {/* Explanation */}
-          <div
-            className="dd-explain"
-            dangerouslySetInnerHTML={{ __html: a.deepDive.explanation.replace(/\n/g, '<br>') }}
-          />
+          {deepDiveSections.length > 0 ? (
+            <div className="dd-explain dd-explain-structured">
+              <nav className="dd-section-map" aria-label="Deep dive sections">
+                {deepDiveSections.map(section => (
+                  <a key={section.number} href={`#dd-sec-${section.number}`}>
+                    <b>{String(section.number).padStart(2, '0')}</b>
+                    {shortSectionTitle(section.title)}
+                  </a>
+                ))}
+              </nav>
+              {deepDiveSections.map(section => (
+                <section
+                  key={section.number}
+                  id={`dd-sec-${section.number}`}
+                  className={`dd-note-section tone-${section.tone}`}
+                >
+                  <div className="dd-note-head">
+                    <span>{String(section.number).padStart(2, '0')}</span>
+                    <h3>{section.title}</h3>
+                  </div>
+                  <div
+                    className="dd-note-body"
+                    dangerouslySetInnerHTML={{ __html: section.body }}
+                  />
+                </section>
+              ))}
+            </div>
+          ) : (
+            <div
+              className="dd-explain"
+              dangerouslySetInnerHTML={{ __html: a.deepDive.explanation.replace(/\n/g, '<br>') }}
+            />
+          )}
 
           <div className="dd-divider"></div>
 
