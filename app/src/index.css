@@ -157,19 +157,12 @@ html.dark .penni-loader-mark{background:rgba(255,255,255,.9);box-shadow:0 18px 4
 .login-sheet-head h2{font-size:22px;font-weight:950;letter-spacing:-.3px;color:#172246}
 .login-sheet-head p{font-size:12px;font-weight:800;line-height:1.45;color:rgba(23,34,70,.58);margin-top:3px}
 .login-actions{display:flex;flex-direction:column;gap:10px;margin-top:15px}
-.login-actions button,.login-phone-panel button,.student-profile-actions button{border:0;cursor:pointer;font:inherit}
-.login-oauth,.login-phone-toggle{height:48px;border-radius:19px;background:#fff;color:#172246;display:flex;align-items:center;justify-content:center;gap:10px;font-size:13px;font-weight:950;box-shadow:0 12px 28px rgba(35,83,128,.1)}
-.login-oauth svg,.login-phone-toggle svg{font-size:16px}
-.login-phone-toggle{background:rgba(255,255,255,.52);justify-content:flex-start;padding:0 15px}
-.login-phone-toggle svg:last-child{margin-left:auto;font-size:13px;opacity:.56}
-.login-phone-panel{margin-top:10px;padding:12px;border-radius:24px;background:rgba(255,255,255,.46);border:1px solid rgba(255,255,255,.58);display:grid;gap:10px}
-.login-phone-panel label,.student-profile-card label{display:flex;flex-direction:column;gap:6px}
-.login-phone-panel label span,.student-profile-card label span{font-size:10px;font-weight:950;letter-spacing:.7px;text-transform:uppercase;color:rgba(23,34,70,.52)}
-.login-phone-panel input,.student-profile-card input{height:44px;border:1px solid rgba(39,57,111,.1);border-radius:16px;background:rgba(255,255,255,.78);padding:0 13px;color:#172246;font-size:14px;font-weight:850;outline:none}
-.login-phone-panel button{height:42px;border-radius:16px;background:#172246;color:#fff;font-size:12px;font-weight:950;display:flex;align-items:center;justify-content:center;gap:8px}
-.login-otp-tools{display:flex;justify-content:space-between;gap:8px}
-.login-otp-tools button{height:auto!important;padding:4px 2px;background:transparent!important;color:rgba(23,34,70,.68)!important;font-size:10px!important;box-shadow:none!important}
-.login-otp-tools button:disabled{opacity:.45;cursor:default}
+.login-actions button,.student-profile-actions button{border:0;cursor:pointer;font:inherit}
+.login-oauth{height:48px;border-radius:19px;background:#fff;color:#172246;display:flex;align-items:center;justify-content:center;gap:10px;font-size:13px;font-weight:950;box-shadow:0 12px 28px rgba(35,83,128,.1)}
+.login-oauth svg{font-size:16px}
+.student-profile-card label{display:flex;flex-direction:column;gap:6px}
+.student-profile-card label span{font-size:10px;font-weight:950;letter-spacing:.7px;text-transform:uppercase;color:rgba(23,34,70,.52)}
+.student-profile-card input{height:44px;border:1px solid rgba(39,57,111,.1);border-radius:16px;background:rgba(255,255,255,.78);padding:0 13px;color:#172246;font-size:14px;font-weight:850;outline:none}
 .login-error,.student-error{font-size:12px;font-weight:850;color:#b73b4e;background:rgba(255,255,255,.58);border-radius:14px;padding:9px 11px;margin-top:10px}
 .login-skip{width:100%;height:38px;border:0;background:transparent;color:rgba(23,34,70,.62);font-size:12px;font-weight:950;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:8px;cursor:pointer}
 .login-trust{display:flex;align-items:center;gap:8px;margin-top:12px;color:rgba(23,34,70,.48);font-size:10.5px;font-weight:850}
@@ -249,18 +242,17 @@ html.dark .penni-loader-mark{background:rgba(255,255,255,.9);box-shadow:0 18px 4
   .login-sheet{left:auto;right:20px;bottom:18px;top:58px;width:min(360px,47vw);overflow:auto;border-radius:28px;padding:14px}
   .login-sheet-head h2{font-size:19px}
   .login-sheet-head p{font-size:11.5px}
-  .login-oauth,.login-phone-toggle{height:42px;border-radius:16px}
+  .login-oauth{height:42px;border-radius:16px}
   .login-actions{gap:8px;margin-top:11px}
   .login-trust{margin-top:7px}
 }
 html.dark .login-screen,html.dark .student-profile-screen{background:linear-gradient(180deg,#111833 0%,#17264a 46%,#0e5f8d 100%)}
 html.dark .login-sheet,html.dark .student-profile-shell{background:rgba(20,31,62,.62);border-color:rgba(255,255,255,.16);color:#fff}
-html.dark .login-sheet-head h2,html.dark .student-profile-hero h1,html.dark .student-step-title,html.dark .student-target,html.dark .student-profile-card input,html.dark .login-phone-panel input{color:#fff}
+html.dark .login-sheet-head h2,html.dark .student-profile-hero h1,html.dark .student-step-title,html.dark .student-target,html.dark .student-profile-card input{color:#fff}
 html.dark .login-sheet-head p,html.dark .student-profile-hero p,html.dark .login-trust{color:rgba(255,255,255,.62)}
 html.dark .student-profile-card,html.dark .student-target{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.12)}
 html.dark .login-oauth{background:rgba(255,255,255,.92);color:#172246}
-html.dark .login-phone-toggle,html.dark .student-chip-grid button,html.dark .student-profile-actions button{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.12);color:#fff}
-html.dark .login-otp-tools button{color:rgba(255,255,255,.72)!important}
+html.dark .student-chip-grid button,html.dark .student-profile-actions button{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.12);color:#fff}
 html.dark .login-skip{color:rgba(255,255,255,.68)}
 
 #app{position:fixed;inset:0;display:none;flex-direction:column;padding-top:env(safe-area-inset-top);background:linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 55%,var(--bg3) 100%)}

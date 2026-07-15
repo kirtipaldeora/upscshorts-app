@@ -1,20 +1,14 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faApple,
-  faGoogle,
-} from '@fortawesome/free-brands-svg-icons'
+import { faGoogle } from '@fortawesome/free-brands-svg-icons'
 import {
   faArrowRight,
   faBookOpen,
-  faChevronDown,
   faDumbbell,
   faEarthAsia,
   faLayerGroup,
   faNewspaper,
-  faPhone,
   faShieldHalved,
-  faXmark,
 } from '@fortawesome/free-solid-svg-icons'
 import { EASE, gsap, reducedMotion } from '@/anim/animations'
 import { useAuthStore } from '@/stores/useAuthStore'
@@ -33,13 +27,8 @@ const FEATURE_TRACK = [
 ]
 
 export function PenniLogin({ onAuthenticated }: PenniLoginProps) {
-  const { user, isGuest, loading, error, supabaseConfigured, signInOAuth, sendOtp, verifyOtp, continueAsGuest, clearError } = useAuthStore()
+  const { user, isGuest, loading, error, supabaseConfigured, signInOAuth, continueAsGuest, clearError } = useAuthStore()
   const [feature, setFeature] = useState(0)
-  const [phoneOpen, setPhoneOpen] = useState(false)
-  const [otpSent, setOtpSent] = useState(false)
-  const [phone, setPhone] = useState('')
-  const [otp, setOtp] = useState('')
-  const [resendIn, setResendIn] = useState(0)
   const rootRef = useRef<HTMLDivElement>(null)
   const featureRef = useRef<HTMLDivElement>(null)
   const haptic = useHaptic()
@@ -76,38 +65,10 @@ export function PenniLogin({ onAuthenticated }: PenniLoginProps) {
     gsap.fromTo(featureEl.querySelector('.login-word-loop'), { opacity: 0.9, y: 8 }, { opacity: 1, y: 0, duration: 0.34, ease: EASE.expo })
   }, [feature])
 
-  useEffect(() => {
-    if (resendIn <= 0) return
-    const timer = window.setInterval(() => setResendIn(value => Math.max(0, value - 1)), 1000)
-    return () => window.clearInterval(timer)
-  }, [resendIn])
-
-  async function runOAuth(provider: 'google' | 'apple') {
+  async function runGoogleLogin() {
     await haptic(8)
     clearError()
-    await signInOAuth(provider)
-  }
-
-  async function runPhone() {
-    await haptic(8)
-    clearError()
-    if (!otpSent) {
-      const sent = await sendOtp(phone)
-      if (sent) {
-        setOtpSent(true)
-        setResendIn(30)
-      }
-    } else {
-      if (otp.trim().length < 4) return
-      await verifyOtp(phone, otp)
-    }
-  }
-
-  async function resendOtp() {
-    if (loading || resendIn > 0) return
-    clearError()
-    const sent = await sendOtp(phone)
-    if (sent) setResendIn(30)
+    await signInOAuth('google')
   }
 
   async function runGuest() {
@@ -164,63 +125,11 @@ export function PenniLogin({ onAuthenticated }: PenniLoginProps) {
         </div>
 
         <div className="login-actions">
-          <button className="login-oauth" onClick={() => void runOAuth('apple')} disabled={loading}>
-            <FontAwesomeIcon icon={faApple} />
-            Continue with Apple
-          </button>
-          <button className="login-oauth" onClick={() => void runOAuth('google')} disabled={loading}>
+          <button className="login-oauth" onClick={() => void runGoogleLogin()} disabled={loading}>
             <FontAwesomeIcon icon={faGoogle} />
             Continue with Google
           </button>
-          <button className={`login-phone-toggle ${phoneOpen ? 'open' : ''}`} onClick={() => { void haptic(6); setPhoneOpen(v => !v) }} disabled={loading}>
-            <FontAwesomeIcon icon={faPhone} />
-            Phone number
-            <FontAwesomeIcon icon={phoneOpen ? faXmark : faChevronDown} />
-          </button>
         </div>
-
-        {phoneOpen && (
-          <div className="login-phone-panel">
-            <label>
-              <span>Phone</span>
-              <input
-                value={phone}
-                onChange={(event) => setPhone(event.target.value)}
-                placeholder="+91 98765 43210"
-                inputMode="tel"
-                autoComplete="tel"
-                disabled={otpSent}
-              />
-            </label>
-            {otpSent && (
-              <label>
-                <span>OTP</span>
-                <input
-                  value={otp}
-                  onChange={(event) => setOtp(event.target.value.replace(/\D/g, '').slice(0, 6))}
-                  placeholder={supabaseConfigured ? '6-digit code' : 'Any 4 digits'}
-                  inputMode="numeric"
-                  autoComplete="one-time-code"
-                  maxLength={6}
-                />
-              </label>
-            )}
-            <button onClick={() => void runPhone()} disabled={loading}>
-              {otpSent ? 'Verify and continue' : 'Send OTP'}
-              <FontAwesomeIcon icon={faArrowRight} />
-            </button>
-            {otpSent && (
-              <div className="login-otp-tools">
-                <button type="button" onClick={() => { setOtpSent(false); setOtp(''); setResendIn(0); clearError() }} disabled={loading}>
-                  Change number
-                </button>
-                <button type="button" onClick={() => void resendOtp()} disabled={loading || resendIn > 0}>
-                  {resendIn > 0 ? `Resend in ${resendIn}s` : 'Resend code'}
-                </button>
-              </div>
-            )}
-          </div>
-        )}
 
         {error && <p className="login-error">{error}</p>}
         <button className="login-skip" onClick={() => void runGuest()} disabled={loading}>
@@ -229,7 +138,7 @@ export function PenniLogin({ onAuthenticated }: PenniLoginProps) {
         </button>
         <div className="login-trust">
           <FontAwesomeIcon icon={faShieldHalved} />
-          <span>{supabaseConfigured ? 'Protected with Supabase Auth' : 'Add Supabase keys to enable real OAuth and OTP'}</span>
+          <span>{supabaseConfigured ? 'Protected with Supabase Auth' : 'Add Supabase keys to enable Google sign-in'}</span>
         </div>
       </div>
 
