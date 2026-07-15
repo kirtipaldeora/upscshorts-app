@@ -91,6 +91,12 @@ interface PracticeStore {
   saveSettings: (patch: Partial<PracticeSettings>) => void
   setPyqData: (data: PyqItem[]) => void
   incrementMainsQuota: () => void
+  hydrateCloudState: (state: {
+    stats?: PracticeStats
+    settings?: Partial<PracticeSettings>
+    questionBookmarks?: string[]
+    mainsQuota?: Record<string, number>
+  }) => void
 }
 
 export const usePracticeStore = create<PracticeStore>()((set, get) => ({
@@ -161,5 +167,18 @@ export const usePracticeStore = create<PracticeStore>()((set, get) => ({
     const mq = { ...get().mainsQuota, [TODAY]: (get().mainsQuota[TODAY] ?? 0) + 1 }
     localStorage.setItem('u4mq', JSON.stringify(mq))
     set({ mainsQuota: mq })
+  },
+
+  hydrateCloudState: (cloud) => {
+    const current = get()
+    const stats = cloud.stats ?? current.stats
+    const settings = { ...DEFAULT_SETTINGS, ...current.settings, ...cloud.settings }
+    const questionBookmarks = cloud.questionBookmarks ?? current.questionBookmarks
+    const mainsQuota = cloud.mainsQuota ?? current.mainsQuota
+    localStorage.setItem('u4stats', JSON.stringify(stats))
+    localStorage.setItem('u4set', JSON.stringify(settings))
+    localStorage.setItem('u4qbm', JSON.stringify(questionBookmarks))
+    localStorage.setItem('u4mq', JSON.stringify(mainsQuota))
+    set({ stats, settings, questionBookmarks, mainsQuota })
   },
 }))

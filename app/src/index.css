@@ -167,6 +167,9 @@ html.dark .penni-loader-mark{background:rgba(255,255,255,.9);box-shadow:0 18px 4
 .login-phone-panel label span,.student-profile-card label span{font-size:10px;font-weight:950;letter-spacing:.7px;text-transform:uppercase;color:rgba(23,34,70,.52)}
 .login-phone-panel input,.student-profile-card input{height:44px;border:1px solid rgba(39,57,111,.1);border-radius:16px;background:rgba(255,255,255,.78);padding:0 13px;color:#172246;font-size:14px;font-weight:850;outline:none}
 .login-phone-panel button{height:42px;border-radius:16px;background:#172246;color:#fff;font-size:12px;font-weight:950;display:flex;align-items:center;justify-content:center;gap:8px}
+.login-otp-tools{display:flex;justify-content:space-between;gap:8px}
+.login-otp-tools button{height:auto!important;padding:4px 2px;background:transparent!important;color:rgba(23,34,70,.68)!important;font-size:10px!important;box-shadow:none!important}
+.login-otp-tools button:disabled{opacity:.45;cursor:default}
 .login-error,.student-error{font-size:12px;font-weight:850;color:#b73b4e;background:rgba(255,255,255,.58);border-radius:14px;padding:9px 11px;margin-top:10px}
 .login-skip{width:100%;height:38px;border:0;background:transparent;color:rgba(23,34,70,.62);font-size:12px;font-weight:950;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:8px;cursor:pointer}
 .login-trust{display:flex;align-items:center;gap:8px;margin-top:12px;color:rgba(23,34,70,.48);font-size:10.5px;font-weight:850}
@@ -257,6 +260,7 @@ html.dark .login-sheet-head p,html.dark .student-profile-hero p,html.dark .login
 html.dark .student-profile-card,html.dark .student-target{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.12)}
 html.dark .login-oauth{background:rgba(255,255,255,.92);color:#172246}
 html.dark .login-phone-toggle,html.dark .student-chip-grid button,html.dark .student-profile-actions button{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.12);color:#fff}
+html.dark .login-otp-tools button{color:rgba(255,255,255,.72)!important}
 html.dark .login-skip{color:rgba(255,255,255,.68)}
 
 #app{position:fixed;inset:0;display:none;flex-direction:column;padding-top:env(safe-area-inset-top);background:linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 55%,var(--bg3) 100%)}

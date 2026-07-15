@@ -80,7 +80,8 @@ export function StudentProfileForm({ onComplete }: StudentProfileFormProps) {
       setStep(step + 1)
       return
     }
-    await saveProfile(form)
+    const saved = await saveProfile(form)
+    if (!saved) return
     saveSettings({ name: form.name || 'UPSC Aspirant', target: form.dailyTarget })
     setGsFilter({
       'GS 1': form.gsFocus.includes('GS 1'),
@@ -128,7 +129,14 @@ export function StudentProfileForm({ onComplete }: StudentProfileFormProps) {
               </label>
               <label>
                 <span>Phone</span>
-                <input value={form.phone} onChange={(event) => patch({ phone: event.target.value })} placeholder="+91 98765 43210" inputMode="tel" />
+                <input
+                  value={form.phone}
+                  onChange={(event) => patch({ phone: event.target.value })}
+                  placeholder="+91 98765 43210"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  disabled={user?.method === 'phone'}
+                />
               </label>
               <label>
                 <span>Target attempt</span>

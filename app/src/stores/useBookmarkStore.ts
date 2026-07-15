@@ -6,6 +6,7 @@ interface BookmarkStore {
   toggle: (id: string) => void
   isBookmarked: (id: string) => boolean
   clearAll: () => void
+  replaceAll: (ids: string[]) => void
 }
 
 export const useBookmarkStore = create<BookmarkStore>()(
@@ -23,6 +24,7 @@ export const useBookmarkStore = create<BookmarkStore>()(
         }),
       isBookmarked: (id) => get().bookmarkedIds.includes(id),
       clearAll: () => set({ bookmarkedIds: [] }),
+      replaceAll: (ids) => set({ bookmarkedIds: [...new Set(ids)] }),
     }),
     {
       name: 'u4bm', // Matches original localStorage key

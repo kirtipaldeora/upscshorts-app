@@ -39,6 +39,7 @@ export function PenniLogin({ onAuthenticated }: PenniLoginProps) {
   const [otpSent, setOtpSent] = useState(false)
   const [phone, setPhone] = useState('')
   const [otp, setOtp] = useState('')
+  const [resendIn, setResendIn] = useState(0)
   const rootRef = useRef<HTMLDivElement>(null)
   const featureRef = useRef<HTMLDivElement>(null)
   const haptic = useHaptic()
@@ -75,6 +76,12 @@ export function PenniLogin({ onAuthenticated }: PenniLoginProps) {
     gsap.fromTo(featureEl.querySelector('.login-word-loop'), { opacity: 0.9, y: 8 }, { opacity: 1, y: 0, duration: 0.34, ease: EASE.expo })
   }, [feature])
 
+  useEffect(() => {
+    if (resendIn <= 0) return
+    const timer = window.setInterval(() => setResendIn(value => Math.max(0, value - 1)), 1000)
+    return () => window.clearInterval(timer)
+  }, [resendIn])
+
   async function runOAuth(provider: 'google' | 'apple') {
     await haptic(8)
     clearError()
@@ -85,13 +92,22 @@ export function PenniLogin({ onAuthenticated }: PenniLoginProps) {
     await haptic(8)
     clearError()
     if (!otpSent) {
-      if (phone.replace(/\D/g, '').length < 10) return
-      await sendOtp(phone.trim())
-      setOtpSent(true)
+      const sent = await sendOtp(phone)
+      if (sent) {
+        setOtpSent(true)
+        setResendIn(30)
+      }
     } else {
       if (otp.trim().length < 4) return
-      await verifyOtp(phone.trim(), otp.trim())
+      await verifyOtp(phone, otp)
     }
+  }
+
+  async function resendOtp() {
+    if (loading || resendIn > 0) return
+    clearError()
+    const sent = await sendOtp(phone)
+    if (sent) setResendIn(30)
   }
 
   async function runGuest() {
@@ -167,18 +183,42 @@ export function PenniLogin({ onAuthenticated }: PenniLoginProps) {
           <div className="login-phone-panel">
             <label>
               <span>Phone</span>
-              <input value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="+91 98765 43210" inputMode="tel" />
+              <input
+                value={phone}
+                onChange={(event) => setPhone(event.target.value)}
+                placeholder="+91 98765 43210"
+                inputMode="tel"
+                autoComplete="tel"
+                disabled={otpSent}
+              />
             </label>
             {otpSent && (
               <label>
                 <span>OTP</span>
-                <input value={otp} onChange={(event) => setOtp(event.target.value)} placeholder={supabaseConfigured ? 'Enter code' : 'Any 4 digits'} inputMode="numeric" />
+                <input
+                  value={otp}
+                  onChange={(event) => setOtp(event.target.value.replace(/\D/g, '').slice(0, 6))}
+                  placeholder={supabaseConfigured ? '6-digit code' : 'Any 4 digits'}
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                />
               </label>
             )}
             <button onClick={() => void runPhone()} disabled={loading}>
               {otpSent ? 'Verify and continue' : 'Send OTP'}
               <FontAwesomeIcon icon={faArrowRight} />
             </button>
+            {otpSent && (
+              <div className="login-otp-tools">
+                <button type="button" onClick={() => { setOtpSent(false); setOtp(''); setResendIn(0); clearError() }} disabled={loading}>
+                  Change number
+                </button>
+                <button type="button" onClick={() => void resendOtp()} disabled={loading || resendIn > 0}>
+                  {resendIn > 0 ? `Resend in ${resendIn}s` : 'Resend code'}
+                </button>
+              </div>
+            )}
           </div>
         )}
 

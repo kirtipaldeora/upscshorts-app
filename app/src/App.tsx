@@ -9,6 +9,8 @@ import { Toast, useToast } from '@/components/ui/Toast'
 import { useAppStore } from '@/stores/useAppStore'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { usePracticeStore } from '@/stores/usePracticeStore'
+import { startStudentStateSync } from '@/lib/studentDataClient'
+import { getSupabase } from '@/lib/authClient'
 import type { MainsRecord } from '@/hooks/useMainsDB'
 
 // Heavy / seldom-used screens are code-split so they never bloat first load.
@@ -72,6 +74,21 @@ export default function App() {
     }, Math.min(next.getTime() - now.getTime(), 2147483647))
     return () => window.clearTimeout(timeout)
   }, [phase, settings.remind, settings.reminderTime, showToast])
+
+  useEffect(() => {
+    if (phase !== 'main' || !user || isGuest) return
+    return startStudentStateSync(user.id)
+  }, [phase, user?.id, isGuest])
+
+  useEffect(() => {
+    const supabase = getSupabase()
+    if (!supabase) return
+    const { data } = supabase.auth.onAuthStateChange((event) => {
+      if (event !== 'SIGNED_OUT' && event !== 'USER_UPDATED') return
+      window.setTimeout(() => void bootstrap(), 0)
+    })
+    return () => data.subscription.unsubscribe()
+  }, [bootstrap])
 
   if (phase === 'splash') {
     return <SplashScreen onDone={handleSplashDone} />
