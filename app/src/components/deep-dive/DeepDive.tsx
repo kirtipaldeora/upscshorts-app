@@ -473,9 +473,12 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
                 <div className="dd-prelims-stem">
                   {previewStem.lead && <p>{previewStem.lead}</p>}
                   {previewStem.statements.length > 0 && (
-                    <ol>
+                    <ol className="upsc-statement-list">
                       {previewStem.statements.map((statement, i) => (
-                        <li key={i}>{statement}</li>
+                        <li key={i}>
+                          <span className="upsc-statement-label">{previewStem.statementLabels[i] ?? i + 1}</span>
+                          <span className="upsc-statement-text">{statement}</span>
+                        </li>
                       ))}
                     </ol>
                   )}

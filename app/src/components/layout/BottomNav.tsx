@@ -73,7 +73,7 @@ export function BottomNav() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 11,
+        gap: 7,
         zIndex: 100,
       }}
     >
@@ -84,13 +84,17 @@ export function BottomNav() {
             key={item.label}
             onClick={() => handleTap(item)}
             className={`nav-item ${isActive ? 'active' : ''}`}
+            aria-label={item.label}
+            aria-current={isActive ? 'page' : undefined}
             style={{
-              width: 54,
-              height: 54,
-              borderRadius: 19,
+              width: 62,
+              height: 58,
+              borderRadius: 18,
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
+              gap: 3,
               cursor: 'pointer',
               padding: 0,
               transition: 'all 0.3s cubic-bezier(0.3, 1.2, 0.4, 1)',
@@ -100,6 +104,7 @@ export function BottomNav() {
           >
             {/* Premium liquid glass gloss highlight overlay */}
             <span
+              className="nav-gloss"
               style={{
                 position: 'absolute',
                 top: 0,
@@ -113,11 +118,12 @@ export function BottomNav() {
             <FontAwesomeIcon
               icon={item.icon}
               style={{
-                fontSize: 19,
+                fontSize: 17,
                 transition: 'transform 0.3s',
                 transform: isActive ? 'scale(1.08)' : 'scale(1)',
               }}
             />
+            <span className="nav-label" style={{ display: 'block' }}>{item.label}</span>
           </button>
         )
       })}

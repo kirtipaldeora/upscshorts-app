@@ -2,6 +2,8 @@ import type { Article } from '@/types/article'
 import type { PyqItem } from '@/stores/usePracticeStore'
 import type { PyqDifficulty, PyqFormat, PyqSolution } from '@/types/pyq'
 
+export const CURRENT_AFFAIRS_MCQ_START = '2026-07-15'
+
 // ─── Unified question shape ───────────────────────────────────
 export interface Question {
   id: string
@@ -37,6 +39,7 @@ export interface MainsQuestion {
 export function articleQs(articles: Article[]): Question[] {
   const out: Question[] = []
   articles.forEach(a => {
+    if (a.date < CURRENT_AFFAIRS_MCQ_START) return
     ;(a.prelimsQs ?? []).forEach((q, i) => {
       out.push({
         id: `${a.id}-q${i + 1}`,

@@ -27,6 +27,9 @@ import {
 import { QuizPlayer } from '@/components/practice/QuizPlayer'
 import { PyqSolutionView } from './PyqSolutionView'
 import { getPyqSubtopic } from '@/utils/pyqTaxonomy'
+import { useAllArticles } from '@/hooks/useAllArticles'
+import { articleQs } from '@/utils/practiceUtils'
+import { relatedCurrentQuestions } from '@/utils/questionLinks'
 
 type AllOr<T> = T | 'all'
 
@@ -37,7 +40,12 @@ function QuestionStem({ text, compact = false }: { text: string; compact?: boole
   return (
     <div className={`pyqv-question-text structured ${compact ? 'compact' : ''}`}>
       {structured.lead && <p>{structured.lead}</p>}
-      <ol>{shownStatements.map((statement, index) => <li key={index}>{statement}</li>)}</ol>
+      <ol className="upsc-statement-list">{shownStatements.map((statement, index) => (
+        <li key={index}>
+          <span className="upsc-statement-label">{structured.statementLabels[index] ?? index + 1}</span>
+          <span className="upsc-statement-text">{statement}</span>
+        </li>
+      ))}</ol>
       {compact && structured.statements.length > shownStatements.length && (
         <span className="pyqv-more-statements">+{structured.statements.length - shownStatements.length} more statements</span>
       )}
@@ -52,7 +60,7 @@ function answerLabel(question: PyqQuestion) {
 }
 
 export function PYQVault() {
-  const { setOverlay } = useAppStore()
+  const { setOverlay, articlesByDate } = useAppStore()
   const { stats, questionBookmarks, toggleQbm } = usePracticeStore()
   const [manifest, setManifest] = useState<PyqManifest | null>(null)
   const [questions, setQuestions] = useState<PyqQuestion[]>([])
@@ -72,6 +80,19 @@ export function PYQVault() {
   const [detailMode, setDetailMode] = useState<'question' | 'solution'>('question')
   const [quizQuestions, setQuizQuestions] = useState<PyqQuestion[] | null>(null)
   const [toast, setToast] = useState('')
+  useAllArticles()
+
+  const currentQuestionEntries = useMemo(() => Object.values(articlesByDate).flat().flatMap(article =>
+    articleQs([article]).map(question => ({ article, question }))), [articlesByDate])
+  const currentLinksByQuestion = useMemo(() => {
+    const links = new Map<string, ReturnType<typeof relatedCurrentQuestions>>()
+    questions.forEach(question => {
+      const related = relatedCurrentQuestions(question, currentQuestionEntries)
+      if (related.length) links.set(question.id, related)
+    })
+    return links
+  }, [currentQuestionEntries, questions])
+  const selectedCurrentLinks = selected ? currentLinksByQuestion.get(selected.id) ?? [] : []
 
   function showToast(message: string) {
     setToast(message)
@@ -338,6 +359,7 @@ export function PYQVault() {
               : results.slice(0, visibleCount).map((question) => {
                   const bookmarked = questionBookmarks.includes(pyqQuestionId(question))
                   const answered = Boolean(stats.a[pyqQuestionId(question)])
+                  const currentLinks = currentLinksByQuestion.get(question.id) ?? []
                   return (
                     <article
                       className="pyqv-card"
@@ -370,6 +392,12 @@ export function PYQVault() {
                         </button>
                       </div>
                       <QuestionStem text={question.stem} compact />
+                      {currentLinks.length > 0 && (
+                        <details className="question-link-signal current" onClick={event => event.stopPropagation()}>
+                          <summary><span>Seen in recent news</span><b>{currentLinks.length === 1 ? new Date(`${currentLinks[0].article.date}T12:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : `${currentLinks.length} close news links`}</b><FontAwesomeIcon icon={faChevronDown} /></summary>
+                          <div>{currentLinks.map(({ article, reason }) => <p key={article.id}><span>{article.date} · {article.category}</span><b>{article.headline}</b><i>{reason}</i></p>)}</div>
+                        </details>
+                      )}
                       <div className="pyqv-card-actions">
                         <button onClick={(event) => { event.stopPropagation(); openDetail(question, 'question') }}><FontAwesomeIcon icon={faBookOpen} /> View question</button>
                         <button onClick={(event) => { event.stopPropagation(); openDetail(question, 'solution') }}>See answer <FontAwesomeIcon icon={faChevronRight} /></button>
@@ -406,6 +434,17 @@ export function PYQVault() {
                 ))}
               </div>
               {detailMode === 'solution' && <PyqSolutionView solution={selected.solution} answerLabel={answerLabel(selected)} />}
+              {selectedCurrentLinks.length > 0 && (
+                <section className="question-connection current-link">
+                  <div className="question-connection-head"><span>Seen in recent news</span><p>These links are visible before the solution because they are revision context, not another test.</p></div>
+                  {selectedCurrentLinks.map(({ article, question, reason }) => (
+                    <details key={article.id}>
+                      <summary><span>{article.date} · {article.category}</span><b>{article.headline}</b><i>{reason}</i></summary>
+                      <div><p>{question.q}</p>{detailMode === 'solution' && <><b>Current MCQ answer: {String.fromCharCode(65 + question.answer)}</b><em>{question.explanation}</em></>}</div>
+                    </details>
+                  ))}
+                </section>
+              )}
             </div>
             {detailMode === 'question' && (
               <div className="pyqv-detail-actions">

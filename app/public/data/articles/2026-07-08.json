@@ -21,31 +21,6 @@
         "Orographic rainfall",
         "Disaster Management Act 2005"
       ],
-      "prelimsQs": [
-        {
-          "q": "Consider the following statements: 1. The Gadgil Committee recommended treating almost the entire Western Ghats as an Ecologically Sensitive Area. 2. The Kasturirangan Committee reduced the proposed ESA to about 37% of the Western Ghats. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Statement 1 is correct: the Gadgil Committee recommended treating almost the entire Western Ghats as ecologically sensitive, with graded zones of regulation. Statement 2 is also correct: the Kasturirangan Committee later reduced the proposed ESA to about 37%, reflecting a more selective approach."
-        },
-        {
-          "q": "With reference to disaster-management institutions in India, consider the following statements: 1. The National Disaster Response Force (NDRF) was constituted under the Disaster Management Act, 2005. 2. The National Disaster Management Authority (NDMA) is chaired by the Prime Minister. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. The DM Act, 2005 created the statutory framework for NDMA and NDRF; NDMA is chaired by the Prime Minister.",
-          "ref": "Disaster Management Act, 2005"
-        }
-      ],
       "location": {
         "lat": 11.6,
         "lon": 76.13,
@@ -73,20 +48,6 @@
         "Current Account Deficit",
         "Crude oil basket",
         "Implicit Price Deflator"
-      ],
-      "prelimsQs": [
-        {
-          "q": "With reference to the Strait of Hormuz, consider the following statements: 1. It connects the Persian Gulf with the Gulf of Oman. 2. It separates Iran from Oman/UAE. 3. It lies between Yemen and Djibouti. Which of the statements given above are correct?",
-          "options": [
-            "1 and 2 only",
-            "2 and 3 only",
-            "1 and 3 only",
-            "1, 2 and 3"
-          ],
-          "answer": 0,
-          "explanation": "Statements 1 and 2 are correct: the Strait of Hormuz connects the Persian Gulf with the Gulf of Oman and lies between Iran and Oman/UAE. Statement 3 is incorrect because the Yemen-Djibouti chokepoint is Bab-el-Mandeb, not Hormuz.",
-          "ref": "West Asian oil chokepoints"
-        }
       ],
       "location": {
         "lat": 26.57,
@@ -116,20 +77,6 @@
         "Article 43B",
         "Sahkar se Samriddhi"
       ],
-      "prelimsQs": [
-        {
-          "q": "With reference to cooperative societies in India, consider the following statements: 1. The 97th Constitutional Amendment Act inserted Part IXB into the Constitution. 2. The amendment added the right to form cooperative societies under Article 19(1)(c). Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. The 97th Amendment constitutionalised cooperative societies through Part IXB and expanded Article 19(1)(c).",
-          "ref": "97th Constitutional Amendment Act, 2011"
-        }
-      ],
       "location": {
         "lat": 22.55,
         "lon": 72.96,
@@ -157,20 +104,6 @@
         "IORA",
         "Malabar exercise",
         "AUSINDEX"
-      ],
-      "prelimsQs": [
-        {
-          "q": "With reference to India-Australia economic relations, consider the following statements: 1. ECTA is an interim free-trade agreement between India and Australia. 2. It was negotiated as a step towards a more comprehensive economic cooperation agreement. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. The India-Australia Economic Cooperation and Trade Agreement is an interim FTA and part of the broader CECA track.",
-          "ref": "India-Australia ECTA"
-        }
       ],
       "location": {
         "lat": -35.28,
@@ -200,32 +133,6 @@
         "MTCR",
         "Comprehensive Strategic Partnership"
       ],
-      "prelimsQs": [
-        {
-          "q": "With reference to the BrahMos missile, consider the following statements: 1. Its name is derived from the Brahmaputra and Moskva rivers. 2. It is a supersonic cruise missile developed through India-Russia cooperation. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. BrahMos combines Brahmaputra and Moskva and is an India-Russia supersonic cruise missile programme.",
-          "ref": "BrahMos basics"
-        },
-        {
-          "q": "With reference to BrahMos range and export controls, consider the following statements: 1. The original range of about 290 km reflected the Missile Technology Control Regime threshold. 2. India became a member of the MTCR in 2016, enabling development of longer-range variants. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. The 300-km MTCR threshold shaped the original export-sensitive range; India joined MTCR in 2016.",
-          "ref": "MTCR and BrahMos"
-        }
-      ],
       "location": {
         "lat": -6.21,
         "lon": 106.85,
@@ -254,20 +161,6 @@
         "Bharat Ratna",
         "Rural connectivity"
       ],
-      "prelimsQs": [
-        {
-          "q": "With reference to the Padma Awards, consider the following statements: 1. The order of precedence is Padma Vibhushan, Padma Bhushan and Padma Shri. 2. These awards are for distinguished service and do not amount to titles under Article 18 when used as decorations. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. The Padma awards follow that order of precedence and are national honours, not hereditary or titular prefixes.",
-          "ref": "Padma Awards; Article 18"
-        }
-      ],
       "audioScript": "Let's spend a few minutes on a story that many aspirants will skip — the passing of Girish Bharadwaj, the Bridge Man of India — and let me show you why skipping it would be a mistake. Personalities like him are exactly what examiners want as examples in answers on rural development, appropriate technology and even ethics. A well-placed example is worth more than a paragraph of theory.\n\nThe facts are simple. Girish Bharadwaj, a mechanical engineering graduate of nineteen seventy-three from Karnataka, died at seventy-six in Sullia, Dakshina Kannada. Instead of chasing a corporate career, he spent his life building low-cost suspension footbridges — over one hundred and forty by conservative counts, some say three hundred — across Karnataka, Kerala, Andhra Pradesh and Odisha. His first was across the Payaswini river at Aramburu in nineteen eighty-nine. In twenty seventeen the government honoured him with the Padma Shri.\n\nNow ask the UPSC question: why do footbridges matter in a country building bullet trains? Because development fails at the last mile. A village cut off by a river during monsoon loses school days, market access and emergency healthcare — the entire promise of every welfare scheme collapses at that crossing. A large government bridge may cost crores and take years; Bharadwaj's hanging bridges — a deck slung from cables anchored at both ends — cost a fraction, used local labour, and went up in months. This is the concept UPSC calls appropriate technology, an idea popularised by the economist Schumacher in Small is Beautiful: technology matched to local resources, local skills and local needs, rather than imported scale. Gandhi's charkha was appropriate technology; so is a suspension footbridge.\n\nTeach yourself the small statics here too. The Padma awards — Padma Vibhushan, Padma Bhushan, Padma Shri in descending order — are announced every Republic Day; the Bharat Ratna stands above them all. A suspension bridge carries its deck from cables in tension — that is why it can span a river without pillars in the water, which is exactly what makes it cheap and monsoon-proof.\n\nWhere do you deploy this? In GS One or GS Two answers on rural development and last-mile connectivity, Bharadwaj is your human example alongside schemes like PMGSY, the rural roads programme. In GS Three questions on frugal innovation, pair him with ISRO's low-cost missions to show frugality as a national trait. In the Ethics paper, he is a ready case study of dedication to public service without office — a private citizen embodying the service values the paper examines. And in an Essay on technology and society, his life argues that the direction of technology matters more than its sophistication.\n\nIf UPSC asks about inclusive infrastructure, most candidates will write scheme names. You should write one sentence of theory and then one sentence of Bharadwaj — the examiner remembers answers with faces in them.\n\nThe takeaway to remember: development is not measured by the size of the structure but by the distance it removes between a citizen and her entitlements. One engineer with cables and conviction connected more villages than many project reports — and that is precisely the kind of line that lifts a Mains answer from average to memorable."
     },
     {
@@ -289,20 +182,6 @@
         "Ayushman Bharat",
         "Non-communicable diseases",
         "Female labour-force participation"
-      ],
-      "prelimsQs": [
-        {
-          "q": "With reference to out-of-pocket expenditure (OOPE) in health, consider the following statements: 1. It refers to health spending borne directly by households at the point of care. 2. High OOPE can push vulnerable households into poverty and reduce timely access to care. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. OOPE is direct household payment for health services and is a major cause of health-related financial distress.",
-          "ref": "Health financing basics"
-        }
       ],
       "audioScript": "Let's understand a piece of research that quietly connects two of the biggest transformations in India — more women entering paid work, and disease shifting from infections to lifestyle conditions. UPSC will not ask you to summarise the study; it will expect you to use its core insight: that women's income is health policy in disguise.\n\nWhat does the research say? A forthcoming study in Oxford Open Economics examined India's twenty eighteen EPF reform, which cut the mandatory provident fund contribution for newly employed women from twelve per cent to eight per cent for three years. Understand the design: the Employees' Provident Fund is a compulsory retirement savings scheme run by the EPFO under the Labour Ministry; cutting the employee's contribution does not reduce her salary — it increases her take-home pay today at the cost of savings tomorrow. That makes it a natural experiment on what happens when women control more current income. The finding: households where female beneficiaries led spending cut overall healthcare expenditure by around eleven point six per cent — spending less on medicines and consultations, but more on nutrition and fitness. In plain words, money in women's hands shifted the household from cure to prevention.\n\nNow ask why that shift matters so much. India's disease burden has flipped: non-communicable diseases — diabetes, hypertension, cardiovascular disease — now cause most deaths. NCDs are precisely the diseases where prevention through diet and activity beats treatment. And Indian health financing leans heavily on out-of-pocket expenditure — money paid directly by families at the point of care — which remains one of our biggest drivers of impoverishment. So if women's earnings organically push households toward prevention, employment policy starts doing the work of health policy, reducing future pressure on hospitals and on schemes like Ayushman Bharat, the PM-JAY insurance cover of five lakh rupees per family per year for the poor.\n\nThis echoes a larger literature you should cite: the Nobel-winning work of Abhijit Banerjee and Esther Duflo showing that resources directed to women improve household outcomes — children's nutrition, education, health — more than the same resources directed to men. Economists call this the gender lens on public policy.\n\nMap it to the syllabus with reasons. GS One, society: the changing role of women and the link between economic participation and social outcomes. GS Two: health policy and welfare scheme design — this study argues for designing transfers and tax breaks that raise women's take-home income. GS Three: economy and female labour-force participation, which in India remains low largely because of the unpaid care burden. And it is tailor-made for an Essay on women-led development, the phrase India championed during its G-Twenty presidency.\n\nIf UPSC asks how to improve health outcomes without raising the health budget, the average answer lists insurance schemes. The better answer adds this insight: raise women's incomes and bargaining power, because households then buy prevention on their own. That is value addition drawn from evidence, not opinion.\n\nThe takeaway to remember: in India, the shortest route to a healthier family often runs through a woman's payslip. Economic empowerment of women is not just a growth strategy — it is one of the cheapest public-health interventions we have. Use that framing and your answer immediately gains an inter-disciplinary edge."
     },
@@ -326,20 +205,6 @@
         "Circular economy",
         "ICE vehicles"
       ],
-      "prelimsQs": [
-        {
-          "q": "With reference to electric-mobility schemes in India, consider the following statements: 1. PM E-DRIVE succeeded the earlier FAME scheme. 2. Such schemes support adoption of electric vehicles and charging infrastructure rather than subsidising fossil-fuel vehicles. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. PM E-DRIVE is the successor framework after FAME and focuses on EV adoption and related infrastructure.",
-          "ref": "PM E-DRIVE; FAME"
-        }
-      ],
       "audioScript": "Let's look at an idea that most people have never considered part of India's electric vehicle story — retrofitment — and understand why analysts are calling it the missing half of the EV transition. This is a classic UPSC topic in the making: a policy gap, an environmental imperative and an economic opportunity rolled into one.\n\nThe context first. The West Asia crisis reminded everyone that India imports more than eighty-five per cent of its crude. EVs are the long-term answer, but here is the inconvenient arithmetic: electric vehicles are only about eight and a half per cent of new vehicle sales, while more than thirty crore internal-combustion vehicles are already on the road, burning imported petroleum every day. Even if every new vehicle sold tomorrow were electric, the existing fleet would keep polluting for fifteen to twenty years. Retrofitment attacks exactly that stock problem: you remove the engine and exhaust, fit a battery pack, motor and controllers, and keep the chassis — cheaper than buying a new EV, and far less wasteful than scrapping a working vehicle.\n\nAsk why retrofitment has not taken off, and you reach the policy layer. There is no national framework: State rules differ, certification and safety standards are patchy, banks will not finance a retrofitted vehicle as an asset, and GST on retrofit kits is not rationalised. Madhya Pradesh has moved first with upfront subsidies and State-wide registration of retrofit agencies; Nepal and parts of Europe are promoting conversions. But without inclusion in the central scheme — PM E-DRIVE, the successor to FAME, the programme that subsidises electric mobility — retrofitment remains a cottage activity.\n\nNow teach the concepts. FAME — Faster Adoption and Manufacturing of Electric Vehicles — was India's flagship demand-incentive scheme; PM E-DRIVE has replaced it. Internal combustion engine, ICE, is the petrol or diesel heart of a conventional vehicle. And the deeper concept here is the circular economy: an economic model that keeps products and materials in use for as long as possible — repair, reuse, remanufacture — instead of the linear take-make-dispose pattern. Retrofitment is circular economy applied to mobility, and it resonates with the government's Mission LiFE emphasis on sustainable consumption. There is also a justice angle worth noticing: a new EV is unaffordable for a small transporter or auto driver; a subsidised retrofit democratises the transition instead of reserving it for the affluent.\n\nSyllabus connections, with reasons. GS Three environment: decarbonising transport is central to India's net-zero-by-twenty-seventy pledge, and the transport sector is a major oil consumer. GS Three economy: energy security and reducing the import bill. GS Two governance: the federal patchwork of State EV policies versus the need for national standards — a small but sharp example of regulatory fragmentation.\n\nIf UPSC asks about accelerating the EV transition, most candidates will write charging infrastructure and battery manufacturing. Add the layer nobody writes: manage the existing fleet through a national retrofitment framework — standardised certification, financeable-asset status, rationalised GST, and inclusion under PM E-DRIVE. That single paragraph is genuine value addition.\n\nThe takeaway to remember: a transition that only touches new purchases is a transition postponed. The speed of India's clean-mobility shift will be decided as much by what we do with the thirty crore vehicles we already own as by the ones we are yet to buy."
     },
     {
@@ -362,20 +227,6 @@
         "D-SII",
         "Insurance penetration"
       ],
-      "prelimsQs": [
-        {
-          "q": "With reference to Government Securities (G-Secs), consider the following statements: 1. They are tradable sovereign debt instruments issued to finance government borrowing. 2. Institutional investors such as insurance companies are important participants in the G-Sec market. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. G-Secs are sovereign debt instruments, and long-term institutional investors such as insurers hold large pools of such securities.",
-          "ref": "G-Sec market"
-        }
-      ],
       "audioScript": "Let's understand one of the most under-appreciated relationships in the Indian economy — the one between your life insurance premium and the government's borrowing programme. This explainer looks technical, but once you see the mechanism, an entire section of GS Three — government borrowing, financial markets, fiscal stability — becomes intuitive.\n\nStart with the mechanism, because everything follows from it. When crores of households pay life insurance premiums, insurers receive money today against promises that mature decades later. To match those long liabilities, they park the funds in the longest, safest assets available — government securities. G-Secs are tradable sovereign debt instruments the government issues to finance its fiscal deficit; because sovereign default risk is considered nil, their yield is the risk-free benchmark against which every other interest rate in the economy is priced. Now the scale: life insurers hold close to a quarter of all outstanding central government dated securities. LIC alone holds about nineteen per cent — twenty point two lakh crore rupees — making it the single largest institutional lender to the Government of India. Sovereign paper is roughly sixty-three per cent of LIC's non-linked corpus.\n\nAsk the analytical why: why does this matter beyond trivia? Because of the kind of investor an insurer is. Banks and foreign investors trade in and out; insurers are buy-and-hold and counter-cyclical — when markets panic and others sell, insurers with decades-long horizons keep buying. That behaviour stabilises government borrowing costs precisely when stability is scarcest. The article's data point proves it: even as sovereign debt grew about forty per cent in three years, insurers' share stayed steady. In effect, the life insurance sector is a shock-absorber for India's public debt market.\n\nNow the worry, and this is where a balanced Mains answer lives: life insurance penetration — premiums as a share of GDP — has fallen to two point seven per cent, declining for the third straight year from a peak of three point two. If households shift savings away from insurance, the state quietly loses its most patient lender. That is why the authors argue the health of the insurance industry is a matter of macroeconomic and fiscal stability, not just household protection — a link, they note, missing from policy discourse.\n\nTeach the remaining statics. IRDAI is the statutory regulator of insurance. It designates LIC a Domestic Systemically Important Insurer — D-SII — the insurance equivalent of too-big-to-fail, attracting enhanced supervision because its distress would dislocate the financial system. Connect this to the parallel concept you already know from banking: D-SIBs like SBI, HDFC Bank and ICICI Bank.\n\nSyllabus mapping. GS Three economy: mobilisation of resources, financial markets, and the mechanics of deficit financing — this article lets you explain who actually funds the deficit, which most aspirants cannot. It also enriches answers on pension and insurance reforms, and on household savings channelling into productive investment.\n\nIf UPSC asks how the government finances its fiscal deficit, do not stop at \"market borrowings\". Name the lenders — banks under statutory liquidity requirements, insurance and pension funds as long-horizon holders, and the RBI's operations — and add the insight that the composition of lenders determines the stability of borrowing costs. That is a topper's answer.\n\nThe takeaway to remember: every long-term savings product is quietly an act of nation-financing. A country that wants cheap, stable long-term capital for its government and infrastructure must first keep its insurance and pension institutions healthy. That sentence can conclude answers on financial markets, public debt and even infrastructure financing."
     },
     {
@@ -397,32 +248,6 @@
         "Article 262",
         "ISRWD Act 1956",
         "Cooperative federalism"
-      ],
-      "prelimsQs": [
-        {
-          "q": "With reference to inter-State river water disputes, consider the following statements: 1. Article 262 empowers Parliament to provide for adjudication of disputes relating to inter-State rivers. 2. Parliament may by law exclude the jurisdiction of courts over such disputes. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. Article 262 specifically enables adjudication by law and exclusion of court jurisdiction.",
-          "ref": "Article 262"
-        },
-        {
-          "q": "With reference to the river Narmada, consider the following statements: 1. It originates from the Amarkantak plateau. 2. It is one of the major west-flowing peninsular rivers draining into the Arabian Sea. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. The Narmada rises near Amarkantak and is a major west-flowing peninsular river. Unlike the Ganga-Brahmaputra system, it drains westwards into the Arabian Sea, making it important for map-based UPSC questions.",
-          "ref": "Indian river systems"
-        }
       ],
       "location": {
         "lat": 21.83,
@@ -451,20 +276,6 @@
         "Central Information Commission",
         "Ayodhya Acquisition Act 1993"
       ],
-      "prelimsQs": [
-        {
-          "q": "With reference to the RTI Act, 2005, consider the following statements: 1. A body established by the Constitution, a law, or government notification can be a public authority. 2. A non-government body substantially financed by government can also fall within the definition of public authority. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. Section 2(h) includes bodies created by law/notification and substantially government-financed non-government bodies.",
-          "ref": "RTI Act, Section 2(h)"
-        }
-      ],
       "location": {
         "lat": 26.79,
         "lon": 82.19,
@@ -491,20 +302,6 @@
         "Shariat Application Act 1937",
         "Uniform Civil Code",
         "Article 44"
-      ],
-      "prelimsQs": [
-        {
-          "q": "With reference to the Prohibition of Child Marriage Act, 2006, consider the following statements: 1. The minimum age of marriage is 21 years for men and 18 years for women. 2. Child marriages are generally voidable at the option of the contracting party who was a child. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. PCMA keeps the age at 21/18 and treats most child marriages as voidable, with certain aggravated cases void.",
-          "ref": "PCMA, 2006"
-        }
       ],
       "location": {
         "lat": 25.44,
@@ -533,20 +330,6 @@
         "DPDP Act 2023",
         "Article 21"
       ],
-      "prelimsQs": [
-        {
-          "q": "With reference to informational privacy in India, consider the following statements: 1. The Supreme Court recognised privacy as a fundamental right in K.S. Puttaswamy v. Union of India. 2. The judgment located privacy within the guarantees of life, liberty and dignity under Part III. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. Puttaswamy (2017) unanimously recognised privacy as a fundamental right grounded in Part III, especially Article 21.",
-          "ref": "K.S. Puttaswamy judgment"
-        }
-      ],
       "audioScript": "Let's understand a debate that looks like a tech-news squabble — WhatsApp wants to introduce usernames, the IT Ministry is worried — and see why it is actually a compact lesson in the constitutional law of privacy. What makes this episode special is that both sides are invoking the same value: the user's informational privacy. That paradox is your entry point.\n\nThe facts. WhatsApp announced an optional username feature — you could be reached by a handle instead of your phone number. WhatsApp's case: hiding phone numbers from strangers enhances privacy, since your number is the key to your digital life. MeitY's worry: anonymity through usernames could turbo-charge fraud, phishing, impersonation of institutions and the so-called digital arrest scams, making criminals harder to trace. Critics of the government respond that it cannot block a lawful feature without statutory backing; the government invokes national security and public welfare.\n\nNow teach the constitutional core, because this is permanent syllabus. In two thousand seventeen, a nine-judge bench in K S Puttaswamy versus Union of India unanimously held privacy to be a fundamental right under Article twenty-one. Within privacy, the Court recognised informational privacy — the individual's control over her personal data — and, crucially, said the threat comes from both state and non-state actors. Any restriction on privacy must pass the three-fold proportionality test: a fair law must exist, it must pursue a legitimate aim, and the means must be proportionate to the objective. Later, in Anuradha Bhasin — the Kashmir internet case — the Court applied similar proportionality reasoning to liberty-versus-security conflicts.\n\nApply the test to both sides and watch the debate sharpen. WhatsApp's feature serves informational privacy against non-state snooping. The government's objection serves security — but the Puttaswamy framework demands that any restriction come through law, not executive displeasure. And that is where the Digital Personal Data Protection Act of twenty twenty-three enters: India finally has a statutory framework for personal data, with consent requirements, data-fiduciary obligations and penalties. The article's way forward is exactly the constitutional one — resolve such conflicts through the statutory framework rather than ad hoc intervention.\n\nAsk the deeper why: why do platform design choices keep becoming constitutional questions? Because private platforms now perform quasi-public functions — communication, identity, commerce. Their architecture decides, in practice, how much privacy or safety citizens enjoy. Governance is migrating from statutes to settings screens. That single observation is essay-grade material on technology and governance.\n\nSyllabus mapping with reasons. GS Two polity: fundamental rights jurisprudence — Puttaswamy, proportionality, Article twenty-one. GS Three internal security: cybercrime typologies — phishing, impersonation, digital arrest scams — and the tension between traceability and anonymity, the same tension underlying the ongoing litigation over breaking end-to-end encryption under the IT Rules. GS Four: a neat ethics debate — is anonymity a shield for the vulnerable or a sword for the fraudster? The honest answer is both, which is why proportionate regulation, not prohibition, is the mature position.\n\nIf UPSC asks about balancing privacy and security in digital India, the average answer says \"balance is needed\". The topper's answer names the test: restrictions must satisfy legality, legitimate aim and proportionality; cites Puttaswamy and the DPDP Act as the framework; and offers a concrete middle path — features like usernames with verified-identity backends, so users get privacy from strangers while lawful investigation retains traceability.\n\nThe takeaway to remember: in the digital age, the real privacy battles are fought not in courtrooms but in product design — and the Constitution now follows the citizen into the app. End a cyber-governance answer with that line and the examiner knows you see the larger picture."
     },
     {
@@ -568,20 +351,6 @@
         "Rule of law",
         "Independence of the Bar",
         "National Legal Academy"
-      ],
-      "prelimsQs": [
-        {
-          "q": "With reference to the Bar Council of India, consider the following statements: 1. It is a statutory body constituted under the Advocates Act, 1961. 2. It has functions relating to standards of legal education and regulation of the legal profession. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. The BCI is established under the Advocates Act and regulates professional standards as well as legal education norms.",
-          "ref": "Advocates Act, 1961"
-        }
       ],
       "audioScript": "Let's understand a Supreme Court observation that sounds ceremonial — the independence of the Bar is crucial for the rule of law — and unpack why it is actually a structural insight about how justice works. Everyone writes about judicial independence; almost nobody writes about the independence of lawyers. That gap is your opportunity.\n\nThe facts. A bench led by Justice P S Narasimha held that an independent Bar stands with an independent Bench as the foundation of the rule of law. The Court emphasised self-regulation as the defining feature of the legal profession, called advocates officers of the court who must remain insulated from external pressure, proposed a full-time National Legal Academy for continuing legal education on the lines of the National Judicial Academy, directed the Bar Council of India to audit its disciplinary mechanisms under the Advocates Act of nineteen sixty-one, and named pendency the greatest challenge to justice delivery — insisting the Bar share responsibility for delay. The immediate relief went to a lawyer wrongly placed on a bank's caution list.\n\nNow ask why the Bar's independence matters as much as the judiciary's. Follow the chain. Judges are drawn from the Bar — a compromised Bar eventually staffs a compromised Bench. Fearless representation is the citizen's real access to justice: if lawyers can be intimidated by the state, by banks, by mobs or by bar associations themselves, then the right to counsel becomes hollow. Recall the companion debate you studied recently: bar associations passing resolutions refusing to represent unpopular accused, which the Supreme Court in A S Mohammed Rafi declared wholly illegal. Both stories teach the same principle from opposite directions — the lawyer's duty runs to the court and the client, not to popular sentiment or power.\n\nTeach the statics. The Bar Council of India is a statutory body created by the Advocates Act, nineteen sixty-one; it regulates legal education, enrolment and professional discipline. Self-regulation means the profession disciplines its own members — a privilege premised on the profession actually doing it, which is why the Court ordered a performance audit of disciplinary committees. The rule of law — a basic-structure feature — means governance by law, not by arbitrary power; the classical formulation comes from Dicey. And the phrase officers of the court captures the dual role of advocates: they serve clients, but their first duty is to the administration of justice.\n\nConnect to the pendency crisis, because the Court did. India carries crores of pending cases. The usual villains cited are judge shortage and infrastructure. The Court's point is more uncomfortable: adjournment culture, strikes by lawyers — which the Court has repeatedly held illegal — and dilatory tactics are Bar-side contributions to delay. A reform answer that mentions only more judges is therefore half an answer; case-flow management, limiting adjournments, and professional accountability complete it.\n\nSyllabus mapping with reasons. GS Two polity: judiciary, structure and functioning of the justice system, statutory bodies like the BCI. GS Four ethics: professional ethics — the advocate's conflict between client interest, personal safety and duty to the court is a ready case-study template.\n\nIf UPSC asks about judicial reforms, add the dimension examiners rarely see: reform of the Bar — continuing legal education through the proposed National Legal Academy, audited disciplinary mechanisms, and joint Bench-Bar responsibility for pendency. Quote the Court's own metaphor: the Bar and the Bench are the two wheels of the chariot of justice.\n\nThe takeaway to remember: the rule of law is not maintained by judges alone; it is maintained by the ecosystem that argues before them. A fearless, self-disciplined Bar is as much a constitutional necessity as an independent Bench — and an answer that sees both wheels of the chariot will always outrun one that sees only the judge."
     },
@@ -605,20 +374,6 @@
         "ASISSE",
         "Gross Value Added"
       ],
-      "prelimsQs": [
-        {
-          "q": "With reference to the proposed Index of Services Production (ISP), consider the following statements: 1. It is intended to improve high-frequency measurement of services-sector activity. 2. GST data is expected to be a key input for constructing the index. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. ISP aims to capture services activity more regularly, with GST data serving as a major administrative data source.",
-          "ref": "Index of Services Production"
-        }
-      ],
       "audioScript": "Let's understand a statistical reform that sounds dry but will quietly change how India measures itself — the new Index of Services Production, the ISP. UPSC has a soft spot for statistical infrastructure — remember questions on GDP base revisions and the IIP — and this is the newest member of that family.\n\nThe news. A technical advisory committee chaired by Debjani Ghosh has recommended that India's first Index of Services Production be built primarily on Goods and Services Tax data, supplemented by administrative data and the Annual Survey of Incorporated Services Sector Enterprises. Sectoral indices will be compiled monthly and released within sixty days of the reference month. The first release is dated for the twenty-ninth of July, twenty twenty-six.\n\nStart with the obvious why: why does India need this index at all? Look at the asymmetry. Services contribute more than half of India's gross value added — the largest share by far. Yet for high-frequency tracking we have the Index of Industrial Production for factories and mines, agricultural estimates for farms, and for services — essentially nothing monthly. Policymakers have been flying the largest engine of the economy on annual instruments. The ISP fills that gap: think of it as the IIP's counterpart for services.\n\nNow the design choice worth analysing: anchoring the index on GST data. Why GST? Because since July twenty seventeen, when the One Hundred and First Constitutional Amendment brought GST into force, every registered business files turnover returns through the GST Network — a near-real-time administrative data trove covering the whole country. Using it means no fresh surveys, faster releases, wider coverage. But — and this is the caveat that makes your answer intelligent — GST registration is not mandatory below twenty lakh rupees of turnover, ten lakh in some north-eastern States. So the ISP will capture only the formal, registered services economy. India's informal services — the neighbourhood tailor, the unregistered tutor, vast swathes of trade and transport — remain invisible to it. The committee itself warns the index must not be read as a measure of the informal sector.\n\nTeach the supporting concepts. Gross value added measures output net of intermediate consumption — GDP from the production side. The IIP, base twenty eleven-twelve, is the existing monthly index of industrial output. The GSTN is the company running GST's IT backbone. And the formal-informal distinction: the organised sector comprises registered, regulated enterprises; the unorganised sector escapes registration — and in India it employs the overwhelming majority of workers.\n\nConnect to a larger theme UPSC loves: the modernisation of Indian statistics through administrative data. E-way bills tracking goods movement, UPI data tracking payments, GST returns tracking turnover — the state increasingly measures the economy through digital exhaust rather than surveys. That is faster and cheaper, but it structurally over-represents the formal economy. If policy targets what it measures, an index blind to informality can bias policy toward the visible economy. That tension — measurement bias becoming policy bias — is a genuinely sharp analytical point.\n\nSyllabus mapping. GS Three economy: national income accounting, the services sector, and statistical reform. It also feeds answers on the digital public infrastructure story, since GSTN is part of that stack.\n\nIf UPSC asks about measuring the services economy, structure your answer as: the gap the ISP fills, the GST-data innovation, the formal-sector limitation, and the way forward — read the ISP alongside periodic informal-sector surveys so the invisible half is not forgotten.\n\nThe takeaway to remember: what a nation measures shapes what it manages. The ISP is a genuine leap for Indian statistics — but until our instruments learn to see the informal economy, our policies will keep optimising for only half of India. That is a conclusion with bite for any question on data and governance."
     },
     {
@@ -641,20 +396,6 @@
         "RTE Act 2009",
         "Retention rate"
       ],
-      "prelimsQs": [
-        {
-          "q": "With reference to Gross Enrolment Ratio (GER), consider the following statements: 1. It can exceed 100% because it includes over-age and under-age students enrolled at a given level. 2. It is calculated against the population of the official age group for that level of education. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. GER compares total enrolment at a level, regardless of age, with the official age-group population.",
-          "ref": "UDISE+; education indicators"
-        }
-      ],
       "audioScript": "Let's understand what the new UDISE-plus report actually tells us, beyond the cheerful headlines about falling dropout rates — because UPSC never asks you to celebrate data; it asks you to interrogate it.\n\nThe numbers first, briefly. The Education Ministry's UDISE-plus report for twenty twenty-five twenty-six shows dropout at the preparatory stage — classes three to five — falling from two point three to one point eight per cent, and secondary dropout — classes nine to twelve — from eight point two to seven per cent. The gross enrolment ratio at secondary level jumped to seventy-one point seven per cent. Women now form nearly fifty-five per cent of all teachers. Zero-enrolment schools fell twenty-nine per cent, schools with computers rose to about seventy per cent, internet to sixty-seven per cent, and basic infrastructure — electricity, toilets — now covers the mid-to-high nineties.\n\nTeach the instruments before analysing. UDISE-plus is the Unified District Information System for Education — the Ministry's nationwide online database covering every school's enrolment, teachers and infrastructure; it is the statistical backbone of school planning. The gross enrolment ratio divides all students enrolled at a level by the official school-age population for that level — which is why it can exceed one hundred per cent when over-age and under-age children are enrolled. Retention rate tracks students continuing year to year. And the legal-policy frame: the Right to Education Act of two thousand nine, operationalising Article twenty-one A, guarantees free and compulsory education for ages six to fourteen; the National Education Policy twenty twenty targets one hundred per cent GER across school education by twenty thirty.\n\nNow interrogate. Why are dropouts falling? Layer the causes: better infrastructure — a girl is far likelier to stay in a school with a functional toilet; direct incentives — midday meals, scholarships, cycles; tracking itself — UDISE-plus makes every school visible, and what is measured gets managed. But then ask the harder question: where is the remaining problem? Look at the secondary GER of seventy-one point seven. Even after improvement, nearly three in ten adolescents of secondary age are not enrolled at that level. Elementary education is approaching universality; the secondary transition is where India still leaks students — into work, into early marriage, into nothing. And a quality caveat the report cannot answer: enrolment is not learning. Successive ASER surveys have shown children in school without foundational literacy and numeracy — which is precisely why NEP created the NIPUN Bharat foundational-learning mission.\n\nSyllabus mapping with reasons. GS Two: issues relating to development and management of education, and the performance of welfare schemes — this report is your evidence base. GS One society: education's link with demographic dividend — a young population without secondary education becomes a liability, not a dividend. Essay: human capital as the true wealth of nations.\n\nIf UPSC asks about school education progress, structure the answer as access, equity, quality: access has largely arrived — cite these UDISE numbers; equity is improving — girls' enrolment, women teachers; quality remains the frontier — cite ASER and NEP's foundational-learning push. That three-part frame covers any education question.\n\nThe takeaway to remember: India has nearly won the battle of getting children into school; the war now is keeping them through secondary school and ensuring they learn. Falling dropout rates are the end of the beginning — not the beginning of the end."
     },
     {
@@ -676,20 +417,6 @@
         "Minilaterals",
         "ASEAN centrality",
         "Indo-Pacific"
-      ],
-      "prelimsQs": [
-        {
-          "q": "With reference to strategic commentary on the Indo-Pacific, consider the following statements: 1. The term G2 usually refers to a hypothetical US-China duopoly in global affairs. 2. A G-Minus 2 approach implies building issue-based coalitions without allowing the US-China rivalry alone to define the regional order. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. G2 commonly denotes a US-China condominium, while G-Minus 2 stresses agency for other Indo-Pacific actors.",
-          "ref": "Indo-Pacific strategic vocabulary"
-        }
       ],
       "location": {
         "lat": 28.61,
@@ -718,20 +445,6 @@
         "LEOP",
         "Geomagnetic storm"
       ],
-      "prelimsQs": [
-        {
-          "q": "With reference to Synthetic Aperture Radar (SAR), consider the following statements: 1. It uses active microwave signals rather than relying only on reflected sunlight. 2. It can image the Earth through cloud cover and during night-time. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. SAR is an active radar system and is valuable for all-weather, day-night Earth observation.",
-          "ref": "SAR remote sensing"
-        }
-      ],
       "location": {
         "lat": 12.97,
         "lon": 77.59,
@@ -759,20 +472,6 @@
         "Hyperkalaemia",
         "Patent expiry"
       ],
-      "prelimsQs": [
-        {
-          "q": "With reference to glomeruli in human kidneys, consider the following statements: 1. They are microscopic filtering units involved in removing waste from blood. 2. Damage to glomeruli can contribute to chronic kidney disease and protein leakage in urine. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. Glomeruli filter blood in the kidneys; their damage is central to several kidney diseases.",
-          "ref": "Kidney physiology"
-        }
-      ],
       "audioScript": "Let's understand a medical story that UPSC could touch from three directions — science, public health and drug economics. Three of the world's top journals have reported that finerenone, a drug so far used mainly in diabetes-related kidney disease, slows chronic kidney disease even in patients without diabetes.\n\nFirst, the science, taught from the ground up. Your kidneys filter waste through roughly a million tiny units called glomeruli — microscopic sieves of blood vessels. When glomeruli are damaged — by diabetes, hypertension, or autoimmune conditions like IgA nephropathy — protein leaks into urine, filtration declines, and the slow slide called chronic kidney disease begins, ending in dialysis or transplant. Most existing drugs slow CKD by controlling the upstream disease, especially blood sugar. Finerenone works differently: it blocks inflammation and scarring within the kidney itself. That mechanism is why the new findings matter — the FIND-CKD trial enrolled over fifteen hundred non-diabetic patients, a sub-analysis of nine hundred with glomerular diseases showed about a forty-two per cent reduction in urine protein leakage, and a pooled analysis across more than fourteen thousand patients found consistent benefit regardless of diabetes status. The interpretation: diabetic and non-diabetic CKD share a common damage pathway, and we now have a drug that targets it. The main side effect to note is hyperkalaemia — elevated blood potassium — seen in roughly a sixth of patients, requiring monitoring.\n\nNow the public-health layer, which matters more for Mains than the pharmacology. CKD in India is a silent epidemic riding on our twin epidemics of diabetes and hypertension. Dialysis is ruinously expensive — which is why the Pradhan Mantri National Dialysis Programme exists — and transplants are scarce. The experts quoted make the crucial point: the bigger win is early detection. A simple, cheap urine protein test at the primary-care level can catch kidney damage years before symptoms — detect the smoke before the fire. Connect that to Ayushman Bharat's health and wellness centres, whose entire logic is screening for non-communicable diseases close to home. A drug is only as useful as the health system that finds patients in time.\n\nThen the economics — the classic UPSC angle. Finerenone currently costs eighty to ninety rupees a day, out of reach for most Indian households paying out of pocket. Its patent expires in twenty twenty-eight, after which Indian generic manufacturers can produce it cheaply. Teach the concept: a patent grants twenty years of market exclusivity as the reward for innovation; expiry opens the door to generics, and India — the pharmacy of the world — supplies a huge share of global generic medicines. This innovation-versus-access tension, managed through TRIPS flexibilities and India's Patents Act, is a recurring exam theme; finerenone is your newest example.\n\nSyllabus mapping with reasons. GS Three science: applications of research in everyday life — explain the mechanism simply and you demonstrate scientific literacy. GS Two health: NCD burden, screening infrastructure, out-of-pocket expenditure and drug affordability.\n\nIf UPSC asks about tackling non-communicable diseases, do not write only about awareness campaigns. The stronger structure: shift resources to early screening at primary level; ensure affordable therapeutics through the generics ecosystem and price regulation; and strengthen continuity of care. Use finerenone as the live example of a therapy whose benefit will reach Indians only when patents lapse and screening finds patients early.\n\nThe takeaway to remember: in public health, breakthroughs happen in journals, but outcomes happen in systems. A miracle drug without early detection and affordability is a headline, not a health gain — and that sentence will serve you in every health-policy answer."
     },
     {
@@ -794,20 +493,6 @@
         "Indian Forest Act 1927",
         "Reserved Forest",
         "Ek Ped Maa Ke Naam"
-      ],
-      "prelimsQs": [
-        {
-          "q": "With reference to the Delhi Ridge, consider the following statements: 1. It is the northern extension of the Aravalli Range. 2. It functions as an important ecological buffer and green lung for Delhi. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. The Delhi Ridge is part of the Aravalli system and has major ecological significance for the city.",
-          "ref": "Delhi Ridge; Aravalli Range"
-        }
       ],
       "location": {
         "lat": 28.65,
@@ -836,20 +521,6 @@
         "Ever-greening",
         "Priority-sector lending"
       ],
-      "prelimsQs": [
-        {
-          "q": "With reference to Non-Banking Financial Companies (NBFCs), consider the following statements: 1. They cannot accept demand deposits like banks. 2. Many NBFCs are regulated by the Reserve Bank of India. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. NBFCs do not have a full banking licence to accept demand deposits, and RBI regulates major NBFC categories.",
-          "ref": "NBFC regulation"
-        }
-      ],
       "audioScript": "Let's understand why gold loans — the humblest form of credit in India — have suddenly become the fastest-growing segment of retail lending, and why the RBI is watching carefully. This story is a compact tutorial on NBFCs, collateralised credit and the thin line between financial inclusion and financial stress.\n\nThe numbers. Gold-loan books of non-banking financial companies surged nearly seventy per cent year-on-year to three point two nine lakh crore rupees — against under twenty per cent growth in overall retail loans — and have jumped about one hundred and thirty-six per cent in two years. Growth is spreading far beyond the traditional South: Uttar Pradesh up one hundred and thirty-eight per cent, West Bengal one hundred and twelve, Rajasthan and Maharashtra over a hundred.\n\nAsk the first why: why gold loans, why now? Because gold prices are at record highs. The mechanics answer everything: a gold loan is secured against pledged jewellery, and the RBI caps the loan-to-value ratio — the fraction of the gold's market value you can borrow. When gold prices surge, the same bangle unlocks a bigger loan. For a household squeezed by inflation or a micro-enterprise needing working capital, the fastest liquidity in India is the family locker. That is the inclusion story, and it is real: gold loans reach women-led households and informal businesses that formal underwriting rejects, converting idle metal — Indians hold thousands of tonnes of it — into productive credit.\n\nNow teach the institution. An NBFC is a company that lends but cannot accept demand deposits and lacks a full banking licence; it is regulated by the RBI. NBFCs thrive exactly where banks are thin — doorstep gold appraisal, quick disbursal, informal-income customers. Gold lending also partly qualifies as priority-sector lending, which sweetens the economics.\n\nThen the worry, because a topper's answer always carries the counterweight. The article flags widespread roll-overs — borrowers paying only interest or part-dues and renewing the loan. The industry calls it flexibility; supervisors call it ever-greening: repeatedly refreshing a loan so it never shows as stressed. Stack the risks: if gold prices correct, collateral values fall below outstanding loans; borrowers who never amortised face margin calls; and lenders discover that growth built on price appreciation, not repayment capacity, is fragile. The RBI has tightened gold-loan norms precisely because collateral comfort can breed underwriting laziness.\n\nSyllabus mapping with reasons. GS Three economy: financial inclusion, NBFC regulation and household indebtedness. This also enriches answers on monetising India's idle gold — remember the Gold Monetisation Scheme and sovereign gold bonds as the policy cousins of this market.\n\nIf UPSC asks about NBFCs or financial inclusion, use this as your double-edged example: gold loans democratise credit access, but supervision must ensure inclusion does not curdle into distress lending. Suggest the fixes: strict LTV enforcement, curbing perpetual roll-overs, and borrower education on auction risk.\n\nThe takeaway to remember: in India, gold is the poor family's credit history. That makes gold lending both a bridge into formal finance and a mirror of household stress — and the examiner rewards those who can see one market playing both roles at once."
     },
     {
@@ -871,20 +542,6 @@
         "New Development Bank",
         "Narcotics Control Bureau",
         "NDPS Act 1985"
-      ],
-      "prelimsQs": [
-        {
-          "q": "With reference to the New Development Bank (NDB), consider the following statements: 1. It was established by BRICS countries. 2. It is headquartered in Shanghai. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. The New Development Bank was created by BRICS countries to finance infrastructure and sustainable development projects. Its headquarters is in Shanghai, which is a frequently tested static-current linkage.",
-          "ref": "BRICS; NDB"
-        }
       ],
       "location": {
         "lat": 26.14,
@@ -913,20 +570,6 @@
         "EAC-PM",
         "Contingent liabilities"
       ],
-      "prelimsQs": [
-        {
-          "q": "With reference to crowding out in public finance, consider the following statements: 1. It can occur when government borrowing absorbs financial resources that may otherwise be available for private investment. 2. It is more likely to be discussed in contexts of high fiscal deficits and constrained savings. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. Crowding out refers to public borrowing/spending reducing space for private or productive investment.",
-          "ref": "Fiscal policy concepts"
-        }
-      ],
       "audioScript": "Let's understand the most consequential welfare experiment happening in Indian States today — unconditional cash transfers to women — and the uncomfortable fiscal question riding alongside it. This is a debate where UPSC will reward the candidate who can hold two truths simultaneously.\n\nThe landscape. Schemes like Ladli Behna in Madhya Pradesh, Maiya Samman in Jharkhand and Magalir Urimai Thogai in Tamil Nadu now transfer fixed monthly amounts to crores of women. In twenty twenty-five twenty-six, twelve States were estimated to spend one point six eight lakh crore rupees on such transfers — nearly double the Union's entire MGNREGA allocation of eighty-six thousand crore. Hold that comparison; it is the single most powerful statistic in this debate.\n\nFirst truth: the transfers work. An Economic Advisory Council to the Prime Minister working paper finds beneficiary households increased consumption, savings, and spending on health and education. This sits on a global evidence base — from Brazil's Bolsa Familia to India's own PM-KISAN — showing cash in women's hands improves household welfare and bargaining power. Teach the delivery concept: Direct Benefit Transfer routes money straight into Aadhaar-linked bank accounts, slashing the leakages that plagued in-kind welfare. The JAM trinity — Jan Dhan, Aadhaar, Mobile — is the plumbing that made this scale possible.\n\nSecond truth: the financing is fragile. The RBI has warned such spending runs the risk of crowding out — teach the concept: when government revenue expenditure absorbs resources, less remains for capital investment in roads, schools and irrigation, the spending that builds future growth. Now look at who is spending: Punjab's debt is over forty-six per cent of its GSDP, West Bengal's around thirty-nine, Bihar's thirty-seven. The debt-to-GSDP ratio measures a State's borrowing burden against its economy; beyond prudent limits — the FRBM review suggested around twenty per cent for States — debt service eats the budget. Add contingent liabilities — guarantees that can crystallise later — and the picture darkens. The political economy makes it stickier: transfers announced before elections are nearly impossible to withdraw after them, hard-wiring revenue expenditure into stressed budgets.\n\nAsk the synthesis question UPSC actually wants: is this welfare or fiscal populism? The mature answer refuses the binary. The test is financing: a transfer funded by expenditure-switching — pruning inefficient subsidies — is defensible social protection; one funded by ballooning deficits at the cost of capital outlay mortgages the future to pay the present. The Fifteenth Finance Commission's warnings on State fiscal health and the freebies debate before the Supreme Court give you the institutional hooks.\n\nSyllabus mapping with reasons. GS Two: welfare schemes for vulnerable sections and their design — conditionality, targeting, universality. GS Three: government budgeting, fiscal federalism and State finances. GS One: women's empowerment — because income in a woman's name shifts intra-household power. Essay: the ethics of cash versus capability.\n\nIf UPSC asks about women-centric cash transfers, structure it: the empowerment evidence; the fiscal arithmetic; and the reconciliation — transparent budgeting, sunset-and-review clauses, and pairing transfers with investments in childcare and skills so cash becomes a ladder, not a substitute, for opportunity.\n\nThe takeaway to remember: the question is never whether the poor deserve cash — they do; it is whether the State's balance sheet can keep the promise honestly. Welfare that borrows from tomorrow's classrooms to fund today's transfers is compassion running on credit — and that closing line will serve you in any freebies-versus-welfare answer."
     },
     {
@@ -948,20 +591,6 @@
         "Protected Forest",
         "Human-elephant conflict",
         "Biodiversity corridor"
-      ],
-      "prelimsQs": [
-        {
-          "q": "With reference to forest categories under the Indian Forest Act, 1927, consider the following statements: 1. In a Protected Forest, activities are generally permitted unless specifically prohibited. 2. In a Reserved Forest, activities are generally prohibited unless specifically permitted. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. Protected Forests and Reserved Forests differ in the default rule regarding permitted activities.",
-          "ref": "Indian Forest Act, 1927"
-        }
       ],
       "location": {
         "lat": 26.2,
@@ -990,20 +619,6 @@
         "S-400",
         "F-35"
       ],
-      "prelimsQs": [
-        {
-          "q": "With reference to Article 5 of the North Atlantic Treaty, consider the following statements: 1. It embodies the principle of collective defence among NATO members. 2. It treats an armed attack against one or more members as an attack against all. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. Article 5 is NATO's collective-defence clause: an armed attack on one or more members is treated as an attack on all. This makes it central to questions on alliance politics and transatlantic security.",
-          "ref": "NATO Article 5"
-        }
-      ],
       "location": {
         "lat": 39.93,
         "lon": 32.85,
@@ -1030,20 +645,6 @@
         "Prior restraint",
         "CBI",
         "Delhi Special Police Establishment Act 1946"
-      ],
-      "prelimsQs": [
-        {
-          "q": "With reference to the Central Bureau of Investigation (CBI), consider the following statements: 1. It derives its police powers from the Delhi Special Police Establishment Act, 1946. 2. General consent of a State is normally relevant for CBI investigation within that State, unless directed by constitutional courts. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Both statements are correct. CBI functions through the DSPE Act framework; State consent is normally needed, subject to court-directed investigations.",
-          "ref": "DSPE Act; CBI jurisdiction"
-        }
       ],
       "location": {
         "lat": 10.96,

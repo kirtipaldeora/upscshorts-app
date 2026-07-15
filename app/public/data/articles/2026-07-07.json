@@ -21,32 +21,6 @@
         "The Resistance Front",
         "Waging war against the State"
       ],
-      "prelimsQs": [
-        {
-          "q": "Consider the following statements: 1. The National Investigation Agency (NIA) was created by an Act of Parliament in 2008. 2. The UAPA, 1967 allows the government to designate individuals, and not just organisations, as terrorists. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "The NIA Act, 2008 was enacted after the 26/11 attacks, and the UAPA (post its 2019 amendment) permits designating individuals as terrorists.",
-          "ref": "Prelims facts: NIA Act 2008; UAPA designation power"
-        },
-        {
-          "q": "'The Resistance Front (TRF)', sometimes seen in the news, is best described as:",
-          "options": [
-            "A proxy/offshoot of Lashkar-e-Taiba",
-            "A Baloch separatist group",
-            "A Myanmar-based insurgent group",
-            "A cyber-mercenary collective"
-          ],
-          "answer": 0,
-          "explanation": "TRF is a proxy/offshoot of the Pakistan-based LeT, named in the Pahalgam attack chargesheet.",
-          "ref": "Article: TRF described as LeT proxy"
-        }
-      ],
       "location": {
         "lat": 34.01,
         "lon": 75.33,
@@ -75,32 +49,6 @@
         "SECC 2011",
         "Caste enumeration"
       ],
-      "prelimsQs": [
-        {
-          "q": "Consider the following statements about the Census in India: 1. It is conducted under the Census Act, 1948. 2. It is carried out in two phases — Houselisting and Population Enumeration. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "The Census is conducted by the RGI under the Census Act, 1948 in two phases.",
-          "ref": "Prelims facts: Census Act; two phases"
-        },
-        {
-          "q": "The last Census of India to enumerate all castes (beyond SCs/STs) was conducted in:",
-          "options": [
-            "1941",
-            "1931",
-            "1951",
-            "1971"
-          ],
-          "answer": 1,
-          "explanation": "The 1931 Census was the last full caste enumeration, recording 4,147 castes; since Independence only SCs and STs have been counted.",
-          "ref": "Prelims fact: 1931 Census recorded 4,147 castes"
-        }
-      ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is Census 2027 Test Run Has 'Open Column' to Record Caste. The rehearsal for the second phase of Census 2027, begun in 16 States/UTs, carries an 'open column' for respondents to record their caste — signalling how caste is likely to be enumerated in the Population Census 2027, the first to count caste in independent India. Until now only SCs and STs were enumerated. Now, why is this important for UPSC? The caste census is a landmark governance and social-justice decision with direct bearing on welfare targeting and reservation policy — a very high-yield GS 1 and GS 2 topic. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
@@ -123,32 +71,6 @@
         "Orbital-class rocket",
         "Vikram-S",
         "Space debris"
-      ],
-      "prelimsQs": [
-        {
-          "q": "Vikram-1, recently in the news, is:",
-          "options": [
-            "ISRO's heavy-lift launch vehicle",
-            "India's first privately developed orbital-class rocket",
-            "A lunar lander of Chandrayaan-4",
-            "A hypersonic missile demonstrator"
-          ],
-          "answer": 1,
-          "explanation": "Vikram-1 by Skyroot Aerospace is India's first private orbital-class rocket; Vikram-S (2022) was the earlier sub-orbital flight.",
-          "ref": "Article headline/summary"
-        },
-        {
-          "q": "IN-SPACe, often seen in the news with private space launches, functions under which of the following?",
-          "options": [
-            "Ministry of Defence",
-            "Department of Space",
-            "NITI Aayog",
-            "Department of Science & Technology"
-          ],
-          "answer": 1,
-          "explanation": "IN-SPACe is the single-window nodal agency under the Department of Space to promote and authorise private-sector space activity.",
-          "ref": "Prelims fact: IN-SPACe under DoS"
-        }
       ],
       "location": {
         "lat": 13.72,
@@ -178,32 +100,6 @@
         "NOTA",
         "Article 19(1)(a)"
       ],
-      "prelimsQs": [
-        {
-          "q": "Under the Constitution of India, universal adult suffrage for elections is provided by:",
-          "options": [
-            "Article 324",
-            "Article 326",
-            "Article 329",
-            "Article 32"
-          ],
-          "answer": 1,
-          "explanation": "Article 326 provides that elections to the Lok Sabha and State Assemblies shall be on the basis of adult suffrage.",
-          "ref": "Prelims fact: Article 326"
-        },
-        {
-          "q": "Consider the following statements: 1. The Supreme Court has consistently treated the right to vote as a fundamental right. 2. The right of voters to know the antecedents of candidates has been read into Article 19(1)(a). Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 1,
-          "explanation": "The Court has long held voting to be a statutory right (Ponnuswami 1952; Kuldip Nayar 2006), while the right to know (ADR 2002, PUCL 2003) flows from Article 19(1)(a).",
-          "ref": "Prelims facts: statutory-right cases; ADR/PUCL"
-        }
-      ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is In India, Voting Cannot Remain Merely a Statutory Right. A demand to recognise voting as a fundamental right revived an old debate. For seven decades the Supreme Court has held voting a statutory right, yet its own rulings have progressively constitutionalised many facets of voting — creating an anomaly a former CEC argues the Court should revisit. Now, why is this important for UPSC? The nature of the right to vote links Fundamental Rights, elections and the basic structure doctrine — a classic conceptual GS 2 Polity question. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
@@ -225,32 +121,6 @@
         "Right to Walk",
         "Maneka Gandhi case",
         "Urban mobility"
-      ],
-      "prelimsQs": [
-        {
-          "q": "The Supreme Court grounded the newly declared 'Right to Walk' on footpaths in which Articles of the Constitution?",
-          "options": [
-            "Articles 14 and 19(1)(g)",
-            "Articles 19(1)(d) and 21",
-            "Articles 21 and 32",
-            "Articles 15 and 21A"
-          ],
-          "answer": 1,
-          "explanation": "The Court located the right in Article 19(1)(d) (freedom of movement) read with Article 21 (right to life).",
-          "ref": "Article summary"
-        },
-        {
-          "q": "The expansive interpretation of Article 21 that underlies rulings like the 'Right to Walk' judgment traces back to which landmark case?",
-          "options": [
-            "A.K. Gopalan v. State of Madras",
-            "Maneka Gandhi v. Union of India",
-            "Minerva Mills v. Union of India",
-            "S.R. Bommai v. Union of India"
-          ],
-          "answer": 1,
-          "explanation": "Maneka Gandhi (1978) began the expansive reading of 'life and personal liberty' under Article 21.",
-          "ref": "Prelims fact: Maneka Gandhi 1978"
-        }
       ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is Supreme Court Declares 'Right to Walk' on Footpaths a Fundamental Right. The Supreme Court ruled the Right to Walk safely on footpaths a fundamental right under Article 19(1)(d) (freedom of movement) and Article 21 (right to life), giving pedestrians a claim on public pathways over automobiles — reframing urban mobility as a rights question. Now, why is this important for UPSC? An example of the judicial expansion of Article 21, and a fresh angle on urban planning and pedestrian safety — useful across GS 2 (rights) and GS 1 (urban society). For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
@@ -274,32 +144,6 @@
         "Strategic autonomy",
         "Global Digital Compact"
       ],
-      "prelimsQs": [
-        {
-          "q": "Arrange the following global AI summits in the correct chronological order: 1. Seoul Summit 2. Bletchley Park Summit 3. Paris Summit 4. India AI Impact Summit",
-          "options": [
-            "2-1-3-4",
-            "1-2-3-4",
-            "2-3-1-4",
-            "1-3-2-4"
-          ],
-          "answer": 0,
-          "explanation": "Bletchley (2023) → Seoul (2024) → Paris (2025) → India AI Impact Summit (Feb 2026).",
-          "ref": "Prelims fact: summit sequence"
-        },
-        {
-          "q": "The term 'Pax Silica', recently seen in commentary on technology geopolitics, refers to:",
-          "options": [
-            "A UN treaty on semiconductor trade",
-            "A US-led alignment of the semiconductor supply chain",
-            "China's chip self-sufficiency programme",
-            "An EU digital-sovereignty law"
-          ],
-          "answer": 1,
-          "explanation": "'Pax Silica' denotes the US-led effort to align global semiconductor supply chains with trusted partners.",
-          "ref": "Prelims fact: Pax Silica"
-        }
-      ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is AI Governance and a Voice for the Global South. After hosting the India AI Impact Summit 2026 to centre the Global South, India has drifted toward 'middle power' positioning and joined Pax Silica, aligning with the US-led semiconductor supply chain — at the cost, the op-ed argues, of Global-South solidarity and strategic autonomy. Now, why is this important for UPSC? AI governance, strategic autonomy and Global-South leadership are converging into a major GS 2 IR theme, freshly relevant with the UN Global Dialogue on AI under way. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
@@ -322,32 +166,6 @@
         "Non-fossil capacity",
         "BESS",
         "Coal dependence"
-      ],
-      "prelimsQs": [
-        {
-          "q": "With reference to India's electricity system, consider the following statements: 1. Non-fossil sources account for a little under one-third of actual electricity generation. 2. One terawatt-hour (TWh) equals one billion units (kWh) of electricity. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Non-fossil sources contribute about 29.2% of generation, and 1 TWh = 1 billion kWh (units).",
-          "ref": "Prelims facts: 29.2%; 1 TWh = 1 billion units"
-        },
-        {
-          "q": "During an El Niño year, India's power system is stressed mainly because:",
-          "options": [
-            "Solar output collapses due to cloud cover",
-            "Wind and hydro generation weaken while cooling demand rises",
-            "Coal plants must legally reduce output",
-            "Transmission losses double in dry weather"
-          ],
-          "answer": 1,
-          "explanation": "El Niño weakens monsoon winds and inflows (hurting wind/hydro) while heat raises AC demand, widening the generation gap.",
-          "ref": "Article summary"
-        }
       ],
       "location": {
         "lat": 28.61,
@@ -376,32 +194,6 @@
         "SEBI Act 1992",
         "Hyundai Motor India IPO"
       ],
-      "prelimsQs": [
-        {
-          "q": "Which body vets the disclosures made by a company launching an Initial Public Offering (IPO) in India?",
-          "options": [
-            "RBI",
-            "SEBI",
-            "Ministry of Corporate Affairs",
-            "NSE itself"
-          ],
-          "answer": 1,
-          "explanation": "SEBI, under the SEBI Act 1992, regulates public issues and vets IPO disclosures.",
-          "ref": "Prelims fact: SEBI vets IPO disclosures"
-        },
-        {
-          "q": "Prior to the proposed NSE issue, India's largest IPO so far has been that of:",
-          "options": [
-            "LIC",
-            "Paytm",
-            "Hyundai Motor India",
-            "Coal India"
-          ],
-          "answer": 2,
-          "explanation": "Hyundai Motor India's Rs 27,870-crore IPO (October 2024) is the largest to date; NSE targets ~Rs 30,000 crore.",
-          "ref": "Prelims fact: Hyundai Oct 2024"
-        }
-      ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is NSE Targets Rs 30,000-crore IPO in September — India's Largest Ever. The National Stock Exchange (NSE) is targeting its long-awaited IPO, estimated at around Rs 30,000 crore, in September — set to be India's largest ever, surpassing Hyundai Motor India's Rs 27,870-crore IPO of October 2024. Now, why is this important for UPSC? Capital markets, IPOs and SEBI regulation are staple GS 3 Economy topics; the largest-ever listing is a fact worth remembering for Prelims. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
@@ -424,32 +216,6 @@
         "Tribhuvan Sahkari University",
         "IFFCO",
         "PACS"
-      ],
-      "prelimsQs": [
-        {
-          "q": "Consider the following statements: 1. 'Cooperation' is a subject in the State List of the Seventh Schedule. 2. The Union Ministry of Cooperation was carved out in 2021. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "Cooperative societies fall under Entry 32 of the State List, and the Ministry of Cooperation was created in July 2021.",
-          "ref": "Prelims facts: Entry 32; Ministry 2021"
-        },
-        {
-          "q": "India's first national cooperative university, 'Tribhuvan Sahkari University', is being established at:",
-          "options": [
-            "Ahmedabad",
-            "Anand, Gujarat",
-            "Nagpur",
-            "Karnal"
-          ],
-          "answer": 1,
-          "explanation": "It is coming up at Anand, Gujarat, named after Amul founder Tribhuvandas Patel.",
-          "ref": "Prelims fact: Anand, Gujarat"
-        }
       ],
       "location": {
         "lat": 22.55,
@@ -477,32 +243,6 @@
         "Indo-Pacific",
         "Critical Minerals Initiative",
         "US Pacific Command"
-      ],
-      "prelimsQs": [
-        {
-          "q": "The 'Quad' grouping comprises which of the following countries?",
-          "options": [
-            "India, US, Japan, South Korea",
-            "India, US, Japan, Australia",
-            "India, US, UK, Australia",
-            "India, Japan, Australia, Indonesia"
-          ],
-          "answer": 1,
-          "explanation": "The Quadrilateral Security Dialogue includes India, the US, Japan and Australia.",
-          "ref": "Prelims fact: Quad members"
-        },
-        {
-          "q": "The Quadrilateral Security Dialogue traces its origin to cooperation among the four navies during:",
-          "options": [
-            "The 1999 East Timor crisis",
-            "The 2004 Indian Ocean tsunami relief",
-            "The 2008 Gulf of Aden anti-piracy patrols",
-            "The 2011 Fukushima disaster"
-          ],
-          "answer": 1,
-          "explanation": "Coordination for 2004 tsunami relief seeded the Quad idea, formalised in 2007 and revived in 2017.",
-          "ref": "Prelims fact: 2004 tsunami origin"
-        }
       ],
       "location": {
         "lat": 38.9,
@@ -532,32 +272,6 @@
         "Food inflation",
         "Nutrient-Based Subsidy"
       ],
-      "prelimsQs": [
-        {
-          "q": "Consider the following statements: 1. Agriculture contributes about one-fifth of India's GVA. 2. Agriculture employs less than one-fourth of India's workforce. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 0,
-          "explanation": "Agriculture is ~1/5 of GVA but employs about 46% of the workforce, so statement 2 is wrong.",
-          "ref": "Prelims fact: 1/5 GVA, 46% workforce"
-        },
-        {
-          "q": "Which of the following years were El Niño-linked drought years in India? 1. 1972 2. 2009 3. 2015",
-          "options": [
-            "1 and 2 only",
-            "2 and 3 only",
-            "1 and 3 only",
-            "1, 2 and 3"
-          ],
-          "answer": 3,
-          "explanation": "1972, 1982, 2009 and 2015 were all El Niño drought years.",
-          "ref": "Prelims fact: drought years"
-        }
-      ],
       "location": {
         "lat": 28.61,
         "lon": 77.21,
@@ -586,32 +300,6 @@
         "Bar Council of India",
         "Fair trial"
       ],
-      "prelimsQs": [
-        {
-          "q": "The right of an arrested person to consult and be defended by a legal practitioner of his choice is guaranteed under:",
-          "options": [
-            "Article 20(3)",
-            "Article 21A",
-            "Article 22(1)",
-            "Article 32"
-          ],
-          "answer": 2,
-          "explanation": "Article 22(1) guarantees the right to counsel of one's choice upon arrest.",
-          "ref": "Prelims fact: Article 22(1)"
-        },
-        {
-          "q": "Free legal aid to ensure justice is not denied due to economic disability is provided for in the Constitution under:",
-          "options": [
-            "Article 39A (DPSP)",
-            "Article 44 (DPSP)",
-            "Article 51A (Fundamental Duties)",
-            "Article 14"
-          ],
-          "answer": 0,
-          "explanation": "Article 39A, a Directive Principle inserted by the 42nd Amendment, mandates free legal aid.",
-          "ref": "Prelims fact: Article 39A"
-        }
-      ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is Can Bar Associations Refuse to Represent an Accused?. The Faizabad Bar Association's resolution not to represent the accused in the Ayodhya Ram Temple embezzlement case raised whether a Bar body can collectively refuse legal representation — which the Supreme Court has repeatedly held illegal, as it violates the right to counsel and fair trial. Now, why is this important for UPSC? The right to legal representation ties together Articles 22(1), 39A, 14 and 21 and legal ethics — a conceptually clean GS 2 Polity/judiciary question. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
@@ -633,32 +321,6 @@
         "OIC",
         "SCO",
         "Veto power"
-      ],
-      "prelimsQs": [
-        {
-          "q": "Consider the following statements about the UN Security Council: 1. It has 10 non-permanent members elected for two-year terms. 2. Non-permanent members enjoy veto power on substantive resolutions. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 0,
-          "explanation": "The UNSC has 5 permanent members (with veto) and 10 non-permanent members without veto.",
-          "ref": "Prelims fact: 5 permanent + 10 non-permanent"
-        },
-        {
-          "q": "India's rival for the Asia-Pacific non-permanent UNSC seat for 2028-29, backed by the OIC bloc, is:",
-          "options": [
-            "Kazakhstan",
-            "Tajikistan",
-            "Malaysia",
-            "Bangladesh"
-          ],
-          "answer": 1,
-          "explanation": "Tajikistan, supported by the 57-member OIC, is contesting against India for the seat.",
-          "ref": "Article summary"
-        }
       ],
       "location": {
         "lat": 40.75,
@@ -688,32 +350,6 @@
         "Comprehensive Strategic Partnership",
         "Indo-Pacific"
       ],
-      "prelimsQs": [
-        {
-          "q": "'MAHASAGAR', recently in the news, is best described as:",
-          "options": [
-            "An indigenous aircraft carrier",
-            "India's maritime vision succeeding SAGAR",
-            "A deep-sea mining mission",
-            "A naval exercise with ASEAN"
-          ],
-          "answer": 1,
-          "explanation": "MAHASAGAR is the successor formulation to the SAGAR (Security and Growth for All in the Region) maritime vision.",
-          "ref": "Prelims fact: MAHASAGAR successor to SAGAR"
-        },
-        {
-          "q": "'ECTA', an interim free trade agreement signed by India in 2022, is with which country?",
-          "options": [
-            "UAE",
-            "Australia",
-            "UK",
-            "Indonesia"
-          ],
-          "answer": 1,
-          "explanation": "The India-Australia Economic Cooperation and Trade Agreement (ECTA) came into force in 2022.",
-          "ref": "Prelims fact: ECTA 2022"
-        }
-      ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is Modi's Three-Nation Tour: India-Australia-Indonesia Indo-Pacific Push. PM Modi began a three-nation tour (6-11 July) in Indonesia, followed by Australia and New Zealand, to strengthen the Act East Policy, MAHASAGAR Vision and a free, open, inclusive Indo-Pacific. The IE editorial frames it as building an 'arc of trust' amid US retrenchment. Now, why is this important for UPSC? Act East, Indo-Pacific minilateralism and bilateral partnerships are core GS 2 IR; MAHASAGAR, ECTA and Comprehensive Strategic Partnership are Prelims keywords. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
@@ -735,32 +371,6 @@
         "BRIMSTOWAD",
         "Disaster Management Act 2005",
         "Urban flooding"
-      ],
-      "prelimsQs": [
-        {
-          "q": "The 'Sponge City' concept, often cited for urban flood management, was pioneered as policy in:",
-          "options": [
-            "Japan",
-            "China",
-            "Netherlands",
-            "Singapore"
-          ],
-          "answer": 1,
-          "explanation": "China adopted the Sponge City programme after the 2012 Beijing floods, emphasising absorptive urban design.",
-          "ref": "Prelims fact: Sponge City China"
-        },
-        {
-          "q": "A 'cloudburst' is conventionally characterised by rainfall of about:",
-          "options": [
-            "More than 100 mm per hour over a small area",
-            "More than 50 mm per day city-wide",
-            "More than 500 mm per week",
-            "Continuous drizzle for over 24 hours"
-          ],
-          "answer": 0,
-          "explanation": "Cloudbursts involve intense localised rain, typically exceeding 100 mm/hour.",
-          "ref": "Prelims fact: >100 mm/hour"
-        }
       ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is Mumbai's Monsoon Flooding: Infrastructure Falling Behind. Intense monsoon rain paralysed Mumbai and parts of Maharashtra, killing at least seven, shutting the Mumbai-Pune Expressway and rail links. Editorials argue drainage upgrades alone cannot withstand climate-driven cloudbursts, and cities must shift to absorptive 'Sponge City' design. Now, why is this important for UPSC? Urban flooding blends urbanisation, disaster management and climate adaptation — a GS 1 and GS 3 theme, with BRIMSTOWAD and Sponge City as key concepts. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
@@ -806,32 +416,6 @@
         "By-election",
         "Resign-and-recontest loophole"
       ],
-      "prelimsQs": [
-        {
-          "q": "The Anti-Defection Law was added to the Constitution by which amendment, and in which Schedule is it contained?",
-          "options": [
-            "44th Amendment; Ninth Schedule",
-            "52nd Amendment; Tenth Schedule",
-            "61st Amendment; Tenth Schedule",
-            "91st Amendment; Twelfth Schedule"
-          ],
-          "answer": 1,
-          "explanation": "The 52nd Amendment (1985) inserted the Tenth Schedule containing the anti-defection provisions.",
-          "ref": "Prelims fact: 52nd Amendment, Tenth Schedule"
-        },
-        {
-          "q": "Under the Tenth Schedule, a legislator does NOT face disqualification when he/she:",
-          "options": [
-            "Voluntarily gives up party membership",
-            "Votes against the party whip without condonation",
-            "Resigns the seat and contests a by-election on another party's ticket",
-            "Abstains contrary to party direction without condonation"
-          ],
-          "answer": 2,
-          "explanation": "Resigning and re-contesting is the well-known loophole — the law penalises defection while holding the seat, not resignation.",
-          "ref": "Prelims fact: resign-and-recontest loophole"
-        }
-      ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is A Defection Wave in Tamil Nadu. Since the Tamilaga Vetri Kazhagam (TVK), led by actor C. Joseph Vijay, came to power, several MLAs — mostly from the AIADMK — resigned seats to join the ruling party, hoping for renomination in by-elections. The Opposition calls it 'horse-trading' that sidesteps the anti-defection law. Now, why is this important for UPSC? The resign-and-recontest workaround exposes a persistent loophole in the Tenth Schedule — a live GS 2 Polity debate on defection and democratic ethics. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
@@ -853,32 +437,6 @@
         "Section 16A(5) proposal",
         "Foreign contribution",
         "NGO regulation"
-      ],
-      "prelimsQs": [
-        {
-          "q": "The Foreign Contribution (Regulation) Act, 2010 is administered by:",
-          "options": [
-            "Ministry of Finance",
-            "Ministry of External Affairs",
-            "Ministry of Home Affairs",
-            "NITI Aayog"
-          ],
-          "answer": 2,
-          "explanation": "FCRA registration, renewal and enforcement are handled by the MHA.",
-          "ref": "Prelims fact: FCRA under MHA"
-        },
-        {
-          "q": "Consider the following statements regarding FCRA, 2010: 1. Organisations need registration or prior permission to receive foreign contribution. 2. FCRA registration once granted is permanent and needs no renewal. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 0,
-          "explanation": "FCRA requires registration/prior permission and periodic renewal — registration is not permanent.",
-          "ref": "Prelims fact: registration + renewal"
-        }
       ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is Meghalaya CM Flags Proposed FCRA Amendments. Meghalaya CM Conrad Sangma urged the Centre to reconsider proposed FCRA changes, warning they could adversely affect Christian institutions in public service. The delegation objected to proposed Section 16A(5), which lets an authority take over assets created with foreign funds when FCRA registration is cancelled. Now, why is this important for UPSC? NGO regulation, foreign funding and Centre-State/minority-institution concerns are recurring GS 2 governance issues; Section 16A(5) is a fresh specific. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
@@ -902,32 +460,6 @@
         "CCTNS",
         "SVPNPA"
       ],
-      "prelimsQs": [
-        {
-          "q": "The Appointments Committee of the Cabinet (ACC), which clears senior government appointments, consists of:",
-          "options": [
-            "PM, Home Minister and Defence Minister",
-            "PM and Home Minister",
-            "PM, Home Minister and the Cabinet Secretary",
-            "President and PM"
-          ],
-          "answer": 1,
-          "explanation": "The ACC comprises the Prime Minister and the Home Minister.",
-          "ref": "Prelims fact: ACC composition"
-        },
-        {
-          "q": "'Crime in India', the annual national crime statistics report, is published by:",
-          "options": [
-            "BPRD",
-            "NCRB",
-            "NHRC",
-            "MHA Directorate of Statistics"
-          ],
-          "answer": 1,
-          "explanation": "The National Crime Records Bureau publishes Crime in India and runs the CCTNS network.",
-          "ref": "Prelims fact: NCRB publications"
-        }
-      ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is New Chiefs for BPRD, NCRB and SVPNPA. The Appointments Committee of the Cabinet (ACC) named 1993-batch IPS officers Alok Mittal and Amit Garg as chiefs of the BPRD and NCRB respectively; Sujeet Pandey was made Director of the SVPNPA, Hyderabad. Mittal earlier supervised busting of several IS modules. Now, why is this important for UPSC? Knowing key police/security institutions (BPRD, NCRB, SVPNPA) and the ACC is useful for GS 2 governance and Prelims institution-mapping. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
@@ -949,32 +481,6 @@
         "Priority Households",
         "PDS",
         "Per-capita entitlement"
-      ],
-      "prelimsQs": [
-        {
-          "q": "Under the National Food Security Act, 2013, Antyodaya Anna Yojana (AAY) households are entitled to:",
-          "options": [
-            "5 kg foodgrain per person per month",
-            "35 kg foodgrain per household per month",
-            "10 kg foodgrain per person per month",
-            "50 kg foodgrain per household per month"
-          ],
-          "answer": 1,
-          "explanation": "AAY (poorest-of-poor) households get 35 kg/household/month; Priority Households get 5 kg/person.",
-          "ref": "Prelims fact: AAY 35 kg/household"
-        },
-        {
-          "q": "The National Food Security Act, 2013 covers approximately what share of India's population?",
-          "options": [
-            "One-third",
-            "Half",
-            "Two-thirds",
-            "Ninety per cent"
-          ],
-          "answer": 2,
-          "explanation": "NFSA legally entitles roughly two-thirds of the population to subsidised foodgrain via the PDS.",
-          "ref": "Prelims fact: ~2/3 coverage"
-        }
       ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is Tamil Nadu CM Opposes Per-Capita Amendment to Food Security Act. TN CM urged PM Modi to retain the existing 35 kg per-household monthly entitlement under Antyodaya Anna Yojana, opposing a proposed NFSA amendment to a per-capita basis (7 kg/person, capped at 35 kg/household) that would cut grain for smaller families and penalise southern States. Now, why is this important for UPSC? Food security, the NFSA and Centre-State welfare tensions are core GS 2; the household-vs-per-capita design question is a sharp federalism-and-welfare debate. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
@@ -1018,32 +524,6 @@
         "Flex-fuel vehicles",
         "Hygroscopic",
         "Energy security"
-      ],
-      "prelimsQs": [
-        {
-          "q": "Consider the following statements about ethanol-blended petrol: 1. E20 denotes petrol blended with 20% ethanol. 2. Ethanol has a higher energy content than petrol, improving mileage. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 0,
-          "explanation": "E20 is 20% ethanol; ethanol's LOWER energy content slightly reduces fuel economy.",
-          "ref": "Prelims facts: E20; lower energy content"
-        },
-        {
-          "q": "Older petrol vehicles face corrosion risk with high ethanol blends chiefly because ethanol is:",
-          "options": [
-            "Strongly acidic",
-            "Hygroscopic (absorbs water)",
-            "Highly viscous",
-            "Rich in sulphur"
-          ],
-          "answer": 1,
-          "explanation": "Ethanol absorbs moisture, which corrodes fuel-system components not designed for it.",
-          "ref": "Prelims fact: hygroscopic"
-        }
       ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is Ethanol Blending in Fuel: Why the Road Ahead Is Bumpy. India's push to E20 (20% ethanol-blended petrol) — achieved five years ahead of the 2030 target — is running into consumer opposition over fuel-economy loss and engine wear in older vehicles. The government must balance energy-security and emissions gains against consumer-end costs. Now, why is this important for UPSC? The EBP programme links energy security, emissions, agriculture and consumer protection — a multi-dimensional GS 3 Economy/Environment topic. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
@@ -1089,32 +569,6 @@
         "CODOG propulsion",
         "Mahendragiri"
       ],
-      "prelimsQs": [
-        {
-          "q": "INS Mahendragiri, recently commissioned, is the sixth ship of which class?",
-          "options": [
-            "Project 15B destroyers",
-            "Project 17A stealth frigates",
-            "Project 75 submarines",
-            "Project 28 corvettes"
-          ],
-          "answer": 1,
-          "explanation": "Mahendragiri (F38) is the sixth Project 17A stealth frigate.",
-          "ref": "Article headline"
-        },
-        {
-          "q": "Project 17A frigates are being built at which of the following shipyards? 1. Mazagon Dock, Mumbai 2. GRSE, Kolkata 3. Cochin Shipyard",
-          "options": [
-            "1 only",
-            "1 and 2 only",
-            "2 and 3 only",
-            "1, 2 and 3"
-          ],
-          "answer": 1,
-          "explanation": "P-17A ships are split between MDL (Mumbai) and GRSE (Kolkata).",
-          "ref": "Prelims fact: MDL & GRSE"
-        }
-      ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is INS Mahendragiri: Sixth Project 17A Stealth Frigate to be Commissioned. The Indian Navy will commission its sixth Project 17A indigenous stealth frigate, Mahendragiri (F38), at Visakhapatnam on 11 July — designed by the Warship Design Bureau and built by Mazagon Dock, with over 75% indigenous content. Now, why is this important for UPSC? Indigenous warship-building is a flagship 'Aatmanirbhar' defence story; Project 17A, MDL and the Warship Design Bureau are Prelims-relevant GS 3 facts. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
@@ -1136,32 +590,6 @@
         "Environmental surveillance",
         "Pulse Polio",
         "NCDC"
-      ],
-      "prelimsQs": [
-        {
-          "q": "India was certified free of wild poliovirus in which year?",
-          "options": [
-            "2011",
-            "2014",
-            "2017",
-            "2020"
-          ],
-          "answer": 1,
-          "explanation": "India was declared wild-polio-free in 2014, with the last case in 2011.",
-          "ref": "Prelims fact: 2014"
-        },
-        {
-          "q": "'Vaccine-derived poliovirus (VDPV)', which triggered the Ghaziabad response, arises from:",
-          "options": [
-            "Mutation of the weakened strain in the Oral Polio Vaccine",
-            "Contamination of the injectable vaccine",
-            "A new wild strain from across the border",
-            "Zoonotic spillover from cattle"
-          ],
-          "answer": 0,
-          "explanation": "VDPV is a mutated form of the live attenuated virus used in OPV, detectable via sewage surveillance.",
-          "ref": "Prelims fact: VDPV from OPV"
-        }
       ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is Polio Campaign Relaunched After Virus Found in Ghaziabad Sewage. An intensified vaccination drive was launched in Ghaziabad after a sewage sample from Vijay Nagar tested positive for vaccine-derived poliovirus (VDPV). Officials flagged 12 high-risk neighbourhoods (~1,50,000 residents); India was declared free of wild poliovirus in 2014. Now, why is this important for UPSC? Public-health surveillance, VDPV vs wild polio, and OPV/IPV are testable health-governance topics (GS 2), underlining why surveillance continues post-elimination. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
@@ -1185,32 +613,6 @@
         "Burden sharing",
         "Mark Rutte"
       ],
-      "prelimsQs": [
-        {
-          "q": "Consider the following statements about NATO: 1. It currently has 32 member countries. 2. Article 5 of its treaty embodies collective defence. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 2,
-          "explanation": "NATO has 32 members after Finland and Sweden joined, and Article 5 is the collective-defence clause.",
-          "ref": "Prelims facts: 32 members; Article 5"
-        },
-        {
-          "q": "NATO's newly adopted defence-spending goal for members by 2035 is:",
-          "options": [
-            "2% of GDP",
-            "3% of GDP",
-            "5% of GDP (3.5% core + 1.5% security-related)",
-            "10% of GDP"
-          ],
-          "answer": 2,
-          "explanation": "The 5%-by-2035 target splits into 3.5% core defence and 1.5% broader security spending, replacing the older 2% benchmark.",
-          "ref": "Prelims fact: 5% target split"
-        }
-      ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is NATO's Defence-Spending Push Strains Europe's Budgets. Ahead of the NATO summit in Ankara, Secretary-General Mark Rutte will insist members are honouring pledges to raise defence spending to 5% of GDP by 2035 — but the Trump-driven push is stretching several European budgets, splitting members into fiscally comfortable and struggling camps. Now, why is this important for UPSC? NATO burden-sharing, transatlantic strain and a multipolar security order shape the global environment for India's defence exports — relevant GS 2 IR. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
@@ -1232,32 +634,6 @@
         "Supply-chain security",
         "E-rickshaw ecosystem"
       ],
-      "prelimsQs": [
-        {
-          "q": "In electric vehicles, the 'BMS', recently in news over Bluetooth vulnerabilities, stands for:",
-          "options": [
-            "Battery Management System",
-            "Brake Modulation System",
-            "Basic Motor Software",
-            "Bharat Mobility Standard"
-          ],
-          "answer": 0,
-          "explanation": "The BMS monitors cell voltage, temperature and charge; unauthenticated Bluetooth BMS modules were being switched off remotely.",
-          "ref": "Prelims fact: BMS definition"
-        },
-        {
-          "q": "The e-rickshaw battery 'shutdown' videos pointed primarily to which underlying problem?",
-          "options": [
-            "Deliberate state-sponsored sabotage",
-            "Absence of authentication in imported BMS modules",
-            "Overheating due to Indian summers",
-            "Grid voltage fluctuations"
-          ],
-          "answer": 1,
-          "explanation": "The flaw is a known security gap — imported BMS modules lack authentication, a supply-chain security issue rather than sabotage.",
-          "ref": "Article summary"
-        }
-      ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is E-Rickshaw Battery 'Hacks' and Bluetooth BMS Vulnerabilities. Viral videos showed people wirelessly disabling e-rickshaw batteries over Bluetooth. The piece clarifies this is not Chinese 'sabotage' but exploitation of a long-known security flaw in imported Battery Management System (BMS) modules that lack authentication — pointing to a supply-chain security gap. Now, why is this important for UPSC? IoT/BMS vulnerabilities and supply-chain security are emerging GS 3 cybersecurity themes with a concrete, memorable case study. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
@@ -1278,32 +654,6 @@
         "Global Digital Compact",
         "AI supercomputing concentration",
         "AI Child Safety Pledge"
-      ],
-      "prelimsQs": [
-        {
-          "q": "The first government-level 'UN Global Dialogue on AI Governance' was held in July 2026 at:",
-          "options": [
-            "New York",
-            "Geneva",
-            "Paris",
-            "Nairobi"
-          ],
-          "answer": 1,
-          "explanation": "The Dialogue, mandated by the Global Digital Compact (2024), met in Geneva on 6-7 July 2026.",
-          "ref": "Prelims fact: Geneva"
-        },
-        {
-          "q": "According to the UN expert panel cited at the Dialogue, the share of the world's top-500 AI supercomputing power held by the US is about:",
-          "options": [
-            "50%",
-            "60%",
-            "75%",
-            "90%"
-          ],
-          "answer": 2,
-          "explanation": "The US holds ~75% and China ~15% of top-500 AI supercomputing capacity.",
-          "ref": "Prelims fact: 75% US"
-        }
       ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is UN's Guterres Warns AI Is Outpacing Oversight. At the first government-level UN Global Dialogue on AI Governance in Geneva, UN chief Guterres warned AI is developing faster than anyone can keep up, urging globally harmonised rules — especially to protect children. A UN panel found the US holds 75% of the world's top-500 AI supercomputing power. Now, why is this important for UPSC? Global AI governance, compute concentration and the digital divide are fast-rising GS 2/GS 3 topics; the UN Global Dialogue is a fresh institutional development. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
@@ -1327,32 +677,6 @@
         "Nuclear triad",
         "PLA Rocket Force"
       ],
-      "prelimsQs": [
-        {
-          "q": "An Intercontinental Ballistic Missile (ICBM) is conventionally defined by a range exceeding:",
-          "options": [
-            "1,000 km",
-            "3,000 km",
-            "5,500 km",
-            "10,000 km"
-          ],
-          "answer": 2,
-          "explanation": "ICBMs have ranges above 5,500 km and are typically nuclear-capable.",
-          "ref": "Prelims fact: >5,500 km"
-        },
-        {
-          "q": "The 'nuclear triad' refers to delivery of nuclear weapons via:",
-          "options": [
-            "Army, Navy and Air Force commands",
-            "Land-based missiles, submarine-launched missiles and strategic bombers",
-            "Fission, fusion and neutron weapons",
-            "Tactical, theatre and strategic warheads"
-          ],
-          "answer": 1,
-          "explanation": "The triad = land-based ICBMs + sea-based SLBMs + air-delivered weapons, ensuring second-strike capability.",
-          "ref": "Prelims fact: triad definition"
-        }
-      ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is China Test-Fires 'Strategic' Missile into the Pacific. A Chinese nuclear submarine test-fired a 'strategic' missile with a dummy warhead into the Pacific, drawing condemnation from regional states. The launch — timed with an Australia-Fiji defence treaty and China-Russia naval drills — signals intensifying great-power competition in the South Pacific. Now, why is this important for UPSC? China's strategic signalling, the nuclear triad and South Pacific contestation directly shape India's Indo-Pacific stakes — a strong GS 2 IR/security item. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
@@ -1374,32 +698,6 @@
         "MoSPI",
         "Battery swapping",
         "TWh demand"
-      ],
-      "prelimsQs": [
-        {
-          "q": "As per the MoSPI expert committee, which EV segment accounts for the largest share (~61%) of electricity demand from India's EV fleet?",
-          "options": [
-            "Electric cars",
-            "Electric two-wheelers",
-            "Electric three-wheelers",
-            "Electric buses"
-          ],
-          "answer": 2,
-          "explanation": "Commercial e-3Ws dominate electricity draw due to heavy daily usage, though 2Ws dominate fleet numbers.",
-          "ref": "Article summary"
-        },
-        {
-          "q": "Battery swapping as a charging model is considered best suited for:",
-          "options": [
-            "Heavy trucks",
-            "Two- and three-wheelers",
-            "Sedan taxis",
-            "Electric buses only"
-          ],
-          "answer": 1,
-          "explanation": "Small standardised batteries make swapping practical for 2W/3W fleets.",
-          "ref": "Prelims fact: swapping suits 2W/3W"
-        }
       ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is 'Prioritise Charging Infrastructure for Electric Three-Wheelers' — MoSPI. A MoSPI report says commercial three-wheeler charging corridors should be prioritised, as e-3Ws account for 61% of electricity demand from India's EV fleet despite two-wheelers dominating fleet numbers. Total EV electricity demand is ~20 TWh/year, projected to rise sharply by 2030. Now, why is this important for UPSC? EV energy transition, grid planning and charging/battery-swapping infrastructure are practical GS 3 Economy/Environment themes backed by fresh official data. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
@@ -1424,32 +722,6 @@
         "CIBA",
         "Brackishwater aquaculture"
       ],
-      "prelimsQs": [
-        {
-          "q": "India's largest shrimp-producing State is:",
-          "options": [
-            "West Bengal",
-            "Odisha",
-            "Andhra Pradesh",
-            "Gujarat"
-          ],
-          "answer": 2,
-          "explanation": "Andhra Pradesh leads Indian shrimp production, centred on its coastal aquaculture belt.",
-          "ref": "Prelims fact: AP largest"
-        },
-        {
-          "q": "MPEDA, associated with India's seafood sector, is the:",
-          "options": [
-            "Marine Products Export Development Authority",
-            "Maritime Ports & Estuaries Development Agency",
-            "Marine Pollution & Environment Defence Authority",
-            "Mariculture Production & Extension Directorate"
-          ],
-          "answer": 0,
-          "explanation": "MPEDA under the Commerce Ministry promotes marine-product exports.",
-          "ref": "Prelims fact: MPEDA"
-        }
-      ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is White Gut Disease Outbreak in Andhra Pradesh Shrimp Ponds. Andhra Pradesh's Fisheries Department flagged an outbreak of White Gut Disease (White Feces Disease) in shrimp ponds in West Godavari, urging preventive measures. AP is India's largest shrimp-producing State, and the export-oriented industry is a major forex earner. Now, why is this important for UPSC? Aquaculture, the blue economy and export-oriented shrimp farming are niche but scoring GS 3 agriculture topics; biosecurity is the key policy angle. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
@@ -1471,32 +743,6 @@
         "Gelug school",
         "Dharamshala",
         "Succession dispute"
-      ],
-      "prelimsQs": [
-        {
-          "q": "The Central Tibetan Administration (Tibetan government-in-exile) is headquartered at:",
-          "options": [
-            "Leh",
-            "Dharamshala",
-            "Gangtok",
-            "Tawang"
-          ],
-          "answer": 1,
-          "explanation": "The CTA is based at McLeodganj, Dharamshala, Himachal Pradesh.",
-          "ref": "Prelims fact: Dharamshala"
-        },
-        {
-          "q": "The Dalai Lama belongs to which school of Tibetan Buddhism?",
-          "options": [
-            "Nyingma",
-            "Kagyu",
-            "Sakya",
-            "Gelug"
-          ],
-          "answer": 3,
-          "explanation": "The Dalai Lamas head the Gelug ('Yellow Hat') school.",
-          "ref": "Prelims fact: Gelug school"
-        }
       ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is Tibetan Community Marks Dalai Lama's 91st Birthday. The 91st birthday of the 14th Dalai Lama was celebrated by the Tibetan community across Himachal Pradesh, with the principal ceremony at Shewatsel Teaching Ground in Leh, Ladakh, where he is visiting. His reincarnation/succession remains a live India-China geopolitical issue. Now, why is this important for UPSC? The Dalai Lama, the CTA and the succession question sit at the intersection of culture, diaspora and India-China relations — useful for GS 1 and GS 2. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
@@ -1520,32 +766,6 @@
         "NTCA",
         "IUCN Endangered"
       ],
-      "prelimsQs": [
-        {
-          "q": "Consider the following statements about the white tiger: 1. It is a separate subspecies of tiger. 2. Its colouration results from leucism, a recessive genetic variant. Which of the statements given above is/are correct?",
-          "options": [
-            "1 only",
-            "2 only",
-            "Both 1 and 2",
-            "Neither 1 nor 2"
-          ],
-          "answer": 1,
-          "explanation": "The white tiger is merely a leucistic colour variant of the Bengal tiger, not a species or subspecies.",
-          "ref": "Prelims fact: leucistic variant"
-        },
-        {
-          "q": "India holds approximately what share of the world's wild tiger population?",
-          "options": [
-            "30%",
-            "50%",
-            "70%",
-            "90%"
-          ],
-          "answer": 2,
-          "explanation": "India harbours ~70% of wild tigers, conserved under Project Tiger (1973) and the NTCA.",
-          "ref": "Prelims fact: ~70%"
-        }
-      ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is Rare Bengal Tiger Cubs Born at Cuba's National Zoo. The birth of four Bengal tiger cubs, including a rare white tiger, at the Cuban National Zoo in Havana is being celebrated as a 'small miracle'. The Bengal tiger is native to the Indian subcontinent — India holds ~70% of the world's wild tigers — and the white tiger is a leucistic colour variant, not a species. Now, why is this important for UPSC? Tiger conservation, ex-situ vs in-situ conservation and leucism vs albinism are clean GS 3 environment facts often asked in Prelims. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     },
     {
@@ -1567,32 +787,6 @@
         "Valmikinagar Tiger Reserve",
         "Sindhu Darshan",
         "Nalanda circuit"
-      ],
-      "prelimsQs": [
-        {
-          "q": "Valmikinagar, connected under Bihar's new heli-tourism scheme, is known for:",
-          "options": [
-            "An ancient Buddhist university",
-            "A tiger reserve on the Indo-Nepal border",
-            "A hydropower dam on the Ganga",
-            "A classical dance festival"
-          ],
-          "answer": 1,
-          "explanation": "Valmiki Tiger Reserve lies in West Champaran on the Indo-Nepal border.",
-          "ref": "Prelims fact: Valmikinagar tiger reserve"
-        },
-        {
-          "q": "Rajgir, part of the Nalanda heritage circuit, is associated with which religions' heritage?",
-          "options": [
-            "Buddhism and Jainism",
-            "Sikhism and Buddhism",
-            "Hinduism and Zoroastrianism",
-            "Jainism and Sufism"
-          ],
-          "answer": 0,
-          "explanation": "Rajgir carries major Buddhist and Jain heritage sites near ancient Nalanda.",
-          "ref": "Prelims fact: Rajgir heritage"
-        }
       ],
       "audioScript": "Namaskar. In today's Penni current affairs short, the story is Bihar Launches Heli-Tourism and Air-Tourism Scheme. The Bihar Cabinet approved the CM Heli-Tourism and Air Tourism Scheme, 2026, launching subsidised helicopter and fixed-wing services from 15 July to connect Patna with Rajgir, Kaimur and Valmikinagar, plus weekend joyrides over Patna. It also cleared a Sindhu Darshan pilgrimage grant. Now, why is this important for UPSC? Tourism as regional development and connectivity is a GS 3 economy/GS 2 governance theme; the scheme names are Prelims-worthy state-scheme facts. For prelims, remember the key institution, provision or concept linked to this news. For mains, think about the larger governance, economy, security, society or environment angle behind the development."
     }

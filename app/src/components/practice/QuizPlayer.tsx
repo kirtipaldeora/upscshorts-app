@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faXmark,
@@ -7,71 +7,84 @@ import {
   faBookmark as faBookmarkSolid,
   faClock,
   faBullseye,
-  faDownload,
-  faShareNodes,
+  faChevronDown,
   faRotateLeft,
 } from '@fortawesome/free-solid-svg-icons'
 import { faBookmark as faBookmarkReg } from '@fortawesome/free-regular-svg-icons'
 import { usePracticeStore } from '@/stores/usePracticeStore'
+import type { PyqItem } from '@/stores/usePracticeStore'
+import { useAppStore } from '@/stores/useAppStore'
 import { pulseCorrect, shakeWrong } from '@/anim/animations'
 import type { Question } from '@/utils/practiceUtils'
 import { splitUPSCStem } from '@/utils/questionQuality'
 import { PyqSolutionView } from '@/components/pyq-vault/PyqSolutionView'
+import { relatedPyqs } from '@/utils/questionLinks'
+import { loadPyqManifest, loadPyqYears } from '@/utils/pyqData'
 
 interface QuizPlayerProps {
   title: string
   questions: Question[]
+  eyebrow?: string
+  description?: string
   onClose: () => void
   onShowToast: (msg: string) => void
 }
 
 type AnsweredState = { picked: number; correct: boolean } | null
 type TestAnswer = { picked: number | null; correct: boolean; skipped: boolean }
-type RewardBurst = { id: number; text: string; combo: number; xp: number } | null
 
-export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlayerProps) {
-  const { settings, recordAnswer, toggleQbm, questionBookmarks } = usePracticeStore()
+export function QuizPlayer({ title, questions, eyebrow, description, onClose, onShowToast }: QuizPlayerProps) {
+  const { settings, recordAnswer, toggleQbm, questionBookmarks, pyqData, pyqReady, setPyqData } = usePracticeStore()
+  const { articlesByDate } = useAppStore()
+  const [started, setStarted] = useState(false)
+  const [testMode, setTestMode] = useState<'exam' | 'learn'>('exam')
   const [idx, setIdx] = useState(0)
   const [answers, setAnswers] = useState<Record<number, TestAnswer>>({})
   const [answered, setAnswered] = useState<AnsweredState>(null)
   const [done, setDone] = useState(false)
   const [reviewMode, setReviewMode] = useState(false)
   const [explanationOpen, setExplanationOpen] = useState(false)
-  const [combo, setCombo] = useState(0)
-  const [earnedXp, setEarnedXp] = useState(0)
-  const [earnedCredits, setEarnedCredits] = useState(0)
-  const [rewardBurst, setRewardBurst] = useState<RewardBurst>(null)
   const [startedAt, setStartedAt] = useState(Date.now())
   const [elapsedMs, setElapsedMs] = useState(0)
 
   const q = questions[idx]
   const total = questions.length
+  const articlesById = useMemo(() => new Map(Object.values(articlesByDate).flat().map(article => [article.id, article])), [articlesByDate])
+  const linkedArticle = q.aid ? articlesById.get(q.aid) : undefined
+  const currentRelatedPyqs = useMemo(
+    () => linkedArticle && pyqData.length > 1000 ? relatedPyqs(linkedArticle, q, pyqData, 2) : [],
+    [linkedArticle, pyqData, q],
+  )
+
+  useEffect(() => {
+    if (!questions.some(question => question.src === 'article') || (pyqReady && pyqData.length > 1000)) return
+    loadPyqManifest()
+      .then(manifest => loadPyqYears(manifest.totals.years))
+      .then(items => setPyqData(items.map((item): PyqItem => ({
+        id: item.id,
+        exam: item.exam,
+        year: item.year,
+        subject: item.subject,
+        question: item.stem,
+        options: item.options,
+        answer: item.answer,
+        explanation: item.solution.detail,
+        paper: item.paper,
+        keyPoints: item.keyPoints,
+      }))))
+      .catch(() => {})
+  }, [pyqData.length, pyqReady, questions, setPyqData])
 
   function pickAnswer(i: number) {
-    if (answered) return
+    if (answered && testMode === 'learn') return
     const correct = i === q.answer
     setAnswered({ picked: i, correct })
-    setExplanationOpen(false)
     setAnswers(prev => ({ ...prev, [idx]: { picked: i, correct, skipped: false } }))
-    if (correct) {
-      const nextCombo = combo + 1
-      const bonus = nextCombo >= 3 ? 5 : 0
-      const xpGain = 15 + bonus
-      setCombo(nextCombo)
-      setEarnedXp(value => value + xpGain)
-      setEarnedCredits(value => value + 3 + (nextCombo >= 3 ? 1 : 0))
-      if (nextCombo >= 2) {
-        setRewardBurst({
-          id: Date.now(),
-          combo: nextCombo,
-          xp: xpGain,
-          text: nextCombo >= 5 ? 'Brilliant streak' : nextCombo >= 3 ? 'Combo bonus' : 'Nice chain',
-        })
-        window.setTimeout(() => setRewardBurst(null), 1250)
-      }
-    } else {
-      setCombo(0)
+    if (testMode === 'exam') {
+      setExplanationOpen(false)
+      return
     }
+    setExplanationOpen(true)
     recordAnswer(q.id, correct, q.subject, settings.target, onShowToast)
     // Feedback motion after the correct/wrong classes render
     requestAnimationFrame(() => {
@@ -81,6 +94,9 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
   }
 
   function next() {
+    if (testMode === 'exam' && answered) {
+      recordAnswer(q.id, answered.correct, q.subject, settings.target, onShowToast)
+    }
     if (idx + 1 >= total) { finish(); return }
     setIdx(i => i + 1)
     setAnswered(null)
@@ -88,7 +104,7 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
   }
 
   function retry() {
-    setIdx(0); setAnswers({}); setAnswered(null); setDone(false); setReviewMode(false); setExplanationOpen(false); setCombo(0); setEarnedXp(0); setEarnedCredits(0); setRewardBurst(null); setStartedAt(Date.now()); setElapsedMs(0)
+    setIdx(0); setAnswers({}); setAnswered(null); setDone(false); setReviewMode(false); setExplanationOpen(false); setStartedAt(Date.now()); setElapsedMs(0)
   }
 
   function finish() {
@@ -99,10 +115,19 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
   function skip() {
     if (answered) return
     setAnswers(prev => ({ ...prev, [idx]: { picked: null, correct: false, skipped: true } }))
-    setCombo(0)
     if (idx + 1 >= total) { finish(); return }
     setIdx(i => i + 1)
     setExplanationOpen(false)
+  }
+
+  function clearSelection() {
+    if (testMode !== 'exam') return
+    setAnswered(null)
+    setAnswers(previous => {
+      const nextAnswers = { ...previous }
+      delete nextAnswers[idx]
+      return nextAnswers
+    })
   }
 
   function formatTime(ms: number) {
@@ -112,36 +137,7 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
     return `${mm}:${ss}`
   }
 
-  function downloadAnswers() {
-    const lines = questions.map((item, i) => {
-      const answer = answers[i]
-      const picked = answer?.picked === null || answer?.picked === undefined ? 'Skipped' : item.options[answer.picked]
-      return [
-        `Q${i + 1}. ${item.q}`,
-        `Your answer: ${picked}`,
-        `Correct answer: ${item.options[item.answer]}`,
-        `Explanation: ${item.pyq?.solution.detail ?? item.explanation}`,
-      ].join('\n')
-    })
-    const blob = new Blob([lines.join('\n\n---\n\n')], { type: 'text/plain' })
-    const link = document.createElement('a')
-    link.href = URL.createObjectURL(blob)
-    link.download = `${title.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}-answers.txt`
-    link.click()
-    URL.revokeObjectURL(link.href)
-  }
-
-  async function shareMarks() {
-    const text = `I scored ${marksText} in ${title} on Penni with ${accuracy}% accuracy.`
-    if (navigator.share) {
-      await navigator.share({ title: 'Penni scorecard', text }).catch(() => {})
-    } else {
-      await navigator.clipboard?.writeText(text).catch(() => {})
-      onShowToast('Score copied')
-    }
-  }
-
-  const answerList = questions.map((item, i) => answers[i] ?? { picked: null, correct: false, skipped: false })
+  const answerList = questions.map((item, i) => answers[i] ?? { picked: null, correct: false, skipped: true })
   const correctCount = answerList.filter(a => a.correct).length
   const incorrectCount = answerList.filter(a => !a.correct && !a.skipped).length
   const skippedCount = answerList.filter(a => a.skipped).length
@@ -151,6 +147,52 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
   const marks = correctCount * 2 - incorrectCount * (2 / 3)
   const maxMarks = total * 2
   const marksText = `${Number(marks.toFixed(2))} / ${maxMarks}`
+  const estimatedMinutes = Math.max(1, Math.ceil(total * 1.2))
+  const subjects = Array.from(new Set(questions.map(item => item.subject).filter(Boolean)))
+  const subjectAnalysis = subjects.map(subject => {
+    const indices = questions.map((item, index) => item.subject === subject ? index : -1).filter(index => index >= 0)
+    const attempted = indices.filter(index => !answerList[index].skipped).length
+    const correct = indices.filter(index => answerList[index].correct).length
+    return { subject, total: indices.length, attempted, correct }
+  })
+
+  if (!started) {
+    return (
+      <div className="quiz-overlay qz-intro-shell">
+        <div className="quiz-header">
+          <button className="qz-close" onClick={onClose} aria-label="Close test"><FontAwesomeIcon icon={faXmark} /></button>
+          <span className="qz-title">Test instructions</span>
+          <span style={{ width: 38 }} />
+        </div>
+        <div className="qz-intro">
+          <section className="qz-intro-card">
+            <span className="qz-intro-kicker">{eyebrow ?? 'Practice test'}</span>
+            <h2>{title}</h2>
+            <p>{description ?? 'Review the test details and choose how you want to attempt it.'}</p>
+            <div className="qz-intro-facts">
+              <div><b>{total}</b><span>Questions</span></div>
+              <div><b>{estimatedMinutes} min</b><span>Estimated</span></div>
+              <div><b>+2 / −0.66</b><span>Marking</span></div>
+            </div>
+            <div className="qz-intro-coverage"><span>Coverage</span><p>{subjects.slice(0, 5).join(' · ') || 'General Studies'}</p></div>
+          </section>
+
+          <section className="qz-mode-card">
+            <div><span>Attempt mode</span><p>You can change the feedback style before starting.</p></div>
+            <button className={testMode === 'exam' ? 'active' : ''} onClick={() => setTestMode('exam')}>
+              <b>Exam mode</b><span>No answers or explanations until submission</span>
+            </button>
+            <button className={testMode === 'learn' ? 'active' : ''} onClick={() => setTestMode('learn')}>
+              <b>Learn mode</b><span>Check each answer and explanation as you go</span>
+            </button>
+          </section>
+
+          <div className="qz-intro-note"><b>Before you begin</b><p>Unanswered questions receive no penalty. Your result will include accuracy, attempt data and subject-wise performance.</p></div>
+          <button className="pn-btn qz-intro-start" onClick={() => { setStartedAt(Date.now()); setStarted(true) }}>Start test</button>
+        </div>
+      </div>
+    )
+  }
 
   if (done) {
     return (
@@ -170,10 +212,6 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
                 <h3>Total Marks</h3>
                 <div className={`qz-marks ${marks >= maxMarks * 0.5 ? 'good' : 'low'}`}>{Number(marks.toFixed(2))}<span>/{maxMarks}</span></div>
                 <p>{pct >= 80 ? 'Excellent control. Keep building speed.' : pct >= 50 ? 'Good attempt. Review errors before the next set.' : "One test does not define you. Review, retry, improve."}</p>
-                <div className="qz-reward-summary">
-                  <span>+{earnedXp} XP</span>
-                  <span>+{earnedCredits} credits</span>
-                </div>
                 <div className="qz-score-metrics">
                   <div><FontAwesomeIcon icon={faClock} /><span>Time Taken</span><b>{formatTime(elapsedMs)}</b></div>
                   <div><FontAwesomeIcon icon={faBullseye} /><span>Accuracy</span><b>{accuracy}%</b></div>
@@ -189,9 +227,14 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
                 </div>
               </div>
 
-              <div className="qz-export-card">
-                <button onClick={downloadAnswers}><FontAwesomeIcon icon={faDownload} /><span><b>Download answers</b><i>Get a clean answer file</i></span></button>
-                <button onClick={() => void shareMarks()}><FontAwesomeIcon icon={faShareNodes} /><span><b>Share your marks</b><i>Copy or share scorecard</i></span></button>
+              <div className="qz-subject-analysis">
+                <div className="qz-analysis-head"><span>Performance by subject</span><b>{marksText}</b></div>
+                {subjectAnalysis.map(row => (
+                  <div className="qz-analysis-row" key={row.subject}>
+                    <span><b>{row.subject}</b><i>{row.attempted}/{row.total} attempted</i></span>
+                    <strong>{row.correct}/{row.total}</strong>
+                  </div>
+                ))}
               </div>
 
               <div className="qz-result-actions horizontal">
@@ -250,24 +293,23 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
         <span className="qz-cnt">{idx + 1}<i>/{total}</i></span>
       </div>
 
-      {rewardBurst && (
-        <div key={rewardBurst.id} className="qz-reward-burst">
-          <b>{rewardBurst.text}</b>
-          <span>{rewardBurst.combo} correct in a row · +{rewardBurst.xp} XP</span>
-        </div>
-      )}
-
       <div className="qz-timeline" aria-label={`Question ${idx + 1} of ${total}`}>
         {questions.map((item, i) => {
           const state = answers[i]
           const cls = [
             i === idx ? 'current' : '',
-            state?.correct ? 'ok' : '',
-            state && !state.correct && !state.skipped ? 'no' : '',
+            testMode === 'exam' && state && !state.skipped ? 'answered' : '',
+            testMode === 'learn' && state?.correct ? 'ok' : '',
+            testMode === 'learn' && state && !state.correct && !state.skipped ? 'no' : '',
             state?.skipped ? 'skip' : '',
           ].filter(Boolean).join(' ')
           return <span key={item.id} className={cls} title={`Question ${i + 1}`} />
         })}
+      </div>
+
+      <div className={`qz-mode-indicator ${testMode}`}>
+        <b>{testMode === 'exam' ? 'Exam mode' : 'Learn mode'}</b>
+        <span>{testMode === 'exam' ? 'Select or change an option. Answers stay hidden until submission.' : 'Instant feedback and explanation after every answer.'}</span>
       </div>
 
       {/* Body */}
@@ -276,7 +318,6 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
         <div className="qz-meta">
           {q.subject && <span className="pv-tag subject">{q.subject}</span>}
           {q.srcLabel && <span className="qz-src">{q.srcLabel}</span>}
-          {earnedXp > 0 && <span className={`qz-live-xp ${combo >= 2 ? 'hot' : ''}`}>+{earnedXp} XP</span>}
           <button
             className={`qz-bm ${bm ? 'on' : ''}`}
             onClick={() => toggleQbm(q.id, onShowToast)}
@@ -291,13 +332,25 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
           {structuredStem.statements.length ? (
             <>
               {structuredStem.lead && <p>{structuredStem.lead}</p>}
-              <ol>
-                {structuredStem.statements.map((statement, i) => <li key={i}>{statement}</li>)}
+              <ol className="upsc-statement-list">
+                {structuredStem.statements.map((statement, i) => (
+                  <li key={i}>
+                    <span className="upsc-statement-label">{structuredStem.statementLabels[i] ?? i + 1}</span>
+                    <span className="upsc-statement-text">{statement}</span>
+                  </li>
+                ))}
               </ol>
               {structuredStem.ask && <p className="qz-ask">{structuredStem.ask}</p>}
             </>
           ) : q.q}
         </div>
+
+        {currentRelatedPyqs.length > 0 && (
+          <details className="question-link-signal qz-link-signal">
+            <summary><span>Related PYQ available</span><b>{currentRelatedPyqs.length === 1 ? `UPSC ${currentRelatedPyqs[0].item.year}` : `${currentRelatedPyqs.length} close matches`}</b><FontAwesomeIcon icon={faChevronDown} /></summary>
+            <div>{currentRelatedPyqs.map(({ item, reason }) => <p key={item.id}><span>UPSC {item.year} · {item.subject}</span><b>{item.question}</b><i>{reason}</i></p>)}</div>
+          </details>
+        )}
 
         {/* Options */}
         <div className="qz-opts">
@@ -305,7 +358,9 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
             let cls = 'pv-opt'
             let mark: 'ok' | 'no' | null = null
             if (answered) {
-              if (i === q.answer) { cls += ' correct'; mark = 'ok' }
+              if (testMode === 'exam') {
+                if (i === answered.picked) cls += ' selected'
+              } else if (i === q.answer) { cls += ' correct'; mark = 'ok' }
               else if (i === answered.picked) { cls += ' wrong'; mark = 'no' }
               else cls += ' dim'
             }
@@ -314,7 +369,7 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
                 key={i}
                 className={cls}
                 onClick={() => pickAnswer(i)}
-                disabled={!!answered}
+                disabled={testMode === 'learn' && !!answered}
               >
                 <span className="ol">{String.fromCharCode(65 + i)}</span>
                 <span className="pv-opt-text">{opt}</span>
@@ -329,7 +384,7 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
         </div>
 
         {/* Explanation */}
-        {answered && (
+        {answered && testMode === 'learn' && (
           explanationOpen ? (
             <div className={`qz-exp show ${answered.correct ? 'ok' : 'no'} ${q.pyq ? 'structured' : ''}`}>
               {q.pyq ? (
@@ -355,10 +410,13 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
       {/* Sticky footer */}
       <div className="qz-footer">
         {answered ? (
-          <button className="pn-btn qz-next" onClick={next}>
-            {idx + 1 === total ? 'Finish test' : 'Next question'}
-            <FontAwesomeIcon icon={faArrowRight} style={{ marginLeft: 8 }} />
-          </button>
+          <div className={`qz-answered-actions ${testMode}`}>
+            {testMode === 'exam' && <button className="qz-clear" onClick={clearSelection}>Clear</button>}
+            <button className="pn-btn qz-next" onClick={next}>
+              {idx + 1 === total ? 'Submit test' : testMode === 'exam' ? 'Save & next' : 'Next question'}
+              <FontAwesomeIcon icon={faArrowRight} style={{ marginLeft: 8 }} />
+            </button>
+          </div>
         ) : (
           <div className="qz-foot-actions">
             <button onClick={skip}>Skip</button>

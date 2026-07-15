@@ -286,20 +286,21 @@ export function splitUPSCStem(stem: string) {
   const askMatch = normal.match(/\b((?:Which|How many|Select the correct|What (?:is|are))[^?]*\?)$/)
   const ask = askMatch?.[0] ?? ''
   const setup = ask ? normal.slice(0, normal.length - ask.length).trim() : normal
-  const firstStatement = setup.search(/(?:^|\s)(?:1|I)\.\s+/)
+  const labelledMarkers = [...setup.matchAll(/(?:^|\s)Statement\s+((?:\d{1,2}|I{1,3}|IV|V))\s*:\s*/gi)]
+  const dottedMarkers = [...setup.matchAll(/(?:^|\s)((?:\d{1,2}|I{1,3}|IV|V))\.\s+/g)]
+  const markers = labelledMarkers.length >= 2 ? labelledMarkers : dottedMarkers
+  const firstStatement = markers[0]?.index ?? -1
 
-  if (firstStatement < 0) {
-    return { lead: normal, statements: [] as string[], ask: '' }
+  if (firstStatement < 0 || markers.length < 2) {
+    return { lead: normal, statements: [] as string[], statementLabels: [] as string[], ask: '' }
   }
 
   const lead = setup.slice(0, firstStatement).trim()
-  const statementText = setup.slice(firstStatement).trim()
-  const markers = [...statementText.matchAll(/(?:^|\s)((?:\d{1,2}|I{1,3}|IV|V))\.\s+/g)]
-  if (markers.length < 2) return { lead: normal, statements: [] as string[], ask: '' }
   const statements = markers.map((marker, index) => {
     const from = (marker.index ?? 0) + marker[0].length
-    const to = markers[index + 1]?.index ?? statementText.length
-    return statementText.slice(from, to).trim()
+    const to = markers[index + 1]?.index ?? setup.length
+    return setup.slice(from, to).trim()
   }).filter(Boolean)
-  return { lead, statements, ask }
+  const statementLabels = markers.slice(0, statements.length).map(marker => marker[1].toUpperCase())
+  return { lead, statements, statementLabels, ask }
 }

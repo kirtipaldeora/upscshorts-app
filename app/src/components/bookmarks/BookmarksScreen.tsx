@@ -1,27 +1,36 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faArrowLeft,
   faBookmark,
-  faExpand,
+  faBookOpen,
+  faBrain,
+  faChevronDown,
+  faMagnifyingGlass,
   faPlay,
+  faTrash,
+  faXmark,
 } from '@fortawesome/free-solid-svg-icons'
-import { faBookmark as faBookmarkReg } from '@fortawesome/free-regular-svg-icons'
+import { faBookmark as faBookmarkRegular } from '@fortawesome/free-regular-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
 import { useBookmarkStore } from '@/stores/useBookmarkStore'
 import { usePracticeStore } from '@/stores/usePracticeStore'
-import { articleQs, allQs, bookmarkPracticeSet } from '@/utils/practiceUtils'
+import { articleQs, allQs } from '@/utils/practiceUtils'
 import type { Article } from '@/types/article'
-import { fmtShort } from '@/constants/categories'
-import { CATEGORY_COLORS } from '@/constants/categories'
-import { QuizPlayer } from '@/components/practice/QuizPlayer'
 import type { Question } from '@/utils/practiceUtils'
+import { QuizPlayer } from '@/components/practice/QuizPlayer'
+import { useAllArticles } from '@/hooks/useAllArticles'
+import { buildRecallCards } from '@/utils/recallCards'
 
-type Tab = 'articles' | 'questions'
-type ActiveQuiz = { title: string; questions: Question[] } | null
+type Tab = 'articles' | 'cards' | 'questions'
+type ActiveQuiz = { title: string; questions: Question[]; description: string } | null
 
 interface BookmarksScreenProps {
   onShowToast: (msg: string) => void
+}
+
+function loadRecallBookmarks(): string[] {
+  try { return JSON.parse(localStorage.getItem('penni.ca-recall.bookmarks.v1') || '[]') as string[] } catch { return [] }
 }
 
 export function BookmarksScreen({ onShowToast }: BookmarksScreenProps) {
@@ -29,164 +38,147 @@ export function BookmarksScreen({ onShowToast }: BookmarksScreenProps) {
   const { bookmarkedIds, toggle } = useBookmarkStore()
   const { questionBookmarks, toggleQbm, pyqData } = usePracticeStore()
   const [tab, setTab] = useState<Tab>('articles')
+  const [query, setQuery] = useState('')
+  const [subject, setSubject] = useState('all')
   const [activeQuiz, setActiveQuiz] = useState<ActiveQuiz>(null)
+  const [recallBookmarks, setRecallBookmarks] = useState<string[]>(loadRecallBookmarks)
+  useAllArticles()
 
-  const allArticles = Object.values(articlesByDate).flat()
-  const bookmarked = allArticles.filter(a => bookmarkedIds.includes(a.id))
-  const bmQs = allQs(allArticles, pyqData).filter(q => questionBookmarks.includes(q.id))
-  const practiceBmSet = bookmarkPracticeSet(allArticles, bookmarkedIds, questionBookmarks, pyqData)
+  const allArticles = useMemo(() => Object.values(articlesByDate).flat(), [articlesByDate])
+  const bookmarked = useMemo(() => allArticles.filter(article => bookmarkedIds.includes(article.id)).sort((a, b) => b.date.localeCompare(a.date)), [allArticles, bookmarkedIds])
+  const bookmarkedRecallCards = useMemo(() => buildRecallCards(allArticles).filter(card => recallBookmarks.includes(card.id)).sort((a, b) => b.article.date.localeCompare(a.article.date)), [allArticles, recallBookmarks])
+  const bookmarkedQuestions = useMemo(() => allQs(allArticles, pyqData).filter(question => questionBookmarks.includes(question.id)), [allArticles, pyqData, questionBookmarks])
+  const subjects = useMemo(() => [...new Set((tab === 'articles'
+    ? bookmarked.map(item => item.category)
+    : tab === 'cards'
+      ? bookmarkedRecallCards.map(item => item.article.category)
+      : bookmarkedQuestions.map(item => item.subject)))].sort(), [bookmarked, bookmarkedQuestions, bookmarkedRecallCards, tab])
+  const normalizedQuery = query.trim().toLowerCase()
+  const filteredArticles = bookmarked.filter(article => {
+    if (subject !== 'all' && article.category !== subject) return false
+    if (!normalizedQuery) return true
+    return [article.headline, article.summary, article.category, ...(article.keyTerms ?? [])].join(' ').toLowerCase().includes(normalizedQuery)
+  })
+  const filteredQuestions = bookmarkedQuestions.filter(question => {
+    if (subject !== 'all' && question.subject !== subject) return false
+    if (!normalizedQuery) return true
+    return [question.q, question.subject, question.srcLabel].join(' ').toLowerCase().includes(normalizedQuery)
+  })
+  const filteredRecallCards = bookmarkedRecallCards.filter(card => {
+    if (subject !== 'all' && card.article.category !== subject) return false
+    if (!normalizedQuery) return true
+    return [card.article.headline, card.article.summary, card.article.category, ...(card.article.keyTerms ?? [])].join(' ').toLowerCase().includes(normalizedQuery)
+  })
 
-  function openArticle(a: Article) {
-    setActiveArticle(a)
+  function switchTab(next: Tab) {
+    setTab(next)
+    setSubject('all')
+    setQuery('')
+  }
+
+  function openArticle(article: Article) {
+    setActiveArticle(article)
     setOverlay('deep-dive')
   }
 
-  function startQuiz(title: string, qs: Question[]) {
-    if (!qs.length) { onShowToast('No questions'); return }
-    setActiveQuiz({ title, questions: qs })
+  function startQuiz(title: string, questions: Question[], description: string) {
+    if (!questions.length) { onShowToast('No MCQs are available in this selection'); return }
+    setActiveQuiz({ title, questions, description })
+  }
+
+  function openRecall(scope: string, articleIds: string[] = []) {
+    localStorage.setItem('penni.ca-recall.scope', scope)
+    if (articleIds.length) localStorage.setItem('penni.ca-recall.selection.v1', JSON.stringify(articleIds))
+    setScreen('revise')
+  }
+
+  function removeRecallBookmark(cardId: string) {
+    const next = recallBookmarks.filter(id => id !== cardId)
+    setRecallBookmarks(next)
+    localStorage.setItem('penni.ca-recall.bookmarks.v1', JSON.stringify(next))
+    onShowToast('Recall card removed')
   }
 
   if (activeQuiz) {
-    return (
-      <QuizPlayer
-        title={activeQuiz.title}
-        questions={activeQuiz.questions}
-        onClose={() => setActiveQuiz(null)}
-        onShowToast={onShowToast}
-      />
-    )
+    return <QuizPlayer title={activeQuiz.title} eyebrow="Saved revision" description={activeQuiz.description} questions={activeQuiz.questions} onClose={() => setActiveQuiz(null)} onShowToast={onShowToast} />
   }
 
   return (
-    <div
-      style={{
-        position: 'absolute',
-        inset: 0,
-        display: 'flex',
-        flexDirection: 'column',
-        background: 'transparent',
-        zIndex: 10,
-        animation: 'scrIn 0.35s cubic-bezier(0.22,1,0.36,1)',
-      }}
-    >
-      {/* Header */}
-      <div style={{ height: 58, display: 'flex', alignItems: 'center', gap: 12, padding: '0 18px', flexShrink: 0, position: 'relative', zIndex: 2 }}>
-        <button onClick={() => setScreen('feed')} className="icon-btn">
-          <FontAwesomeIcon icon={faArrowLeft} />
-        </button>
-        <h2 style={{ fontSize: 21, fontWeight: 900, letterSpacing: -0.3, flex: 1, color: 'var(--on)' }}>Bookmarks</h2>
-      </div>
+    <div className="bookmarks-shell">
+      <header className="bookmarks-header">
+        <button className="icon-btn" onClick={() => setScreen('feed')} aria-label="Back"><FontAwesomeIcon icon={faArrowLeft} /></button>
+        <div><span>Personal revision library</span><h2>Bookmarks</h2></div>
+      </header>
 
-      {/* Tabs */}
-      <div className="pv-tabs" style={{ padding: '0 16px 4px', flexShrink: 0, zIndex: 2, position: 'relative' }}>
-        <button className={`pv-tab ${tab === 'articles' ? 'active' : ''}`} onClick={() => setTab('articles')}>
-          Articles ({bookmarked.length})
-        </button>
-        <button className={`pv-tab ${tab === 'questions' ? 'active' : ''}`} onClick={() => setTab('questions')}>
-          Questions ({bmQs.length})
-        </button>
-      </div>
+      <main className="bookmarks-main">
+        <section className="bookmarks-overview">
+          <div><span>Saved for later</span><h3>Read it. Recall it. Test it.</h3><p>Bookmarks are organised as a working revision list, not a passive collection.</p></div>
+          <div className="bookmarks-counts"><div><b>{bookmarked.length}</b><span>articles</span></div><div><b>{bookmarkedRecallCards.length}</b><span>recall cards</span></div><div><b>{bookmarkedQuestions.length}</b><span>questions</span></div></div>
+        </section>
 
-      {/* Body */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '8px 16px calc(110px + env(safe-area-inset-bottom))', position: 'relative', zIndex: 2 }}>
+        <div className="bookmarks-tabs" role="tablist">
+          <button className={tab === 'articles' ? 'active' : ''} onClick={() => switchTab('articles')}>Saved articles <span>{bookmarked.length}</span></button>
+          <button className={tab === 'cards' ? 'active' : ''} onClick={() => switchTab('cards')}>Recall cards <span>{bookmarkedRecallCards.length}</span></button>
+          <button className={tab === 'questions' ? 'active' : ''} onClick={() => switchTab('questions')}>Saved questions <span>{bookmarkedQuestions.length}</span></button>
+        </div>
 
-        {tab === 'questions' ? (
-          bmQs.length === 0 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '60%', color: 'var(--on2)', gap: 12 }}>
-              <FontAwesomeIcon icon={faBookmarkReg} style={{ fontSize: 36, opacity: 0.5 }} />
-              <p style={{ fontSize: 13, textAlign: 'center', maxWidth: 240, lineHeight: 1.5, fontWeight: 700 }}>
-                No bookmarked questions yet.<br />Tap the bookmark icon on any question while practising.
-              </p>
-            </div>
-          ) : (
-            <>
-              <button className="pn-btn" style={{ marginBottom: 12, width: '100%' }} onClick={() => startQuiz('Bookmarked Questions', bmQs)}>
-                <FontAwesomeIcon icon={faPlay} style={{ marginRight: 8 }} />
-                Practice these {bmQs.length}
-              </button>
-              {bmQs.map(q => (
-                <div key={q.id} className="pn-qcard">
-                  <div className="pn-qcard-top">
-                    <span className="pv-tag subject">{q.subject}</span>
-                    <button className="qz-bm on" onClick={() => toggleQbm(q.id, onShowToast)} aria-label="Remove bookmark">
-                      <FontAwesomeIcon icon={faBookmark} />
-                    </button>
-                  </div>
-                  <p>{q.q}</p>
-                  <span className="qz-src">{q.srcLabel}</span>
-                </div>
-              ))}
-            </>
-          )
-        ) : (
-          <>
-            {/* Practice from bookmarked articles */}
-            {practiceBmSet.length > 0 && (
-              <button className="pn-btn" style={{ marginBottom: 12, width: '100%' }} onClick={() => startQuiz('Bookmarked Practice', practiceBmSet)}>
-                <FontAwesomeIcon icon={faPlay} style={{ marginRight: 8 }} />
-                Practice {practiceBmSet.length} Qs from saved articles
-              </button>
-            )}
+        <section className="bookmarks-controls">
+          <div className="bookmarks-search"><FontAwesomeIcon icon={faMagnifyingGlass} /><input value={query} onChange={event => setQuery(event.target.value)} placeholder={tab === 'articles' ? 'Search saved articles, topics or key terms' : tab === 'cards' ? 'Search saved recall cards or concepts' : 'Search saved question text or subject'} />{query && <button onClick={() => setQuery('')}><FontAwesomeIcon icon={faXmark} /></button>}</div>
+          <label><select value={subject} onChange={event => setSubject(event.target.value)}><option value="all">All subjects</option>{subjects.map(item => <option key={item}>{item}</option>)}</select><FontAwesomeIcon icon={faChevronDown} /></label>
+        </section>
 
-            {bookmarked.length === 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '60%', color: 'var(--on2)', gap: 12 }}>
-                <FontAwesomeIcon icon={faBookmark} style={{ fontSize: 36, opacity: 0.5 }} />
-                <p style={{ fontSize: 13, textAlign: 'center', maxWidth: 240, lineHeight: 1.5, fontWeight: 700 }}>
-                  No bookmarks yet.<br />Tap ⭐ on any article to save it.
-                </p>
-              </div>
-            ) : (
-              bookmarked.map(a => {
-                const catColor = CATEGORY_COLORS[a.category]
-                const nq = (a.prelimsQs ?? []).length
-                const aqForArticle = articleQs(allArticles).filter(q => q.aid === a.id)
-                return (
-                  <div
-                    key={a.id}
-                    className="bm-item"
-                    onClick={() => openArticle(a)}
-                    style={{ background: 'var(--card)', borderRadius: 20, padding: 15, marginBottom: 9, cursor: 'pointer', transition: 'all 0.2s', position: 'relative', boxShadow: 'var(--shadow-soft)', color: 'var(--ink)' }}
-                  >
-                    <div className="bm-cat" style={{ position: 'absolute', top: 17, right: 17, width: 9, height: 9, borderRadius: '50%', background: catColor }} />
-                    <h4 style={{ fontSize: 14, fontWeight: 800, marginBottom: 4, lineHeight: 1.3, paddingRight: 20, color: 'var(--ink)' }}>{a.headline}</h4>
-                    <div className="bm-meta" style={{ fontSize: 10, color: 'var(--ink3)', marginBottom: 6, display: 'flex', gap: 5, alignItems: 'center', flexWrap: 'wrap', fontWeight: 700 }}>
-                      <span>{a.category}</span><span>·</span><span>{fmtShort(a.date)}</span>
-                      {nq > 0 && <><span>·</span><span style={{ color: 'var(--acc)', fontWeight: 800 }}>{nq} practice Qs</span></>}
-                    </div>
-                    <p style={{ fontSize: 12.5, color: 'var(--ink2)', lineHeight: 1.55, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', fontWeight: 600 }}>
-                      {a.summary}
-                    </p>
-                    <div className="bm-actions" style={{ display: 'flex', gap: 8, marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--border)' }}>
-                      <button
-                        onClick={e => { e.stopPropagation(); toggle(a.id) }}
-                        style={{ width: 36, height: 36, borderRadius: 13, fontSize: 12, cursor: 'pointer', border: 'none', background: 'var(--yellow)', color: 'var(--yellow-ink)', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                      >
-                        <FontAwesomeIcon icon={faBookmark} />
-                      </button>
-                      {nq > 0 && (
-                        <button
-                          onClick={e => { e.stopPropagation(); startQuiz('Article Practice', aqForArticle) }}
-                          style={{ width: 36, height: 36, borderRadius: 13, border: 'none', background: 'var(--panel2)', color: 'var(--on)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12 }}
-                        >
-                          <FontAwesomeIcon icon={faPlay} />
-                        </button>
-                      )}
-                      <button
-                        onClick={e => { e.stopPropagation(); openArticle(a) }}
-                        className="btn-dive"
-                        style={{ marginLeft: 'auto', width: 'auto', padding: '0 16px', height: 36, borderRadius: 14, border: 'none', background: 'var(--yellow)', color: 'var(--yellow-ink)', fontWeight: 800, fontSize: 11.5, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
-                      >
-                        <FontAwesomeIcon icon={faExpand} style={{ fontSize: 10 }} />
-                        Deep Dive
-                      </button>
-                    </div>
-                  </div>
-                )
-              })
-            )}
-          </>
+        {tab === 'articles' && bookmarked.length > 0 && (
+          <section className="bookmarks-batch">
+            <div><span>Saved article set</span><b>{filteredArticles.length} articles in this view</b></div>
+            <button disabled={!filteredArticles.length} onClick={() => openRecall('selection', filteredArticles.map(article => article.id))}><FontAwesomeIcon icon={faBrain} /> Recall this view</button>
+            <button disabled={!filteredArticles.length} onClick={() => startQuiz('Saved Article MCQs', articleQs(filteredArticles), 'MCQs drawn only from the saved articles in this filtered view.')}><FontAwesomeIcon icon={faPlay} /> Review MCQs</button>
+          </section>
         )}
-      </div>
+
+        {tab === 'cards' && bookmarkedRecallCards.length > 0 && (
+          <section className="bookmarks-batch">
+            <div><span>Saved recall set</span><b>{filteredRecallCards.length} cards in this view</b></div>
+            <button className="primary" disabled={!filteredRecallCards.length} onClick={() => openRecall('selection', filteredRecallCards.map(card => card.article.id))}><FontAwesomeIcon icon={faBrain} /> Recall this view</button>
+          </section>
+        )}
+
+        {tab === 'questions' && bookmarkedQuestions.length > 0 && (
+          <section className="bookmarks-batch">
+            <div><span>Saved question set</span><b>{filteredQuestions.length} questions in this view</b></div>
+            <button className="primary" disabled={!filteredQuestions.length} onClick={() => startQuiz('Saved Questions', filteredQuestions, 'A focused review of the questions in this filtered view.')}><FontAwesomeIcon icon={faPlay} /> Review selection</button>
+          </section>
+        )}
+
+        {tab === 'articles' ? (
+          filteredArticles.length ? <div className="bookmarks-list">{filteredArticles.map(article => {
+            const questions = articleQs([article])
+            const saved = bookmarkedIds.includes(article.id)
+            return (
+              <article className="bookmark-article-card" key={article.id}>
+                <div className="bookmark-card-meta"><span>{new Date(`${article.date}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span><span>{article.gsPaper}</span><span>{article.category}</span><button className={saved ? 'active' : ''} onClick={() => toggle(article.id)} aria-label="Remove bookmark"><FontAwesomeIcon icon={faBookmark} /></button></div>
+                <h3>{article.headline}</h3><p>{article.summary}</p>
+                <div className="bookmark-card-actions"><button onClick={() => openArticle(article)}><FontAwesomeIcon icon={faBookOpen} /> Read</button><button onClick={() => openRecall(`article:${article.id}`)}><FontAwesomeIcon icon={faBrain} /> Recall</button><button onClick={() => startQuiz(`${article.category} · Saved Article`, questions, 'MCQs connected only to this saved article.')} disabled={!questions.length}><FontAwesomeIcon icon={faPlay} /> {questions.length} MCQs</button><button className="remove" onClick={() => toggle(article.id)}><FontAwesomeIcon icon={faTrash} /></button></div>
+              </article>
+            )
+          })}</div> : <BookmarkEmpty search={Boolean(query || subject !== 'all')} onClear={() => { setQuery(''); setSubject('all') }} />
+        ) : tab === 'cards' ? (
+          filteredRecallCards.length ? <div className="bookmarks-list">{filteredRecallCards.map(card => (
+            <article className="bookmark-article-card recall" key={card.id}>
+              <div className="bookmark-card-meta"><span>{new Date(`${card.article.date}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span><span>{card.article.gsPaper}</span><span>{card.article.category}</span><button className="active" onClick={() => removeRecallBookmark(card.id)} aria-label="Remove saved recall card"><FontAwesomeIcon icon={faBookmark} /></button></div>
+              <h3>{card.article.headline}</h3><p>{card.prompts.length} active-recall checks covering the news fact, exam trap and static link.</p>
+              <div className="bookmark-card-actions"><button onClick={() => openRecall(`article:${card.article.id}`)}><FontAwesomeIcon icon={faBrain} /> Recall card</button><button onClick={() => openArticle(card.article)}><FontAwesomeIcon icon={faBookOpen} /> Read article</button><button className="remove" onClick={() => removeRecallBookmark(card.id)}><FontAwesomeIcon icon={faTrash} /> Remove</button></div>
+            </article>
+          ))}</div> : <BookmarkEmpty search={Boolean(query || subject !== 'all')} onClear={() => { setQuery(''); setSubject('all') }} />
+        ) : (
+          filteredQuestions.length ? <div className="bookmarks-list">{filteredQuestions.map(question => (
+            <article className="bookmark-question-card" key={question.id}><div><span>{question.subject}</span><button onClick={() => toggleQbm(question.id, onShowToast)}><FontAwesomeIcon icon={faBookmark} /></button></div><p>{question.q}</p><small>{question.srcLabel}</small><button onClick={() => startQuiz('Saved Question', [question], 'Review this saved question in a focused one-question session.')}><FontAwesomeIcon icon={faBookOpen} /> Review question</button></article>
+          ))}</div> : <BookmarkEmpty search={Boolean(query || subject !== 'all')} onClear={() => { setQuery(''); setSubject('all') }} />
+        )}
+      </main>
     </div>
   )
+}
+
+function BookmarkEmpty({ search, onClear }: { search: boolean; onClear: () => void }) {
+  return <div className="bookmarks-empty"><FontAwesomeIcon icon={faBookmarkRegular} /><b>{search ? 'No saved items match' : 'Nothing saved yet'}</b><p>{search ? 'Try a wider search or subject.' : 'Use the bookmark icon on an article, recall card or question to add it here.'}</p>{search && <button onClick={onClear}>Clear filters</button>}</div>
 }
