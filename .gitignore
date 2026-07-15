@@ -128,3 +128,6 @@ content-pipeline/runs/
 # local scratch
 tmp/
 michi/
+.tokensave
+.claude
+.codex
