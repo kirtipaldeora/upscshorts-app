@@ -1570,6 +1570,7 @@ export function MapsArcade() {
 
   function renderParkLearn() {
     const states = [...new Set((loaded?.parks ?? []).filter(p => !state.parkRegion || p.region === state.parkRegion).map(p => p.state))].sort()
+    const regionName = cleanRegionName(loaded?.parkRegions.find(region => region.key === state.parkRegion)?.name ?? 'National Parks')
     const selected = currentParkLearnState()
     const visible = (loaded?.parks ?? []).filter(p => (!state.parkRegion || p.region === state.parkRegion) && (!selected || p.state === selected))
     const park = visible.find(item => item.id === state.parkLearnParkId) ?? visible[0] ?? null
@@ -1674,8 +1675,12 @@ export function MapsArcade() {
                   <FontAwesomeIcon icon={faChevronRight} />
                 </button>
               </div>
-              <button className="atlas-primary-mini" onClick={() => startQuiz(parkItems(visible, state.parkRegion))}>
-                Practice state
+              <button
+                className="atlas-primary-mini"
+                aria-label={`Practice ${regionName} region`}
+                onClick={() => openSetup({ app: 'india', category: 'parks', parkRegion: state.parkRegion })}
+              >
+                Practice region
                 <FontAwesomeIcon icon={faChevronRight} />
               </button>
             </div>
