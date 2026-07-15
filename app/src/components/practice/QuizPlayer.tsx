@@ -16,6 +16,7 @@ import { usePracticeStore } from '@/stores/usePracticeStore'
 import { pulseCorrect, shakeWrong } from '@/anim/animations'
 import type { Question } from '@/utils/practiceUtils'
 import { splitUPSCStem } from '@/utils/questionQuality'
+import { PyqSolutionView } from '@/components/pyq-vault/PyqSolutionView'
 
 interface QuizPlayerProps {
   title: string
@@ -119,7 +120,7 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
         `Q${i + 1}. ${item.q}`,
         `Your answer: ${picked}`,
         `Correct answer: ${item.options[item.answer]}`,
-        `Explanation: ${item.explanation}`,
+        `Explanation: ${item.pyq?.solution.detail ?? item.explanation}`,
       ].join('\n')
     })
     const blob = new Blob([lines.join('\n\n---\n\n')], { type: 'text/plain' })
@@ -213,7 +214,13 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
                       <b>{item.q}</b>
                       <p>Your answer: {answer.skipped || answer.picked === null ? 'Skipped' : item.options[answer.picked]}</p>
                       <p>Correct answer: {item.options[item.answer]}</p>
-                      <em>{item.explanation}</em>
+                      {item.pyq ? (
+                        <PyqSolutionView
+                          compact
+                          solution={item.pyq.solution}
+                          answerLabel={String.fromCharCode(65 + item.answer)}
+                        />
+                      ) : <em>{item.explanation}</em>}
                     </div>
                   )
                 })}
@@ -324,9 +331,18 @@ export function QuizPlayer({ title, questions, onClose, onShowToast }: QuizPlaye
         {/* Explanation */}
         {answered && (
           explanationOpen ? (
-            <div className={`qz-exp show ${answered.correct ? 'ok' : 'no'}`}>
-              <b>{answered.correct ? 'Correct' : 'Not quite'}</b>
-              <p>{q.explanation}{q.ref ? ` (${q.ref})` : ''}</p>
+            <div className={`qz-exp show ${answered.correct ? 'ok' : 'no'} ${q.pyq ? 'structured' : ''}`}>
+              {q.pyq ? (
+                <PyqSolutionView
+                  solution={q.pyq.solution}
+                  answerLabel={String.fromCharCode(65 + q.answer)}
+                />
+              ) : (
+                <>
+                  <b>{answered.correct ? 'Correct' : 'Not quite'}</b>
+                  <p>{q.explanation}{q.ref ? ` (${q.ref})` : ''}</p>
+                </>
+              )}
             </div>
           ) : (
             <button className={`qz-reveal-exp ${answered.correct ? 'ok' : 'no'}`} onClick={() => setExplanationOpen(true)}>

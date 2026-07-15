@@ -1,432 +1,423 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft, faMagnifyingGlass, faBookmark } from '@fortawesome/free-solid-svg-icons'
+import {
+  faArrowLeft,
+  faBookmark as faBookmarkSolid,
+  faBookOpen,
+  faCheck,
+  faChevronDown,
+  faChevronRight,
+  faMagnifyingGlass,
+  faPlay,
+  faRotateLeft,
+  faXmark,
+} from '@fortawesome/free-solid-svg-icons'
+import { faBookmark as faBookmarkRegular } from '@fortawesome/free-regular-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
-import { asset } from '@/utils/asset'
+import { usePracticeStore } from '@/stores/usePracticeStore'
+import type { PyqDifficulty, PyqManifest, PyqQuestion } from '@/types/pyq'
+import { splitUPSCStem } from '@/utils/questionQuality'
+import { seededPick } from '@/utils/practiceUtils'
+import {
+  loadPyqManifest,
+  loadPyqYears,
+  pyqQuestionId,
+  pyqToPracticeQuestion,
+} from '@/utils/pyqData'
+import { QuizPlayer } from '@/components/practice/QuizPlayer'
+import { PyqSolutionView } from './PyqSolutionView'
+import { getPyqSubtopic } from '@/utils/pyqTaxonomy'
 
-interface PYQQuestion {
-  id: string
-  year: number
-  exam: 'prelims' | 'mains'
-  subject: string
-  paper?: string
-  question: string
-  options?: string[]
-  answer?: string | number
-  explanation?: string
-}
+type AllOr<T> = T | 'all'
 
-interface DropdownProps<T> {
-  value: T
-  options: { value: T; label: string }[]
-  onChange: (val: T) => void
-  isOpen: boolean
-  setOpen: (open: boolean) => void
-  placeholder: string
-}
-
-function CustomDropdown<T extends string | number>({
-  value,
-  options,
-  onChange,
-  isOpen,
-  setOpen,
-  placeholder,
-}: DropdownProps<T>) {
-  const selectedLabel = options.find((o) => o.value === value)?.label ?? placeholder
-
+function QuestionStem({ text, compact = false }: { text: string; compact?: boolean }) {
+  const structured = splitUPSCStem(text)
+  if (!structured.statements.length) return <p className="pyqv-question-text">{text}</p>
+  const shownStatements = compact ? structured.statements.slice(0, 2) : structured.statements
   return (
-    <div style={{ flex: 1, position: 'relative' }}>
-      {/* Dropdown Button */}
-      <button
-        onClick={() => setOpen(!isOpen)}
-        style={{
-          width: '100%',
-          height: 40,
-          background: 'var(--panel)',
-          border: '1px solid var(--panel-border)',
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          borderRadius: 16,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0 14px',
-          color: 'var(--on)',
-          fontFamily: 'Nunito, sans-serif',
-          fontSize: 13,
-          fontWeight: 700,
-          cursor: 'pointer',
-          transition: 'all 0.2s',
-        }}
-      >
-        <span style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: '82%', textAlign: 'left' }}>
-          {selectedLabel}
-        </span>
-        <span style={{ fontSize: 9, opacity: 0.7, marginLeft: 6, transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
-          ▼
-        </span>
-      </button>
-
-      {/* Floating Options Menu */}
-      {isOpen && (
-        <>
-          {/* Backdrop click closer */}
-          <div 
-            onClick={() => setOpen(false)} 
-            style={{ position: 'fixed', inset: 0, zIndex: 998 }} 
-          />
-          <div
-            style={{
-              position: 'absolute',
-              top: 'calc(100% + 6px)',
-              left: 0,
-              right: 0,
-              maxHeight: 220,
-              overflowY: 'auto',
-              background: 'var(--card)',
-              border: '1px solid var(--panel-border)',
-              borderRadius: 16,
-              boxShadow: 'var(--shadow)',
-              zIndex: 999,
-              padding: '6px 0',
-              animation: 'scrIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-            }}
-          >
-            {options.map((opt) => {
-              const isSelected = opt.value === value
-              return (
-                <button
-                  key={opt.value}
-                  onClick={() => {
-                    onChange(opt.value)
-                    setOpen(false)
-                  }}
-                  style={{
-                    width: '100%',
-                    padding: '9px 16px',
-                    textAlign: 'left',
-                    background: isSelected ? 'rgba(233, 185, 59, 0.12)' : 'transparent',
-                    border: 'none',
-                    color: isSelected ? 'var(--yellow)' : 'var(--ink)',
-                    fontFamily: 'Nunito, sans-serif',
-                    fontSize: 13,
-                    fontWeight: isSelected ? 800 : 600,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    transition: 'background 0.15s',
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isSelected) e.currentTarget.style.background = 'var(--card2)'
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isSelected) e.currentTarget.style.background = 'transparent'
-                  }}
-                >
-                  <span style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
-                    {opt.label}
-                  </span>
-                  {isSelected && <span style={{ fontSize: 10 }}>✓</span>}
-                </button>
-              )
-            })}
-          </div>
-        </>
+    <div className={`pyqv-question-text structured ${compact ? 'compact' : ''}`}>
+      {structured.lead && <p>{structured.lead}</p>}
+      <ol>{shownStatements.map((statement, index) => <li key={index}>{statement}</li>)}</ol>
+      {compact && structured.statements.length > shownStatements.length && (
+        <span className="pyqv-more-statements">+{structured.statements.length - shownStatements.length} more statements</span>
       )}
+      {structured.ask && <p className="ask">{structured.ask}</p>}
     </div>
   )
 }
 
+function answerLabel(question: PyqQuestion) {
+  if (question.answer === undefined) return ''
+  return String.fromCharCode(65 + question.answer)
+}
+
 export function PYQVault() {
   const { setOverlay } = useAppStore()
-  const [data, setData] = useState<PYQQuestion[]>([])
+  const { stats, questionBookmarks, toggleQbm } = usePracticeStore()
+  const [manifest, setManifest] = useState<PyqManifest | null>(null)
+  const [questions, setQuestions] = useState<PyqQuestion[]>([])
+  const [loadedYears, setLoadedYears] = useState<Set<number>>(new Set())
+  const [activeYear, setActiveYear] = useState<AllOr<number>>('all')
+  const [mode, setMode] = useState<'prelims' | 'mains'>('prelims')
+  const [subject, setSubject] = useState('all')
+  const [subtopic, setSubtopic] = useState('all')
+  const [difficulty, setDifficulty] = useState<AllOr<PyqDifficulty>>('all')
   const [query, setQuery] = useState('')
-  const [exam, setExam] = useState<'all' | 'prelims' | 'mains'>('all')
-  const [activeYear, setActiveYear] = useState<number | 'all'>('all')
-  const [activeSubject, setActiveSubject] = useState<string | 'all'>('all')
-  const [bookmarked, setBookmarked] = useState<string[]>(() => {
-    try { return JSON.parse(localStorage.getItem('u4pyqbm') || '[]') } catch { return [] }
-  })
-  const [revealed, setRevealed] = useState<Set<string>>(new Set())
-  const [yearOpen, setYearOpen] = useState(false)
-  const [subjectOpen, setSubjectOpen] = useState(false)
+  const [bookmarkedOnly, setBookmarkedOnly] = useState(false)
+  const [visibleCount, setVisibleCount] = useState(24)
+  const [practiceCount, setPracticeCount] = useState<number | 'all'>(10)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [selected, setSelected] = useState<PyqQuestion | null>(null)
+  const [detailMode, setDetailMode] = useState<'question' | 'solution'>('question')
+  const [quizQuestions, setQuizQuestions] = useState<PyqQuestion[] | null>(null)
+  const [toast, setToast] = useState('')
+
+  function showToast(message: string) {
+    setToast(message)
+    window.setTimeout(() => setToast(''), 1800)
+  }
 
   useEffect(() => {
-    fetch(asset('data/pyq-data.json'))
-      .then((r) => r.json())
-      .then(setData)
-      .catch(() => {})
+    let active = true
+    loadPyqManifest()
+      .then((nextManifest) => {
+        if (!active) return
+        setManifest(nextManifest)
+        setActiveYear(nextManifest.totals.years[0] ?? 'all')
+      })
+      .catch(() => {
+        if (active) setError('The PYQ library could not be loaded. Please try again.')
+      })
+    return () => { active = false }
   }, [])
 
-  const pool = useMemo(() => exam === 'all' ? data : data.filter((q) => q.exam === exam), [data, exam])
-  const years = useMemo(() => [...new Set(pool.map((q) => q.year))].sort((a, b) => b - a), [pool])
-  const subjects = useMemo(() => [...new Set(pool.map((q) => q.subject))].sort(), [pool])
+  useEffect(() => {
+    if (!manifest) return
+    const wanted = activeYear === 'all' ? manifest.totals.years : [activeYear]
+    const missing = wanted.filter((year) => !loadedYears.has(year))
+    if (!missing.length) { setLoading(false); return }
+    let active = true
+    setLoading(true)
+    loadPyqYears(missing)
+      .then((loaded) => {
+        if (!active) return
+        setQuestions((current) => {
+          const merged = new Map(current.map((question) => [question.id, question]))
+          loaded.forEach((question) => merged.set(question.id, question))
+          return [...merged.values()]
+        })
+        setLoadedYears((current) => new Set([...current, ...missing]))
+        setError('')
+      })
+      .catch(() => {
+        if (active) setError('This question set could not be loaded. Please try another year.')
+      })
+      .finally(() => { if (active) setLoading(false) })
+    return () => { active = false }
+  }, [activeYear, loadedYears, manifest])
+
+  const availableSubjects = useMemo(() => {
+    if (!manifest) return []
+    const papers = activeYear === 'all'
+      ? manifest.papers
+      : manifest.papers.filter((paper) => paper.year === activeYear)
+    return [...new Set(papers.flatMap((paper) => Object.keys(paper.subjects)))].sort()
+  }, [activeYear, manifest])
+
+  const yearPool = useMemo(() => questions
+    .filter((question) => activeYear === 'all' || question.year === activeYear)
+    .sort((a, b) => b.year - a.year || a.qno - b.qno), [activeYear, questions])
+
+  const availableSubtopics = useMemo(() => {
+    const counts = new Map<string, number>()
+    yearPool
+      .filter((question) => subject === 'all' || question.subject === subject)
+      .forEach((question) => {
+        const value = getPyqSubtopic(question)
+        counts.set(value, (counts.get(value) ?? 0) + 1)
+      })
+    return [...counts.entries()]
+      .map(([label, count]) => ({ label, count }))
+      .sort((a, b) => a.label.localeCompare(b.label))
+  }, [subject, yearPool])
 
   const results = useMemo(() => {
-    const q = query.toLowerCase()
-    return pool.filter((item) => {
-      const matchYear = activeYear === 'all' || item.year === activeYear
-      const matchSub = activeSubject === 'all' || item.subject === activeSubject
-      const matchQ = !q || item.question.toLowerCase().includes(q) || item.subject.toLowerCase().includes(q)
-      return matchYear && matchSub && matchQ
+    const normalizedQuery = query.trim().toLowerCase()
+    return yearPool.filter((question) => {
+      if (subject !== 'all' && question.subject !== subject) return false
+      const questionSubtopic = getPyqSubtopic(question)
+      if (subtopic !== 'all' && questionSubtopic !== subtopic) return false
+      if (difficulty !== 'all' && question.difficulty !== difficulty) return false
+      if (bookmarkedOnly && !questionBookmarks.includes(pyqQuestionId(question))) return false
+      if (!normalizedQuery) return true
+      const searchable = [
+        question.stem,
+        question.subject,
+        questionSubtopic,
+        question.year,
+        ...question.tags,
+        ...(question.options ?? []),
+      ].join(' ').toLowerCase()
+      return searchable.includes(normalizedQuery)
     })
-  }, [pool, activeYear, activeSubject, query])
+  }, [bookmarkedOnly, difficulty, query, questionBookmarks, subject, subtopic, yearPool])
 
-  const yearOptions = useMemo(() => [
-    { value: 'all' as const, label: 'All Years' },
-    ...years.map((y) => ({ value: y, label: String(y) }))
-  ], [years])
+  const attempted = useMemo(() => results.filter((question) => stats.a[pyqQuestionId(question)]).length, [results, stats.a])
+  const bookmarkedCount = useMemo(() => results.filter((question) => questionBookmarks.includes(pyqQuestionId(question))).length, [questionBookmarks, results])
 
-  const subjectOptions = useMemo(() => [
-    { value: 'all' as const, label: 'All Subjects' },
-    ...subjects.map((s) => ({ value: s, label: s }))
-  ], [subjects])
+  useEffect(() => {
+    setVisibleCount(24)
+  }, [activeYear, subject, difficulty, query, bookmarkedOnly])
 
-  function toggleBm(id: string) {
-    setBookmarked((prev) => {
-      const next = prev.includes(id) ? prev.filter((b) => b !== id) : [...prev, id]
-      try { localStorage.setItem('u4pyqbm', JSON.stringify(next)) } catch {}
-      return next
-    })
+  useEffect(() => { setSubtopic('all') }, [activeYear, subject])
+
+  function clearFilters() {
+    setSubject('all')
+    setSubtopic('all')
+    setDifficulty('all')
+    setQuery('')
+    setBookmarkedOnly(false)
   }
 
-  function toggleReveal(id: string) {
-    setRevealed((prev) => {
-      const next = new Set(prev)
-      next.has(id) ? next.delete(id) : next.add(id)
-      return next
-    })
+  function startPractice(pool: PyqQuestion[], count: number | 'all' = practiceCount) {
+    const eligible = pool.filter((question) => question.options?.length === 4 && question.answer !== undefined)
+    if (!eligible.length) { showToast('No practice-ready questions in this selection'); return }
+    const requested = count === 'all' ? eligible.length : Math.max(1, count)
+    const picked = seededPick(eligible, Math.min(requested, eligible.length), `pyq-${Date.now()}`)
+    setQuizQuestions(picked)
+    setSelected(null)
   }
 
-  function chip(label: string, active: boolean, onClick: () => void) {
+  function openDetail(question: PyqQuestion, view: 'question' | 'solution') {
+    setDetailMode(view)
+    setSelected(question)
+  }
+
+  if (quizQuestions) {
     return (
-      <button
-        key={label}
-        onClick={onClick}
-        style={{
-          flexShrink: 0,
-          padding: '7px 14px',
-          borderRadius: 15,
-          fontSize: 11.5,
-          fontWeight: 700,
-          border: active ? '1px solid transparent' : '1px solid var(--panel-border)',
-          background: active ? '#fff' : 'var(--panel)',
-          color: active ? '#4A4E8C' : 'var(--on2)',
-          whiteSpace: 'nowrap',
-          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-          cursor: 'pointer',
-          boxShadow: active ? '0 4px 12px rgba(0, 0, 0, 0.1)' : 'none',
-          transform: active ? 'scale(1.02)' : 'scale(1)',
-        }}
-        onMouseDown={(e) => {
-          e.currentTarget.style.transform = 'scale(0.95)';
-        }}
-        onMouseUp={(e) => {
-          e.currentTarget.style.transform = active ? 'scale(1.02)' : 'scale(1)';
-        }}
-      >
-        {label}
-      </button>
+      <QuizPlayer
+        title="UPSC Prelims PYQ"
+        questions={quizQuestions.map(pyqToPracticeQuestion)}
+        onClose={() => setQuizQuestions(null)}
+        onShowToast={showToast}
+      />
     )
   }
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        paddingTop: 'env(safe-area-inset-top)',
-        zIndex: 300,
-        background: 'linear-gradient(180deg, var(--bg1), var(--bg3))',
-        display: 'flex',
-        flexDirection: 'column',
-        transform: 'translateX(0)',
-        transition: 'transform 0.35s cubic-bezier(0.4,0,0.2,1)',
-      }}
-    >
-      {/* Header with Title, Subtitle, and Inline Search Bar */}
-      <div className="ma-header" style={{ height: 'auto', padding: '10px 18px', gap: 12, display: 'flex', alignItems: 'center' }}>
-        <button onClick={() => setOverlay(null)} aria-label="Back">
+    <div className="pyqv-shell">
+      <header className="pyqv-header">
+        <button className="pyqv-icon-btn" onClick={() => setOverlay(null)} aria-label="Close PYQ Vault">
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 1, minWidth: 100 }}>
-          <h2 style={{ fontSize: 19, fontWeight: 900, color: 'var(--on)', margin: 0, whiteSpace: 'nowrap' }}>
-            PYQ <span style={{ color: 'var(--yellow)' }}>Vault</span>
-          </h2>
-          <span style={{ fontSize: 10.5, color: 'var(--on2)', fontWeight: 700, whiteSpace: 'nowrap' }}>
-            Practice years 📝
-          </span>
+        <div>
+          <span>UPSC Question Library</span>
+          <h2>PYQ Vault</h2>
         </div>
-
-        {/* Small Inline Search Bar */}
-        <div 
-          style={{ 
-            flex: 1, 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 8, 
-            background: 'var(--panel)', 
-            border: '1px solid var(--panel-border)', 
-            backdropFilter: 'blur(16px)', 
-            borderRadius: 16, 
-            padding: '8px 12px',
-            marginLeft: 8,
-          }}
-        >
-          <FontAwesomeIcon icon={faMagnifyingGlass} style={{ color: 'var(--on2)', fontSize: 12 }} />
-          <input 
-            value={query} 
-            onChange={(e) => setQuery(e.target.value)} 
-            placeholder="Search PYQs..." 
-            style={{ 
-              width: '100%', 
-              background: 'none', 
-              border: 'none', 
-              outline: 'none', 
-              color: 'var(--on)', 
-              fontFamily: 'Nunito, sans-serif', 
-              fontSize: 12.5, 
-              fontWeight: 600 
-            }} 
-          />
+        <div className="pyqv-mode-switch" role="tablist" aria-label="Examination stage">
+          <button className={mode === 'prelims' ? 'active' : ''} onClick={() => { setMode('prelims'); setSelected(null) }}>Prelims</button>
+          <button className={mode === 'mains' ? 'active' : ''} onClick={() => { setMode('mains'); setSelected(null) }}>Mains</button>
         </div>
-      </div>
+      </header>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '10px 16px 60px', position: 'relative', zIndex: 2 }}>
-
-        {/* Exam tabs (Capsule Segmented Control) */}
-        <div 
-          style={{ 
-            display: 'flex', 
-            background: 'var(--panel)', 
-            border: '1px solid var(--panel-border)', 
-            backdropFilter: 'blur(16px)', 
-            borderRadius: 20, 
-            padding: 4, 
-            marginBottom: 14 
-          }}
-        >
-          {(['all', 'prelims', 'mains'] as const).map((e) => {
-            const isSel = exam === e
-            return (
-              <button 
-                key={e} 
-                onClick={() => setExam(e)} 
-                style={{ 
-                  flex: 1, 
-                  textAlign: 'center', 
-                  padding: '9px 0', 
-                  borderRadius: 16, 
-                  border: 'none', 
-                  background: isSel ? '#fff' : 'transparent', 
-                  color: isSel ? '#4A4E8C' : 'var(--on2)', 
-                  fontSize: 12.5, 
-                  fontWeight: 800, 
-                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)', 
-                  cursor: 'pointer',
-                  boxShadow: isSel ? '0 4px 12px rgba(0,0,0,0.12)' : 'none',
-                }}
-              >
-                {e === 'all' ? 'All' : e.charAt(0).toUpperCase() + e.slice(1)}
-              </button>
-            )
-          })}
-        </div>
-
-        {/* Year + Subject Select Dropdowns (Side-by-Side Compact Custom Layout) */}
-        <div style={{ display: 'flex', gap: 10, marginBottom: 12, position: 'relative', zIndex: 10 }}>
-          {/* Year Custom Dropdown */}
-          <CustomDropdown
-            value={activeYear}
-            options={yearOptions}
-            onChange={(val) => setActiveYear(val)}
-            isOpen={yearOpen}
-            setOpen={(open) => {
-              setYearOpen(open)
-              if (open) setSubjectOpen(false) // Close subject dropdown if year is clicked
-            }}
-            placeholder="All Years"
-          />
-
-          {/* Subject Custom Dropdown */}
-          <CustomDropdown
-            value={activeSubject}
-            options={subjectOptions}
-            onChange={(val) => setActiveSubject(val)}
-            isOpen={subjectOpen}
-            setOpen={(open) => {
-              setSubjectOpen(open)
-              if (open) setYearOpen(false) // Close year dropdown if subject is clicked
-            }}
-            placeholder="All Subjects"
-          />
-        </div>
-
-        <p style={{ fontSize: 11.5, color: 'var(--on2)', margin: '4px 4px 12px', fontWeight: 800 }}>
-          {results.length} question{results.length !== 1 ? 's' : ''}
-        </p>
-
-        {/* Questions */}
-        {results.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--on2)', fontWeight: 700 }}>
-            <FontAwesomeIcon icon={faMagnifyingGlass} style={{ fontSize: 32, marginBottom: 12, display: 'block', opacity: 0.5 }} />
-            No questions match your filters.
-          </div>
+      <main className="pyqv-main">
+        {mode === 'mains' ? (
+          <section className="pyqv-mains-placeholder">
+            <span>Mains PYQ workspace</span>
+            <h3>Answer-writing archive, coming next.</h3>
+            <p>This section is reserved for paper-wise Mains questions, syllabus filters and model-answer frameworks. Prelims remains fully available from the switch above.</p>
+          </section>
         ) : (
-          results.map((q) => {
-            const isBm = bookmarked.includes(q.id)
-            const isRevealed = revealed.has(q.id)
-            return (
-              <div key={q.id} style={{ background: 'var(--card)', borderRadius: 26, padding: 18, marginBottom: 12, boxShadow: 'var(--shadow-soft)', animation: 'cardIn 0.45s cubic-bezier(0.22,1,0.36,1) both', color: 'var(--ink)' }}>
-                {/* Tags */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12, flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: 9.5, fontWeight: 900, letterSpacing: 0.4, textTransform: 'uppercase', padding: '5px 11px', borderRadius: 12, background: 'rgba(108,113,196,.14)', color: 'var(--acc)' }}>{q.year}</span>
-                  <span style={{ fontSize: 9.5, fontWeight: 900, letterSpacing: 0.4, textTransform: 'uppercase', padding: '5px 11px', borderRadius: 12, background: 'rgba(76,175,130,.15)', color: 'var(--good)' }}>{q.exam}</span>
-                  <span style={{ fontSize: 9.5, fontWeight: 900, letterSpacing: 0.4, textTransform: 'uppercase', padding: '5px 11px', borderRadius: 12, background: 'var(--card2)', color: 'var(--ink2)' }}>{q.subject}</span>
-                  <button onClick={() => toggleBm(q.id)} style={{ marginLeft: 'auto', width: 36, height: 36, borderRadius: 13, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', background: isBm ? 'var(--yellow)' : 'var(--card2)', color: isBm ? 'var(--yellow-ink)' : 'var(--ink2)', fontSize: 14 }}>
-                    <FontAwesomeIcon icon={faBookmark} />
-                  </button>
-                </div>
+        <>
+        <section className="pyqv-overview">
+          <div className="pyqv-overview-copy">
+            <span>PYQ Vault</span>
+            <h3>Learn the patterns UPSC repeats.</h3>
+            <p>Choose a subject and its connected subtopic, then practise the filtered paper or study the full solution.</p>
+          </div>
+          <div className="pyqv-metrics">
+            <div><b>{results.length.toLocaleString('en-IN')}</b><span>in selection</span></div>
+            <div><b>{attempted}</b><span>attempted</span></div>
+            <div><b>{bookmarkedCount}</b><span>bookmarked</span></div>
+          </div>
+        </section>
 
-                {/* Question */}
-                <p style={{ fontSize: 15, lineHeight: 1.55, fontWeight: 800, marginBottom: 14, color: 'var(--ink)' }}>{q.question}</p>
+        <section className="pyqv-controls" aria-label="Question filters">
+          <div className="pyqv-search">
+            <FontAwesomeIcon icon={faMagnifyingGlass} />
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search concepts, subtopics or question text"
+              aria-label="Search PYQs"
+            />
+            {query && <button onClick={() => setQuery('')} aria-label="Clear search"><FontAwesomeIcon icon={faXmark} /></button>}
+          </div>
 
-                {/* Options */}
-                {q.options && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 6 }}>
-                    {q.options.map((opt, idx) => {
-                      const letter = String.fromCharCode(65 + idx)
-                      const isCorrect = isRevealed && q.answer === letter
-                      return (
-                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '12px 14px', borderRadius: 16, border: isCorrect ? '1.5px solid var(--good)' : '1.5px solid var(--border)', background: isCorrect ? 'rgba(76,175,130,.12)' : 'var(--card2)', fontSize: 13.5, fontWeight: 600, color: 'var(--ink)' }}>
-                          <span style={{ width: 24, height: 24, borderRadius: 9, border: isCorrect ? 'none' : '1.5px solid var(--border)', background: isCorrect ? 'var(--good)' : 'var(--card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10.5, fontWeight: 900, color: isCorrect ? '#fff' : 'var(--ink2)', flexShrink: 0 }}>
-                            {letter}
-                          </span>
-                          {opt}
-                        </div>
-                      )
-                    })}
-                  </div>
-                )}
+          <div className="pyqv-filter-grid">
+            <label>
+              <span>Year</span>
+              <div><select value={activeYear} onChange={(event) => setActiveYear(event.target.value === 'all' ? 'all' : Number(event.target.value))}>
+                <option value="all">All years</option>
+                {manifest?.totals.years.map((year) => <option key={year} value={year}>{year}</option>)}
+              </select><FontAwesomeIcon icon={faChevronDown} /></div>
+            </label>
+            <label>
+              <span>Subject</span>
+              <div><select value={subject} onChange={(event) => setSubject(event.target.value)}>
+                <option value="all">All subjects</option>
+                {availableSubjects.map((item) => <option key={item} value={item}>{item}</option>)}
+              </select><FontAwesomeIcon icon={faChevronDown} /></div>
+            </label>
+            <label>
+              <span>Sub-topic</span>
+              <div><select value={subtopic} onChange={(event) => setSubtopic(event.target.value)}>
+                <option value="all">All sub-topics</option>
+                {availableSubtopics.map((item) => <option key={item.label} value={item.label}>{item.label} ({item.count})</option>)}
+              </select><FontAwesomeIcon icon={faChevronDown} /></div>
+            </label>
+            <label>
+              <span>Difficulty</span>
+              <div><select value={difficulty} onChange={(event) => setDifficulty(event.target.value as AllOr<PyqDifficulty>)}>
+                <option value="all">All levels</option>
+                <option value="easy">Easy</option>
+                <option value="moderate">Moderate</option>
+                <option value="hard">Hard</option>
+              </select><FontAwesomeIcon icon={faChevronDown} /></div>
+            </label>
+          </div>
 
-                {/* Reveal / Explanation */}
-                {!isRevealed ? (
-                  <button onClick={() => toggleReveal(q.id)} style={{ background: 'var(--yellow)', color: 'var(--yellow-ink)', border: 'none', borderRadius: 16, padding: '11px 18px', fontSize: 12, fontWeight: 900, cursor: 'pointer' }}>
-                    Reveal Answer
-                  </button>
-                ) : q.explanation ? (
-                  <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1.5px dashed var(--border)', fontSize: 13, color: 'var(--ink2)', lineHeight: 1.65, fontWeight: 600 }}>
-                    <strong style={{ color: 'var(--ink)' }}>Explanation: </strong>
-                    {q.explanation}
-                  </div>
-                ) : null}
-              </div>
-            )
-          })
+          <div className="pyqv-control-footer">
+            <button className={`pyqv-bookmark-filter ${bookmarkedOnly ? 'active' : ''}`} onClick={() => setBookmarkedOnly((value) => !value)}>
+              <FontAwesomeIcon icon={bookmarkedOnly ? faBookmarkSolid : faBookmarkRegular} /> Bookmarked only
+            </button>
+            <button className="pyqv-reset" onClick={clearFilters}><FontAwesomeIcon icon={faRotateLeft} /> Reset</button>
+          </div>
+        </section>
+
+        <section className="pyqv-practice-bar">
+          <div>
+            <span>Build a test</span>
+            <b>{results.length ? `${practiceCount === 'all' ? results.length : Math.min(practiceCount, results.length)} questions from this selection` : 'Adjust filters to find questions'}</b>
+          </div>
+          <div className="pyqv-count-picker" aria-label="Question count">
+            {[10, 20, 50].map((count) => <button key={count} className={practiceCount === count ? 'active' : ''} onClick={() => setPracticeCount(count)}>{count}</button>)}
+            <input
+              type="number"
+              min="1"
+              max={Math.max(results.length, 1)}
+              value={typeof practiceCount === 'number' && ![10, 20, 50].includes(practiceCount) ? practiceCount : ''}
+              onChange={(event) => {
+                const value = Number(event.target.value)
+                if (value > 0) setPracticeCount(value)
+              }}
+              placeholder="Custom"
+              aria-label="Custom question count"
+            />
+            <button className={practiceCount === 'all' ? 'active' : ''} onClick={() => setPracticeCount('all')}>All</button>
+          </div>
+          <button className="pyqv-start" onClick={() => startPractice(results)} disabled={!results.length || loading}>
+            <FontAwesomeIcon icon={faPlay} /> Start test
+          </button>
+        </section>
+
+        <div className="pyqv-result-head">
+          <div><span>Question bank</span><b>{loading ? 'Loading paper…' : `${results.length.toLocaleString('en-IN')} questions`}</b></div>
+          {activeYear === 'all' && loading && <span className="pyqv-loading-note">Loading all 31 years</span>}
+        </div>
+
+        {error ? (
+          <div className="pyqv-empty"><FontAwesomeIcon icon={faBookOpen} /><b>Library unavailable</b><p>{error}</p></div>
+        ) : !loading && !results.length ? (
+          <div className="pyqv-empty"><FontAwesomeIcon icon={faMagnifyingGlass} /><b>No questions match</b><p>Try a wider year, subject or search term.</p><button onClick={clearFilters}>Clear filters</button></div>
+        ) : (
+          <div className={`pyqv-list ${loading && !results.length ? 'loading' : ''}`}>
+            {loading && !results.length
+              ? Array.from({ length: 5 }, (_, index) => <div className="pyqv-skeleton" key={index} />)
+              : results.slice(0, visibleCount).map((question) => {
+                  const bookmarked = questionBookmarks.includes(pyqQuestionId(question))
+                  const answered = Boolean(stats.a[pyqQuestionId(question)])
+                  return (
+                    <article
+                      className="pyqv-card"
+                      key={question.id}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => openDetail(question, 'question')}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault()
+                          openDetail(question, 'question')
+                        }
+                      }}
+                    >
+                      <div className="pyqv-card-meta">
+                        <span>{question.year} · Q{question.qno}</span>
+                        <span>{question.subject}</span>
+                        <span>{getPyqSubtopic(question)}</span>
+                        <i className={question.difficulty}>{question.difficulty}</i>
+                        {answered && <i className="attempted"><FontAwesomeIcon icon={faCheck} /> attempted</i>}
+                        <button
+                          className={bookmarked ? 'active' : ''}
+                          onClick={(event) => {
+                            event.stopPropagation()
+                            toggleQbm(pyqQuestionId(question), showToast)
+                          }}
+                          aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark question'}
+                        >
+                          <FontAwesomeIcon icon={bookmarked ? faBookmarkSolid : faBookmarkRegular} />
+                        </button>
+                      </div>
+                      <QuestionStem text={question.stem} compact />
+                      <div className="pyqv-card-actions">
+                        <button onClick={(event) => { event.stopPropagation(); openDetail(question, 'question') }}><FontAwesomeIcon icon={faBookOpen} /> View question</button>
+                        <button onClick={(event) => { event.stopPropagation(); openDetail(question, 'solution') }}>See answer <FontAwesomeIcon icon={faChevronRight} /></button>
+                      </div>
+                    </article>
+                  )
+                })}
+          </div>
         )}
-      </div>
+
+        {visibleCount < results.length && (
+          <button className="pyqv-load-more" onClick={() => setVisibleCount((count) => count + 24)}>
+            Show 24 more <span>{results.length - visibleCount} remaining</span>
+          </button>
+        )}
+        </>
+        )}
+      </main>
+
+      {selected && (
+        <div className="pyqv-detail-backdrop" onClick={() => setSelected(null)}>
+          <aside className="pyqv-detail" onClick={(event) => event.stopPropagation()}>
+            <div className="pyqv-detail-head">
+              <div><span>UPSC Prelims {selected.year} · Question {selected.qno} · {detailMode === 'question' ? 'Question' : 'Answer'}</span><b>{selected.subject} · {getPyqSubtopic(selected)}</b></div>
+              <button onClick={() => setSelected(null)} aria-label="Close solution"><FontAwesomeIcon icon={faXmark} /></button>
+            </div>
+            <div className="pyqv-detail-scroll">
+              <QuestionStem text={selected.stem} />
+              <div className="pyqv-detail-options">
+                {selected.options?.map((option, index) => (
+                  <div key={index} className={detailMode === 'solution' && index === selected.answer ? 'correct' : ''}>
+                    <span>{String.fromCharCode(65 + index)}</span><p>{option}</p>{detailMode === 'solution' && index === selected.answer && <FontAwesomeIcon icon={faCheck} />}
+                  </div>
+                ))}
+              </div>
+              {detailMode === 'solution' && <PyqSolutionView solution={selected.solution} answerLabel={answerLabel(selected)} />}
+            </div>
+            {detailMode === 'question' && (
+              <div className="pyqv-detail-actions">
+                <button onClick={() => setDetailMode('solution')}><FontAwesomeIcon icon={faBookOpen} /> See solution</button>
+                <button onClick={() => startPractice([selected], 1)}><FontAwesomeIcon icon={faPlay} /> Practise question</button>
+              </div>
+            )}
+          </aside>
+        </div>
+      )}
+
+      {toast && <div className="pyqv-toast">{toast}</div>}
     </div>
   )
 }

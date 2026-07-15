@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useAppStore } from '@/stores/useAppStore'
 import type { ArticlesByDate } from '@/types/article'
-import { asset } from '@/utils/asset'
+import { fetchContent } from '@/utils/content'
 
 interface DatesManifest {
   dates: string[]
@@ -23,13 +23,11 @@ export function useAllArticles() {
     if (started.current) return
     started.current = true
 
-    fetch(asset('data/articles/index.json'))
-      .then((r) => (r.ok ? (r.json() as Promise<DatesManifest>) : Promise.reject()))
+    fetchContent<DatesManifest>('articles/index.json')
       .then((manifest) =>
         Promise.all(
           (manifest.dates ?? []).map((date) =>
-            fetch(asset(`data/articles/${date}.json`))
-              .then((r) => (r.ok ? (r.json() as Promise<ArticlesByDate>) : null))
+            fetchContent<ArticlesByDate>(`articles/${date}.json`)
               .then((data) => { if (data) mergeArticles(data) })
               .catch(() => {}),
           ),

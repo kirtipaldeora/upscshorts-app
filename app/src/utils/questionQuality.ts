@@ -184,10 +184,10 @@ export const prelimQualityIssues = contentQualityIssues
 
 export function splitUPSCStem(stem: string) {
   const normal = stem.replace(/\s+/g, ' ').trim()
-  const askMatch = normal.match(/\b(Which of the statements given above is\/are correct\?|Which of the following statements is\/are correct\?|Which of the following is\/are correct\?|How many of the above statements are correct\?)$/i)
+  const askMatch = normal.match(/\b((?:Which|How many|Select the correct|What (?:is|are))[^?]*\?)$/)
   const ask = askMatch?.[0] ?? ''
   const setup = ask ? normal.slice(0, normal.length - ask.length).trim() : normal
-  const firstStatement = setup.search(/\b1\.\s+/)
+  const firstStatement = setup.search(/(?:^|\s)(?:1|I)\.\s+/)
 
   if (firstStatement < 0) {
     return { lead: normal, statements: [] as string[], ask: '' }
@@ -195,6 +195,12 @@ export function splitUPSCStem(stem: string) {
 
   const lead = setup.slice(0, firstStatement).trim()
   const statementText = setup.slice(firstStatement).trim()
-  const statements = Array.from(statementText.matchAll(/\d+\.\s+(.+?)(?=\s+\d+\.\s+|$)/g), m => m[1].trim())
+  const markers = [...statementText.matchAll(/(?:^|\s)((?:\d{1,2}|I{1,3}|IV|V))\.\s+/g)]
+  if (markers.length < 2) return { lead: normal, statements: [] as string[], ask: '' }
+  const statements = markers.map((marker, index) => {
+    const from = (marker.index ?? 0) + marker[0].length
+    const to = markers[index + 1]?.index ?? statementText.length
+    return statementText.slice(from, to).trim()
+  }).filter(Boolean)
   return { lead, statements, ask }
 }

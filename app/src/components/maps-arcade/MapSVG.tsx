@@ -61,6 +61,8 @@ interface MapSVGProps {
   activeParkRegion: string | null
   activePracticeRegion?: string | null
   activeParkState?: string | null
+  activeParkId?: number | null
+  learnRiverNames?: string[]
   activePracticeState?: string | null
   stateName: (name: string) => string
   targetId: string | number | null
@@ -141,6 +143,8 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
   activeParkRegion,
   activePracticeRegion,
   activeParkState,
+  activeParkId,
+  learnRiverNames = [],
   activePracticeState,
   stateName,
   targetId,
@@ -180,6 +184,8 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
     const { width, height } = wrap.getBoundingClientRect()
     const w = Math.max(320, Math.round(width))
     const h = Math.max(320, Math.round(height))
+    const parkLearnSideDock = view === 'parks' && phase === 'learn' && w >= 700 && w / h > 1.25
+    const parkLearnDockWidth = Math.min(330, Math.max(270, w * 0.36))
     const svg = d3.select(svgEl).attr('viewBox', `0 0 ${w} ${h}`)
     svg.selectAll('*').remove()
 
@@ -192,19 +198,49 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
     const worldFc: FeatureCollection = { type: 'FeatureCollection', features: countries.map(c => c.feature) }
     const indiaFeature = countries.find(c => c.id === 356)?.feature
 
-    const focusedState = activePracticeState ?? (phase === 'learn' ? activeParkState : null)
+    const activeParkStateId = activeParkState ? stateName(activeParkState) : null
+    const focusedState = activePracticeState ?? (phase === 'learn' ? activeParkStateId : null)
     const activeStateFeature = isIndiaView && indiaStates && focusedState
       ? indiaStates.features.find(feature => stateName(stateFeatureName(feature)) === focusedState)
       : null
+    const visibleSystemRivers = view === 'river-system'
+      ? rivers.filter(river => !activeRiverSystem || river.system === activeRiverSystem)
+      : []
+    const targetRiver = view === 'river-system'
+      ? visibleSystemRivers.find(river => String(river.id) === String(targetId))
+      : null
+    const visibleLearnRivers = view === 'parks' && phase === 'learn'
+      ? rivers.filter(river => learnRiverNames.includes(river.name))
+      : []
 
     if (view === 'continent' && activeContinent && WORLD_BOUNDS[activeContinent]) {
       projection.fitExtent([[20, 18], [w - 20, h - 18]], boundsFeature(WORLD_BOUNDS[activeContinent]) as never)
     } else if (isIndiaView) {
       const effectiveParkRegion = activePracticeRegion ?? activeParkRegion
       const bottomGutter = phase === 'playing' || phase === 'answered' ? 166 : 74
-      if (view === 'parks' && activeStateFeature) {
+      if (view === 'river-system' && visibleSystemRivers.length) {
+        const targetFeature: Feature | null = targetRiver
+          ? { type: 'Feature', properties: {}, geometry: targetRiver.geometry }
+          : null
+        const systemFeatures: FeatureCollection = {
+          type: 'FeatureCollection',
+          features: visibleSystemRivers.map(river => ({ type: 'Feature', properties: {}, geometry: river.geometry })),
+        }
+        const focusGeometry = mode === 'name' && targetFeature && (phase === 'playing' || phase === 'answered')
+          ? paddedFeatureBounds(targetFeature, 6.2, 1.1)
+          : systemFeatures
         projection.fitExtent(
-          [[30, 34], [w - 30, h - (phase === 'learn' ? 128 : bottomGutter)]],
+          [[44, 32], [w - 44, h - bottomGutter]],
+          focusGeometry as never,
+        )
+      } else if (view === 'parks' && activeStateFeature) {
+        const compact = w < 640
+        projection.fitExtent(
+          phase === 'learn'
+            ? parkLearnSideDock
+              ? [[36, 112], [w - parkLearnDockWidth - 24, h - 28]]
+              : [[compact ? 24 : 38, compact ? 106 : 104], [w - (compact ? 24 : 38), h - (compact ? 252 : 184)]]
+            : [[30, 34], [w - 30, h - bottomGutter]],
           paddedFeatureBounds(activeStateFeature) as never,
         )
       } else {
@@ -237,6 +273,7 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
     const answerable = phase === 'playing' && mode === 'locate'
     const shouldShowCountries = view === 'world' || view === 'continent'
     const shouldShowIndia = isIndiaView
+    const occupiedMapLabels: { x1: number; y1: number; x2: number; y2: number }[] = []
 
     if (shouldShowCountries) {
       const countryLayer = g.append('g').attr('class', 'atlas-country-layer')
@@ -344,6 +381,26 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
       }
     }
 
+    if (view === 'river-system') {
+      const basinCountryIds = activeRiverSystem === 'indus_ref'
+        ? new Set([4, 156, 356, 586])
+        : activeRiverSystem === 'brahmaputra_ref'
+          ? new Set([50, 64, 104, 156, 356])
+          : activeRiverSystem === 'ganga_ref'
+            ? new Set([50, 156, 356, 524])
+            : new Set([356])
+      g.append('g')
+        .attr('class', 'atlas-basin-context')
+        .selectAll('path')
+        .data(countries.filter(country => basinCountryIds.has(country.id)))
+        .join('path')
+        .attr('d', country => path(country.feature as never) ?? '')
+        .attr('fill', country => country.id === 356 ? C.india : '#f4e7d5')
+        .attr('stroke', country => country.id === 356 ? C.indiaStroke : '#cbb18c')
+        .attr('stroke-width', country => country.id === 356 ? 1.05 : 0.7)
+        .attr('vector-effect', 'non-scaling-stroke')
+    }
+
     if (shouldShowIndia && indiaFeature) {
       g.append('path')
         .datum(indiaFeature)
@@ -360,6 +417,10 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
         .data(indiaStates.features)
         .join('path')
         .attr('d', d => path(d as never) ?? '')
+        .attr('data-active-state', d => {
+          const id = stateName(stateFeatureName(d))
+          return view === 'parks' && phase === 'learn' && id === activeParkStateId ? 'true' : null
+        })
         .attr('fill', d => {
           const id = stateName(stateFeatureName(d))
           if (phase === 'answered') {
@@ -367,12 +428,24 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
             if (String(id) === String(targetId)) return C.correct
           }
           if (view === 'parks' && activePracticeState && id === activePracticeState && phase === 'playing') return '#fff3db'
+          if (view === 'parks' && phase === 'learn' && activeParkStateId) return id === activeParkStateId ? '#d9edcf' : '#f5e9d8'
           return C.india
         })
         .attr('stroke', C.indiaStroke)
+        .attr('opacity', d => {
+          if (view !== 'parks' || phase !== 'learn' || !activeParkStateId) return 1
+          return stateName(stateFeatureName(d)) === activeParkStateId ? 1 : 0.17
+        })
+        .attr('filter', d => {
+          const id = stateName(stateFeatureName(d))
+          return view === 'parks' && phase === 'learn' && id === activeParkStateId
+            ? 'drop-shadow(0 5px 8px rgba(34,91,62,.18))'
+            : null
+        })
         .attr('stroke-width', d => {
           const id = stateName(stateFeatureName(d))
           if (view === 'parks' && activePracticeState && id === activePracticeState && phase === 'playing') return 1.5
+          if (view === 'parks' && phase === 'learn' && id === activeParkStateId) return 1.6
           return String(id) === String(targetId) && (phase === 'answered' || mode === 'name') ? 1.6 : 0.55
         })
         .attr('vector-effect', 'non-scaling-stroke')
@@ -494,6 +567,73 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
       }
     }
 
+    if (view === 'parks' && phase === 'learn' && visibleLearnRivers.length) {
+      const learnRiverLayer = g.append('g').attr('class', 'atlas-park-river-layer')
+      const learnRiverPaths = learnRiverLayer.selectAll('path')
+        .data(visibleLearnRivers)
+        .join('path')
+        .attr('class', 'park-river-visible')
+        .attr('d', river => path(river.geometry as never) ?? '')
+        .attr('fill', 'none')
+        .attr('stroke', river => river.major ? '#2f79b8' : '#6ba9d2')
+        .attr('stroke-width', river => river.major ? 2.4 : 1.65)
+        .attr('stroke-linecap', 'round')
+        .attr('stroke-linejoin', 'round')
+        .attr('vector-effect', 'non-scaling-stroke')
+        .attr('opacity', river => river.major ? 0.9 : 0.72)
+        .style('pointer-events', 'none')
+
+      const labelLimit = w < 640 ? 2 : parkLearnSideDock ? 4 : 3
+      const labelCandidates = visibleLearnRivers
+        .slice()
+        .sort((a, b) => Number(Boolean(b.major)) - Number(Boolean(a.major)))
+        .slice(0, labelLimit)
+      const safeRight = parkLearnSideDock ? w - parkLearnDockWidth - 18 : w - 14
+      const safeBottom = parkLearnSideDock ? h - 14 : h - (w < 640 ? 248 : 178)
+      learnRiverPaths
+        .filter(river => labelCandidates.some(candidate => candidate.id === river.id))
+        .each(function (river) {
+          const riverPath = this as SVGPathElement
+          const length = riverPath.getTotalLength?.() ?? 0
+          if (length < 28) return
+          const labelWidth = Math.max(42, Math.min(92, river.name.length * 5.6 + 14))
+          const fractions = [0.5, 0.34, 0.66, 0.2, 0.8]
+          let labelPoint: { x: number; y: number } | null = null
+          for (const fraction of fractions) {
+            const point = riverPath.getPointAtLength(length * fraction)
+            const rect = { x1: point.x - labelWidth / 2, y1: point.y - 10, x2: point.x + labelWidth / 2, y2: point.y + 8 }
+            const inFrame = rect.x1 > 12 && rect.x2 < safeRight && rect.y1 > 108 && rect.y2 < safeBottom
+            const collides = occupiedMapLabels.some(other => !(rect.x2 < other.x1 || rect.x1 > other.x2 || rect.y2 < other.y1 || rect.y1 > other.y2))
+            if (inFrame && !collides) {
+              occupiedMapLabels.push(rect)
+              labelPoint = point
+              break
+            }
+          }
+          if (!labelPoint) return
+          const label = learnRiverLayer.append('g')
+            .attr('class', 'park-river-label')
+            .attr('transform', `translate(${labelPoint.x},${labelPoint.y})`)
+            .style('pointer-events', 'none')
+          label.append('rect')
+            .attr('x', -labelWidth / 2)
+            .attr('y', -10)
+            .attr('width', labelWidth)
+            .attr('height', 18)
+            .attr('rx', 7)
+            .attr('fill', 'rgba(244,251,255,.92)')
+            .attr('stroke', '#6ba9d2')
+            .attr('stroke-width', 0.8)
+          label.append('text')
+            .attr('y', 2.8)
+            .attr('text-anchor', 'middle')
+            .attr('font-size', 8.8)
+            .attr('font-weight', 900)
+            .attr('fill', '#245b84')
+            .text(river.name)
+        })
+    }
+
     if (view === 'parks') {
       const effectiveParkRegion = activePracticeRegion ?? activeParkRegion
       const regionParks = parks.filter(p => !effectiveParkRegion || p.region === effectiveParkRegion)
@@ -501,7 +641,8 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
         ? regionParks.filter(p => !activeParkState || p.state === activeParkState)
         : regionParks.filter(p => history.some(h => h.park?.name === p.name))
       const doneParks = history.filter(h => h.park)
-      const occupiedLabels: { x1: number; y1: number; x2: number; y2: number }[] = []
+      const compactLearnLabels = phase === 'learn' && w < 640
+      const occupiedLabels = occupiedMapLabels
       const labelOffsets = [
         { dx: 10, dy: 4, anchor: 'start' as const },
         { dx: 10, dy: -10, anchor: 'start' as const },
@@ -521,7 +662,10 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
           const widthEstimate = Math.max(48, Math.min(132, shortName.length * 5.9 + 16))
           const heightEstimate = 18
           let label: { dx: number; dy: number; anchor: 'start' | 'middle' | 'end'; text: string } | null = null
-          if (phase === 'learn' || doneParks.some(h => h.park?.name === park.name)) {
+          const isActivePark = phase === 'learn' && park.id === activeParkId
+          if (isActivePark && compactLearnLabels) {
+            label = { dx: 0, dy: xy[1] < 128 ? 25 : -20, anchor: 'middle', text: shortName }
+          } else if ((phase === 'learn' && !compactLearnLabels) || doneParks.some(h => h.park?.name === park.name)) {
             for (const offset of labelOffsets) {
               const left = offset.anchor === 'start'
                 ? xy[0] + offset.dx
@@ -530,7 +674,10 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
                   : xy[0] + offset.dx - widthEstimate / 2
               const top = xy[1] + offset.dy - heightEstimate + 4
               const rect = { x1: left - 4, y1: top - 3, x2: left + widthEstimate + 4, y2: top + heightEstimate + 3 }
-              const outOfFrame = rect.x1 < 8 || rect.x2 > w - 8 || rect.y1 < 8 || rect.y2 > h - 112
+              const topLimit = phase === 'learn' ? 104 : 8
+              const rightLimit = parkLearnSideDock && phase === 'learn' ? w - parkLearnDockWidth - 14 : w - 8
+              const bottomLimit = phase === 'learn' && !parkLearnSideDock ? h - (w < 640 ? 245 : 176) : h - 8
+              const outOfFrame = rect.x1 < 8 || rect.x2 > rightLimit || rect.y1 < topLimit || rect.y2 > bottomLimit
               const collides = occupiedLabels.some(other => !(rect.x2 < other.x1 || rect.x1 > other.x2 || rect.y2 < other.y1 || rect.y1 > other.y2))
               if (!outOfFrame && !collides) {
                 occupiedLabels.push(rect)
@@ -548,18 +695,24 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
         .join('g')
         .attr('class', 'park')
         .attr('data-id', p => p.park.id)
+        .attr('data-active', p => phase === 'learn' && p.park.id === activeParkId ? 'true' : null)
         .attr('data-answer', p => doneParks.find(h => h.park?.name === p.park.name)?.correct ? 'target' : doneParks.some(h => h.park?.name === p.park.name) ? 'chosen' : null)
         .attr('transform', p => `translate(${p.x},${p.y})`)
         .style('cursor', phase === 'learn' ? 'pointer' : 'default')
         .on('click', (_event, p) => { if (phase === 'learn') onParkFocus?.(p.park) })
         .each(function (p) {
           const node = d3.select(this)
+          const visual = node.append('g').attr('class', 'park-visual')
           const answered = doneParks.find(h => h.park?.name === p.park.name)
           const color = answered ? (answered.correct ? C.correct : C.wrong) : C.park
-          node.append('circle').attr('r', phase === 'learn' ? 5.5 : 4).attr('fill', color).attr('stroke', '#fff').attr('stroke-width', 2)
+          const active = phase === 'learn' && p.park.id === activeParkId
+          if (active) {
+            visual.append('circle').attr('r', compactLearnLabels ? 10 : 12).attr('fill', 'rgba(35,132,92,.14)').attr('stroke', color).attr('stroke-width', 1.4)
+          }
+          visual.append('circle').attr('r', active ? 6.8 : phase === 'learn' ? 4.5 : 4).attr('fill', color).attr('stroke', '#fff').attr('stroke-width', active ? 2.6 : 2)
           if (p.label) {
             if (Math.abs(p.label.dx) > 0 || Math.abs(p.label.dy) > 8) {
-              node.append('line')
+              visual.append('line')
                 .attr('x1', p.label.dx > 0 ? 4 : p.label.dx < 0 ? -4 : 0)
                 .attr('y1', p.label.dy > 0 ? 4 : p.label.dy < 0 ? -4 : 0)
                 .attr('x2', p.label.dx)
@@ -568,11 +721,25 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
                 .attr('stroke-width', 1)
                 .attr('opacity', 0.55)
             }
-            node.append('text')
+            if (active) {
+              const pillWidth = Math.max(58, Math.min(146, p.label.text.length * 6.05 + 18))
+              const pillX = p.label.anchor === 'start' ? p.label.dx - 7 : p.label.anchor === 'end' ? p.label.dx - pillWidth + 7 : p.label.dx - pillWidth / 2
+              visual.append('rect')
+                .attr('x', pillX)
+                .attr('y', p.label.dy - 14)
+                .attr('width', pillWidth)
+                .attr('height', 20)
+                .attr('rx', 8)
+                .attr('fill', 'rgba(255,255,255,.96)')
+                .attr('stroke', color)
+                .attr('stroke-width', 1.2)
+                .attr('filter', 'drop-shadow(0 5px 10px rgba(22,43,58,.16))')
+            }
+            visual.append('text')
               .attr('x', p.label.dx)
               .attr('y', p.label.dy)
               .attr('text-anchor', p.label.anchor)
-              .attr('font-size', 10)
+              .attr('font-size', active ? 10.5 : 10)
               .attr('font-weight', 800)
               .attr('fill', C.text)
               .attr('paint-order', 'stroke')
@@ -591,6 +758,8 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
         activeParkRegion,
         activePracticeRegion,
         activeParkState,
+        activeParkId,
+        learnRiverNames,
         activePracticeState,
         targetId,
       ].filter(Boolean).join(':')
@@ -599,17 +768,17 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
       gsap.fromTo(g.node(),
         {
           opacity: changedFocus ? 0.42 : 0.76,
-          scale: changedFocus ? (view === 'parks' || view === 'continent' ? 0.84 : 0.9) : 1,
+          scale: changedFocus ? (view === 'parks' ? 0.965 : view === 'continent' || view === 'river-system' ? 0.84 : 0.9) : 1,
           transformOrigin: '50% 50%',
         },
         {
           opacity: 1,
           scale: 1,
-          duration: changedFocus ? 0.68 : 0.28,
-          ease: 'expo.out',
+          duration: changedFocus ? (view === 'parks' ? 0.52 : 0.68) : 0.28,
+          ease: view === 'parks' ? 'power3.out' : 'expo.out',
           clearProps: 'transform,opacity',
         })
-      gsap.fromTo(svgEl.querySelectorAll('.atlas-country-layer path, .atlas-india-states path, .river-visible, .park'),
+      gsap.fromTo(svgEl.querySelectorAll('.atlas-country-layer path, .atlas-india-states path, .river-visible, .park-river-visible, .park'),
         { opacity: 0.74 },
         { opacity: 1, duration: 0.35, stagger: 0.001, ease: 'power2.out' })
       const riversToDraw = svgEl.querySelectorAll('.river-visible')
@@ -620,11 +789,33 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
           { strokeDasharray: length, strokeDashoffset: length },
           { strokeDashoffset: 0, duration: changedFocus ? 0.85 : 0.48, ease: 'power2.out', clearProps: 'strokeDasharray,strokeDashoffset' })
       })
+      const parkRiversToDraw = svgEl.querySelectorAll('.park-river-visible')
+      parkRiversToDraw.forEach((pathNode, index) => {
+        const pathEl = pathNode as SVGPathElement
+        const length = Math.min(1800, Math.max(100, pathEl.getTotalLength?.() || 0))
+        gsap.fromTo(pathEl,
+          { strokeDasharray: length, strokeDashoffset: length, opacity: 0.2 },
+          { strokeDashoffset: 0, opacity: Number(pathEl.getAttribute('opacity') ?? 0.8), duration: 0.62, delay: index * 0.035, ease: 'power2.out', clearProps: 'strokeDasharray,strokeDashoffset' })
+      })
       const parkDots = svgEl.querySelectorAll('.park circle')
       if (parkDots.length) {
         gsap.fromTo(parkDots,
           { scale: 0.2, transformOrigin: '50% 50%' },
           { scale: 1, duration: 0.42, stagger: 0.035, ease: 'back.out(2)', clearProps: 'transform' })
+      }
+      const activeParkVisual = svgEl.querySelector('.park[data-active="true"] .park-visual')
+      if (activeParkVisual) {
+        gsap.timeline()
+          .fromTo(activeParkVisual, { y: 5, opacity: 0.68 }, { y: -7, opacity: 1, duration: 0.38, ease: 'back.out(1.7)' })
+          .to(activeParkVisual, { y: 0, duration: 0.42, delay: 0.9, ease: 'power2.inOut', clearProps: 'transform,opacity' })
+      }
+      const activeStatePath = svgEl.querySelector('.atlas-india-states path[data-active-state="true"]')
+      if (activeStatePath) {
+        gsap.timeline()
+          .fromTo(activeStatePath,
+            { scale: 0.985, opacity: 0.62, transformOrigin: '50% 50%', filter: 'drop-shadow(0 0 0 rgba(34,91,62,0))' },
+            { scale: 1, opacity: 1, filter: 'drop-shadow(0 8px 12px rgba(34,91,62,.24))', duration: 0.46, ease: 'power3.out' })
+          .to(activeStatePath, { filter: 'drop-shadow(0 4px 8px rgba(34,91,62,.16))', duration: 0.42, delay: 0.35, clearProps: 'transform' })
       }
       const selectedStates = svgEl.querySelectorAll('.atlas-india-states [data-answer="target"], .atlas-india-states [data-answer="chosen"]')
       if (selectedStates.length) {
@@ -639,7 +830,7 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
           { filter: 'drop-shadow(0 0 10px rgba(46,117,184,.45))', duration: 0.38, yoyo: true, repeat: 1, ease: 'power2.out' })
       }
     }
-  }, [view, mode, phase, countries, indiaStates, rivers, parks, activeContinent, activeRiverSystem, activeParkRegion, activePracticeRegion, activeParkState, activePracticeState, stateName, targetId, chosenId, history, onAnswer, onParkFocus])
+  }, [view, mode, phase, countries, indiaStates, rivers, parks, activeContinent, activeRiverSystem, activeParkRegion, activePracticeRegion, activeParkState, activeParkId, learnRiverNames, activePracticeState, stateName, targetId, chosenId, history, onAnswer, onParkFocus])
 
   return (
     <div ref={wrapRef} className="atlas-map-canvas">

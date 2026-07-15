@@ -64,11 +64,27 @@ export default defineConfig({
             },
           },
           {
+            // CMS-published snapshots (Supabase Storage). The rule above only
+            // matches the bundled /data/ copies, so without this the CDN
+            // responses would never be cached and an offline launch would
+            // always fall back to whatever shipped in the build.
+            // NetworkFirst, not StaleWhileRevalidate: an editor publishing a
+            // correction expects the next open to show it, not the one after.
+            urlPattern: /\/storage\/v1\/object\/public\/content\/.+\.json$/,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'cms-content-cache',
+              expiration: { maxEntries: 90 },
+              networkTimeoutSeconds: 4,
+            },
+          },
+          {
             urlPattern: /\/data\/(countries|india-rivers|india-national|pyq).+/,
-            handler: 'CacheFirst',
+            handler: 'NetworkFirst',
             options: {
               cacheName: 'geo-data-cache',
               expiration: { maxEntries: 10 },
+              networkTimeoutSeconds: 4,
             },
           },
         ],

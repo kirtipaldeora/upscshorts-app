@@ -123,7 +123,6 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
   const missionQuestions = remaining > 0
     ? dailyQuestions.concat(dailyTopUpQuestions).slice(0, remaining)
     : dailyBaseQuestions.filter(q => stats.a[q.id])
-  const pyqQuestions = pool.filter(q => q.src === 'pyq')
   const mistakes = pool.filter(q => stats.a[q.id]?.[0] === 0)
   const bmQs = bookmarkPracticeSet(allArticles, bookmarkedIds, usePracticeStore.getState().questionBookmarks, pyqData)
   const mainsLeft = 5 - (usePracticeStore.getState().mainsQuota[TODAY] ?? 0)
@@ -256,7 +255,6 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
               <FontAwesomeIcon icon={faScroll} />
               <span>
                 <b>PYQ Vault</b>
-                <i>{pyqQuestions.length} UPSC prelims questions</i>
               </span>
               <strong>Open</strong>
             </button>
@@ -340,7 +338,7 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
                 </button>
                 <button onClick={() => { setPanel(null); onOpenPYQ() }}>
                   <FontAwesomeIcon icon={faScroll} />
-                  <span><b>Previous Year Questions</b><i>{pyqQuestions.length} prelims questions</i></span>
+                  <span><b>PYQ Vault</b></span>
                 </button>
                 <button onClick={() => setPanel('random')}>
                   <FontAwesomeIcon icon={faDice} />

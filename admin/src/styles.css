@@ -1,0 +1,192 @@
+/* Penni CMS — deliberately plain. This is an internal tool; it should look
+   like a tool, not like Penni. Nothing here is shared with the app. */
+
+:root {
+  --bg: #14151a;
+  --panel: #1c1e26;
+  --panel-2: #23262f;
+  --border: #2f333f;
+  --ink: #eceef4;
+  --ink-2: #9aa0b0;
+  --ink-3: #6b7080;
+  --acc: #7a7fc9;
+  --acc-ink: #fff;
+  --good: #4caf82;
+  --warn: #e9b93b;
+  --bad: #ef5a5a;
+  --radius: 10px;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 14px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; }
+
+/* ─── Layout ─────────────────────────────────────────────── */
+
+.shell { display: flex; flex-direction: column; height: 100vh; }
+
+.topbar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+  flex-shrink: 0;
+}
+.topbar h1 { font-size: 15px; margin: 0; font-weight: 700; letter-spacing: -0.01em; }
+.topbar h1 span { color: var(--acc); }
+.topbar .spacer { flex: 1; }
+.topbar .who { color: var(--ink-3); font-size: 12px; }
+
+.body { display: flex; flex: 1; min-height: 0; }
+
+.rail {
+  width: 190px; flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  background: var(--panel);
+  overflow-y: auto;
+  padding: 10px;
+}
+.rail h2 {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--ink-3); margin: 6px 4px 8px; font-weight: 700;
+}
+
+.main { flex: 1; overflow-y: auto; padding: 16px; min-width: 0; }
+
+/* ─── Buttons ────────────────────────────────────────────── */
+
+.btn {
+  background: var(--panel-2); color: var(--ink);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 7px 12px; font-size: 13px; font-weight: 600;
+  transition: background .15s, border-color .15s;
+}
+.btn:hover:not(:disabled) { background: #2b2f3a; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn.primary { background: var(--acc); border-color: var(--acc); color: var(--acc-ink); }
+.btn.primary:hover:not(:disabled) { filter: brightness(1.1); }
+.btn.danger { color: var(--bad); border-color: #4a2b2f; }
+.btn.danger:hover:not(:disabled) { background: #2e1d20; }
+.btn.sm { padding: 4px 9px; font-size: 12px; }
+
+/* ─── Date rail ──────────────────────────────────────────── */
+
+.date-btn {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  background: none; border: none; border-radius: 8px;
+  padding: 7px 8px; color: var(--ink-2); text-align: left;
+  font-size: 13px; font-weight: 600;
+}
+.date-btn:hover { background: var(--panel-2); }
+.date-btn.on { background: var(--acc); color: var(--acc-ink); }
+.date-btn .count {
+  margin-left: auto; font-size: 11px; opacity: .7; font-variant-numeric: tabular-nums;
+}
+.date-btn .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--warn); flex-shrink: 0; }
+.date-btn.on .dot { background: var(--acc-ink); }
+
+/* ─── Article cards ──────────────────────────────────────── */
+
+.card {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px;
+}
+.card-head { display: flex; align-items: center; gap: 8px; }
+.card h3 { margin: 0; font-size: 14px; font-weight: 650; flex: 1; min-width: 0; }
+.card .meta { color: var(--ink-3); font-size: 12px; margin-top: 3px; }
+
+.tag {
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+  padding: 3px 7px; border-radius: 5px; background: var(--panel-2); color: var(--ink-2);
+  flex-shrink: 0;
+}
+.tag.draft { background: #3d3520; color: var(--warn); }
+.tag.published { background: #1f3b2e; color: var(--good); }
+
+/* ─── Forms ──────────────────────────────────────────────── */
+
+.field { margin-bottom: 12px; }
+.field label {
+  display: block; font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .05em; color: var(--ink-3); margin-bottom: 4px;
+}
+.field input, .field select, .field textarea {
+  width: 100%; background: var(--bg); color: var(--ink);
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none; border-color: var(--acc);
+}
+.field textarea { resize: vertical; min-height: 70px; line-height: 1.55; }
+.field .hint { font-size: 11px; color: var(--ink-3); margin-top: 4px; text-transform: none; letter-spacing: 0; }
+.row { display: flex; gap: 10px; }
+.row > * { flex: 1; }
+
+/* ─── Modal ──────────────────────────────────────────────── */
+
+.modal-bg {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, .6);
+  display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 50;
+}
+.modal {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 14px; width: 100%; max-width: 780px;
+  max-height: 90vh; display: flex; flex-direction: column;
+}
+.modal-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.modal-head h2 { margin: 0; font-size: 15px; flex: 1; }
+.modal-body { overflow-y: auto; padding: 16px; }
+.modal-foot {
+  display: flex; gap: 8px; justify-content: flex-end;
+  padding: 12px 16px; border-top: 1px solid var(--border); flex-shrink: 0;
+}
+
+/* ─── Publish bar / notices ──────────────────────────────── */
+
+.bar {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 10px 14px; margin-bottom: 14px;
+}
+.bar .spacer { flex: 1; }
+.bar .summary { font-size: 13px; color: var(--ink-2); }
+.bar .summary b { color: var(--ink); }
+
+.notice {
+  border-radius: var(--radius); padding: 10px 14px; margin-bottom: 12px;
+  font-size: 13px; border: 1px solid;
+}
+.notice.warn { background: #2e2716; border-color: #4a4020; color: #f0d68a; }
+.notice.bad  { background: #2e1d20; border-color: #4a2b2f; color: #f2a3a3; }
+.notice.good { background: #162b22; border-color: #234a38; color: #8fdcb8; }
+.notice ul { margin: 6px 0 0; padding-left: 18px; }
+.notice li { margin: 2px 0; }
+
+.empty { color: var(--ink-3); text-align: center; padding: 48px 20px; }
+
+/* ─── Centred gate (sign-in / errors) ────────────────────── */
+
+.gate { display: flex; align-items: center; justify-content: center; height: 100vh; padding: 24px; }
+.gate-card {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 14px; padding: 28px; width: 100%; max-width: 380px;
+}
+.gate-card h1 { margin: 0 0 6px; font-size: 19px; }
+.gate-card h1 span { color: var(--acc); }
+.gate-card p { color: var(--ink-2); margin: 0 0 18px; font-size: 13px; }
+.gate-card code {
+  background: var(--bg); padding: 2px 5px; border-radius: 4px;
+  font-size: 12px; color: var(--acc);
+}

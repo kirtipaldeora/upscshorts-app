@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useAppStore } from '@/stores/useAppStore'
 import type { ArticlesByDate } from '@/types/article'
-import { asset } from '@/utils/asset'
+import { fetchContent } from '@/utils/content'
 
 const LS_KEY = 'u4ct' // original localStorage key for cached articles
 
@@ -25,8 +25,10 @@ function saveToLS(data: ArticlesByDate) {
 /**
  * Loads articles for a given date.
  * 1. Immediately hydrates from localStorage (instant render).
- * 2. Fetches /data/articles/{date}.json and merges if newer.
- * 3. Architecture is ready for remote fetch — just swap the URL.
+ * 2. Fetches the date's pack and merges it.
+ *
+ * Step 2 goes through fetchContent(), which prefers the CMS-published snapshot
+ * and falls back to the bundled data/articles/{date}.json.
  */
 export function useArticles(date: string) {
   const { setArticlesByDate, mergeArticles } = useAppStore()
@@ -60,11 +62,7 @@ export function useArticles(date: string) {
     setError(null)
 
     const fetchArticles = (targetDate: string) =>
-      fetch(asset(`data/articles/${targetDate}.json`), { signal: controller.signal })
-        .then((r) => {
-          if (!r.ok) throw new Error(`No data for ${targetDate}`)
-          return r.json() as Promise<ArticlesByDate>
-        })
+      fetchContent<ArticlesByDate>(`articles/${targetDate}.json`, { signal: controller.signal })
 
     fetchArticles(date)
       .then((r) => {

@@ -23,6 +23,11 @@ function composeSourceLabel(members) {
 }
 
 export async function enrichCluster(cluster, { maxSources = 2 } = {}) {
+  // Curated source text supplied directly (e.g. a manually imported daily
+  // digest) — use it verbatim and skip any network fetch.
+  if (cluster.sourceText) {
+    return [{ source: composeSourceLabel(cluster.members), url: cluster.members[0]?.url || '', text: cluster.sourceText }]
+  }
   const texts = []
   for (const member of cluster.members.slice(0, maxSources)) {
     try {

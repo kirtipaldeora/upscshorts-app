@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "paths": {
+      // Fallback list, and the order matters. Admin's own modules win. The
+      // second entry exists for the app sources pulled in via @penni/*, which
+      // contain their own '@/...' imports meaning *app's* src — questionQuality
+      // imports '@/types/article'. Those are all `import type`, so esbuild
+      // strips them and Vite never has to resolve them; only tsc does.
+      "@/*": ["./src/*", "../app/src/*"],
+      "@penni/*": ["../app/src/*"]
+    },
+    "types": ["vite/client", "node"]
+  },
+  "include": ["src", "vite.config.ts", "../app/src/types", "../app/src/utils/questionQuality.ts"]
+}

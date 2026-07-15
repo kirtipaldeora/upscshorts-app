@@ -6,6 +6,7 @@ import {
   faArrowLeft,
   faArrowRotateRight,
   faBullseye,
+  faChevronLeft,
   faChevronRight,
   faCompass,
   faEarthAsia,
@@ -13,8 +14,8 @@ import {
   faLocationDot,
   faMinus,
   faMountainSun,
+  faPaw,
   faPlus,
-  faRotateLeft,
   faSeedling,
   faWater,
   faXmark,
@@ -36,6 +37,7 @@ import {
   type AtlasView,
   type MapSVGHandle,
 } from './MapSVG'
+import { WORLD_PHYSICAL_FEATURES } from './worldPhysicalData'
 
 const AtlasGlobe = lazy(() => import('./AtlasGlobe').then(module => ({ default: module.AtlasGlobe })))
 
@@ -51,6 +53,7 @@ interface AtlasState {
   riverSystem: string | null
   parkRegion: string | null
   parkLearnState: string | null
+  parkLearnParkId: number | null
   setupCount: number
   setupMode: AtlasMode
   mode: AtlasMode
@@ -107,17 +110,6 @@ interface QuizItem {
   source?: { type: string; name: string; place: string }
 }
 
-export interface WorldPhysicalFeature {
-  id: string
-  name: string
-  kind: 'river' | 'mountain'
-  continent: string
-  region: string
-  clue: string
-  coordinates: [number, number][]
-  labelPoint?: [number, number]
-}
-
 interface ParkRegion {
   key: string
   name: string
@@ -146,42 +138,265 @@ const CONT_DATA: Record<string, [number, string][]> = {
 }
 
 const RIVER_SYSTEMS = [
-  { key: 'ganga_ref', name: 'Ganga River System', color: '#2d72c4', blurb: 'Ganga, Yamuna and key UPSC tributaries' },
+  { key: 'ganga_ref', name: 'Ganga River System', color: '#2d72c4', blurb: 'Major NCERT tributaries of the northern plains' },
+  { key: 'indus_ref', name: 'Indus River System', color: '#2b9b91', blurb: 'Indus and the five rivers of the Punjab' },
+  { key: 'brahmaputra_ref', name: 'Brahmaputra River System', color: '#4b78c8', blurb: 'Brahmaputra and key Himalayan tributaries' },
+  { key: 'narmada_ref', name: 'Narmada River System', color: '#7e6bc9', blurb: 'West-flowing trunk and central Indian tributaries' },
+  { key: 'mahanadi_ref', name: 'Mahanadi River System', color: '#d08c3f', blurb: 'Mahanadi basin from Chhattisgarh to Odisha' },
+  { key: 'godavari_ref', name: 'Godavari River System', color: '#3f9f78', blurb: 'Godavari and major Deccan tributaries' },
+  { key: 'krishna_ref', name: 'Krishna River System', color: '#c66278', blurb: 'Krishna and major peninsular tributaries' },
 ]
 
-const WORLD_PHYSICAL_FEATURES: WorldPhysicalFeature[] = [
-  { id: 'wr-nile', name: 'Nile', kind: 'river', continent: 'Africa', region: 'North-East Africa', clue: 'Flows north through Sudan and Egypt to the Mediterranean Sea', coordinates: [[29.9, -3.4], [31.8, 0.4], [32.7, 4.7], [31.6, 8.4], [32.5, 12.1], [31.8, 16.1], [31.2, 20.2], [30.7, 24.3], [31.2, 27.2], [30.4, 31.2]], labelPoint: [31.7, 17.0] },
-  { id: 'wr-congo', name: 'Congo', kind: 'river', continent: 'Africa', region: 'Central Africa', clue: 'Large equatorial basin river crossing the Congo rainforest', coordinates: [[28.8, -11.8], [26.2, -8.9], [23.6, -5.6], [21.3, -2.3], [18.6, 0.0], [16.5, -0.5], [15.3, -2.7], [14.2, -4.8], [12.4, -6.0]], labelPoint: [18.3, -2.2] },
-  { id: 'wr-niger', name: 'Niger', kind: 'river', continent: 'Africa', region: 'West Africa', clue: 'Forms a great arc through Mali and Nigeria before reaching the Gulf of Guinea', coordinates: [[-10.7, 9.6], [-8.2, 11.1], [-5.7, 13.4], [-3.4, 16.4], [1.4, 16.8], [4.2, 14.1], [6.6, 12.2], [7.4, 9.6], [6.4, 5.4]], labelPoint: [1.6, 14.8] },
-  { id: 'wr-zambezi', name: 'Zambezi', kind: 'river', continent: 'Africa', region: 'Southern Africa', clue: 'Flows east across southern Africa and includes Victoria Falls', coordinates: [[24.3, -11.4], [22.8, -13.2], [23.2, -15.4], [25.8, -17.8], [28.8, -17.9], [31.0, -16.5], [33.8, -17.2], [36.2, -18.6]], labelPoint: [29.0, -17.7] },
-  { id: 'wr-amazon', name: 'Amazon', kind: 'river', continent: 'South America', region: 'South America', clue: 'Crosses the equatorial rainforest from the Andes to the Atlantic', coordinates: [[-75.2, -5.0], [-73.5, -4.6], [-70.2, -4.1], [-66.1, -3.8], [-62.2, -3.2], [-58.5, -2.9], [-54.6, -2.4], [-51.2, -1.6], [-49.5, -1.3]], labelPoint: [-61.2, -3.2] },
-  { id: 'wr-parana', name: 'Parana', kind: 'river', continent: 'South America', region: 'Brazil-Paraguay-Argentina', clue: 'A major south-flowing river system of the La Plata basin', coordinates: [[-47.5, -20.1], [-50.8, -22.4], [-53.7, -24.0], [-54.8, -25.7], [-56.3, -27.3], [-58.6, -30.0], [-59.7, -32.7], [-58.4, -34.3]], labelPoint: [-55.7, -27.0] },
-  { id: 'wr-orinoco', name: 'Orinoco', kind: 'river', continent: 'South America', region: 'Venezuela and Colombia', clue: 'Drains northern South America into the Atlantic', coordinates: [[-66.1, 2.4], [-67.8, 4.2], [-67.2, 6.2], [-65.4, 7.5], [-63.6, 8.1], [-61.4, 8.8], [-60.7, 9.6]], labelPoint: [-65.2, 7.2] },
-  { id: 'wr-sao-francisco', name: 'Sao Francisco', kind: 'river', continent: 'South America', region: 'Eastern Brazil', clue: 'Important river of eastern Brazil flowing to the Atlantic', coordinates: [[-46.2, -20.3], [-44.2, -17.8], [-43.5, -14.7], [-42.1, -11.8], [-40.8, -9.8], [-37.7, -10.5]], labelPoint: [-42.7, -14.2] },
-  { id: 'wr-yangtze', name: 'Yangtze', kind: 'river', continent: 'Asia', region: 'China', clue: 'China’s longest river, flowing east to the East China Sea', coordinates: [[91.2, 33.4], [95.2, 32.2], [99.8, 30.9], [103.2, 29.5], [106.6, 29.6], [110.4, 30.1], [114.3, 30.6], [118.8, 31.4], [121.5, 31.2]], labelPoint: [108.2, 30.1] },
-  { id: 'wr-yellow', name: 'Yellow River', kind: 'river', continent: 'Asia', region: 'Northern China', clue: 'The Huang He makes a broad bend through the North China region', coordinates: [[96.2, 35.2], [100.4, 36.2], [104.2, 36.6], [106.5, 39.2], [110.2, 40.4], [112.8, 37.7], [116.0, 36.0], [119.2, 37.7]], labelPoint: [109.4, 39.3] },
-  { id: 'wr-mekong', name: 'Mekong', kind: 'river', continent: 'Asia', region: 'South-East Asia', clue: 'Flows from the Tibetan Plateau through mainland South-East Asia', coordinates: [[94.9, 33.2], [97.4, 29.6], [99.4, 25.5], [100.4, 22.0], [101.6, 20.8], [103.0, 18.1], [104.2, 16.2], [105.5, 13.4], [106.8, 9.8]], labelPoint: [102.8, 18.2] },
-  { id: 'wr-ganga-brahmaputra', name: 'Ganga-Brahmaputra', kind: 'river', continent: 'Asia', region: 'Indian subcontinent', clue: 'The Himalayan-fed river system draining into the Bay of Bengal', coordinates: [[78.7, 30.1], [79.8, 28.0], [81.8, 25.5], [85.1, 25.6], [88.1, 24.1], [91.2, 24.0], [92.7, 25.0], [91.0, 23.2], [90.4, 22.5]], labelPoint: [87.5, 24.8] },
-  { id: 'wr-indus', name: 'Indus', kind: 'river', continent: 'Asia', region: 'Tibet-Pakistan-Arabian Sea', clue: 'Flows from the Tibetan region through Pakistan to the Arabian Sea', coordinates: [[81.7, 31.1], [78.2, 33.4], [75.3, 34.5], [72.4, 33.0], [71.4, 30.3], [69.6, 27.8], [68.2, 25.2], [67.4, 24.1]], labelPoint: [71.5, 30.2] },
-  { id: 'wr-danube', name: 'Danube', kind: 'river', continent: 'Europe', region: 'Central and Eastern Europe', clue: 'Flows across Europe into the Black Sea', coordinates: [[8.2, 48.0], [10.2, 48.4], [12.5, 48.2], [14.6, 48.1], [16.4, 48.2], [19.0, 47.5], [21.2, 45.8], [24.8, 44.3], [27.8, 45.2], [29.6, 45.2]], labelPoint: [18.7, 47.0] },
-  { id: 'wr-volga', name: 'Volga', kind: 'river', continent: 'Europe', region: 'Russia', clue: 'Europe’s longest river, draining into the Caspian Sea', coordinates: [[33.0, 57.2], [36.0, 56.8], [38.4, 57.6], [42.1, 56.5], [45.9, 55.8], [48.4, 53.2], [46.8, 50.2], [46.3, 48.7], [47.8, 46.3]], labelPoint: [45.4, 53.6] },
-  { id: 'wr-rhine', name: 'Rhine', kind: 'river', continent: 'Europe', region: 'Western Europe', clue: 'Flows from the Alps toward the North Sea', coordinates: [[8.7, 46.6], [8.2, 47.6], [7.6, 48.6], [7.8, 49.8], [6.9, 50.8], [6.2, 51.7], [4.7, 52.1]], labelPoint: [7.2, 50.0] },
-  { id: 'wr-dnieper', name: 'Dnieper', kind: 'river', continent: 'Europe', region: 'Eastern Europe', clue: 'Flows south through Belarus and Ukraine to the Black Sea', coordinates: [[33.4, 55.9], [31.6, 53.6], [30.5, 51.5], [30.5, 50.4], [31.1, 49.0], [32.4, 47.5], [32.3, 46.5]], labelPoint: [31.0, 50.0] },
-  { id: 'wr-mississippi', name: 'Mississippi-Missouri', kind: 'river', continent: 'North America', region: 'Central United States', clue: 'A major drainage system of the central United States', coordinates: [[-111.2, 45.9], [-106.0, 44.8], [-101.4, 43.2], [-96.6, 41.3], [-92.4, 39.4], [-90.2, 35.0], [-91.1, 32.1], [-90.1, 29.1]], labelPoint: [-94.5, 38.2] },
-  { id: 'wr-mackenzie', name: 'Mackenzie', kind: 'river', continent: 'North America', region: 'North-West Canada', clue: 'Flows north-west through Canada to the Arctic Ocean', coordinates: [[-117.2, 55.1], [-116.2, 58.4], [-118.6, 61.0], [-121.1, 63.7], [-123.2, 66.1], [-134.8, 68.8]], labelPoint: [-121.2, 63.4] },
-  { id: 'wr-st-lawrence', name: 'St. Lawrence', kind: 'river', continent: 'North America', region: 'Great Lakes to Atlantic', clue: 'Connects the Great Lakes system with the Atlantic', coordinates: [[-83.0, 42.3], [-79.2, 43.2], [-76.5, 44.2], [-73.6, 45.5], [-70.2, 47.1], [-64.5, 49.0]], labelPoint: [-73.5, 45.8] },
-  { id: 'wr-colorado', name: 'Colorado', kind: 'river', continent: 'North America', region: 'Western United States', clue: 'Carves the Grand Canyon and drains toward the Gulf of California', coordinates: [[-105.8, 40.4], [-108.8, 39.1], [-111.5, 37.2], [-112.1, 36.1], [-114.5, 34.3], [-114.8, 32.2]], labelPoint: [-111.7, 36.5] },
-  { id: 'wr-yukon', name: 'Yukon', kind: 'river', continent: 'North America', region: 'Alaska and Canada', clue: 'Flows across Yukon and Alaska to the Bering Sea', coordinates: [[-134.6, 60.7], [-137.4, 62.2], [-141.0, 64.1], [-146.3, 65.0], [-151.2, 64.7], [-164.5, 62.6]], labelPoint: [-146.0, 64.3] },
-  { id: 'wr-murray-darling', name: 'Murray-Darling', kind: 'river', continent: 'Oceania', region: 'South-East Australia', clue: 'Australia’s major river basin across the south-east', coordinates: [[148.2, -26.2], [147.6, -29.0], [146.0, -31.5], [144.6, -34.2], [142.5, -34.9], [139.0, -35.5]], labelPoint: [145.2, -33.2] },
-  { id: 'wr-sepik', name: 'Sepik', kind: 'river', continent: 'Oceania', region: 'Papua New Guinea', clue: 'One of Papua New Guinea’s major rivers flowing to the Bismarck Sea', coordinates: [[141.0, -4.4], [142.6, -4.0], [144.2, -4.1], [145.6, -4.2], [146.6, -3.9]], labelPoint: [144.2, -4.0] },
-  { id: 'mt-himalayas', name: 'Himalayas', kind: 'mountain', continent: 'Asia', region: 'Asia', clue: 'The young fold mountain arc north of the Indian subcontinent', coordinates: [[72.8, 35.5], [77.1, 34.1], [81.2, 30.7], [85.3, 28.2], [89.4, 27.8], [95.0, 28.7]], labelPoint: [84.8, 29.6] },
-  { id: 'mt-andes', name: 'Andes', kind: 'mountain', continent: 'South America', region: 'South America', clue: 'The long western mountain chain of South America', coordinates: [[-77.8, 8.4], [-76.2, -5.2], [-72.4, -15.8], [-70.2, -25.1], [-70.8, -34.4], [-72.4, -45.1]], labelPoint: [-72.2, -22.0] },
-  { id: 'mt-rockies', name: 'Rocky Mountains', kind: 'mountain', continent: 'North America', region: 'North America', clue: 'Major western mountain system of North America', coordinates: [[-121.0, 55.5], [-116.8, 50.7], [-113.4, 45.2], [-109.8, 40.4], [-106.0, 36.4], [-105.0, 32.4]], labelPoint: [-112.0, 43.0] },
-  { id: 'mt-alps', name: 'Alps', kind: 'mountain', continent: 'Europe', region: 'Europe', clue: 'Arc-shaped European range across France, Switzerland, Italy and Austria', coordinates: [[5.9, 45.6], [7.5, 46.0], [9.4, 46.4], [11.2, 46.6], [13.4, 47.0]], labelPoint: [9.4, 46.5] },
-  { id: 'mt-atlas', name: 'Atlas Mountains', kind: 'mountain', continent: 'Africa', region: 'North Africa', clue: 'Mountain system across Morocco, Algeria and Tunisia', coordinates: [[-9.6, 31.0], [-6.2, 32.0], [-2.4, 34.2], [2.6, 35.3], [8.4, 35.4]], labelPoint: [-2.4, 34.1] },
-  { id: 'mt-urals', name: 'Ural Mountains', kind: 'mountain', continent: 'Europe', region: 'Russia', clue: 'North-south range often used as a Europe-Asia boundary', coordinates: [[59.4, 67.8], [58.8, 62.4], [59.8, 57.5], [59.2, 53.2], [58.0, 50.0]], labelPoint: [59.2, 57.0] },
-  { id: 'mt-great-dividing', name: 'Great Dividing Range', kind: 'mountain', continent: 'Oceania', region: 'Australia', clue: 'Eastern Australian highland chain', coordinates: [[145.6, -16.7], [150.0, -24.0], [151.5, -31.5], [148.2, -37.2]], labelPoint: [150.4, -28.0] },
-]
+const CURATED_RIVER_NAMES: Record<string, readonly string[]> = {
+  ganga_ref: [
+    'Ganga', 'Yamuna', 'Tons', 'Hindon', 'Ramganga', 'Ghaghara', 'Gomti', 'Rapti', 'Gandak', 'Kosi',
+    'Mahananda', 'Son', 'Rihand', 'North Koel', 'Damodar', 'Hooghly', 'Padma', 'Chambal', 'Banas',
+    'Sind', 'Kali Sindh', 'Parbati', 'Betwa', 'Dhasan', 'Ken',
+  ],
+  indus_ref: ['Indus', 'Jhelum', 'Chenab', 'Ravi', 'Beas', 'Sutlej'],
+  brahmaputra_ref: [
+    'Brahmaputra', 'Subansiri', 'Kameng', 'Manas', 'Aie', 'Teesta', 'Dibang', 'Lohit',
+    'Burhi Dihing', 'Dhansiri', 'Kopili', 'Barak', 'Surma', 'Meghna',
+  ],
+  narmada_ref: ['Narmada', 'Hiran', 'Kolar', 'Orsang', 'Tawa', 'Shakkar', 'Sher', 'Banjar', 'Burhner'],
+  mahanadi_ref: ['Mahanadi', 'Seonath', 'Kharun', 'Hasdeo', 'Mand', 'Ib', 'Jonk', 'Ong', 'Indra', 'Tel'],
+  godavari_ref: [
+    'Godavari', 'Pravara', 'Manjira', 'Purna', 'Penganga', 'Wardha', 'Wainganga', 'Pranahita', 'Manair',
+    'Indravati', 'Sabari', 'Kinnerasani',
+  ],
+  krishna_ref: [
+    'Krishna', 'Bhima', 'Koyna', 'Panchganga', 'Dudhganga', 'Ghataprabha', 'Malaprabha', 'Don',
+    'Tungabhadra', 'Tunga', 'Bhadra', 'Dindi', 'Musi', 'Munneru',
+  ],
+}
+
+const CURATED_RIVER_SYSTEM = new Map(
+  Object.entries(CURATED_RIVER_NAMES).flatMap(([system, names]) => names.map(name => [name, system] as const)),
+)
+
+function riverDisplayName(name: string): string { return name }
+
+const CURATED_DISPLAY_NAMES = new Set(
+  Object.values(CURATED_RIVER_NAMES).flat().map(riverDisplayName),
+)
+
+interface ParkStateContext {
+  rivers: readonly string[]
+  landscape: string
+  wildlife: string
+}
+
+const PARK_STATE_CONTEXT: Record<string, ParkStateContext> = {
+  'Andaman and Nicobar Islands': { rivers: [], landscape: 'Island rainforest, coral reefs and mangroves', wildlife: 'Dugong and marine turtles' },
+  'Andhra Pradesh': { rivers: ['Godavari', 'Krishna'], landscape: 'Eastern Ghats and Godavari-Krishna valleys', wildlife: 'Gaur and leopard' },
+  'Arunachal Pradesh': { rivers: ['Brahmaputra', 'Subansiri', 'Kameng', 'Dibang', 'Lohit'], landscape: 'Eastern Himalaya and dense evergreen forest', wildlife: 'Red panda and clouded leopard' },
+  Assam: { rivers: ['Brahmaputra', 'Manas', 'Aie', 'Dhansiri', 'Kopili', 'Barak'], landscape: 'Brahmaputra floodplain, grassland and foothill forest', wildlife: 'One-horned rhinoceros' },
+  Bihar: { rivers: ['Ganga', 'Gandak', 'Kosi'], landscape: 'Terai forest along the Himalayan foothills', wildlife: 'Bengal tiger' },
+  Chhattisgarh: { rivers: ['Mahanadi', 'Hasdeo', 'Indravati'], landscape: 'Sal forest, plateau and limestone caves', wildlife: 'Wild water buffalo' },
+  Goa: { rivers: [], landscape: 'Western Ghats evergreen forest', wildlife: 'Gaur' },
+  Gujarat: { rivers: ['Narmada'], landscape: 'Dry forest, grassland and coral coast', wildlife: 'Asiatic lion and blackbuck' },
+  Haryana: { rivers: ['Yamuna'], landscape: 'Shivalik forest and seasonal wetland', wildlife: 'Asian elephant and migratory waterbirds' },
+  'Himachal Pradesh': { rivers: ['Sutlej', 'Beas', 'Ravi', 'Chenab'], landscape: 'Western Himalaya, alpine meadow and cold desert', wildlife: 'Snow leopard and western tragopan' },
+  'Jammu and Kashmir': { rivers: ['Jhelum', 'Chenab'], landscape: 'Kashmir valley and temperate Himalayan forest', wildlife: 'Hangul' },
+  Jharkhand: { rivers: ['Damodar', 'North Koel'], landscape: 'Chota Nagpur plateau and dry deciduous forest', wildlife: 'Asian elephant' },
+  Karnataka: { rivers: ['Krishna', 'Bhima', 'Tungabhadra'], landscape: 'Western Ghats and southern dry forest', wildlife: 'Tiger and Asian elephant' },
+  Kerala: { rivers: [], landscape: 'Western Ghats shola-grassland and rainforest', wildlife: 'Nilgiri tahr and lion-tailed macaque' },
+  Ladakh: { rivers: ['Indus'], landscape: 'Trans-Himalayan cold desert', wildlife: 'Snow leopard' },
+  'Madhya Pradesh': { rivers: ['Narmada', 'Chambal', 'Betwa', 'Ken', 'Son'], landscape: 'Central Indian highlands and dry deciduous forest', wildlife: 'Tiger, barasingha and cheetah' },
+  Maharashtra: { rivers: ['Godavari', 'Krishna', 'Wardha', 'Wainganga'], landscape: 'Deccan plateau, teak forest and coastal hills', wildlife: 'Bengal tiger and leopard' },
+  Manipur: { rivers: ['Barak'], landscape: 'Floating wetland and forested hill ranges', wildlife: 'Sangai' },
+  Meghalaya: { rivers: ['Surma', 'Meghna'], landscape: 'Garo-Khasi hills and subtropical forest', wildlife: 'Red panda and Asian elephant' },
+  Mizoram: { rivers: ['Barak'], landscape: 'Mizo hills and tropical evergreen forest', wildlife: 'Hoolock gibbon' },
+  Nagaland: { rivers: ['Dhansiri'], landscape: 'Naga hills and tropical forest', wildlife: 'Great hornbill' },
+  Odisha: { rivers: ['Mahanadi', 'Tel', 'Ong'], landscape: 'Eastern Ghats forest, mangroves and delta coast', wildlife: 'Saltwater crocodile and tiger' },
+  Rajasthan: { rivers: ['Chambal', 'Banas'], landscape: 'Thar desert, Aravalli forest and wetland', wildlife: 'Great Indian bustard and tiger' },
+  Sikkim: { rivers: ['Teesta'], landscape: 'Eastern Himalayan alpine and temperate forest', wildlife: 'Snow leopard and red panda' },
+  'Tamil Nadu': { rivers: [], landscape: 'Western Ghats, dry forest and coral coast', wildlife: 'Nilgiri tahr and dugong' },
+  Telangana: { rivers: ['Godavari', 'Krishna'], landscape: 'Deccan scrub and urban forest islands', wildlife: 'Blackbuck and spotted deer' },
+  Tripura: { rivers: [], landscape: 'Low hill rainforest and bamboo forest', wildlife: 'Clouded leopard' },
+  'Uttar Pradesh': { rivers: ['Ganga', 'Yamuna', 'Ghaghara'], landscape: 'Terai grassland, sal forest and wetlands', wildlife: 'Swamp deer and Bengal tiger' },
+  Uttarakhand: { rivers: ['Ganga', 'Yamuna', 'Ramganga'], landscape: 'Himalayan glaciers, alpine meadow and sal forest', wildlife: 'Bengal tiger and snow leopard' },
+  'West Bengal': { rivers: ['Ganga', 'Hooghly', 'Teesta', 'Mahananda'], landscape: 'Himalayan foothills, Terai and mangrove delta', wildlife: 'Bengal tiger and one-horned rhinoceros' },
+}
+
+const PARK_WILDLIFE: Record<string, string> = {
+  'Dachigam National Park': 'Hangul',
+  'Hemis National Park': 'Snow leopard',
+  'Jim Corbett National Park': 'Bengal tiger',
+  'Nanda Devi National Park': 'Snow leopard',
+  'Rajaji National Park': 'Asian elephant',
+  'Valley of Flowers National Park': 'Himalayan pollinators and alpine flora',
+  'Kaziranga National Park': 'One-horned rhinoceros',
+  'Manas National Park': 'Pygmy hog and golden langur',
+  'Raimona National Park': 'Golden langur',
+  'Dihing Patkai National Park': 'White-winged duck',
+  'Nameri National Park': 'Asian elephant',
+  'Orang National Park': 'One-horned rhinoceros',
+  'Namdapha National Park': 'Clouded leopard',
+  'Mouling National Park': 'Red panda',
+  'Keibul Lamjao National Park': 'Sangai',
+  'Murlen National Park': 'Hoolock gibbon',
+  'Phawngpui National Park': 'Asian black bear',
+  'Clouded Leopard National Park': 'Clouded leopard',
+  'Balphakram National Park': 'Red panda',
+  'Nokrek National Park': 'Asian elephant',
+  'Kuno National Park': 'Cheetah',
+  'Kanha National Park': 'Hard-ground barasingha',
+  'Panna National Park': 'Bengal tiger',
+  'Gir Forest National Park': 'Asiatic lion',
+  'Desert National Park': 'Great Indian bustard',
+  'Keoladeo National Park': 'Migratory waterbirds',
+  'Bhitarkanika National Park': 'Saltwater crocodile',
+  'Simlipal National Park': 'Bengal tiger and Asian elephant',
+  'Papikonda National Park': 'Gaur',
+  'Silent Valley National Park': 'Lion-tailed macaque',
+  'Eravikulam National Park': 'Nilgiri tahr',
+  'Bandipur National Park': 'Bengal tiger and Asian elephant',
+  'Nagarhole National Park': 'Asian elephant',
+  'Kudremukh National Park': 'Lion-tailed macaque',
+  'Mukurthi National Park': 'Nilgiri tahr',
+  'Gulf of Mannar Marine National Park': 'Dugong',
+  'Sundarbans National Park': 'Bengal tiger',
+  'Khangchendzonga National Park': 'Snow leopard and red panda',
+  'Dudhwa National Park': 'Swamp deer and Bengal tiger',
+}
+
+interface ParkPrelimsProfile {
+  rivers?: readonly string[]
+  mapRivers?: readonly string[]
+  facts: readonly string[]
+}
+
+const PARK_PRELIMS: Record<string, ParkPrelimsProfile> = {
+  'Dachigam National Park': { rivers: ['Dagwan stream', 'Jhelum basin'], mapRivers: ['Jhelum'], facts: ['Main stronghold of the Hangul in the Kashmir Valley.', 'Its lower and upper zones span temperate forest to alpine habitat.', 'Locate it near Srinagar and the Zabarwan range.'] },
+  'Hemis National Park': { rivers: ['Indus'], mapRivers: ['Indus'], facts: ['A high-altitude cold-desert park in Ladakh.', 'Important snow leopard landscape in the Trans-Himalaya.', 'Place it north of the main Himalayan range.'] },
+  'Great Himalayan National Park': { rivers: ['Tirthan', 'Sainj'], mapRivers: ['Beas'], facts: ['A UNESCO World Heritage natural site in Himachal Pradesh.', 'Protects western Himalayan temperate and alpine ecosystems.', 'Western tragopan is an important species cue.'] },
+  'Jim Corbett National Park': { rivers: ['Ramganga'], mapRivers: ['Ramganga'], facts: ['India’s oldest national park and a major Project Tiger landscape.', 'Ramganga is the key river-map linkage.', 'It lies in the Shivalik-Terai transition of Uttarakhand.'] },
+  'Nanda Devi National Park': { rivers: ['Rishi Ganga', 'Dhauli Ganga'], mapRivers: ['Ganga'], facts: ['Part of the Nanda Devi and Valley of Flowers UNESCO site.', 'A high Himalayan park around the Nanda Devi massif.', 'Snow leopard and bharal are important fauna cues.'] },
+  'Valley of Flowers National Park': { rivers: ['Pushpawati', 'Alaknanda basin'], mapRivers: ['Ganga'], facts: ['A UNESCO natural site known for alpine meadows.', 'It lies in the upper Alaknanda basin of Uttarakhand.', 'Remember endemic alpine flora, not only charismatic fauna.'] },
+  'Rajaji National Park': { rivers: ['Ganga'], mapRivers: ['Ganga'], facts: ['A Shivalik-Terai elephant landscape across three Uttarakhand districts.', 'The Ganga cuts through the broader protected landscape.', 'It forms part of the north-western elephant range.'] },
+  'Kaziranga National Park': { rivers: ['Brahmaputra'], mapRivers: ['Brahmaputra'], facts: ['A UNESCO World Heritage site on the Brahmaputra floodplain.', 'Known for the greater one-horned rhinoceros.', 'Annual flooding maintains its tall grassland-wetland mosaic.'] },
+  'Manas National Park': { rivers: ['Manas'], mapRivers: ['Manas'], facts: ['A UNESCO natural site along the Bhutan foothills.', 'Also associated with tiger reserve and biosphere reserve status.', 'Pygmy hog and golden langur are high-value species cues.'] },
+  'Raimona National Park': { rivers: ['Sankosh'], mapRivers: ['Manas'], facts: ['Located in western Assam along the Bhutan border.', 'Golden langur is its flagship prelims cue.', 'It strengthens a transboundary forest corridor.'] },
+  'Dihing Patkai National Park': { rivers: ['Dihing'], mapRivers: ['Burhi Dihing'], facts: ['Protects lowland rainforest in eastern Assam.', 'White-winged wood duck is an important species association.', 'Remember it as a rainforest park, not a floodplain grassland park.'] },
+  'Dibru-Saikhowa National Park': { rivers: ['Brahmaputra', 'Lohit'], mapRivers: ['Brahmaputra', 'Lohit'], facts: ['A river-island and floodplain landscape in eastern Assam.', 'Known for wetlands, grasslands and feral horses.', 'Its ecology is shaped by the Brahmaputra-Lohit system.'] },
+  'Nameri National Park': { rivers: ['Jia-Bhoroli'], mapRivers: ['Kameng'], facts: ['A foothill forest park on the Assam-Arunachal boundary.', 'Jia-Bhoroli is the lower course of the Kameng.', 'Important for elephants and riverine bird habitat.'] },
+  'Orang National Park': { rivers: ['Brahmaputra'], mapRivers: ['Brahmaputra'], facts: ['A compact Brahmaputra north-bank floodplain park.', 'One-horned rhinoceros, tiger and grassland birds are key cues.', 'Compare its habitat with Kaziranga.'] },
+  'Namdapha National Park': { rivers: ['Noa-Dihing'], mapRivers: ['Burhi Dihing'], facts: ['A large Eastern Himalayan park in Arunachal Pradesh.', 'Extends from tropical forest to high-elevation habitat.', 'Known for exceptional cat diversity, including clouded leopard.'] },
+  'Mouling National Park': { rivers: ['Siang basin'], mapRivers: ['Brahmaputra', 'Dibang'], facts: ['An Eastern Himalayan protected landscape in Arunachal Pradesh.', 'Dense forest and steep elevation gradients drive high diversity.', 'Red panda is an important high-altitude species cue.'] },
+  'Keibul Lamjao National Park': { rivers: ['Loktak Lake'], mapRivers: [], facts: ['The world’s only floating national park, on Loktak Lake.', 'Its habitat is formed by floating phumdis.', 'It is the last natural refuge of the Sangai.'] },
+  'Clouded Leopard National Park': { rivers: [], mapRivers: [], facts: ['Located within the Sepahijala landscape of Tripura.', 'Named after the arboreal clouded leopard.', 'Associate it with north-eastern tropical forest.'] },
+  'Khangchendzonga National Park': { rivers: ['Teesta headwaters'], mapRivers: ['Teesta'], facts: ['India’s first UNESCO mixed World Heritage site.', 'Combines sacred cultural landscape with Eastern Himalayan ecology.', 'Snow leopard and red panda are key fauna cues.'] },
+  'Valmiki National Park': { rivers: ['Gandak'], mapRivers: ['Gandak'], facts: ['Bihar’s only national park, in the Terai Arc landscape.', 'It adjoins Nepal’s Chitwan protected landscape.', 'Tiger, gharial and Gandak river linkages are important.'] },
+  'Betla National Park': { rivers: ['North Koel'], mapRivers: ['North Koel'], facts: ['Located within the Palamau Tiger Reserve landscape.', 'A Chota Nagpur plateau sal-forest park in Jharkhand.', 'North Koel is the key river linkage.'] },
+  'Kuno National Park': { rivers: ['Kuno'], mapRivers: ['Chambal'], facts: ['The principal site of India’s cheetah reintroduction programme.', 'Located in the Chambal landscape of Madhya Pradesh.', 'Dry deciduous forest and open woodland are key habitat cues.'] },
+  'Kanha National Park': { rivers: ['Banjar', 'Halon'], mapRivers: ['Narmada'], facts: ['A central Indian tiger reserve in the Maikal landscape.', 'Famous for recovery of the hard-ground barasingha.', 'Sal forest and meadow form its classic habitat mosaic.'] },
+  'Panna National Park': { rivers: ['Ken'], mapRivers: ['Ken'], facts: ['The Ken river cuts through this Madhya Pradesh tiger landscape.', 'Also a biosphere reserve and tiger reintroduction success story.', 'Link it with the Vindhyan plateau.'] },
+  'Gir Forest National Park': { rivers: ['Hiran', 'Shetrunji basin'], mapRivers: ['Hiran'], facts: ['The only wild home of the Asiatic lion.', 'A dry deciduous and thorn-forest landscape in Gujarat.', 'Do not confuse it with African savanna protected areas.'] },
+  'Marine National Park, Gulf of Kutch': { rivers: [], mapRivers: [], facts: ['India’s first marine national park.', 'Protects coral reefs, mangroves and intertidal islands.', 'Dugong, corals and tidal ecology are key prelims links.'] },
+  'Desert National Park': { rivers: [], mapRivers: [], facts: ['A Thar desert ecosystem in western Rajasthan.', 'A major stronghold of the Great Indian bustard.', 'Sand dunes, rocky surfaces and sparse grassland dominate.'] },
+  'Keoladeo National Park': { rivers: ['Gambhir', 'Banganga system'], mapRivers: ['Banas'], facts: ['A managed wetland and UNESCO World Heritage site at Bharatpur.', 'Also a Ramsar site important for migratory waterbirds.', 'Its wetland character depends heavily on regulated water supply.'] },
+  'Ranthambore National Park': { rivers: ['Banas', 'Chambal basin'], mapRivers: ['Banas', 'Chambal'], facts: ['A tiger landscape at the Aravalli-Vindhya junction.', 'Dry deciduous forest surrounds the historic Ranthambore fort.', 'Place it in eastern Rajasthan, not the Thar core.'] },
+  'Bhitarkanika National Park': { rivers: ['Brahmani', 'Baitarani'], mapRivers: [], facts: ['A mangrove wetland in the Brahmani-Baitarani delta.', 'Known for saltwater crocodiles and rich estuarine biodiversity.', 'The nearby Gahirmatha coast is famous for Olive Ridley nesting.'] },
+  'Simlipal National Park': { rivers: ['Budhabalanga headwaters'], mapRivers: [], facts: ['Part of a biosphere reserve and tiger reserve in Odisha.', 'Combines sal forest, plateau and prominent waterfalls.', 'Tiger, elephant and giant squirrel are important fauna cues.'] },
+  'Indravati National Park': { rivers: ['Indravati'], mapRivers: ['Indravati'], facts: ['A major protected landscape in Bastar, Chhattisgarh.', 'Wild water buffalo and tiger are important associations.', 'Indravati is a tributary of the Godavari.'] },
+  'Papikonda National Park': { rivers: ['Godavari'], mapRivers: ['Godavari'], facts: ['Protects the Godavari gorge through the Eastern Ghats.', 'Gaur is an important large-mammal cue.', 'Locate it along the Andhra Pradesh Godavari valley.'] },
+  'Silent Valley National Park': { rivers: ['Kunthipuzha'], mapRivers: [], facts: ['A tropical evergreen forest in the Nilgiri landscape.', 'Kunthipuzha is a tributary of the Bharathapuzha.', 'Lion-tailed macaque is the flagship prelims association.'] },
+  'Eravikulam National Park': { rivers: [], mapRivers: [], facts: ['A high-elevation shola-grassland park in Kerala.', 'Best known for the Nilgiri tahr.', 'Neelakurinji mass flowering is a recurring ecology cue.'] },
+  'Periyar National Park': { rivers: ['Periyar'], mapRivers: [], facts: ['A Western Ghats tiger and elephant reserve around Periyar lake.', 'The reservoir is central to its landscape identity.', 'Associate it with Kerala, not Tamil Nadu.'] },
+  'Bandipur National Park': { rivers: ['Kabini basin'], mapRivers: [], facts: ['Part of the Nilgiri Biosphere Reserve and a tiger reserve.', 'Forms a contiguous landscape with Nagarhole, Mudumalai and Wayanad.', 'Tiger and elephant corridors are the key linkage.'] },
+  'Nagarhole National Park': { rivers: ['Kabini'], mapRivers: [], facts: ['Also known as Rajiv Gandhi National Park in Karnataka.', 'Kabini links its wildlife landscape with Bandipur.', 'Part of the Nilgiri Biosphere Reserve.'] },
+  'Kudremukh National Park': { rivers: ['Tunga', 'Bhadra', 'Netravati headwaters'], mapRivers: ['Tunga', 'Bhadra'], facts: ['A Western Ghats shola-grassland landscape.', 'Important river headwaters rise in the massif.', 'Lion-tailed macaque and endemic biodiversity are key cues.'] },
+  'Mukurthi National Park': { rivers: [], mapRivers: [], facts: ['A high-altitude shola-grassland park in the Nilgiris.', 'Nilgiri tahr is its flagship species.', 'It lies within the Nilgiri Biosphere Reserve.'] },
+  'Gulf of Mannar Marine National Park': { rivers: [], mapRivers: [], facts: ['Protects coral reefs, seagrass beds and islands off Tamil Nadu.', 'Dugong is the flagship marine mammal cue.', 'It forms part of the Gulf of Mannar Biosphere Reserve.'] },
+  'Dudhwa National Park': { rivers: ['Suheli', 'Ghaghara basin'], mapRivers: ['Ghaghara'], facts: ['A Terai grassland and sal-forest park in Uttar Pradesh.', 'Swamp deer and tiger are major species associations.', 'It forms part of the wider Dudhwa Tiger Reserve.'] },
+  'Sundarbans National Park': { rivers: ['Ganga-Brahmaputra-Meghna delta'], mapRivers: ['Ganga', 'Hooghly'], facts: ['A tidal mangrove landscape and UNESCO World Heritage site.', 'Also a Ramsar site and tiger reserve.', 'Salinity, tides and distributaries shape its ecology.'] },
+  'Jaldapara National Park': { rivers: ['Torsa'], mapRivers: ['Teesta'], facts: ['A Terai-Dooars grassland park in northern West Bengal.', 'Known for the one-horned rhinoceros.', 'Locate it east of the Teesta in the Himalayan foothills.'] },
+  'Neora Valley National Park': { rivers: ['Neora'], mapRivers: ['Teesta'], facts: ['An Eastern Himalayan forest park in northern West Bengal.', 'Red panda is an important species cue.', 'Its elevation range supports subtropical to temperate forest.'] },
+}
+
+const NATURAL_EARTH_RIVER_NAMES: Record<string, string> = {
+  Ganga: 'Ganges',
+  Yamuna: 'Yamuna',
+  Ghaghara: 'Ghaghara',
+  Gandak: 'Gandak',
+  Son: 'Son',
+  Chambal: 'Chambal',
+  Banas: 'Banas',
+  Parbati: 'Parbati',
+  Betwa: 'Betwa',
+  Indus: 'Indus',
+  Jhelum: 'Jhelum',
+  Chenab: 'Chenab',
+  Ravi: 'Ravi',
+  Beas: 'Beas',
+  Sutlej: 'Sutlej',
+  Brahmaputra: 'Brahmaputra',
+  Teesta: 'Teesta',
+  Manas: 'Manas',
+  Narmada: 'Narmada',
+  Mahanadi: 'Mahanadi',
+  Tel: 'Tel',
+  Godavari: 'Godavari',
+  Wainganga: 'Wainganga',
+  Indravati: 'Indravati',
+  Krishna: 'Krishna',
+  Bhima: 'Bhima',
+  Tungabhadra: 'Tungabhadra',
+}
+
+const RIVER_DETAILS: Record<string, { region: string; source?: NonNullable<AtlasRiver['source']>; major?: boolean }> = {
+  Indus: {
+    region: 'Tibet, Ladakh and Pakistan',
+    source: { type: 'lake', name: 'Near Lake Mansarovar', place: 'Tibetan Plateau' },
+    major: true,
+  },
+  Jhelum: {
+    region: 'Kashmir Valley and Pakistan',
+    source: { type: 'spring', name: 'Verinag Spring', place: 'Jammu and Kashmir' },
+  },
+  Chenab: {
+    region: 'Himachal Pradesh, Jammu and Pakistan',
+    source: { type: 'confluence', name: 'Chandra-Bhaga confluence', place: 'Tandi, Himachal Pradesh' },
+  },
+  Ravi: {
+    region: 'Himachal Pradesh, Punjab and Pakistan',
+    source: { type: 'hills', name: 'Near Rohtang Pass', place: 'Himachal Pradesh' },
+  },
+  Beas: {
+    region: 'Himachal Pradesh and Punjab',
+    source: { type: 'glacier', name: 'Beas Kund', place: 'Himachal Pradesh' },
+  },
+  Sutlej: {
+    region: 'Tibet, Himachal Pradesh and Punjab',
+    source: { type: 'lake', name: 'Near Rakshastal', place: 'Tibetan Plateau' },
+  },
+  Brahmaputra: {
+    region: 'Tibet, Arunachal Pradesh, Assam and Bangladesh',
+    source: { type: 'glacier', name: 'Chemayungdung region', place: 'Tibetan Plateau' },
+    major: true,
+  },
+  Narmada: {
+    region: 'Madhya Pradesh, Maharashtra and Gujarat',
+    source: { type: 'hills', name: 'Amarkantak Plateau', place: 'Madhya Pradesh' },
+    major: true,
+  },
+  Mahanadi: {
+    region: 'Chhattisgarh and Odisha',
+    source: { type: 'hills', name: 'Sihawa Hills', place: 'Chhattisgarh' },
+    major: true,
+  },
+  Godavari: {
+    region: 'Deccan Plateau to the Bay of Bengal',
+    source: { type: 'hills', name: 'Trimbakeshwar', place: 'Maharashtra' },
+    major: true,
+  },
+  Krishna: {
+    region: 'Western Ghats to the Bay of Bengal',
+    source: { type: 'hills', name: 'Near Mahabaleshwar', place: 'Maharashtra' },
+    major: true,
+  },
+}
 
 const RIVER_TRACES: (Omit<AtlasRiver, 'geometry'> & { coordinates: [number, number][] })[] = [
   { id: 6101, name: 'Ganga', system: 'ganga_ref', region: 'North India plains', major: true, source: { type: 'glacier', name: 'Gangotri Glacier', place: 'Uttarakhand' }, coordinates: [[78.65, 30.15], [78.25, 29.15], [79.6, 27.4], [81.25, 25.9], [82.8, 25.35], [85.13, 25.59], [87.05, 24.98], [88.15, 24.1]], labelPoint: [82.4, 25.25], labelAngle: 15 },
@@ -212,6 +427,7 @@ const INITIAL: AtlasState = {
   riverSystem: null,
   parkRegion: null,
   parkLearnState: null,
+  parkLearnParkId: null,
   setupCount: 10,
   setupMode: 'locate',
   mode: 'locate',
@@ -273,8 +489,12 @@ function multiplier(streak: number): number {
   return 5
 }
 
+function curriculumRivers(rivers: AtlasRiver[], system: string | null): AtlasRiver[] {
+  return rivers.filter(r => CURATED_DISPLAY_NAMES.has(r.name) && (!system || r.system === system))
+}
+
 function riverItems(rivers: AtlasRiver[], system: string | null): QuizItem[] {
-  return rivers.filter(r => !system || r.system === system).map(r => ({
+  return curriculumRivers(rivers, system).map(r => ({
     id: r.id,
     name: r.name,
     region: r.region,
@@ -296,11 +516,13 @@ function cleanRegionName(name: string): string {
 }
 
 async function loadData(): Promise<LoadedData> {
-  const [world, states, parksRaw, riverRaw] = await Promise.all([
+  const [world, states, parksRaw, riverRaw, naturalEarthRivers, cwcRivers] = await Promise.all([
     fetch(asset('data/countries-110m.json')).then(r => r.json()) as Promise<Topology>,
     fetch(asset('data/india-states.json')).then(r => r.json()) as Promise<FeatureCollection>,
     fetch(asset('data/india-national-parks.json')).then(r => r.json()) as Promise<{ regions: ParkRegion[]; parks: AtlasPark[] }>,
     fetch(asset('data/india-rivers-osm.geojson')).then(r => r.json()).catch(() => null) as Promise<FeatureCollection | null>,
+    fetch(asset('data/india-rivers-ne-10m.geojson')).then(r => r.json()).catch(() => null) as Promise<FeatureCollection | null>,
+    fetch(asset('data/india-rivers-curriculum-v2.geojson')).then(r => r.json()).catch(() => null) as Promise<FeatureCollection | null>,
   ])
   const features = (topojson.feature(world, world.objects.countries) as unknown as FeatureCollection).features
   const byFeatureId = new Map(features.map(f => [Number(f.id), f]))
@@ -322,7 +544,7 @@ async function loadData(): Promise<LoadedData> {
     indiaStates: states,
     parks: parksRaw.parks,
     parkRegions: parksRaw.regions,
-    rivers: loadRiverGeometry(riverRaw),
+    rivers: loadRiverGeometry(riverRaw, naturalEarthRivers, cwcRivers),
   }
 }
 
@@ -331,30 +553,134 @@ const rivers: AtlasRiver[] = RIVER_TRACES.map(r => ({
   geometry: { type: 'LineString', coordinates: r.coordinates } as Geometry,
 }))
 
-function loadRiverGeometry(data: FeatureCollection | null): AtlasRiver[] {
-  if (!data?.features?.length) return rivers
+type RiverPoint = [number, number]
+
+function riverPointDistance(a: RiverPoint, b: RiverPoint): number {
+  const meanLat = ((a[1] + b[1]) / 2) * Math.PI / 180
+  return Math.hypot((a[0] - b[0]) * Math.cos(meanLat), a[1] - b[1])
+}
+
+function riverLineLength(line: RiverPoint[]): number {
+  let length = 0
+  for (let index = 1; index < line.length; index += 1) {
+    length += riverPointDistance(line[index - 1], line[index])
+  }
+  return length
+}
+
+function practiceReadyRiverGeometry(geometry: Geometry): geometry is Geometry {
+  if (geometry.type !== 'LineString') return false
+  const line = geometry.coordinates.map(point => [point[0], point[1]] as RiverPoint)
+  if (line.length < 12 || riverLineLength(line) < 0.35) return false
+  const longitudes = line.map(point => point[0])
+  const latitudes = line.map(point => point[1])
+  return Math.max(...longitudes) - Math.min(...longitudes) >= 0.15
+    || Math.max(...latitudes) - Math.min(...latitudes) >= 0.15
+}
+
+function continuousRiverGeometry(geometry: Geometry): Geometry {
+  if (geometry.type !== 'MultiLineString') return geometry
+  const chains = geometry.coordinates
+    .filter(line => line.length > 1)
+    .map(line => line.map(point => [point[0], point[1]] as RiverPoint))
+  const maxJoinGap = 0.12
+
+  while (chains.length > 1) {
+    let closest: { first: number; second: number; gap: number; join: 'end-start' | 'end-end' | 'start-end' | 'start-start' } | null = null
+    for (let first = 0; first < chains.length; first += 1) {
+      for (let second = first + 1; second < chains.length; second += 1) {
+        const a = chains[first]
+        const b = chains[second]
+        const candidates = [
+          { gap: riverPointDistance(a[a.length - 1], b[0]), join: 'end-start' as const },
+          { gap: riverPointDistance(a[a.length - 1], b[b.length - 1]), join: 'end-end' as const },
+          { gap: riverPointDistance(a[0], b[b.length - 1]), join: 'start-end' as const },
+          { gap: riverPointDistance(a[0], b[0]), join: 'start-start' as const },
+        ]
+        for (const candidate of candidates) {
+          if (candidate.gap > maxJoinGap || (closest && candidate.gap >= closest.gap)) continue
+          closest = { first, second, ...candidate }
+        }
+      }
+    }
+    if (!closest) break
+
+    const a = chains[closest.first]
+    const b = chains[closest.second]
+    const joined = closest.join === 'end-start'
+      ? a.concat(b.slice(1))
+      : closest.join === 'end-end'
+        ? a.concat(b.slice().reverse().slice(1))
+        : closest.join === 'start-end'
+          ? b.concat(a.slice(1))
+          : b.slice().reverse().concat(a.slice(1))
+    chains[closest.first] = joined
+    chains.splice(closest.second, 1)
+  }
+
+  const mainCourse = chains.sort((a, b) => riverLineLength(b) - riverLineLength(a))[0]
+  return mainCourse ? { type: 'LineString', coordinates: mainCourse } : geometry
+}
+
+function naturalEarthRiverGeometry(data: FeatureCollection | null, riverName: string): Geometry | null {
+  const naturalEarthName = NATURAL_EARTH_RIVER_NAMES[riverName]
+  if (!naturalEarthName || !data?.features.length) return null
+  const lines = data.features
+    .filter(feature => {
+      const props = feature.properties as { name?: string; name_en?: string; name_alt?: string } | null
+      return [props?.name, props?.name_en, props?.name_alt].includes(naturalEarthName)
+    })
+    .flatMap(feature => {
+      if (feature.geometry.type === 'LineString') return [feature.geometry.coordinates]
+      if (feature.geometry.type === 'MultiLineString') return feature.geometry.coordinates
+      return []
+    })
+  if (!lines.length) return null
+  return continuousRiverGeometry({ type: 'MultiLineString', coordinates: lines })
+}
+
+function loadRiverGeometry(
+  data: FeatureCollection | null,
+  naturalEarthData: FeatureCollection | null,
+  cwcData: FeatureCollection | null,
+): AtlasRiver[] {
+  if (!data?.features?.length && !naturalEarthData?.features.length && !cwcData?.features.length) return []
   const fallbackByName = new Map(rivers.map(r => [r.name, r]))
-  const traced = data.features
-    .filter(feature => String((feature.properties as { sys?: string } | undefined)?.sys ?? '') === 'ganga_ref')
-    .map(feature => {
-      const props = feature.properties as { name?: string; sys?: string } | undefined
-      const name = props?.name
-      if (!name || !feature.geometry) return null
+  const osmByName = new Map(
+    (data?.features ?? []).map(feature => [String((feature.properties as { name?: string } | null)?.name ?? ''), feature]),
+  )
+  const cwcByName = new Map(
+    (cwcData?.features ?? []).map(feature => [String((feature.properties as { name?: string } | null)?.name ?? ''), feature]),
+  )
+  return [...CURATED_RIVER_SYSTEM.entries()]
+    .map(([name, system]) => {
+      const feature = osmByName.get(name)
+      const cwcFeature = cwcByName.get(name)
+      const naturalEarthGeometry = naturalEarthRiverGeometry(naturalEarthData, name)
+      const osmGeometry = feature?.geometry ? continuousRiverGeometry(feature.geometry) : null
+      const cwcGeometry = cwcFeature?.geometry ?? null
+      const candidates = system === 'indus_ref'
+        ? [naturalEarthGeometry, cwcGeometry, osmGeometry]
+        : [cwcGeometry, naturalEarthGeometry, osmGeometry]
+      const geometry = candidates
+        .find((candidate): candidate is Geometry => Boolean(candidate && practiceReadyRiverGeometry(candidate)))
+      if (!geometry) return null
       const fallback = fallbackByName.get(name)
+      const details = RIVER_DETAILS[name]
+      const systemName = RIVER_SYSTEMS.find(item => item.key === system)?.name ?? 'India river system'
       return {
         id: fallback?.id ?? Math.abs(name.split('').reduce((n, ch) => ((n * 31 + ch.charCodeAt(0)) >>> 0), 0)),
-        name,
-        system: props?.sys ?? 'ganga_ref',
-        region: fallback?.region ?? 'Ganga river system',
-        major: fallback?.major ?? ['Ganga', 'Yamuna', 'Brahmaputra'].includes(name),
-        source: fallback?.source,
-        geometry: feature.geometry,
+        name: riverDisplayName(name),
+        system,
+        region: fallback?.region ?? details?.region ?? systemName,
+        major: fallback?.major ?? details?.major ?? ['Ganga', 'Yamuna'].includes(name),
+        source: fallback?.source ?? details?.source,
+        geometry,
         labelPoint: fallback?.labelPoint,
         labelAngle: fallback?.labelAngle,
       } satisfies AtlasRiver
     })
     .filter(Boolean) as AtlasRiver[]
-  return traced.length ? traced : rivers
 }
 
 export function MapsArcade() {
@@ -364,11 +690,13 @@ export function MapsArcade() {
   const [loaded, setLoaded] = useState<LoadedData | null>(null)
   const [loading, setLoading] = useState(true)
   const [state, setState] = useState<AtlasState>(INITIAL)
+  const [parkFactsOpen, setParkFactsOpen] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 700)
   const mapRef = useRef<MapSVGHandle>(null)
   const rootRef = useRef<HTMLDivElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
   const toastTimer = useRef<number | null>(null)
   const advanceTimer = useRef<number | null>(null)
+  const mapRivers = useMemo(() => curriculumRivers(loaded?.rivers ?? [], null), [loaded])
 
   useEffect(() => {
     let live = true
@@ -377,6 +705,23 @@ export function MapsArcade() {
       .finally(() => { if (live) setLoading(false) })
     return () => { live = false }
   }, [])
+
+  useEffect(() => {
+    if (state.category !== 'rivers' || !state.queue.length) return
+    const validNames = new Set(
+      (CURATED_RIVER_NAMES[state.riverSystem ?? ''] ?? []).map(riverDisplayName),
+    )
+    if (state.queue.every(item => validNames.has(item.name))) return
+    if (advanceTimer.current) window.clearTimeout(advanceTimer.current)
+    setState(prev => ({
+      ...INITIAL,
+      app: 'india',
+      category: 'rivers',
+      screen: 'river-menu',
+      toast: { kind: 'hint', text: 'River maps updated. Choose a basin to begin a clean round.' },
+      setupCount: prev.setupCount,
+    }))
+  }, [state.category, state.queue, state.riverSystem])
 
   useEffect(() => {
     const root = rootRef.current
@@ -394,13 +739,13 @@ export function MapsArcade() {
     const ctx = gsap.context(() => {
       gsap.fromTo(panel, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.32, ease: EASE.out, clearProps: 'transform,opacity' })
       gsap.fromTo(
-        panel.querySelectorAll('.atlas-india-card, .atlas-park-card, .atlas-park-overview, .atlas-chip-scroll button'),
+        panel.querySelectorAll('.atlas-india-card, .atlas-park-card, .atlas-park-overview, .atlas-park-learn-toolbar, .atlas-park-lesson-title, .atlas-park-lesson-context>div, .atlas-park-lesson-actions'),
         { opacity: 0, y: 14, scale: 0.98 },
         { opacity: 1, y: 0, scale: 1, duration: 0.36, stagger: 0.035, delay: 0.05, ease: EASE.out, clearProps: 'transform,opacity' },
       )
     }, panel)
     return () => { ctx.revert() }
-  }, [state.screen, state.qIndex, state.chosenId])
+  }, [state.screen, state.qIndex, state.chosenId, state.parkLearnState, state.parkLearnParkId])
 
   useEffect(() => {
     return () => {
@@ -443,6 +788,13 @@ export function MapsArcade() {
   const total = currentPool().length
   const accuracy = state.queue.length ? Math.round((state.correctCount / state.queue.length) * 100) : 0
   const activeLearnState = state.screen === 'park-learn' ? currentParkLearnState() : null
+  const activeLearnParks = state.screen === 'park-learn'
+    ? (loaded?.parks ?? []).filter(park => (!state.parkRegion || park.region === state.parkRegion) && (!activeLearnState || park.state === activeLearnState))
+    : []
+  const activeLearnPark = activeLearnParks.find(park => park.id === state.parkLearnParkId) ?? activeLearnParks[0] ?? null
+  const activeLearnRiverNames = activeLearnPark
+    ? [...(PARK_PRELIMS[activeLearnPark.name]?.mapRivers ?? PARK_STATE_CONTEXT[activeLearnPark.state]?.rivers ?? [])]
+    : []
   const activePracticeRegion = state.screen === 'play' && state.category === 'parks'
     ? (state.target?.region ?? state.parkRegion)
     : null
@@ -670,24 +1022,26 @@ export function MapsArcade() {
         ? prev.wrongList
         : prev.wrongList.concat(prev.target)
       if (advanceTimer.current) window.clearTimeout(advanceTimer.current)
-      advanceTimer.current = window.setTimeout(() => {
-        setState(s => {
-          const next = s.qIndex + 1
-          if (s.screen !== 'play') return s
-          if (next >= s.queue.length) return { ...s, screen: 'results', toast: null }
-          const target = s.queue[next]
-          return {
-            ...s,
-            qIndex: next,
-            target,
-            choices: s.mode === 'name' ? makeChoicesForContext(target, s.queue) : [],
-            chosenId: null,
-            hintUsed: false,
-            removedChoiceId: null,
-            toast: null,
-          }
-        })
-      }, prev.app === 'world' ? 1450 : prev.category === 'rivers' || prev.category === 'parks' ? 1500 : 1000)
+      if (prev.category !== 'parks') {
+        advanceTimer.current = window.setTimeout(() => {
+          setState(s => {
+            const next = s.qIndex + 1
+            if (s.screen !== 'play') return s
+            if (next >= s.queue.length) return { ...s, screen: 'results', toast: null }
+            const target = s.queue[next]
+            return {
+              ...s,
+              qIndex: next,
+              target,
+              choices: s.mode === 'name' ? makeChoicesForContext(target, s.queue) : [],
+              chosenId: null,
+              hintUsed: false,
+              removedChoiceId: null,
+              toast: null,
+            }
+          })
+        }, prev.app === 'world' ? 1450 : prev.category === 'rivers' ? 1500 : 1000)
+      }
       return {
         ...prev,
         chosenId: id,
@@ -821,6 +1175,10 @@ export function MapsArcade() {
   }
 
   function focusPark(park: AtlasPark) {
+    if (state.screen === 'park-learn') {
+      patch({ parkLearnParkId: park.id })
+      return
+    }
     showToast({ kind: 'hint', text: `${park.name.replace(/ National Park/g, '')}: ${park.state}` }, 1800)
   }
 
@@ -972,6 +1330,7 @@ export function MapsArcade() {
         <div className="atlas-panel-head">
           <span>India Rivers</span>
           <h3>Choose a system</h3>
+          <p>Focused NCERT river sets for clean map recall.</p>
         </div>
         <div className="atlas-list-grid">
           {RIVER_SYSTEMS.map(sys => (
@@ -1017,7 +1376,15 @@ export function MapsArcade() {
               <div>
                 <button onClick={() => {
                   const firstState = [...new Set(loaded.parks.filter(p => p.region === reg.key).map(p => p.state))].sort()[0] ?? null
-                  patch({ app: 'india', category: 'parks', screen: 'park-learn', parkRegion: reg.key, parkLearnState: firstState })
+                  const firstPark = loaded.parks.find(park => park.region === reg.key && park.state === firstState)
+                  patch({
+                    app: 'india',
+                    category: 'parks',
+                    screen: 'park-learn',
+                    parkRegion: reg.key,
+                    parkLearnState: firstState,
+                    parkLearnParkId: firstPark?.id ?? null,
+                  })
                 }}>Learn</button>
                 <button onClick={() => openSetup({ app: 'india', category: 'parks', parkRegion: reg.key })}>Practice</button>
               </div>
@@ -1032,23 +1399,115 @@ export function MapsArcade() {
     const states = [...new Set((loaded?.parks ?? []).filter(p => !state.parkRegion || p.region === state.parkRegion).map(p => p.state))].sort()
     const selected = currentParkLearnState()
     const visible = (loaded?.parks ?? []).filter(p => (!state.parkRegion || p.region === state.parkRegion) && (!selected || p.state === selected))
-    const regionName = loaded?.parkRegions.find(r => r.key === state.parkRegion)?.name
+    const park = visible.find(item => item.id === state.parkLearnParkId) ?? visible[0] ?? null
+    const parkIndex = park ? visible.findIndex(item => item.id === park.id) : 0
+    const stateIndex = selected ? states.indexOf(selected) : 0
+    const context = selected ? PARK_STATE_CONTEXT[selected] : null
+    const wildlife = park ? (PARK_WILDLIFE[park.name] ?? context?.wildlife ?? 'Protected wildlife habitat') : 'Protected wildlife habitat'
+    const prelims = park ? PARK_PRELIMS[park.name] : null
+    const prelimsFacts = prelims?.facts ?? [
+      `Locate it in ${selected}.`,
+      `Associate it with ${wildlife.toLowerCase()}.`,
+      `Connect it with ${context?.landscape.toLowerCase() ?? 'its protected landscape'}.`,
+    ]
+    const riverNames = prelims?.rivers ?? context?.rivers ?? []
+    const riverLabel = riverNames.length ? riverNames.slice(0, 4).join(' · ') : 'No major river cue'
+
+    const selectState = (nextState: string) => {
+      const firstPark = (loaded?.parks ?? []).find(item => (!state.parkRegion || item.region === state.parkRegion) && item.state === nextState)
+      patch({ parkLearnState: nextState, parkLearnParkId: firstPark?.id ?? null })
+    }
+
+    const stepPark = (direction: -1 | 1) => {
+      if (!visible.length) return
+      const nextIndex = (parkIndex + direction + visible.length) % visible.length
+      patch({ parkLearnParkId: visible[nextIndex].id })
+    }
+
+    const stepState = (direction: -1 | 1) => {
+      if (!states.length) return
+      const nextIndex = (stateIndex + direction + states.length) % states.length
+      selectState(states[nextIndex])
+    }
+
     return (
-      <div ref={panelRef} className="atlas-learn-strip">
-        <div className="atlas-learn-summary">
-          <span>{regionName ? cleanRegionName(regionName) : 'Learn mode'}</span>
-          <b>{selected ?? 'Select state'}</b>
-          <em>{visible.length} parks visible</em>
-        </div>
-        <div className="atlas-chip-scroll">
-          {states.map(st => (
-            <button key={st} className={st === selected ? 'on' : ''} onClick={() => patch({ parkLearnState: st })}>{st}</button>
-          ))}
-        </div>
-        <button className="atlas-primary-mini" onClick={() => {
-          const pool = parkItems(loaded?.parks ?? [], state.parkRegion).filter(p => !selected || p.state === selected)
-          startQuiz(pool)
-        }}>Practice visible</button>
+      <div ref={panelRef} className="atlas-park-learn-ui">
+        <nav className="atlas-park-learn-toolbar" aria-label="National park navigation">
+          <button className="atlas-park-nav-button previous" onClick={() => stepPark(-1)} aria-label="Previous national park">
+            <FontAwesomeIcon icon={faChevronLeft} />
+            <span>Previous park</span>
+          </button>
+          <label className="atlas-park-picker">
+            <span>National park</span>
+            <select value={park?.id ?? ''} onChange={event => patch({ parkLearnParkId: Number(event.target.value) })}>
+              {visible.map(item => <option key={item.id} value={item.id}>{item.name.replace(/ National Park/g, '')}</option>)}
+            </select>
+          </label>
+          <button className="atlas-park-nav-button next" onClick={() => stepPark(1)} aria-label="Next national park">
+            <span>Next park</span>
+            <FontAwesomeIcon icon={faChevronRight} />
+          </button>
+        </nav>
+
+        {park && (
+          <section className="atlas-park-lesson-dock" key={park.id}>
+            <div className="atlas-park-lesson-title">
+              <span>{selected} · {parkIndex + 1} of {visible.length}</span>
+              <h3>{park.name.replace(/ National Park/g, '')}</h3>
+              <p><FontAwesomeIcon icon={faPaw} /> {wildlife}</p>
+            </div>
+
+            <div className="atlas-park-lesson-context">
+              <div>
+                <FontAwesomeIcon icon={faSeedling} />
+                <span>Landscape</span>
+                <b>{context?.landscape ?? 'Protected landscape'}</b>
+              </div>
+              <div>
+                <FontAwesomeIcon icon={faWater} />
+                <span>Rivers on map</span>
+                <b>{riverLabel}</b>
+              </div>
+            </div>
+
+            <div className={`atlas-park-prelims ${parkFactsOpen ? 'open' : ''}`}>
+              <button onClick={() => setParkFactsOpen(open => !open)} aria-expanded={parkFactsOpen}>
+                <span><FontAwesomeIcon icon={faLightbulb} /> Prelims focus</span>
+                <b>{prelimsFacts.length} cues</b>
+                <FontAwesomeIcon icon={faChevronRight} />
+              </button>
+              {parkFactsOpen && (
+                <ul>
+                  {prelimsFacts.map(fact => <li key={fact}>{fact}</li>)}
+                </ul>
+              )}
+            </div>
+
+            <div className="atlas-park-lesson-actions">
+              <div className="atlas-park-state-nav">
+                <button onClick={() => stepState(-1)} aria-label="Previous state or union territory">
+                  <FontAwesomeIcon icon={faChevronLeft} />
+                  <span>Previous state</span>
+                </button>
+                <label>
+                  <span>State / UT</span>
+                  <select value={selected ?? ''} onChange={event => selectState(event.target.value)}>
+                    {states.map(item => <option key={item} value={item}>{item}</option>)}
+                  </select>
+                  <small>{stateIndex + 1} of {states.length}</small>
+                </label>
+                <button onClick={() => stepState(1)} aria-label="Next state or union territory">
+                  <span>Next state</span>
+                  <FontAwesomeIcon icon={faChevronRight} />
+                </button>
+              </div>
+              <button className="atlas-primary-mini" onClick={() => startQuiz(parkItems(visible, state.parkRegion))}>
+                Practice state
+                <FontAwesomeIcon icon={faChevronRight} />
+              </button>
+            </div>
+          </section>
+        )}
       </div>
     )
   }
@@ -1134,7 +1593,7 @@ export function MapsArcade() {
         )}
 
         <div className="atlas-controls">
-          <button onClick={previous} disabled={state.qIndex === 0}><FontAwesomeIcon icon={faRotateLeft} /> Previous</button>
+          <button onClick={previous} disabled={state.qIndex === 0}><FontAwesomeIcon icon={faChevronLeft} /> Previous</button>
           <button onClick={useHint} disabled={state.hintsLeft <= 0 || state.hintUsed || Boolean(hist)}><FontAwesomeIcon icon={faLightbulb} /> Hint {state.hintsLeft}</button>
           <button onClick={skip}>{hist ? 'Next' : 'Skip'} <FontAwesomeIcon icon={faChevronRight} /></button>
         </div>
@@ -1203,7 +1662,7 @@ export function MapsArcade() {
         ) : <span style={{ width: 42 }} />}
       </div>
 
-      <div className={`atlas-stage ${useWorldGlobe ? 'atlas-stage-globe' : ''}`}>
+      <div className={`atlas-stage ${useWorldGlobe ? 'atlas-stage-globe' : ''} ${state.screen === 'park-learn' ? 'atlas-stage-park-learn' : ''}`}>
         {loaded && useWorldGlobe ? (
           <Suspense fallback={<PenniLoader label="Spinning up globe" full />}>
             <AtlasGlobe
@@ -1227,13 +1686,15 @@ export function MapsArcade() {
             phase={phase}
             countries={loaded.countries}
             indiaStates={loaded.indiaStates}
-            rivers={loaded.rivers}
+            rivers={mapRivers}
             parks={loaded.parks}
             activeContinent={state.continent}
             activeRiverSystem={state.riverSystem}
             activeParkRegion={state.parkRegion}
             activePracticeRegion={activePracticeRegion}
             activeParkState={activeLearnState}
+            activeParkId={activeLearnPark?.id ?? null}
+            learnRiverNames={activeLearnRiverNames}
             activePracticeState={activePracticeState}
             stateName={normalizeStateName}
             targetId={mapTargetId}

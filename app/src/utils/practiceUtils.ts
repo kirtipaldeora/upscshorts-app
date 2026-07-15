@@ -1,5 +1,6 @@
 import type { Article } from '@/types/article'
 import type { PyqItem } from '@/stores/usePracticeStore'
+import type { PyqDifficulty, PyqFormat, PyqSolution } from '@/types/pyq'
 
 // ─── Unified question shape ───────────────────────────────────
 export interface Question {
@@ -13,6 +14,15 @@ export interface Question {
   explanation: string
   ref?: string
   srcLabel: string
+  pyq?: {
+    year: number
+    qno: number
+    topic: string
+    tags: string[]
+    format: PyqFormat
+    difficulty: PyqDifficulty
+    solution: PyqSolution
+  }
 }
 
 export interface MainsQuestion {
