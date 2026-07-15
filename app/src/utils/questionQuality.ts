@@ -22,91 +22,173 @@ const RECALL_PATTERNS = [
 
 const UPSC_STYLE_PATTERNS = [
   /consider the following statements/i,
+  /consider the following pairs/i,
   /with reference to/i,
   /which of the statements/i,
   /which of the following statements/i,
   /correctly matched/i,
   /how many of the above/i,
+  /how many of them/i,
   /pairs? given above/i,
+  /statement\s+I\s*:/i,
+  /which one of the following/i,
+  /common characteristic/i,
 ]
 
-const DEEP_DIVE_REQUIRED_SECTIONS = [
-  /one-line summary/i,
-  /explain like i'm a upsc aspirant|explain like i.?m a upsc aspirant/i,
-  /what actually happened/i,
-  /why is this important/i,
-  /background you must know/i,
-  /connect with static upsc syllabus/i,
-  /things not mentioned in the article/i,
-  /upsc perspective/i,
-  /prelims nuggets/i,
-  /mains analysis/i,
-  /interlinkages/i,
-  /maps/i,
-  /previous upsc questions/i,
-  /memory tricks/i,
-  /common mistakes students make/i,
-  /revision notes/i,
-]
+type PrelimsFormat = 'count' | 'combination' | 'reasoning' | 'pairs' | 'one-best'
+
+function statementLabels(stem: string): string[] {
+  const dotted = [...stem.matchAll(/(?:^|\s)(I{1,3}|IV|V|[1-5])\.\s+/g)].map(match => match[1].toUpperCase())
+  const labelled = [...stem.matchAll(/\bStatement\s+(I{1,3}|IV|V|[1-5])\s*:/gi)].map(match => match[1].toUpperCase())
+  return [...new Set([...dotted, ...labelled])]
+}
+
+function prelimsFormat(stem: string): PrelimsFormat | null {
+  if (/\bStatement\s+I\s*:/i.test(stem) && /\bStatement\s+II\s*:/i.test(stem)) return 'reasoning'
+  if (/following pairs|pairs? given above|correctly matched/i.test(stem)) return 'pairs'
+  if (/how many of (?:the above|them|the statements|the pairs)/i.test(stem)) return 'count'
+  if (/which of the statements|which of the following statements|select the correct answer using the code/i.test(stem)) return 'combination'
+  if (/which one of the following|common characteristic|best describes/i.test(stem)) return 'one-best'
+  return null
+}
+
+function hasCoherentOptions(q: PrelimQuestion, format: PrelimsFormat | null): boolean {
+  if (!Array.isArray(q.options) || q.options.length !== 4) return false
+  const options = q.options.map(option => option.trim())
+  if (options.some(option => option.length < 2 || /^\([a-d]\)\s*/i.test(option))) return false
+  if (new Set(options.map(option => option.toLowerCase())).size !== 4) return false
+  if (format === 'count' || format === 'pairs') {
+    return options.every(option => /^(?:only (?:one|two|three|four)|all (?:the )?(?:two|three|four|five)|none)$/i.test(option))
+  }
+  if (format === 'reasoning') {
+    return options.every(option => /statement|neither/i.test(option))
+  }
+  return true
+}
+
+function answerMarksEveryItemCorrect(q: PrelimQuestion, labels: string[], format: PrelimsFormat | null): boolean {
+  const selected = q.options[q.answer] ?? ''
+  if (format === 'count' || format === 'pairs') return /\ball\b/i.test(selected)
+  if (format === 'reasoning') return /both Statement II and Statement III are correct/i.test(selected)
+  return labels.length > 0 && labels.every(label => new RegExp(`\\b${label}\\b`, 'i').test(selected))
+}
 
 export function isLikelyUPSCPrelimsQuestion(q: PrelimQuestion): boolean {
   const stem = q.q.trim()
   const words = stem.split(/\s+/).filter(Boolean).length
-  const hasNumberedStatements = /\b1\.\s+.+\b2\.\s+/s.test(stem)
+  const format = prelimsFormat(stem)
+  const hasNumberedStatements = statementLabels(stem).length >= 2
   const hasUpscFrame = UPSC_STYLE_PATTERNS.some(pattern => pattern.test(stem))
   const isRecallStem = RECALL_PATTERNS.some(pattern => pattern.test(stem))
-  return (hasNumberedStatements || hasUpscFrame) && !isRecallStem && words >= 18
+  return Boolean(format) && (hasNumberedStatements || hasUpscFrame) &&
+    hasCoherentOptions(q, format) && !isRecallStem && words >= 14
 }
 
 export function hasDetailedPrelimsExplanation(q: PrelimQuestion): boolean {
   const explanation = q.explanation.trim()
-  const isStatementQuestion = /\b1\.\s+.+\b2\.\s+/s.test(q.q)
-  if (explanation.length < 110) return false
-  if (isStatementQuestion && !/(statement|both|neither|incorrect|correct)/i.test(explanation)) return false
+  const words = explanation.split(/\s+/).filter(Boolean).length
+  const labels = statementLabels(q.q)
+  const format = prelimsFormat(q.q)
+  if (words < 55 || words > 220) return false
+  if (labels.length >= 2 && !labels.every(label =>
+    new RegExp(`\\b(?:Statement|Pair|Item)\\s+${label}\\b`, 'i').test(explanation))) return false
+  if (labels.length >= 2 && !answerMarksEveryItemCorrect(q, labels, format) &&
+      !/incorrect|not correct|false|wrong/i.test(explanation)) return false
   return true
 }
 
+const DEVANAGARI = /[\u0900-\u097F]/
+
+function numericTokens(value: string): string[] {
+  return value.match(/\d+(?:[.,]\d+)*/g) ?? []
+}
+
+function preservesNumbers(english: string, hindi: string): boolean {
+  const left = numericTokens(english).sort()
+  const right = numericTokens(hindi).sort()
+  return left.length === right.length && left.every((token, index) => token === right[index])
+}
+
+function isHindiText(value: string): boolean {
+  return Boolean(value.trim()) && DEVANAGARI.test(value)
+}
+
+export function hasVerifiedHindiDeepDive(article: Article): boolean {
+  const english = article.deepDive
+  const hindi = english.hindi
+  if (!hindi || !english.syllabusLinkage || !english.context) return false
+  if (typeof hindi.syllabusLinkage !== 'string' || typeof hindi.context !== 'string' ||
+      typeof hindi.possibleMainsQuestion !== 'string') return false
+  if (!Array.isArray(english.keyHighlights) || !Array.isArray(english.keyConcepts) || !Array.isArray(english.wayForward)) return false
+  if (english.keyHighlights.length < 4 || english.keyHighlights.length > 6 ||
+      english.keyConcepts.length < 3 || english.keyConcepts.length > 6 ||
+      english.wayForward.length < 3 || english.wayForward.length > 6) return false
+  if (english.keyHighlights.some(item => typeof item !== 'string' || !item.trim()) ||
+      english.wayForward.some(item => typeof item !== 'string' || !item.trim()) ||
+      english.keyConcepts.some(concept => !concept?.term?.trim() || !concept?.definition?.trim())) return false
+  if (!Array.isArray(hindi.keyHighlights) || !Array.isArray(hindi.keyConcepts) || !Array.isArray(hindi.wayForward)) return false
+  if (hindi.keyHighlights.some(item => typeof item !== 'string') ||
+      hindi.wayForward.some(item => typeof item !== 'string') ||
+      hindi.keyConcepts.some(concept => typeof concept?.term !== 'string' || typeof concept?.definition !== 'string')) return false
+  if (hindi.keyHighlights.length !== english.keyHighlights.length ||
+      hindi.keyConcepts.length !== english.keyConcepts.length ||
+      hindi.wayForward.length !== english.wayForward.length) return false
+
+  const pairedText: Array<[string, string]> = [
+    [english.syllabusLinkage, hindi.syllabusLinkage],
+    [english.context, hindi.context],
+    [english.possibleMainsQuestion, hindi.possibleMainsQuestion],
+    ...english.keyHighlights.map((item, index): [string, string] => [item, hindi.keyHighlights[index] ?? '']),
+    ...english.wayForward.map((item, index): [string, string] => [item, hindi.wayForward[index] ?? '']),
+    ...english.keyConcepts.map((concept, index): [string, string] => [
+      `${concept.term} ${concept.definition}`,
+      `${hindi.keyConcepts[index]?.term ?? ''} ${hindi.keyConcepts[index]?.definition ?? ''}`,
+    ]),
+  ]
+
+  const conceptsMatch = english.keyConcepts.every((concept, index) =>
+    concept.term.trim() === hindi.keyConcepts[index]?.term.trim() &&
+    isHindiText(hindi.keyConcepts[index]?.definition ?? ''))
+
+  return conceptsMatch &&
+    pairedText.every(([source, translation]) => isHindiText(translation) && preservesNumbers(source, translation))
+}
+
 export function isStructuredDeepDive(article: Article): boolean {
-  const explanation = article.deepDive?.explanation?.trim() ?? ''
-  const mains = article.deepDive?.possibleMainsQuestion?.trim() ?? ''
-  const sectionLabels = explanation.match(/<strong>[^<]{3,90}:?<\/strong>/g) ?? []
-  const normalized = explanation.replace(/<[^>]+>/g, ' ')
-  const requiredSectionCount = DEEP_DIVE_REQUIRED_SECTIONS.filter(pattern => pattern.test(normalized)).length
-  const hasBullets = /(^|\n)\s*-\s+/.test(explanation) || /<li\b/i.test(explanation)
-  const hasVisualStructure = hasBullets || /<table\b|dd-flow|flow|timeline|comparison|cause|effect|interlinkages|maps/i.test(explanation)
-  const hasTeachingDepth = /background you must know|things not mentioned|previous upsc questions|memory tricks|common mistakes|revision notes/i.test(normalized)
-  const hasExamLens = /prelims nuggets|mains analysis|upsc perspective|static upsc syllabus|gs\s*[1-4]|essay|interview/i.test(normalized)
+  const dive = article.deepDive
+  const mains = dive?.possibleMainsQuestion?.trim() ?? ''
+  const contextWords = dive.context?.trim().split(/\s+/).filter(Boolean).length ?? 0
+  const conceptsValid = (dive.keyConcepts ?? []).every(concept =>
+    Boolean(concept.term.trim()) && concept.definition.trim().split(/\s+/).filter(Boolean).length >= 7)
   const analyticalMains = /\b(discuss|examine|analyse|analyze|evaluate|critically|comment)\b/i.test(mains)
-  return explanation.length >= 2500 &&
-    sectionLabels.length >= 12 &&
-    requiredSectionCount >= 14 &&
-    hasVisualStructure &&
-    hasTeachingDepth &&
-    hasExamLens &&
-    analyticalMains
+  return Boolean(dive.syllabusLinkage?.trim()) &&
+    contextWords >= 18 && contextWords <= 100 &&
+    (dive.keyHighlights?.length ?? 0) >= 4 && (dive.keyHighlights?.length ?? 0) <= 6 &&
+    (dive.keyConcepts?.length ?? 0) >= 3 && (dive.keyConcepts?.length ?? 0) <= 6 && conceptsValid &&
+    (dive.wayForward?.length ?? 0) >= 3 && (dive.wayForward?.length ?? 0) <= 6 &&
+    analyticalMains &&
+    hasVerifiedHindiDeepDive(article)
 }
 
 function hasGoodAudioScript(article: Article): boolean {
   const script = article.audioScript?.trim()
   if (!script) return false
   const words = script.split(/\s+/).filter(Boolean).length
-  const hasExamRelevance = /\b(upsc|prelims|mains|gs\s*[1-4]|exam|syllabus|static|current affairs)\b/i.test(script)
-  const hasMainsKnowledge = /\b(governance|constitutional|institution|policy|federal|economy|welfare|security|ethics|climate|environment|diplomacy|rights|accountability|implementation|trade-off|stakeholder|consequence|reform|livelihood|regulation|capacity|transparency|case study|hazard|vulnerability|exposure)\b/i.test(script)
+  const hasExamRelevance = /\b(upsc|prelims|mains|exam|examination|syllabus|current affairs)\b/i.test(script)
+  const hasBalancedFlow = /\b(but|however|although|the real|larger point|will depend|depends on)\b/i.test(script)
   const hasFiller = /\b(welcome back|this is penni|gist, not the whole article|read the full deep dive|story\s+\d+|that was your briefing)\b/i.test(script)
-  const hasSpokenJargon = /\b(stakeholders?|trade-offs?|implementation|institutional)\b/i.test(script)
-  const hasLabelledDictation = /\b(why this matters|what you should learn|important facts to retain|broader issue is)\s*:/i.test(script)
-  const hasStoryFlow = /\b(Penni Explain|let'?s understand|case study|here is the news|what happened|why it matters|the important point|before we move ahead|remember|real lesson|takeaway)\b/i.test(script)
+  const hasLectureJargon = /\b(ask yourself|upsc expects|one level deeper|value addition|mains framework|interlinkages|stakeholders?|case study)\b/i.test(script)
+  const hasLabelledDictation = /(^|\n)\s*(context|key highlights|key concepts|way forward|why this matters)\s*:/im.test(script)
   const hasRoboticAbbreviations = /\b(RBI|NIA|CBI|GDP|UAPA|RTI)\b/.test(script) &&
     !/\b(Reserve Bank of India|National Investigation Agency|Central Bureau of Investigation|Gross Domestic Product|Unlawful Activities Prevention Act|Right to Information)\b/i.test(script)
   const hasAwkwardRawStyle = /\bwherein|aforesaid|said to have|respectively|inter alia|hereby\b/i.test(script)
-  return words >= 250 &&
-    words <= 1000 &&
+  return words >= 220 &&
+    words <= 550 &&
     !/<[^>]+>/.test(script) &&
     hasExamRelevance &&
-    hasMainsKnowledge &&
-    hasStoryFlow &&
+    hasBalancedFlow &&
     !hasFiller &&
-    !hasSpokenJargon &&
+    !hasLectureJargon &&
     !hasLabelledDictation &&
     !hasRoboticAbbreviations &&
     !hasAwkwardRawStyle
@@ -118,28 +200,31 @@ function hasGoodHinglishAudioScript(article: Article): boolean {
   const words = script.split(/\s+/).filter(Boolean).length
   const hasExamRelevance = /\b(upsc|prelims|mains|exam|static|current affairs)\b/i.test(script)
   const hasHinglishFlow = /\b(chaliye|samajh|news|issue|answer|yaad|kyun|kaise|matlab|takeaway|mains)\b/i.test(script)
-  const hasTeaching = /\b(cause|effect|policy|rights|governance|economy|security|diplomacy|environment|social justice|constitutional|impact|risk|way forward)\b/i.test(script)
+  const hasBalancedFlow = /\b(lekin|however|par |depend|asal|badi baat|larger point)\b/i.test(script)
   const hasFiller = /\b(welcome back|this is penni|gist, not the whole article|read the full deep dive|story\s+\d+|that was your briefing)\b/i.test(script)
-  return words >= 180 &&
-    words <= 1000 &&
+  const hasLectureJargon = /\b(ask yourself|upsc expects|one level deeper|value addition|mains framework|interlinkages|stakeholders?|case study)\b/i.test(script)
+  return words >= 200 &&
+    words <= 550 &&
     !/<[^>]+>/.test(script) &&
     hasExamRelevance &&
     hasHinglishFlow &&
-    hasTeaching &&
+    hasBalancedFlow &&
+    !hasLectureJargon &&
     !hasFiller
 }
 
 export function contentQualityIssues(data: ArticlesByDate): QuestionQualityIssue[] {
   const issues: QuestionQualityIssue[] = []
   Object.values(data).flat().forEach(article => {
-    ;(article.prelimsQs ?? []).forEach(q => {
+    const prelimsQuestions = article.prelimsQs ?? []
+    prelimsQuestions.forEach(q => {
       if (!isLikelyUPSCPrelimsQuestion(q)) {
         issues.push({
           articleId: article.id,
           headline: article.headline,
           field: 'prelims',
           question: q.q,
-          reason: 'Use UPSC-style statement, pair-matching, or static-current linkage format instead of direct recall.',
+          reason: 'Use an authentic UPSC count, combination, reasoning, matched-pairs or applied one-best format with four unique, logically coherent options.',
         })
       }
       if (!hasDetailedPrelimsExplanation(q)) {
@@ -148,16 +233,27 @@ export function contentQualityIssues(data: ArticlesByDate): QuestionQualityIssue
           headline: article.headline,
           field: 'prelims',
           question: q.q,
-          reason: 'Explanation should be detailed and explain why each relevant statement/option is correct or incorrect.',
+          reason: 'Write an 80-160 word explanation that names and evaluates every Statement, Pair or Item separately, including why each incorrect one is wrong.',
         })
       }
     })
+    if (prelimsQuestions.length >= 2) {
+      const formats = prelimsQuestions.map(question => prelimsFormat(question.q)).filter(Boolean)
+      if (formats.length === prelimsQuestions.length && new Set(formats).size < 2) {
+        issues.push({
+          articleId: article.id,
+          headline: article.headline,
+          field: 'prelims',
+          reason: 'The two daily MCQs should use different UPSC formats so practice does not become mechanically repetitive.',
+        })
+      }
+    }
     if (!isStructuredDeepDive(article)) {
       issues.push({
         articleId: article.id,
         headline: article.headline,
         field: 'deepDive',
-        reason: 'Deep Dive should be a full UPSC mentor-style learning module with the 16 required sections, static links, PYQ angle, maps, memory aids, revision notes, and an analytical mains question.',
+        reason: 'Deep Dive needs the five English study-note fields plus a complete Devanagari Hindi version with matching facts, numbers, concept terms, order and bullet counts.',
       })
     }
     if (!hasGoodAudioScript(article)) {
@@ -165,7 +261,7 @@ export function contentQualityIssues(data: ArticlesByDate): QuestionQualityIssue
         articleId: article.id,
         headline: article.headline,
         field: 'audio',
-        reason: 'Add a professionally rewritten Penni Explain audioScript of about 450-900 words with story flow, natural pacing, expanded abbreviations, and concrete mains-relevant teaching points.',
+        reason: 'Add a calm 300-450 word audioScript with plain language, short paragraphs, a balanced concern, practical action and a simple examination takeaway.',
       })
     }
     if (!hasGoodHinglishAudioScript(article)) {
@@ -173,7 +269,7 @@ export function contentQualityIssues(data: ArticlesByDate): QuestionQualityIssue
         articleId: article.id,
         headline: article.headline,
         field: 'audio',
-        reason: 'Add a natural Hinglish audioScriptHi version that teaches the same article to a UPSC aspirant without raw HTML, robotic labels, or literal translation.',
+        reason: 'Add a natural 300-450 word Hinglish audioScriptHi with the same facts and balance, without literal translation, labels or coaching jargon.',
       })
     }
   })

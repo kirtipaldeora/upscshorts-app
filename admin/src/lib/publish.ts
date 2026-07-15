@@ -28,6 +28,22 @@ export interface PublishResult {
   date: string
   count: number
   path: string
+  notifications: { email: number; whatsapp: number } | null
+  notificationError: string | null
+}
+
+export interface BroadcastResult {
+  email: number
+  whatsapp: number
+  type: 'feature'
+}
+
+export async function broadcastFeature(title: string, summary: string): Promise<BroadcastResult> {
+  const { data, error } = await supabase().functions.invoke('broadcast-updates', {
+    body: { type: 'feature', title: title.trim(), summary: summary.trim() },
+  })
+  if (error) throw error
+  return data as BroadcastResult
 }
 
 function upload(path: string, body: unknown) {
@@ -65,7 +81,7 @@ async function publishedDates(): Promise<string[]> {
 
 /**
  * Advisory only — these are the same checks the content pipeline uses, and they
- * are strict enough (2500-char deep dives, 16 sections) that hard-blocking on
+ * are strict enough (editorial structure, visual blocks and teaching depth) that hard-blocking on
  * them would make the CMS unusable. Surface them, let the editor decide.
  */
 export function qualityIssuesFor(articles: Article[]): QuestionQualityIssue[] {
@@ -100,7 +116,22 @@ export async function publishDate(date: string): Promise<PublishResult> {
     published_by: auth.user?.id ?? null,
   })
 
-  return { date, count: articles.length, path }
+  let notifications: PublishResult['notifications'] = null
+  let notificationError: string | null = null
+  if (articles.length > 0) {
+    const { data, error } = await supabase().functions.invoke('broadcast-updates', {
+      body: { type: 'daily', date, articleCount: articles.length },
+    })
+    if (error) {
+      notificationError = error.message
+      console.warn('Content published, but subscriber notifications could not be sent', error)
+    } else {
+      const result = data as { email?: number; whatsapp?: number } | null
+      notifications = { email: result?.email ?? 0, whatsapp: result?.whatsapp ?? 0 }
+    }
+  }
+
+  return { date, count: articles.length, path, notifications, notificationError }
 }
 
 export interface PublicationLog {

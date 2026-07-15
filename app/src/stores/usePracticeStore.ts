@@ -35,6 +35,7 @@ export interface PracticeStats {
 
 export interface PracticeSettings {
   target: number
+  studyTargets: StudyTargets
   remind: boolean
   reminderTime: string
   key: string
@@ -42,6 +43,13 @@ export interface PracticeSettings {
   feedCosmicBackdrop: boolean
   voiceURI: string   // preferred system TTS voice for Penni Explain narration
   hapticsEnabled: boolean
+}
+
+export interface StudyTargets {
+  prelims: boolean
+  mains: boolean
+  news: boolean
+  gs: boolean
 }
 
 export interface PyqItem {
@@ -82,11 +90,23 @@ function loadStats(target: number): PracticeStats {
   }
 }
 
-const DEFAULT_SETTINGS: PracticeSettings = { target: 10, remind: false, reminderTime: '19:00', key: '', name: '', feedCosmicBackdrop: true, voiceURI: '', hapticsEnabled: true }
+export const DEFAULT_STUDY_TARGETS: StudyTargets = {
+  prelims: true,
+  mains: false,
+  news: true,
+  gs: false,
+}
+
+const DEFAULT_SETTINGS: PracticeSettings = { target: 10, studyTargets: DEFAULT_STUDY_TARGETS, remind: false, reminderTime: '19:00', key: '', name: '', feedCosmicBackdrop: true, voiceURI: '', hapticsEnabled: true }
 
 function loadSettings(): PracticeSettings {
   try {
-    return Object.assign({ ...DEFAULT_SETTINGS }, JSON.parse(localStorage.getItem('u4set') || '{}'))
+    const saved = JSON.parse(localStorage.getItem('u4set') || '{}') as Partial<PracticeSettings>
+    return {
+      ...DEFAULT_SETTINGS,
+      ...saved,
+      studyTargets: { ...DEFAULT_STUDY_TARGETS, ...saved.studyTargets },
+    }
   } catch {
     return { ...DEFAULT_SETTINGS }
   }
@@ -235,7 +255,16 @@ export const usePracticeStore = create<PracticeStore>()((set, get) => ({
 
   hydrateCloudState: (cloud) => {
     const current = get()
-    const settings = { ...DEFAULT_SETTINGS, ...current.settings, ...cloud.settings }
+    const settings = {
+      ...DEFAULT_SETTINGS,
+      ...current.settings,
+      ...cloud.settings,
+      studyTargets: {
+        ...DEFAULT_STUDY_TARGETS,
+        ...current.settings.studyTargets,
+        ...cloud.settings?.studyTargets,
+      },
+    }
     const stats = normalizeStats(cloud.stats ?? current.stats, settings.target)
     const questionBookmarks = cloud.questionBookmarks ?? current.questionBookmarks
     const mainsQuota = cloud.mainsQuota ?? current.mainsQuota

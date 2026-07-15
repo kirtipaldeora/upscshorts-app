@@ -10,7 +10,7 @@ import { gsap, reducedMotion, DUR, EASE } from '@/anim/animations'
 import { CATEGORY_COLORS } from '@/constants/categories'
 import { articleQs } from '@/utils/practiceUtils'
 import type { MainsQuestion, Question } from '@/utils/practiceUtils'
-import { splitUPSCStem } from '@/utils/questionQuality'
+import { hasVerifiedHindiDeepDive, splitUPSCStem } from '@/utils/questionQuality'
 import { articleNarration, articleNarrationHi } from '@/utils/narration'
 import type { Article } from '@/types/article'
 import { QuizPlayer } from '@/components/practice/QuizPlayer'
@@ -24,84 +24,94 @@ type ActiveQuiz = { title: string; questions: Question[] } | null
 const READ_SPEEDS = [1, 1.25, 1.5, 1.75]
 const BASE_READ_RATE = 0.88
 
-interface DiveSection {
-  number: number
-  title: string
-  body: string
-  tone: string
+interface StudyNote {
+  syllabusLinkage: string
+  context: string
+  keyHighlights: string[]
+  keyConcepts: Array<{ term: string; definition: string }>
+  wayForward: string[]
 }
 
-const PROFESSIONAL_SECTION_TITLES: Record<number, { title: string; subtitle: string }> = {
-  1: { title: 'Executive Summary', subtitle: 'The exam-ready takeaway' },
-  2: { title: 'Core Issue', subtitle: 'What the topic is really about' },
-  3: { title: 'Event Timeline', subtitle: 'What happened and in what order' },
-  4: { title: 'Significance', subtitle: 'Why it matters for India and UPSC' },
-  5: { title: 'Background Context', subtitle: 'Static base and assumed knowledge' },
-  6: { title: 'Syllabus Linkage', subtitle: 'Where it fits in preparation' },
-  7: { title: 'Value Addition', subtitle: 'Extra points beyond the article' },
-  8: { title: 'Exam Relevance', subtitle: 'Prelims, Mains, Essay and Interview angles' },
-  9: { title: 'Prelims Facts', subtitle: 'Compact factual notes' },
-  10: { title: 'Mains Framework', subtitle: 'Issue, arguments and way forward' },
-  11: { title: 'Interlinkages', subtitle: 'How the topic connects across GS papers' },
-  12: { title: 'Map Work', subtitle: 'Locations to remember' },
-  13: { title: 'PYQ Pattern', subtitle: 'How UPSC has treated similar themes' },
-  14: { title: 'Memory Aid', subtitle: 'Simple recall hooks' },
-  15: { title: 'Common Pitfalls', subtitle: 'Mistakes to avoid' },
-  16: { title: 'Quick Revision', subtitle: 'Last-minute recall points' },
+const CATEGORY_SYLLABUS: Record<Article['category'], string> = {
+  Polity: 'Constitution and Political System',
+  Economy: 'Indian Economy',
+  'International Relations': 'Bilateral and International Relations',
+  Environment: 'Environment and Disaster Management',
+  'Science and Tech': 'Science and Technology',
+  Governance: 'Governance and Public Policy',
+  'Social Issues': 'Indian Society and Social Justice',
+  Security: 'Internal and External Security',
+  Ethics: 'Ethics, Integrity and Aptitude',
+  Schemes: 'Government Policies and Welfare Schemes',
+  'Reports and Indices': 'Reports, Data and Development Indicators',
 }
 
-const DEFAULT_OPEN_SECTIONS = new Set([1, 2, 4, 10, 16])
-
-function professionalSectionMeta(section: DiveSection) {
-  return PROFESSIONAL_SECTION_TITLES[section.number] ?? {
-    title: section.title,
-    subtitle: 'Detailed notes',
-  }
-}
-
-function sectionTone(title: string, number: number) {
-  const key = title.toLowerCase()
-  if (number === 1 || key.includes('summary')) return 'summary'
-  if (key.includes('important') || key.includes('perspective')) return 'exam'
-  if (key.includes('background') || key.includes('static') || key.includes('not mentioned')) return 'concept'
-  if (key.includes('prelims') || key.includes('mains') || key.includes('previous')) return 'practice'
-  if (key.includes('maps')) return 'map'
-  if (key.includes('revision') || key.includes('memory') || key.includes('mistakes')) return 'revision'
-  return 'default'
-}
-
-function shortSectionTitle(section: DiveSection) {
-  const meta = professionalSectionMeta(section)
-  return meta.title
-}
-
-function sectionPreview(body: string) {
-  return body
+function plainText(value: string) {
+  return value
+    .replace(/<br\s*\/?>/gi, ' ')
     .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&gt;/gi, '>')
+    .replace(/&lt;/gi, '<')
+    .replace(/&#0?39;|&apos;/gi, "'")
+    .replace(/&quot;/gi, '"')
     .replace(/\s+/g, ' ')
     .trim()
-    .slice(0, 130)
 }
 
-function parseDeepDiveSections(explanation: string): DiveSection[] {
-  const html = explanation.replace(/\n/g, '<br>')
-  const pattern = /<p>\s*<strong>\s*(\d+)\.\s*([^<:]+?):?\s*<\/strong>\s*([\s\S]*?)(?=<p>\s*<strong>\s*\d+\.\s*[^<:]+?:?\s*<\/strong>|$)/gi
-  const sections: DiveSection[] = []
-  let match: RegExpExecArray | null
+function sentences(value: string) {
+  return plainText(value).split(/(?<=[.!?])\s+/).map(item => item.trim()).filter(item => item.length > 24)
+}
 
-  while ((match = pattern.exec(html)) !== null) {
-    const number = Number(match[1])
-    const title = match[2].trim()
-    const body = match[3].trim()
-    sections.push({
-      number,
-      title,
-      body: body.startsWith('<p') ? body : `<p>${body}`,
-      tone: sectionTone(title, number),
-    })
+function unique(items: string[], limit: number) {
+  return items.filter((item, index) => items.findIndex(other => other.toLowerCase() === item.toLowerCase()) === index).slice(0, limit)
+}
+
+function clip(value: string, length = 240) {
+  return value.length <= length ? value : `${value.slice(0, length).replace(/\s+\S*$/, '')}…`
+}
+
+function buildStudyNote(article: Article, lang: 'en' | 'hi'): StudyNote | null {
+  const dive = article.deepDive
+  if (lang === 'hi') {
+    if (!hasVerifiedHindiDeepDive(article) || !dive.hindi) return null
+    return {
+      syllabusLinkage: dive.hindi.syllabusLinkage,
+      context: dive.hindi.context,
+      keyHighlights: dive.hindi.keyHighlights,
+      keyConcepts: dive.hindi.keyConcepts,
+      wayForward: dive.hindi.wayForward,
+    }
   }
+  const explanation = dive.explanation || ''
+  const listItems = [...explanation.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/gi)].map(match => plainText(match[1])).filter(Boolean)
+  const sourceSentences = sentences(explanation)
+  const keyHighlights = dive.keyHighlights?.filter(Boolean) ?? unique([
+    ...sentences(article.summary),
+    ...sentences(article.whyItMatters),
+    ...listItems,
+  ], 5)
 
-  return sections.length >= 4 ? sections : []
+  const keyConcepts = dive.keyConcepts?.filter(concept => concept.term && concept.definition) ?? (article.keyTerms ?? []).flatMap(term => {
+    const definition = sourceSentences.find(sentence => sentence.toLowerCase().includes(term.toLowerCase()))
+    return definition ? [{ term, definition: clip(definition) }] : []
+  }).slice(0, 6)
+
+  const callout = explanation.match(/<div\b[^>]*class=['"][^'"]*dd-callout[^'"]*['"][^>]*>([\s\S]*?)<\/div>/i)?.[1] ?? ''
+  const recommended = sourceSentences.filter(sentence => /\b(should|must|need(?:s|ed)?|way forward|recommend|ensure|strengthen|improve|expand|build|reform)\b/i.test(sentence))
+  const wayForward = dive.wayForward?.filter(Boolean) ?? unique([
+    ...sentences(callout.replace(/way forward\s*:?/i, '')),
+    ...recommended,
+  ], 6)
+
+  return {
+    syllabusLinkage: dive.syllabusLinkage?.trim() || `${article.gsPaper.replace('GS 1', 'GS I').replace('GS 2', 'GS II').replace('GS 3', 'GS III').replace('GS 4', 'GS IV')}: ${CATEGORY_SYLLABUS[article.category]}`,
+    context: dive.context?.trim() || article.summary,
+    keyHighlights: keyHighlights.length ? keyHighlights : [article.whyItMatters],
+    keyConcepts,
+    wayForward: wayForward.length ? wayForward : ['No specific recommendation was provided in the source material.'],
+  }
 }
 
 export function DeepDive({ onShowToast }: DeepDiveProps) {
@@ -119,6 +129,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
 
   const visible = overlayScreen === 'deep-dive'
   const a = activeArticle
+  const hindiAvailable = a ? hasVerifiedHindiDeepDive(a) : false
 
   // Sibling articles for prev/next navigation — follow the same list the feed
   // shows for this article's day (respects active filters); fall back to the
@@ -138,6 +149,12 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
     narration.stop()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [a?.id])
+
+  useEffect(() => {
+    if (!a || readLang !== 'hi' || hindiAvailable) return
+    setReadLang('en')
+    try { localStorage.setItem('penni-read-lang', 'en') } catch { /* noop */ }
+  }, [a, readLang, hindiAvailable])
 
   // Sections settle in softly when an article opens or changes
   useEffect(() => {
@@ -176,9 +193,12 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
   const prelimQuestions = a?.prelimsQs ?? []
   const previewPrelims = prelimQuestions[0]
   const previewStem = previewPrelims ? splitUPSCStem(previewPrelims.q) : null
-  const articleMainsQuestion: MainsQuestion | null = a?.deepDive.possibleMainsQuestion ? {
+  const displayedMainsQuestion = readLang === 'hi'
+    ? a?.deepDive.hindi?.possibleMainsQuestion ?? ''
+    : a?.deepDive.possibleMainsQuestion ?? ''
+  const articleMainsQuestion: MainsQuestion | null = displayedMainsQuestion && a ? {
     id: `ma-${a.id}`,
-    q: a.deepDive.possibleMainsQuestion,
+    q: displayedMainsQuestion,
     subject: a.category,
     srcLabel: a.headline,
   } : null
@@ -213,9 +233,10 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
   }
 
   function startArticleReading(article: Article, speed = readSpeed, lang = readLang) {
-    const hiScript = lang === 'hi' ? articleNarrationHi(article) : null
-    return narration.speak(hiScript ?? articleNarration(article), {
-      lang: hiScript ? 'hi-IN' : 'en-IN',
+    const script = lang === 'hi' ? articleNarrationHi(article) : articleNarration(article)
+    if (!script) return false
+    return narration.speak(script, {
+      lang: lang === 'hi' ? 'hi-IN' : 'en-IN',
       rate: BASE_READ_RATE * speed,
       pitch: speed > 1.25 ? 1.01 : 1.04,
       voiceURI: settings.voiceURI || undefined,
@@ -226,15 +247,16 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
     if (!a) return
     await haptic()
     const next = readLang === 'en' ? 'hi' : 'en'
-    if (next === 'hi' && !articleNarrationHi(a)) {
-      onShowToast('Hindi version not available for this article yet')
+    if (next === 'hi' && !hasVerifiedHindiDeepDive(a)) {
+      onShowToast('Reviewed Hindi Deep Dive is not available for this article yet')
       return
     }
     setReadLang(next)
     try { localStorage.setItem('penni-read-lang', next) } catch { /* noop */ }
     if (narration.speaking) {
       narration.stop()
-      startArticleReading(a, readSpeed, next)
+      const restarted = startArticleReading(a, readSpeed, next)
+      if (!restarted && next === 'hi') onShowToast('Hindi text is ready, but Hindi audio is not available yet')
     }
   }
 
@@ -243,6 +265,10 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
     await haptic()
     if (narration.speaking) {
       narration.stop()
+      return
+    }
+    if (readLang === 'hi' && !articleNarrationHi(a)) {
+      onShowToast('Hindi audio is not available for this article yet')
       return
     }
     const ok = startArticleReading(a)
@@ -262,9 +288,28 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
   }
 
   const col = a ? CATEGORY_COLORS[a.category] : '#9DBCE8'
-  const deepDiveSections = useMemo(() => {
-    return a ? parseDeepDiveSections(a.deepDive.explanation) : []
-  }, [a])
+  const studyNote = useMemo(() => a ? buildStudyNote(a, readLang) : null, [a, readLang])
+  const noteLabels = readLang === 'hi'
+    ? {
+        syllabus: 'पाठ्यक्रम संबंध',
+        context: 'संदर्भ',
+        highlights: 'मुख्य बिंदु',
+        concepts: 'प्रमुख अवधारणाएँ',
+        wayForward: 'आगे की राह',
+        mains: 'संभावित मुख्य परीक्षा प्रश्न',
+        upload: 'उत्तर मूल्यांकन के लिए अपलोड करें',
+        noConcepts: 'इस लेख में किसी अलग तकनीकी अवधारणा की परिभाषा आवश्यक नहीं है।',
+      }
+    : {
+        syllabus: 'Syllabus Linkage',
+        context: 'Context',
+        highlights: 'Key Highlights',
+        concepts: 'Key Concepts',
+        wayForward: 'Way Forward',
+        mains: 'Expected Mains Question',
+        upload: 'Upload answer for evaluation',
+        noConcepts: 'No separate technical concept needs definition for this article.',
+      }
 
   const fdf = (d: string) => {
     return new Date(d).toLocaleDateString('en-IN', {
@@ -300,9 +345,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
       {a && (
         <div className="dd-body" ref={bodyRef} onScroll={onBodyScroll}>
           <section className="dd-reader-hero">
-            <span>Reader briefing</span>
             <h1>{a.headline}</h1>
-            <p>{a.summary}</p>
             <div className="dd-read-controls">
               <button
                 className={`dd-read-btn ${narration.speaking ? 'on' : ''}`}
@@ -321,11 +364,15 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
                 {readSpeed}x
               </button>
               <button
-                className="dd-speed-btn"
+                className={`dd-lang-toggle ${readLang === 'hi' ? 'hi' : ''} ${!hindiAvailable ? 'unavailable' : ''}`}
                 onClick={toggleReadLang}
-                aria-label={readLang === 'hi' ? 'Switch narration to English' : 'Switch narration to Hindi'}
+                role="switch"
+                aria-checked={readLang === 'hi'}
+                aria-label={readLang === 'hi' ? 'Switch the Deep Dive to English' : 'Switch the Deep Dive to Hindi'}
+                title={hindiAvailable ? 'Change Deep Dive language' : 'Reviewed Hindi translation not available yet'}
               >
-                {readLang === 'hi' ? 'हिं' : 'EN'}
+                <span>EN</span>
+                <span>हिं</span>
               </button>
             </div>
           </section>
@@ -355,60 +402,44 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
             </span>
           </div>
 
-          {/* Explanation */}
-          {deepDiveSections.length > 0 ? (
-            <div className="dd-explain dd-explain-structured">
-              <nav className="dd-section-map" aria-label="Deep dive sections">
-                {deepDiveSections.map(section => (
-                  <a key={section.number} href={`#dd-sec-${section.number}`}>
-                    <b>{String(section.number).padStart(2, '0')}</b>
-                    {shortSectionTitle(section)}
-                  </a>
-                ))}
-              </nav>
-              {deepDiveSections.map(section => (
-                <details
-                  key={section.number}
-                  id={`dd-sec-${section.number}`}
-                  className={`dd-note-section tone-${section.tone}`}
-                  open={DEFAULT_OPEN_SECTIONS.has(section.number)}
-                >
-                  <summary className="dd-note-head">
-                    <span>{String(section.number).padStart(2, '0')}</span>
-                    <div>
-                      <h3>{professionalSectionMeta(section).title}</h3>
-                      <p>{professionalSectionMeta(section).subtitle}</p>
-                    </div>
-                    <i>{sectionPreview(section.body)}...</i>
-                  </summary>
-                  <div
-                    className="dd-note-body"
-                    dangerouslySetInnerHTML={{ __html: section.body }}
-                  />
-                </details>
-              ))}
+          {studyNote && (
+            <div className="dd-study-note">
+              <section className="dd-study-row">
+                <h3>{noteLabels.syllabus}</h3>
+                <div><p>{studyNote.syllabusLinkage}</p></div>
+              </section>
+              <section className="dd-study-row">
+                <h3>{noteLabels.context}</h3>
+                <div><p>{studyNote.context}</p></div>
+              </section>
+              <section className="dd-study-row">
+                <h3>{noteLabels.highlights}</h3>
+                <div><ul>{studyNote.keyHighlights.map((item, index) => <li key={index}>{item}</li>)}</ul></div>
+              </section>
+              <section className="dd-study-row">
+                <h3>{noteLabels.concepts}</h3>
+                <div>
+                  {studyNote.keyConcepts.length > 0
+                    ? <ul>{studyNote.keyConcepts.map(concept => <li key={concept.term}><strong>{concept.term}:</strong> {concept.definition}</li>)}</ul>
+                    : <p>{noteLabels.noConcepts}</p>}
+                </div>
+              </section>
+              <section className="dd-study-row">
+                <h3>{noteLabels.wayForward}</h3>
+                <div><ul>{studyNote.wayForward.map((item, index) => <li key={index}>{item}</li>)}</ul></div>
+              </section>
             </div>
-          ) : (
-            <div
-              className="dd-explain"
-              dangerouslySetInnerHTML={{ __html: a.deepDive.explanation.replace(/\n/g, '<br>') }}
-            />
           )}
 
           <div className="dd-divider"></div>
-
-          <section className="dd-why-panel">
-            <span>Why it matters for UPSC</span>
-            <p>{a.whyItMatters}</p>
-          </section>
 
           {/* Expected Mains Question */}
           <div>
             <div className="dd-section-title">
               <FontAwesomeIcon icon={faPenFancy} style={{ marginRight: 6 }} />
-              Expected Mains Question
+              {noteLabels.mains}
             </div>
-            <div className="dd-question">{a.deepDive.possibleMainsQuestion}</div>
+            <div className="dd-question">{displayedMainsQuestion}</div>
             {articleMainsQuestion && (
               <button
                 className="pn-btn dd-mains-eval-btn"
@@ -418,7 +449,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
                 }}
               >
                 <FontAwesomeIcon icon={faCloudArrowUp} style={{ marginRight: 8 }} />
-                Upload answer for evaluation
+                {noteLabels.upload}
               </button>
             )}
           </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { PrelimQuestion } from '@penni/types/article'
+import type { DeepDive, DeepDiveHindi, PrelimQuestion } from '@penni/types/article'
 import { CATEGORIES, GS_PAPERS, type ArticleRow } from '@/lib/mapArticle'
 
 interface Props {
@@ -12,12 +12,61 @@ function asQuestions(value: unknown): PrelimQuestion[] {
   return Array.isArray(value) ? (value as PrelimQuestion[]) : []
 }
 
-function asDeepDive(value: unknown): { explanation: string; possibleMainsQuestion: string } {
+type EditableDeepDive = Omit<Required<DeepDive>, 'hindi'> & { hindi: DeepDiveHindi }
+
+function asStringList(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : []
+}
+
+function asConcepts(value: unknown) {
+  return Array.isArray(value)
+    ? value.flatMap(item => {
+        const concept = (item && typeof item === 'object' ? item : {}) as Record<string, unknown>
+        return typeof concept.term === 'string' && typeof concept.definition === 'string'
+          ? [{ term: concept.term, definition: concept.definition }]
+          : []
+      })
+    : []
+}
+
+function asHindiDeepDive(value: unknown): DeepDiveHindi {
   const raw = (value && typeof value === 'object' ? value : {}) as Record<string, unknown>
   return {
+    syllabusLinkage: typeof raw.syllabusLinkage === 'string' ? raw.syllabusLinkage : '',
+    context: typeof raw.context === 'string' ? raw.context : '',
+    keyHighlights: asStringList(raw.keyHighlights),
+    keyConcepts: asConcepts(raw.keyConcepts),
+    wayForward: asStringList(raw.wayForward),
+    possibleMainsQuestion: typeof raw.possibleMainsQuestion === 'string' ? raw.possibleMainsQuestion : '',
+  }
+}
+
+function asDeepDive(value: unknown): EditableDeepDive {
+  const raw = (value && typeof value === 'object' ? value : {}) as Record<string, unknown>
+  return {
+    syllabusLinkage: typeof raw.syllabusLinkage === 'string' ? raw.syllabusLinkage : '',
+    context: typeof raw.context === 'string' ? raw.context : '',
+    keyHighlights: asStringList(raw.keyHighlights),
+    keyConcepts: asConcepts(raw.keyConcepts),
+    wayForward: asStringList(raw.wayForward),
+    hindi: asHindiDeepDive(raw.hindi),
     explanation: typeof raw.explanation === 'string' ? raw.explanation : '',
     possibleMainsQuestion: typeof raw.possibleMainsQuestion === 'string' ? raw.possibleMainsQuestion : '',
   }
+}
+
+function lines(value: string): string[] {
+  return value.split('\n').map(item => item.replace(/^\s*[•*-]\s*/, '').trim()).filter(Boolean)
+}
+
+function conceptLines(value: string) {
+  return lines(value).flatMap(line => {
+    const divider = line.indexOf('|')
+    if (divider < 1) return []
+    const term = line.slice(0, divider).trim()
+    const definition = line.slice(divider + 1).trim()
+    return term && definition ? [{ term, definition }] : []
+  })
 }
 
 function asLocation(value: unknown): { lat: string; lon: string; place: string } {
@@ -126,13 +175,62 @@ export function ArticleEditor({ row, onCancel, onSave }: Props) {
           </div>
 
           <div className="field">
-            <label>Deep dive — explanation</label>
+            <label>Deep dive — syllabus linkage</label>
+            <input
+              value={deepDive.syllabusLinkage}
+              onChange={e => setDeepDive(d => ({ ...d, syllabusLinkage: e.target.value }))}
+              placeholder="GS II: Bilateral Relations; GS III: International Trade"
+            />
+          </div>
+
+          <div className="field">
+            <label>Deep dive — context</label>
             <textarea
-              rows={10}
+              rows={3}
+              value={deepDive.context}
+              onChange={e => setDeepDive(d => ({ ...d, context: e.target.value }))}
+            />
+            <div className="hint">Two or three direct sentences: what happened and why it is significant.</div>
+          </div>
+
+          <div className="field">
+            <label>Deep dive — key highlights</label>
+            <textarea
+              rows={6}
+              value={deepDive.keyHighlights.join('\n')}
+              onChange={e => setDeepDive(d => ({ ...d, keyHighlights: lines(e.target.value) }))}
+            />
+            <div className="hint">One factual point per line. Use 4–6 points.</div>
+          </div>
+
+          <div className="field">
+            <label>Deep dive — key concepts</label>
+            <textarea
+              rows={6}
+              value={deepDive.keyConcepts.map(concept => `${concept.term} | ${concept.definition}`).join('\n')}
+              onChange={e => setDeepDive(d => ({ ...d, keyConcepts: conceptLines(e.target.value) }))}
+            />
+            <div className="hint">One per line as Term | plain-English definition.</div>
+          </div>
+
+          <div className="field">
+            <label>Deep dive — way forward</label>
+            <textarea
+              rows={6}
+              value={deepDive.wayForward.join('\n')}
+              onChange={e => setDeepDive(d => ({ ...d, wayForward: lines(e.target.value) }))}
+            />
+            <div className="hint">One practical action per line. Use 3–6 points.</div>
+          </div>
+
+          <div className="field">
+            <label>Supporting explanation (optional)</label>
+            <textarea
+              rows={6}
               value={deepDive.explanation}
               onChange={e => setDeepDive(d => ({ ...d, explanation: e.target.value }))}
             />
-            <div className="hint">HTML. Penni renders this directly, including &lt;strong&gt; section headings.</div>
+            <div className="hint">Used for narration and compatibility with older articles. It is not shown as extra headings in the study note.</div>
           </div>
 
           <div className="field">
@@ -144,6 +242,72 @@ export function ArticleEditor({ row, onCancel, onSave }: Props) {
             />
           </div>
 
+          <div className="card" style={{ margin: '18px 0', padding: 16 }}>
+            <div className="modal-head" style={{ padding: 0, marginBottom: 14 }}>
+              <h2 style={{ fontSize: 16 }}>Deep Dive — Hindi translation</h2>
+            </div>
+            <div className="hint" style={{ marginBottom: 14 }}>
+              Translate the verified English note faithfully. Preserve all facts, names, numbers, concept order and bullet counts; do not add new information.
+            </div>
+
+            <div className="field">
+              <label>पाठ्यक्रम संबंध</label>
+              <input
+                value={deepDive.hindi.syllabusLinkage}
+                onChange={e => setDeepDive(d => ({ ...d, hindi: { ...d.hindi, syllabusLinkage: e.target.value } }))}
+                placeholder="GS II: द्विपक्षीय संबंध; GS III: अंतरराष्ट्रीय व्यापार"
+              />
+            </div>
+
+            <div className="field">
+              <label>संदर्भ</label>
+              <textarea
+                rows={3}
+                value={deepDive.hindi.context}
+                onChange={e => setDeepDive(d => ({ ...d, hindi: { ...d.hindi, context: e.target.value } }))}
+              />
+            </div>
+
+            <div className="field">
+              <label>मुख्य बिंदु</label>
+              <textarea
+                rows={6}
+                value={deepDive.hindi.keyHighlights.join('\n')}
+                onChange={e => setDeepDive(d => ({ ...d, hindi: { ...d.hindi, keyHighlights: lines(e.target.value) } }))}
+              />
+              <div className="hint">English Key Highlights के समान संख्या और क्रम रखें।</div>
+            </div>
+
+            <div className="field">
+              <label>प्रमुख अवधारणाएँ</label>
+              <textarea
+                rows={6}
+                value={deepDive.hindi.keyConcepts.map(concept => `${concept.term} | ${concept.definition}`).join('\n')}
+                onChange={e => setDeepDive(d => ({ ...d, hindi: { ...d.hindi, keyConcepts: conceptLines(e.target.value) } }))}
+              />
+              <div className="hint">Term को English जैसा ही रखें; `Term | स्वाभाविक हिन्दी परिभाषा` लिखें।</div>
+            </div>
+
+            <div className="field">
+              <label>आगे की राह</label>
+              <textarea
+                rows={6}
+                value={deepDive.hindi.wayForward.join('\n')}
+                onChange={e => setDeepDive(d => ({ ...d, hindi: { ...d.hindi, wayForward: lines(e.target.value) } }))}
+              />
+              <div className="hint">English Way Forward के समान संख्या और क्रम रखें।</div>
+            </div>
+
+            <div className="field" style={{ marginBottom: 0 }}>
+              <label>संभावित मुख्य परीक्षा प्रश्न</label>
+              <textarea
+                rows={2}
+                value={deepDive.hindi.possibleMainsQuestion}
+                onChange={e => setDeepDive(d => ({ ...d, hindi: { ...d.hindi, possibleMainsQuestion: e.target.value } }))}
+              />
+            </div>
+          </div>
+
           <div className="field">
             <label>Penni Explain script (English)</label>
             <textarea
@@ -151,7 +315,7 @@ export function ArticleEditor({ row, onCancel, onSave }: Props) {
               value={draft.audio_script ?? ''}
               onChange={e => set('audio_script', e.target.value || null)}
             />
-            <div className="hint">Spoken narration. Plain text, no HTML. Roughly 450–900 words.</div>
+            <div className="hint">Calm spoken explanation. Plain text, no labels or HTML. Target 300–450 words.</div>
           </div>
 
           <div className="field">

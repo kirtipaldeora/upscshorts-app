@@ -69,33 +69,67 @@ Return ONLY a JSON object with EXACTLY these fields:
   "summary": "2-3 sentence factual summary",
   "whyItMatters": "2-3 sentences on why a UPSC aspirant must care",
   "deepDive": {
-    "explanation": "HTML string — see DEEP DIVE QUALITY BAR below",
+    "syllabusLinkage": "Example: GS II: Bilateral Relations; GS III: International Trade",
+    "context": "2-3 direct sentences explaining what happened and why it is significant",
+    "keyHighlights": ["4-6 short factual points, one sentence each"],
+    "keyConcepts": [{"term": "3-6 essential terms", "definition": "plain-English meaning and relevance"}],
+    "wayForward": ["3-6 specific and practical actions, one sentence each"],
+    "hindi": {
+      "syllabusLinkage": "the verified syllabusLinkage translated into natural Devanagari Hindi",
+      "context": "the verified context translated into natural Devanagari Hindi",
+      "keyHighlights": ["Hindi translations in exactly the same order and count as keyHighlights"],
+      "keyConcepts": [{"term": "keep the English term exactly unchanged", "definition": "natural Hindi definition with the same meaning"}],
+      "wayForward": ["Hindi translations in exactly the same order and count as wayForward"],
+      "possibleMainsQuestion": "natural Hindi translation of the same Mains question"
+    },
+    "explanation": "300-500 word supporting explanation in simple paragraphs, without headings or labels",
     "possibleMainsQuestion": "one Mains question asking to analyse/examine/discuss/evaluate"
   },
-  "audioScript": "continuous English narration per the narration spec below, 700-1100 words, no markdown, no labels",
-  "audioScriptHi": "the same lecture in natural Hinglish (Hindi-English classroom mix, Latin script), same depth, 700-1100 words",
+  "audioScript": "calm, natural English explanation per the narration spec below, 300-450 words, no markdown or labels",
+  "audioScriptHi": "the same explanation in natural Hinglish (Latin script), 300-450 words, not a literal translation",
   "prelimsQs": [two UPSC-standard questions per the guidelines: {"q","options"(4),"answer"(0-indexed),"explanation","ref"}],
   "keyTerms": [4-7 key terms],
   "location": {"lat": number, "lon": number, "place": "most relevant place for the news globe"}
 }
 
-=== DEEP DIVE QUALITY BAR (this is what a good deepDive.explanation looks like) ===
-The Deep Dive is the heart of the article. A student should WANT to read it. Write it like the best teacher you have ever had explaining something fascinating — warm, clear, and building understanding step by step. It must NOT read like a filled-in form or a list of bullet points under labels.
+=== DEEP DIVE QUALITY BAR ===
+Every article must produce the same five-part study note shown in the supplied India-UK FTA reference. The app displays these fields directly as: Syllabus Linkage, Context, Key Highlights, Key Concepts and Way Forward.
 
-Keep the SAME 16 section labels from the guidelines below (so the app renders them), formatted exactly as <strong>1. One-Line Summary:</strong> … <strong>16. Revision Notes:</strong>. But treat each label as the START of a real explanation, not a slot to dump a phrase into:
+WRITE EACH FIELD LIKE THIS:
+- syllabusLinkage: name the relevant GS paper and the exact syllabus topic. Add a second GS paper only when genuinely relevant.
+- context: 2-3 short sentences. State what happened, the parties/place involved and why the development matters. Do not give background history here.
+- keyHighlights: 4-6 direct factual bullets covering the main provisions, effects, opportunities, risks or institutional details. No generic claims.
+- keyConcepts: 3-6 terms a student must understand. Expand abbreviations and define every term in one plain sentence. Never define a difficult word using more difficult words.
+- wayForward: 3-6 practical actions tied to the actual issue. Start with clear verbs such as Ensure, Improve, Strengthen, Expand, Review or Build.
+- explanation: supporting source-based detail for narration only. Use simple <p> paragraphs, 300-500 words, with no headings, numbered sections, jargon labels or decorative HTML.
 
-WRITE LIKE THIS:
-- Open section 2 with a genuine hook or a question that makes the student curious ("Imagine you run a country that imports 80% of its oil. One narrow sea lane decides your fuel prices. That lane is the Strait of Hormuz.").
-- Explain every concept from first principles as if the student has never heard it. When you must use a technical term, define it in the same breath in plain words. Prefer "the money a country owes to the rest of the world" over "external liabilities".
-- Use short paragraphs (2-4 sentences). Vary rhythm. Use a real-world analogy or comparison at least twice. Show cause and effect as a chain the reader can follow, not as a heading.
-- Sound human. Use "you", "notice", "here is the interesting part", "so what does this mean". Never sound like Wikipedia or a press release.
-- Be substantive: teach real static concepts, name the actual Articles/Acts/committees/treaties and say what they DO, give numbers and context. Never pad with empty sentences.
+HINDI TRANSLATION RULES:
+- Write deepDive.hindi only after the five English fields and possibleMainsQuestion are final.
+- Translate those verified fields faithfully into natural Devanagari Hindi. Do not summarise, reinterpret or add any fact.
+- Preserve every name, date, figure, percentage and Arabic-number token exactly. Keep each translated item aligned with its English item.
+- Keep the same number and order of keyHighlights, keyConcepts and wayForward items.
+- Keep every keyConcept term exactly the same as its English term; translate only its definition. Retaining an official English technical term is preferable to inventing an unclear Hindi equivalent.
+- Translate possibleMainsQuestion with the same analytical demand and scope.
+- This Hindi study note is separate from audioScriptHi, which should remain naturally spoken Hinglish in Latin script.
 
-HARD RULES (your output is rejected by an automated checker if you break these):
-- Every one of the 16 sections must have real teaching content — at least ~30 words of substance. No empty or one-line sections.
-- No unexplained jargon. If you write an abbreviation or technical term, its meaning must appear right there.
-- At least 900 words total across the explanation; use <p>, <ul>, <li>, <strong> tags only (no markdown, no <h1>/<script>/<style>).
-- Do NOT invent facts. If the source text is thin, teach the surrounding static concepts accurately instead of inventing specifics.
+HARD RULES:
+- Do not create any additional section names.
+- Do not use phrases such as "UPSC lens", "editorial briefing", "interlinkages", "prelims nuggets", "mains framework", "memory aid" or "things not mentioned".
+- Remove jargon where plain English works. If a technical term is essential, define it in keyConcepts.
+- Keep each bullet to one useful sentence. Avoid repeating the summary in multiple sections.
+- Do NOT invent facts. If the source does not support a claim, leave it out.
+
+=== PRELIMS MCQ QUALITY BAR ===
+Create exactly two questions and use two different authentic UPSC formats: count-based statements, statement combinations, Statement I-II-III reasoning, correctly matched pairs, or an applied one-best-answer question.
+
+- Question 1 must test the verified current development through its mechanism, implication or institutional setting; never ask for simple headline recall.
+- Question 2 must test a directly relevant static-current linkage.
+- Use 2-4 independently testable statements where the selected format calls for them. Keep their length and difficulty comparable.
+- Make distractors plausible by changing one precise element such as the institution, jurisdiction, mechanism, condition, location or scope.
+- Keep options mutually exclusive, grammatically parallel and logically compatible with the stem. Exactly one option must be defensible.
+- Do not use silly distractors, giveaway wording, vague claims or unsupported trivia.
+- Write an 80-160 word explanation that evaluates every statement or pair separately, including why each incorrect item is wrong.
+- Use clean English and consistent Roman numbering. Do not copy OCR mistakes or include option labels inside option strings.
 
 === CONTENT GUIDELINES (section order + prelims + mains standards) ===
 ${GUIDELINES}
@@ -106,34 +140,142 @@ ${NARRATION_SPEC}`
 
 const wordCount = s => (s || '').trim().split(/\s+/).filter(Boolean).length
 const stripTags = s => (s || '').replace(/<[^>]+>/g, ' ').replace(/&[a-z]+;/gi, ' ').replace(/\s+/g, ' ').trim()
+const hasDevanagari = s => typeof s === 'string' && /[\u0900-\u097F]/.test(s)
+const numericTokens = s => (typeof s === 'string' ? s.match(/\d+(?:[.,]\d+)*/g) : null) ?? []
+const preservesNumbers = (english, hindi) => {
+  const left = numericTokens(english).sort()
+  const right = numericTokens(hindi).sort()
+  return left.length === right.length && left.every((token, index) => token === right[index])
+}
+
+function hindiDeepDiveProblems(dive) {
+  const problems = []
+  const hindi = dive?.hindi
+  if (!hindi || typeof hindi !== 'object') return ['deepDive.hindi missing']
+  if (!hasDevanagari(hindi.syllabusLinkage)) problems.push('deepDive.hindi.syllabusLinkage needs natural Devanagari Hindi')
+  if (!hasDevanagari(hindi.context)) problems.push('deepDive.hindi.context needs natural Devanagari Hindi')
+  if (!hasDevanagari(hindi.possibleMainsQuestion)) problems.push('deepDive.hindi.possibleMainsQuestion missing or not in Devanagari Hindi')
+
+  for (const field of ['keyHighlights', 'keyConcepts', 'wayForward']) {
+    if (!Array.isArray(hindi[field]) || !Array.isArray(dive[field]) || hindi[field].length !== dive[field].length) {
+      problems.push(`deepDive.hindi.${field} must match the English item count`)
+    }
+  }
+
+  const pairs = [
+    ['syllabusLinkage', dive.syllabusLinkage, hindi.syllabusLinkage],
+    ['context', dive.context, hindi.context],
+    ['possibleMainsQuestion', dive.possibleMainsQuestion, hindi.possibleMainsQuestion],
+  ]
+  if (Array.isArray(dive.keyHighlights) && Array.isArray(hindi.keyHighlights)) {
+    dive.keyHighlights.forEach((item, index) => pairs.push([`keyHighlights[${index}]`, item, hindi.keyHighlights[index]]))
+  }
+  if (Array.isArray(dive.wayForward) && Array.isArray(hindi.wayForward)) {
+    dive.wayForward.forEach((item, index) => pairs.push([`wayForward[${index}]`, item, hindi.wayForward[index]]))
+  }
+  if (Array.isArray(dive.keyConcepts) && Array.isArray(hindi.keyConcepts)) {
+    dive.keyConcepts.forEach((concept, index) => {
+      const translated = hindi.keyConcepts[index]
+      if (typeof translated?.term !== 'string' || translated.term.trim() !== concept?.term?.trim()) {
+        problems.push(`deepDive.hindi.keyConcepts[${index}].term must exactly match English`)
+      }
+      if (!hasDevanagari(translated?.definition)) problems.push(`deepDive.hindi.keyConcepts[${index}].definition needs Devanagari Hindi`)
+      pairs.push([`keyConcepts[${index}]`, `${concept?.term ?? ''} ${concept?.definition ?? ''}`, `${translated?.term ?? ''} ${translated?.definition ?? ''}`])
+    })
+  }
+
+  for (const [label, english, translation] of pairs) {
+    if (!hasDevanagari(translation)) problems.push(`deepDive.hindi.${label} needs Devanagari Hindi`)
+    if (!preservesNumbers(english, translation)) problems.push(`deepDive.hindi.${label} changes or drops a numeric fact`)
+  }
+  return [...new Set(problems)]
+}
 
 // Code-level quality gate for the Deep Dive. Weak, list-dumpy, or jargon-heavy
 // explanations are rejected here so the generator retries with the quality bar.
-function deepDiveProblems(html) {
+function deepDiveProblems(dive) {
   const problems = []
+  if (!dive || typeof dive !== 'object') return ['deepDive missing']
+  const html = dive.explanation
   if (!html || typeof html !== 'string') return ['deepDive.explanation missing']
-  if (/<script|<style|<h1|<iframe/i.test(html)) problems.push('deepDive has forbidden tags')
+  if (/<script|<style|<h[1-6]|<iframe|<div|<table/i.test(html)) problems.push('deepDive explanation should contain simple paragraphs only')
   if (/[#*_]{2,}|^\s*[-*]\s/m.test(html.replace(/<[^>]+>/g, ''))) problems.push('deepDive contains markdown (use HTML)')
 
-  // All 16 labelled sections present, in order, each with real content.
-  const labelRe = /<strong>\s*(\d{1,2})\.\s*[^<]*?:?\s*<\/strong>/g
-  const positions = []
-  let m
-  while ((m = labelRe.exec(html))) positions.push({ n: Number(m[1]), end: labelRe.lastIndex })
-  const nums = positions.map(p => p.n)
-  for (let i = 1; i <= 16; i++) if (!nums.includes(i)) problems.push(`deepDive missing section ${i}`)
+  const totalWords = wordCount(stripTags(html))
+  if (totalWords < 220) problems.push(`deepDive explanation too short (${totalWords} words, need 220+)`)
+  if (totalWords > 650) problems.push(`deepDive explanation too long (${totalWords} words, keep below 650)`)
+  if (!/<p[ >]/i.test(html)) problems.push('deepDive should use <p> paragraphs')
+  if (typeof dive.syllabusLinkage !== 'string' || wordCount(dive.syllabusLinkage) < 3 || !/\bGS\s*(?:I{1,3}|IV|[1-4])\b/i.test(dive.syllabusLinkage)) problems.push('deepDive needs a clear GS syllabusLinkage')
+  if (typeof dive.context !== 'string' || wordCount(dive.context) < 18 || wordCount(dive.context) > 100) problems.push('deepDive context must be 18-100 words')
+  if (!Array.isArray(dive.keyHighlights) || dive.keyHighlights.length < 4 || dive.keyHighlights.length > 6) problems.push('deepDive needs 4-6 keyHighlights')
+  else if (dive.keyHighlights.some(item => typeof item !== 'string' || wordCount(item) < 8 || wordCount(item) > 45)) problems.push('each keyHighlight must be one clear 8-45 word sentence')
+  if (!Array.isArray(dive.keyConcepts) || dive.keyConcepts.length < 3 || dive.keyConcepts.length > 6) problems.push('deepDive needs 3-6 keyConcepts')
+  else for (const concept of dive.keyConcepts) {
+    if (!concept?.term || !concept?.definition || wordCount(concept.definition) < 7) problems.push('each keyConcept needs a term and plain definition')
+  }
+  if (!Array.isArray(dive.wayForward) || dive.wayForward.length < 3 || dive.wayForward.length > 6) problems.push('deepDive needs 3-6 wayForward actions')
+  else if (dive.wayForward.some(item => typeof item !== 'string' || wordCount(item) < 6 || wordCount(item) > 40 || !/^(ensure|improve|strengthen|expand|review|build|support|promote|reduce|increase|create|develop|enforce|provide|simplify|protect|coordinate|adopt|invest|train|establish|maintain)\b/i.test(item))) problems.push('each wayForward item must be a specific 6-40 word action starting with a clear verb')
+  if (/one-line summary|explain like i.?m a upsc aspirant|revision notes|upsc lens|interlinkages|prelims nuggets|mains framework/i.test(`${stripTags(html)} ${dive.context}`)) problems.push('deepDive uses retired labels or jargon')
+  problems.push(...hindiDeepDiveProblems(dive))
+  return problems
+}
 
-  // Each section must carry substance (~25+ words of plain text after its label).
-  for (let i = 0; i < positions.length; i++) {
-    const from = positions[i].end
-    const to = i + 1 < positions.length ? html.indexOf('<strong>', from) : html.length
-    const words = wordCount(stripTags(html.slice(from, to < 0 ? html.length : to)))
-    if (words < 22) problems.push(`deepDive section ${positions[i].n} too thin (${words} words)`)
+function statementLabels(stem) {
+  const dotted = [...(stem || '').matchAll(/(?:^|\s)(I{1,3}|IV|V|[1-5])\.\s+/g)].map(match => match[1].toUpperCase())
+  const labelled = [...(stem || '').matchAll(/\bStatement\s+(I{1,3}|IV|V|[1-5])\s*:/gi)].map(match => match[1].toUpperCase())
+  return [...new Set([...dotted, ...labelled])]
+}
+
+function prelimsFormat(stem = '') {
+  if (/\bStatement\s+I\s*:/i.test(stem) && /\bStatement\s+II\s*:/i.test(stem)) return 'reasoning'
+  if (/following pairs|pairs? given above|correctly matched/i.test(stem)) return 'pairs'
+  if (/how many of (?:the above|them|the statements|the pairs)/i.test(stem)) return 'count'
+  if (/which of the statements|which of the following statements|select the correct answer using the code/i.test(stem)) return 'combination'
+  if (/which one of the following|common characteristic|best describes/i.test(stem)) return 'one-best'
+  return null
+}
+
+function answerMarksEveryItemCorrect(q, labels, format) {
+  const selected = q?.options?.[q.answer] ?? ''
+  if (format === 'count' || format === 'pairs') return /\ball\b/i.test(selected)
+  if (format === 'reasoning') return /both Statement II and Statement III are correct/i.test(selected)
+  return labels.length > 0 && labels.every(item => new RegExp(`\\b${item}\\b`, 'i').test(selected))
+}
+
+function prelimsQuestionProblems(q, index) {
+  const label = `prelimsQs[${index}]`
+  const problems = []
+  if (!q?.q || !Array.isArray(q.options) || q.options.length !== 4 || typeof q.answer !== 'number' || q.answer < 0 || q.answer > 3) {
+    return [`${label} is malformed`]
+  }
+  const format = prelimsFormat(q.q)
+  const options = q.options.map(option => typeof option === 'string' ? option.trim() : '')
+  if (!format) problems.push(`${label} does not use an approved UPSC question format`)
+  if (wordCount(q.q) < 14) problems.push(`${label} stem is too thin for applied UPSC testing`)
+  if (options.some(option => option.length < 2 || /^\([a-d]\)\s*/i.test(option))) problems.push(`${label} has empty options or embeds option labels`)
+  if (new Set(options.map(option => option.toLowerCase())).size !== 4) problems.push(`${label} options must be unique`)
+  if ((format === 'count' || format === 'pairs') && options.some(option => !/^(?:only (?:one|two|three|four)|all (?:the )?(?:two|three|four|five)|none)$/i.test(option))) {
+    problems.push(`${label} count-question options are not logically coherent`)
+  }
+  if (format === 'reasoning' && options.some(option => !/statement|neither/i.test(option))) {
+    problems.push(`${label} reasoning options must use the Statement I-II-III explanation pattern`)
+  }
+  if (/\bis\s*:\s*$|\brefers to\s*:\s*$|\bassociated with\s*:\s*$|\bunder which law\??$/i.test(q.q.trim())) {
+    problems.push(`${label} is direct recall rather than applied testing`)
   }
 
-  const totalWords = wordCount(stripTags(html))
-  if (totalWords < 750) problems.push(`deepDive too short (${totalWords} words, need 750+)`)
-  if (!/<p[ >]/i.test(html)) problems.push('deepDive should use <p> paragraphs')
+  const explanationWords = wordCount(q.explanation)
+  if (explanationWords < 80 || explanationWords > 180) problems.push(`${label} explanation must be 80-180 words`)
+  const labels = statementLabels(q.q)
+  if (labels.length >= 2) {
+    for (const item of labels) {
+      if (!new RegExp(`\\b(?:Statement|Pair|Item)\\s+${item}\\b`, 'i').test(q.explanation || '')) {
+        problems.push(`${label} explanation must assess ${format === 'pairs' ? 'Pair' : 'Statement'} ${item} separately`)
+      }
+    }
+    if (!answerMarksEveryItemCorrect(q, labels, format) &&
+        !/incorrect|not correct|false|wrong/i.test(q.explanation || '')) problems.push(`${label} explanation must state why an item is incorrect`)
+  }
   return problems
 }
 
@@ -143,23 +285,26 @@ function validateArticle(a) {
     if (a?.[k] === undefined || a[k] === null || a[k] === '') problems.push(`missing ${k}`)
   }
   if (a?.deepDive) {
-    problems.push(...deepDiveProblems(a.deepDive.explanation))
+    problems.push(...deepDiveProblems(a.deepDive))
     const q = a.deepDive.possibleMainsQuestion || ''
     if (!/\b(analyse|analyze|examine|discuss|evaluate|critically|comment|assess)\b/i.test(q)) problems.push('mains question not analytical')
   }
   for (const [field, label] of [['audioScript', 'English'], ['audioScriptHi', 'Hinglish']]) {
     if (a?.[field]) {
-      if (wordCount(a[field]) < 550) problems.push(`${label} audioScript too short (${wordCount(a[field])} words)`)
+      const scriptWords = wordCount(a[field])
+      if (scriptWords < 250) problems.push(`${label} audioScript too short (${scriptWords} words, need 250+)`)
+      if (scriptWords > 550) problems.push(`${label} audioScript too long (${scriptWords} words, keep below 550)`)
       if (/<[a-z]+[ >]/i.test(a[field])) problems.push(`${label} audioScript contains HTML`)
       if (/^\s*\d+\.\s|:\s*$/m.test(a[field])) problems.push(`${label} audioScript has list/label formatting (must be flowing speech)`)
+      if (/\b(ask yourself|upsc expects|one level deeper|value addition|mains framework|interlinkages|stakeholders?|case study)\b/i.test(a[field])) problems.push(`${label} audioScript contains coaching jargon or lecture filler`)
+      if (!/\b(but|however|although|the real|larger point|will depend|depends on)\b/i.test(a[field])) problems.push(`${label} audioScript needs a balanced concern or clear concluding takeaway`)
     }
   }
   if (Array.isArray(a?.prelimsQs)) {
-    for (const q of a.prelimsQs) {
-      if (!q.q || !Array.isArray(q.options) || q.options.length !== 4 || typeof q.answer !== 'number' || q.answer < 0 || q.answer > 3) problems.push('malformed prelims question')
-      if (q.explanation && wordCount(q.explanation) < 20) problems.push('prelims explanation too thin')
-    }
-    if (a.prelimsQs.length < 2) problems.push('needs 2 prelims questions')
+    a.prelimsQs.forEach((q, index) => problems.push(...prelimsQuestionProblems(q, index)))
+    if (a.prelimsQs.length !== 2) problems.push('needs exactly 2 prelims questions')
+    const formats = a.prelimsQs.map(q => prelimsFormat(q?.q)).filter(Boolean)
+    if (formats.length === a.prelimsQs.length && new Set(formats).size < 2) problems.push('the two prelims questions must use different UPSC formats')
   } else problems.push('prelimsQs not an array')
   if (a?.location && (typeof a.location.lat !== 'number' || typeof a.location.lon !== 'number')) problems.push('bad location')
   return problems

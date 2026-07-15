@@ -9,6 +9,7 @@ const API_MODELS = { fast: 'claude-haiku-4-5-20251001', smart: 'claude-sonnet-5'
 const CLI_MODELS = { fast: 'haiku', smart: 'sonnet' }
 
 export function resolveEngine(pref = 'auto') {
+  if (pref === 'codex') return 'codex'
   if (pref === 'api' || (pref === 'auto' && process.env.ANTHROPIC_API_KEY)) return 'api'
   return 'cli'
 }
@@ -41,7 +42,7 @@ function callCli({ prompt, system, tier }) {
   return new Promise((resolve, reject) => {
     // Plain text-in/text-out: no tools (the model must answer inline, never
     // "save to a file"), and a high output ceiling so long articles don't truncate.
-    const args = ['-p', '--model', CLI_MODELS[tier], '--disallowedTools', 'Bash', 'Read', 'Write', 'Edit', 'Glob', 'Grep', 'WebFetch', 'WebSearch', 'Task', 'TodoWrite', 'NotebookEdit']
+    const args = ['-p', '--model', CLI_MODELS[tier], '--tools', '']
     if (system) args.push('--append-system-prompt', system)
     const child = spawn(cliBinary(), args, {
       stdio: ['pipe', 'pipe', 'pipe'],
@@ -61,6 +62,30 @@ function callCli({ prompt, system, tier }) {
   })
 }
 
+function callCodex({ prompt, system }) {
+  return new Promise((resolve, reject) => {
+    const args = [
+      'exec', '--ignore-user-config', '--ephemeral', '--ignore-rules',
+      '--skip-git-repo-check', '-s', 'read-only', '-C', process.cwd(), '-',
+    ]
+    const child = spawn(process.env.CODEX_CLI || 'codex', args, {
+      stdio: ['pipe', 'pipe', 'pipe'],
+      env: { ...process.env },
+    })
+    let out = ''
+    let err = ''
+    child.stdout.on('data', d => { out += d })
+    child.stderr.on('data', d => { err += d })
+    child.on('error', reject)
+    child.on('close', code => {
+      if (code === 0) resolve(out.trim())
+      else reject(new Error(`codex CLI exited ${code}: ${err.slice(-500)}`))
+    })
+    child.stdin.write(`${system}\n\n${prompt}`)
+    child.stdin.end()
+  })
+}
+
 export async function callLLM({ prompt, system = '', tier = 'fast', maxTokens = 8000, engine = 'auto', retries = 1 }) {
   const resolved = resolveEngine(engine)
   let lastErr
@@ -68,7 +93,9 @@ export async function callLLM({ prompt, system = '', tier = 'fast', maxTokens = 
     try {
       return resolved === 'api'
         ? await callApi({ prompt, system, tier, maxTokens })
-        : await callCli({ prompt, system, tier })
+        : resolved === 'codex'
+          ? await callCodex({ prompt, system })
+          : await callCli({ prompt, system, tier })
     } catch (err) {
       lastErr = err
       console.warn(`  [llm] attempt ${attempt + 1} failed: ${err.message}`)

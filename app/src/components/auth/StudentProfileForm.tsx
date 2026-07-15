@@ -18,6 +18,12 @@ const DAILY_TARGETS = [5, 10, 15, 20]
 const DEFAULT_PROFILE: StudentProfile = {
   name: '',
   phone: '',
+  email: '',
+  gender: '',
+  dateOfBirth: '',
+  photoUrl: '',
+  emailUpdates: false,
+  whatsappUpdates: false,
   mascotId: 'penni-red',
   attemptYear: '2027',
   prepStage: 'Foundation',
@@ -37,9 +43,12 @@ export function StudentProfileForm({ onComplete }: StudentProfileFormProps) {
     ...profile,
     name: profile?.name || user?.name || '',
     phone: profile?.phone || user?.phone || '',
+    email: profile?.email || user?.email || '',
   }))
   const rootRef = useRef<HTMLDivElement>(null)
   const haptic = useHaptic()
+  const whatsappDigits = form.phone.replace(/\D/g, '')
+  const hasValidWhatsappPhone = whatsappDigits.length >= 8 && whatsappDigits.length <= 15 && whatsappDigits[0] !== '0'
 
   useEffect(() => {
     const root = rootRef.current
@@ -103,6 +112,23 @@ export function StudentProfileForm({ onComplete }: StudentProfileFormProps) {
               {LANGUAGES.map(language => <button key={language} className={form.language === language ? 'active' : ''} onClick={() => patch({ language })}>{language}</button>)}
             </div>
           </div>
+
+          {form.email && (
+            <label className="student-email-consent student-setup-field">
+              <input type="checkbox" checked={form.emailUpdates} onChange={event => patch({ emailUpdates: event.target.checked })} />
+              <span><b>Send me Penni updates</b><small>Daily briefing alerts and important Penni feature news. Unsubscribe anytime in Settings.</small></span>
+            </label>
+          )}
+
+          <label className="student-setup-field">
+            <span><FontAwesomeIcon icon={faUser} /> WhatsApp number</span>
+            <input type="tel" value={form.phone} onChange={event => patch({ phone: event.target.value })} placeholder="+91 98765 43210" autoComplete="tel" />
+          </label>
+
+          <label className={`student-email-consent student-setup-field ${hasValidWhatsappPhone ? '' : 'disabled'}`}>
+            <input type="checkbox" checked={form.whatsappUpdates} disabled={!hasValidWhatsappPhone} onChange={event => patch({ whatsappUpdates: event.target.checked })} />
+            <span><b>Send WhatsApp briefings</b><small>{hasValidWhatsappPhone ? 'Daily briefing alerts and important Penni feature updates. Standard WhatsApp terms apply.' : 'Enter a valid number with country code to enable WhatsApp updates.'}</small></span>
+          </label>
         </div>
 
         {error && <p className="student-error">{error}</p>}

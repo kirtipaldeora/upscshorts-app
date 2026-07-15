@@ -12,6 +12,8 @@ import { usePracticeStore } from '@/stores/usePracticeStore'
 import { startStudentStateSync } from '@/lib/studentDataClient'
 import { getSupabase } from '@/lib/authClient'
 import type { MainsRecord } from '@/hooks/useMainsDB'
+import { TODAY, YESTERDAY } from '@/constants/categories'
+import { StreakRecoverySheet } from '@/components/profile/StreakRecoverySheet'
 
 // Heavy / seldom-used screens are code-split so they never bloat first load.
 const ReviseScreen = lazy(() => import('@/components/revise/ReviseScreen').then(module => ({ default: module.ReviseScreen })))
@@ -38,9 +40,10 @@ export default function App() {
   const [phase, setPhase] = useState<AppPhase>(getInitialPhase)
   const [uploadVisible, setUploadVisible] = useState(false)
   const [mainsRecordOpen, setMainsRecordOpen] = useState<MainsRecord | null>(null)
+  const [streakRecoveryOpen, setStreakRecoveryOpen] = useState(false)
   const { activeScreen, overlayScreen, setOverlay, setScreen } = useAppStore()
   const { user, profile, isGuest, bootstrap } = useAuthStore()
-  const { settings } = usePracticeStore()
+  const { settings, stats } = usePracticeStore()
   const { message: toastMsg, show: showToast, clear: clearToast } = useToast()
 
   const handleSplashDone = useCallback(async () => {
@@ -74,6 +77,18 @@ export default function App() {
     }, Math.min(next.getTime() - now.getTime(), 2147483647))
     return () => window.clearTimeout(timeout)
   }, [phase, settings.remind, settings.reminderTime, showToast])
+
+  useEffect(() => {
+    if (phase !== 'main') return
+    const lost = stats.streak.count === 0 && Boolean(stats.streak.last) && stats.streak.last < YESTERDAY
+    const dismissed = localStorage.getItem('penni.streak-recovery-dismissed') === TODAY
+    setStreakRecoveryOpen(lost && !dismissed)
+  }, [phase, stats.streak.count, stats.streak.last])
+
+  const dismissStreakRecovery = useCallback(() => {
+    localStorage.setItem('penni.streak-recovery-dismissed', TODAY)
+    setStreakRecoveryOpen(false)
+  }, [])
 
   useEffect(() => {
     if (phase !== 'main' || !user || isGuest) return
@@ -178,6 +193,7 @@ export default function App() {
               <ProfileScreen
                 onOpenSettings={() => setScreen('settings')}
                 onOpenMainsRecord={(rec) => setMainsRecordOpen(rec)}
+                onShowToast={showToast}
               />
             </Suspense>
           )}
@@ -267,6 +283,17 @@ export default function App() {
 
       {/* Toast notifications */}
       <Toast message={toastMsg} onClear={clearToast} />
+
+      {streakRecoveryOpen && (
+        <StreakRecoverySheet
+          lastStreak={stats.streak.longest}
+          onDismiss={dismissStreakRecovery}
+          onPractice={() => {
+            dismissStreakRecovery()
+            setScreen('practice')
+          }}
+        />
+      )}
     </>
   )
 }

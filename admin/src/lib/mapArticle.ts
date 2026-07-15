@@ -2,6 +2,7 @@ import type {
   Article,
   Category,
   DeepDive,
+  DeepDiveHindi,
   GeoLocation,
   GsPaper,
   PrelimQuestion,
@@ -62,11 +63,53 @@ function asString(value: unknown, fallback = ''): string {
   return typeof value === 'string' ? value : fallback
 }
 
+function toStringList(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === 'string' && Boolean(item.trim())).map(item => item.trim())
+    : []
+}
+
+function toConcepts(value: unknown) {
+  return Array.isArray(value)
+    ? value.flatMap(item => {
+        const concept = asRecord(item)
+        const term = asString(concept.term).trim()
+        const definition = asString(concept.definition).trim()
+        return term && definition ? [{ term, definition }] : []
+      })
+    : []
+}
+
+function toHindiDeepDive(value: unknown): DeepDiveHindi | undefined {
+  const raw = asRecord(value)
+  const hindi: DeepDiveHindi = {
+    syllabusLinkage: asString(raw.syllabusLinkage).trim(),
+    context: asString(raw.context).trim(),
+    keyHighlights: toStringList(raw.keyHighlights),
+    keyConcepts: toConcepts(raw.keyConcepts),
+    wayForward: toStringList(raw.wayForward),
+    possibleMainsQuestion: asString(raw.possibleMainsQuestion).trim(),
+  }
+  const hasContent = hindi.syllabusLinkage || hindi.context || hindi.keyHighlights.length ||
+    hindi.keyConcepts.length || hindi.wayForward.length || hindi.possibleMainsQuestion
+  return hasContent ? hindi : undefined
+}
+
 function toDeepDive(value: unknown): DeepDive {
   const raw = asRecord(value)
+  const keyHighlights = toStringList(raw.keyHighlights)
+  const wayForward = toStringList(raw.wayForward)
+  const keyConcepts = toConcepts(raw.keyConcepts)
+  const hindi = toHindiDeepDive(raw.hindi)
   return {
     explanation: asString(raw.explanation),
     possibleMainsQuestion: asString(raw.possibleMainsQuestion),
+    ...(typeof raw.syllabusLinkage === 'string' && raw.syllabusLinkage.trim() ? { syllabusLinkage: raw.syllabusLinkage.trim() } : {}),
+    ...(typeof raw.context === 'string' && raw.context.trim() ? { context: raw.context.trim() } : {}),
+    ...(keyHighlights.length ? { keyHighlights } : {}),
+    ...(keyConcepts.length ? { keyConcepts } : {}),
+    ...(wayForward.length ? { wayForward } : {}),
+    ...(hindi ? { hindi } : {}),
   }
 }
 
@@ -154,7 +197,23 @@ export function emptyRow(date: string): ArticleRow {
     gs_paper: 'GS 2',
     summary: '',
     why_it_matters: '',
-    deep_dive: { explanation: '', possibleMainsQuestion: '' },
+    deep_dive: {
+      syllabusLinkage: '',
+      context: '',
+      keyHighlights: [],
+      keyConcepts: [],
+      wayForward: [],
+      explanation: '',
+      possibleMainsQuestion: '',
+      hindi: {
+        syllabusLinkage: '',
+        context: '',
+        keyHighlights: [],
+        keyConcepts: [],
+        wayForward: [],
+        possibleMainsQuestion: '',
+      },
+    },
     audio_script: null,
     audio_script_hi: null,
     prelims_qs: [],

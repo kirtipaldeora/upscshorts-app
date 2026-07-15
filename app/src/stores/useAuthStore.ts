@@ -27,6 +27,12 @@ export interface PenniUser {
 export interface StudentProfile {
   name: string
   phone: string
+  email: string
+  gender: '' | 'female' | 'male' | 'non-binary' | 'prefer-not-to-say'
+  dateOfBirth: string
+  photoUrl: string
+  emailUpdates: boolean
+  whatsappUpdates: boolean
   mascotId: string
   attemptYear: string
   prepStage: string
@@ -52,6 +58,7 @@ interface AuthStore {
   saveProfile: (profile: StudentProfile) => Promise<boolean>
   continueAsGuest: () => Promise<void>
   signOut: () => Promise<void>
+  deleteAccount: () => Promise<boolean>
   clearError: () => void
 }
 
@@ -83,6 +90,12 @@ function normalizeProfile(profile: StudentProfile | null): StudentProfile | null
   if (!profile) return null
   return {
     ...profile,
+    email: profile.email || '',
+    gender: profile.gender || '',
+    dateOfBirth: profile.dateOfBirth || '',
+    photoUrl: profile.photoUrl || '',
+    emailUpdates: profile.emailUpdates === true,
+    whatsappUpdates: profile.whatsappUpdates === true,
     mascotId: profile.mascotId || 'penni-red',
     dailyTarget: profile.dailyTarget || 10,
     gsFocus: profile.gsFocus?.length ? profile.gsFocus : ['GS 1', 'GS 2', 'GS 3'],
@@ -98,6 +111,12 @@ async function readCloudProfile(userId: string): Promise<StudentProfile | null> 
   return normalizeProfile({
     name: data.full_name ?? '',
     phone: data.phone ?? '',
+    email: data.email ?? '',
+    gender: data.gender ?? '',
+    dateOfBirth: data.date_of_birth ?? '',
+    photoUrl: data.photo_url ?? '',
+    emailUpdates: data.email_updates === true,
+    whatsappUpdates: data.whatsapp_updates === true,
     mascotId: data.mascot_id ?? 'penni-red',
     attemptYear: data.attempt_year ?? '',
     prepStage: data.prep_stage ?? 'Foundation',
@@ -257,6 +276,14 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
           id: user.id,
           full_name: cleanProfile.name,
           phone: cleanProfile.phone,
+          email: cleanProfile.email,
+          gender: cleanProfile.gender,
+          date_of_birth: cleanProfile.dateOfBirth || null,
+          photo_url: cleanProfile.photoUrl,
+          email_updates: cleanProfile.emailUpdates,
+          email_consent_at: cleanProfile.emailUpdates ? new Date().toISOString() : null,
+          whatsapp_updates: cleanProfile.whatsappUpdates,
+          whatsapp_consent_at: cleanProfile.whatsappUpdates ? new Date().toISOString() : null,
           mascot_id: cleanProfile.mascotId,
           attempt_year: cleanProfile.attemptYear,
           prep_stage: cleanProfile.prepStage,
@@ -269,6 +296,10 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
         }
         const { error } = await supabase.from('profiles').upsert(profileRow)
         if (error) throw error
+        if (cleanProfile.emailUpdates && (cleanProfile.email || user.email)) {
+          const { error: welcomeError } = await supabase.functions.invoke('send-welcome-email')
+          if (welcomeError) console.warn('Penni welcome email was not sent', welcomeError)
+        }
       }
       writeJson(PROFILE_KEY, cleanProfile)
       if (user) {
@@ -306,6 +337,25 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
       clearAccountCache()
     } catch { /* noop */ }
     set({ user: null, profile: null, isGuest: false, loading: false })
+  },
+
+  deleteAccount: async () => {
+    set({ loading: true, error: null })
+    try {
+      const supabase = getSupabase()
+      const user = get().user
+      if (supabase && user) {
+        const { error } = await supabase.rpc('delete_own_account')
+        if (error) throw error
+        await supabase.auth.signOut()
+      }
+      clearAccountCache()
+      set({ user: null, profile: null, isGuest: false, loading: false })
+      return true
+    } catch (error) {
+      set({ error: error instanceof Error ? error.message : 'Could not delete account', loading: false })
+      return false
+    }
   },
 
   clearError: () => set({ error: null }),

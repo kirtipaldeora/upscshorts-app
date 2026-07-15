@@ -8,8 +8,28 @@ export interface PrelimQuestion {
 }
 
 // ─── DeepDive ────────────────────────────────────────────────
+export interface DeepDiveConcept {
+  term: string
+  definition: string
+}
+
+export interface DeepDiveHindi {
+  syllabusLinkage: string
+  context: string
+  keyHighlights: string[]
+  keyConcepts: DeepDiveConcept[]
+  wayForward: string[]
+  possibleMainsQuestion: string
+}
+
 export interface DeepDive {
-  explanation: string          // HTML string (contains <strong> tags)
+  syllabusLinkage?: string
+  context?: string
+  keyHighlights?: string[]
+  keyConcepts?: DeepDiveConcept[]
+  wayForward?: string[]
+  hindi?: DeepDiveHindi
+  explanation: string          // Supporting HTML for narration and older content
   possibleMainsQuestion: string
 }
 

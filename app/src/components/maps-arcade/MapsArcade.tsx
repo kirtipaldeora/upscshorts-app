@@ -42,7 +42,7 @@ import { WORLD_PHYSICAL_FEATURES } from './worldPhysicalData'
 
 const AtlasGlobe = lazy(() => import('./AtlasGlobe').then(module => ({ default: module.AtlasGlobe })))
 
-type Screen = 'home' | 'world-menu' | 'physical-menu' | 'world-river-menu' | 'india-menu' | 'river-menu' | 'park-menu' | 'park-learn' | 'setup' | 'play' | 'results'
+type Screen = 'home' | 'world-home' | 'world-menu' | 'physical-menu' | 'world-river-menu' | 'india-menu' | 'river-menu' | 'park-menu' | 'park-learn' | 'setup' | 'play' | 'results'
 type AppKind = 'world' | 'india' | null
 type Category = 'countries' | 'world-rivers' | 'mountains' | 'rivers' | 'parks' | null
 
@@ -766,7 +766,7 @@ export function MapsArcade() {
     return map
   }, [loaded])
 
-  const currentView: AtlasView = state.screen === 'home' || state.screen === 'world-menu'
+  const currentView: AtlasView = state.screen === 'home' || state.screen === 'world-home' || state.screen === 'world-menu'
     ? 'world'
     : state.app === 'world'
       ? state.category === 'countries'
@@ -1159,7 +1159,13 @@ export function MapsArcade() {
       patch({ screen: 'physical-menu', continent: null, toast: null })
       return
     }
-    if (state.screen === 'world-menu' || state.screen === 'physical-menu' || state.screen === 'india-menu') {
+    // Countries and Physical Features now live under World Mapping, so their
+    // menus step back to that landing rather than all the way home.
+    if (state.screen === 'world-menu' || state.screen === 'physical-menu') {
+      patch({ screen: 'world-home', continent: null, category: 'countries', toast: null })
+      return
+    }
+    if (state.screen === 'world-home' || state.screen === 'india-menu') {
       setState(INITIAL)
     }
   }
@@ -1200,19 +1206,40 @@ export function MapsArcade() {
           <p>Practice through focused rounds. Penni will handle the questions, feedback and review list.</p>
         </div>
         <div className="atlas-home-grid">
-          <button onClick={() => patch({ app: 'world', screen: 'world-menu', category: 'countries' })}>
+          <button onClick={() => patch({ app: 'world', screen: 'world-home', category: 'countries' })}>
             <FontAwesomeIcon icon={faEarthAsia} />
-            <span><b>World Mapping</b><i>Countries by continent</i></span>
-            <FontAwesomeIcon icon={faChevronRight} />
-          </button>
-          <button onClick={() => patch({ app: 'world', screen: 'physical-menu', category: null })}>
-            <FontAwesomeIcon icon={faMountainSun} />
-            <span><b>Physical Features</b><i>Rivers and mountain chains on a globe</i></span>
+            <span><b>World Mapping</b><i>Countries and physical features</i></span>
             <FontAwesomeIcon icon={faChevronRight} />
           </button>
           <button onClick={() => patch({ app: 'india', screen: 'india-menu' })}>
             <FontAwesomeIcon icon={faCompass} />
             <span><b>India Mapping</b><i>Rivers and national parks</i></span>
+            <FontAwesomeIcon icon={faChevronRight} />
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  function renderWorldHome() {
+    const riverCount = WORLD_PHYSICAL_FEATURES.filter(feature => feature.kind === 'river').length
+    const mountainCount = WORLD_PHYSICAL_FEATURES.filter(feature => feature.kind === 'mountain').length
+    return (
+      <div ref={panelRef} className="atlas-panel atlas-india-panel">
+        <div className="atlas-panel-head">
+          <span>World Mapping</span>
+          <h3>Choose a drill</h3>
+          <p>Locate countries by continent, or trace physical features on the globe.</p>
+        </div>
+        <div className="atlas-india-grid">
+          <button className="atlas-india-card" onClick={() => patch({ app: 'world', screen: 'world-menu', category: 'countries' })}>
+            <i><FontAwesomeIcon icon={faEarthAsia} /></i>
+            <span><b>Countries</b><em>Locate nations continent by continent</em></span>
+            <FontAwesomeIcon icon={faChevronRight} />
+          </button>
+          <button className="atlas-india-card mountains" onClick={() => patch({ app: 'world', screen: 'physical-menu', category: null })}>
+            <i><FontAwesomeIcon icon={faMountainSun} /></i>
+            <span><b>Physical Features</b><em>{riverCount} rivers · {mountainCount} mountain chains</em></span>
             <FontAwesomeIcon icon={faChevronRight} />
           </button>
         </div>
@@ -1640,6 +1667,7 @@ export function MapsArcade() {
     if (loading) return <PenniLoader label="Loading map data" full />
     if (!loaded) return <div className="atlas-loading">Map data could not be loaded.</div>
     if (state.screen === 'home') return renderHome()
+    if (state.screen === 'world-home') return renderWorldHome()
     if (state.screen === 'world-menu') return renderWorldMenu()
     if (state.screen === 'physical-menu') return renderPhysicalMenu()
     if (state.screen === 'world-river-menu') return renderWorldRiverMenu()

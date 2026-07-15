@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faWhatsapp } from '@fortawesome/free-brands-svg-icons'
 import {
   faArrowLeft,
   faUser,
@@ -23,13 +24,19 @@ import {
   faNewspaper,
   faMicrophone,
   faPlay,
+  faEnvelope,
+  faFileContract,
+  faLifeRing,
+  faUserPen,
+  faEnvelopeOpenText,
 } from '@fortawesome/free-solid-svg-icons'
 import { usePracticeStore } from '@/stores/usePracticeStore'
 import { useThemeStore } from '@/stores/useThemeStore'
 import { useAppStore } from '@/stores/useAppStore'
 import { useBookmarkStore } from '@/stores/useBookmarkStore'
 import { useAuthStore, type StudentProfile } from '@/stores/useAuthStore'
-import { ProfileMascot } from '@/components/auth/ProfileMascot'
+import { ProfileAvatar } from '@/components/profile/ProfileAvatar'
+import { getProfileCompletion } from '@/utils/profile'
 import { TODAY } from '@/constants/categories'
 import { NEWS_SOURCES } from '@/constants/sources'
 import { useNarration, listNarrationVoices } from '@/hooks/useNarration'
@@ -52,16 +59,18 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
   const { theme, toggle } = useThemeStore()
   const { articlesByDate, setArticlesByDate, sourceFilter, toggleSource } = useAppStore()
   const { clearAll } = useBookmarkStore()
-  const { user, profile, isGuest, signOut, saveProfile } = useAuthStore()
+  const { user, profile, isGuest, loading: authSaving, signOut, deleteAccount, saveProfile } = useAuthStore()
   const previewNarration = useNarration()
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>(() => listNarrationVoices())
   const [sourcesOpen, setSourcesOpen] = useState(false)
   const [voicesOpen, setVoicesOpen] = useState(false)
   const [contentToolsOpen, setContentToolsOpen] = useState(false)
+  const [advancedOpen, setAdvancedOpen] = useState(false)
   const [dangerOpen, setDangerOpen] = useState(false)
   const settingsRef = useRef<HTMLDivElement>(null)
   const profileName = isGuest ? 'Guest mode' : profile?.name || user?.name || 'Signed in student'
   const profileMethod = isGuest ? 'not signed in' : user?.method ?? 'local'
+  const profileCompletion = getProfileCompletion(profile, user)
   const todayDone = stats.d[TODAY]?.n ?? 0
   const targetPct = Math.min(100, Math.round((todayDone / Math.max(1, settings.target)) * 100))
   const enabledSourceCount = NEWS_SOURCES.filter(source => sourceFilter[source.key]).length
@@ -157,13 +166,65 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
     }
   }
 
-  async function updateStudentProfile(patch: Partial<StudentProfile>, silent = false) {
-    if (!profile || isGuest) return
+  async function handleDeleteAccount() {
+    if (isGuest) {
+      handleReset()
+      return
+    }
+    const confirmation = window.prompt('This permanently deletes your Penni account and synced learning data. Type DELETE to continue.')
+    if (confirmation !== 'DELETE') return
+    const deleted = await deleteAccount()
+    if (!deleted) {
+      onShowToast(useAuthStore.getState().error || 'Could not delete account')
+      return
+    }
+    window.location.reload()
+  }
+
+  async function toggleEmailUpdates() {
+    if (authSaving) return
+    if (!profile || isGuest) {
+      onShowToast('Sign in to receive email updates')
+      return
+    }
+    if (!profile.emailUpdates && !(profile.email || user?.email)) {
+      onShowToast('Add an email address in your profile first')
+      return
+    }
+    const enabling = !profile.emailUpdates
+    const saved = await updateStudentProfile({ emailUpdates: enabling }, true)
+    onShowToast(saved
+      ? `Email updates turned ${enabling ? 'on' : 'off'}`
+      : 'Could not update email preference. Please try again.')
+  }
+
+  async function toggleWhatsappUpdates() {
+    if (authSaving) return
+    if (!profile || isGuest) {
+      onShowToast('Sign in to receive WhatsApp updates')
+      return
+    }
+    const whatsappDigits = profile.phone.replace(/\D/g, '')
+    if (!profile.whatsappUpdates && (whatsappDigits.length < 8 || whatsappDigits.length > 15 || whatsappDigits[0] === '0')) {
+      onShowToast('Add a valid WhatsApp number with country code in your profile')
+      return
+    }
+    const enabling = !profile.whatsappUpdates
+    const saved = await updateStudentProfile({ whatsappUpdates: enabling }, true)
+    onShowToast(saved
+      ? `WhatsApp updates turned ${enabling ? 'on' : 'off'}`
+      : 'Could not update WhatsApp preference. Please try again.')
+  }
+
+  async function updateStudentProfile(patch: Partial<StudentProfile>, silent = false): Promise<boolean> {
+    if (!profile || isGuest) return false
     const next = { ...profile, ...patch }
-    await saveProfile(next)
+    const saved = await saveProfile(next)
+    if (!saved) return false
     if (patch.name) saveSettings({ name: patch.name })
     if (patch.dailyTarget) saveSettings({ target: patch.dailyTarget })
     if (!silent) onShowToast('Profile updated')
+    return true
   }
 
   function handleBackupContent() {
@@ -233,14 +294,12 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
         {/* Account */}
         <div className="setting-group settings-panel">
           <div className="setting-group-title">Account</div>
-          <div className="setting-item">
+          <div className="setting-item settings-account-row" onClick={onClose}>
             <div className="setting-left">
-              <ProfileMascot id={profile?.mascotId} size="sm" />
-              <span>{profileName}</span>
+              <ProfileAvatar profile={profile} user={user} size="sm" />
+              <span><b>{profileName}</b><small>{isGuest ? profileMethod : `${profileCompletion.percent}% complete`}</small></span>
             </div>
-            <span style={{ fontSize: 11, fontWeight: 900, color: 'var(--ink3)' }}>
-              {profileMethod}
-            </span>
+            <FontAwesomeIcon icon={faUserPen} style={{ color: 'var(--acc)' }} />
           </div>
           {isGuest && (
             <p className="pn-note">Guest mode keeps practice local on this device. Sign in to create a profile and sync progress.</p>
@@ -251,6 +310,27 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
               <span style={{ color: isGuest ? 'var(--acc)' : '#E36D6D' }}>{isGuest ? 'Sign in to sync' : 'Sign out'}</span>
             </div>
           </div>
+        </div>
+
+        {/* Communication preferences */}
+        <div className="setting-group settings-panel">
+          <div className="setting-group-title">Updates</div>
+          <div className="setting-item" onClick={() => void toggleEmailUpdates()}>
+            <div className="setting-left">
+              <FontAwesomeIcon icon={faEnvelopeOpenText} style={{ width: 14 }} />
+              <span>Email updates</span>
+            </div>
+            <button className={`toggle ${profile?.emailUpdates ? 'on' : ''}`} disabled={authSaving} onClick={event => { event.stopPropagation(); void toggleEmailUpdates() }} aria-label="Toggle email updates" />
+          </div>
+          <p className="pn-note">A daily briefing email when the new pack is published, plus important Penni feature announcements.</p>
+          <div className="setting-item" onClick={() => void toggleWhatsappUpdates()}>
+            <div className="setting-left">
+              <FontAwesomeIcon icon={faWhatsapp} style={{ width: 14, color: '#23a966' }} />
+              <span>WhatsApp briefings</span>
+            </div>
+            <button className={`toggle ${profile?.whatsappUpdates ? 'on' : ''}`} disabled={authSaving} onClick={event => { event.stopPropagation(); void toggleWhatsappUpdates() }} aria-label="Toggle WhatsApp updates" />
+          </div>
+          <p className="pn-note">A daily briefing alert when the new pack is published, plus major feature updates. Turn it off anytime.</p>
         </div>
 
         {/* Preferences */}
@@ -401,30 +481,19 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
           </div>
         </div>
 
-        {/* AI evaluation */}
-        <div className="setting-group settings-panel">
-          <div className="setting-group-title">AI evaluation (Mains)</div>
-          <div className="setting-item">
-            <div className="setting-left">
-              <FontAwesomeIcon icon={faKey} style={{ width: 14 }} />
-              <span>Claude API key</span>
+        {/* Advanced tools stay out of the primary launch experience. */}
+        <div className={`setting-group settings-panel settings-disclosure ${advancedOpen ? 'open' : ''}`}>
+          <button className="settings-summary" onClick={() => setAdvancedOpen(value => !value)}>
+            <span className="settings-summary-icon"><FontAwesomeIcon icon={faKey} /></span>
+            <span><b>Advanced tools</b><small>Optional personal AI evaluation key</small></span>
+            <FontAwesomeIcon icon={faChevronDown} />
+          </button>
+          {advancedOpen && (
+            <div className="settings-advanced-body">
+              <label><span>Claude API key</span><input className="pn-inp wide" type="password" defaultValue={settings.key} placeholder="sk-ant-..." onChange={e => saveSettings({ key: e.target.value.trim() })} /></label>
+              <p className="pn-note">Stored only on this device. Penni uses it only when you request a Mains evaluation. Daily limit: 5 uploads.</p>
             </div>
-            <input
-              className="pn-inp wide"
-              type="password"
-              defaultValue={settings.key}
-              placeholder="sk-ant-..."
-              onChange={e => {
-                const v = e.target.value.trim()
-                saveSettings({ key: v })
-                if (v) onShowToast('Key saved on this device')
-              }}
-            />
-          </div>
-          <p className="pn-note">
-            Stored only on this device. Used to evaluate your Mains answers with Claude (model: claude-opus-4-8).
-            Get a key at <a href="https://console.anthropic.com" target="_blank" rel="noreferrer" style={{ color: 'var(--accent)' }}>console.anthropic.com</a>. Daily limit: 5 uploads.
-          </p>
+          )}
         </div>
 
         {/* Data & privacy */}
@@ -435,6 +504,18 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
               <FontAwesomeIcon icon={faShieldHalved} style={{ width: 14 }} />
               <span>Privacy policy</span>
             </div>
+            <FontAwesomeIcon icon={faChevronRight} style={{ color: 'var(--ink3)', fontSize: 11 }} />
+          </div>
+          <div className="setting-item" onClick={() => window.open('/terms.html', '_blank')}>
+            <div className="setting-left"><FontAwesomeIcon icon={faFileContract} style={{ width: 14 }} /><span>Terms of use</span></div>
+            <FontAwesomeIcon icon={faChevronRight} style={{ color: 'var(--ink3)', fontSize: 11 }} />
+          </div>
+          <div className="setting-item" onClick={() => window.location.href = 'mailto:support@penni.app?subject=Penni support'}>
+            <div className="setting-left"><FontAwesomeIcon icon={faLifeRing} style={{ width: 14 }} /><span>Help &amp; support</span></div>
+            <FontAwesomeIcon icon={faChevronRight} style={{ color: 'var(--ink3)', fontSize: 11 }} />
+          </div>
+          <div className="setting-item" onClick={() => window.location.href = 'mailto:support@penni.app?subject=Penni feedback'}>
+            <div className="setting-left"><FontAwesomeIcon icon={faEnvelope} style={{ width: 14 }} /><span>Send feedback</span></div>
             <FontAwesomeIcon icon={faChevronRight} style={{ color: 'var(--ink3)', fontSize: 11 }} />
           </div>
 
@@ -483,6 +564,10 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
                 <button onClick={handleReset}>
                   <FontAwesomeIcon icon={faArrowRotateLeft} />
                   Reset app
+                </button>
+                <button className="danger-action" onClick={() => void handleDeleteAccount()}>
+                  <FontAwesomeIcon icon={faTrash} />
+                  {isGuest ? 'Erase guest data' : 'Delete account'}
                 </button>
               </div>
             )}

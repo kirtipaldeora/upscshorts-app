@@ -21,12 +21,16 @@ const args = parseArgs(process.argv)
 const date = args.date || istDateString()
 const engine = args.engine || 'cli'
 
-const dataPath = path.join(ROOT, 'scripts/news-pipeline/data', `${date}.mjs`)
+const dataPath = args.data
+  ? path.resolve(ROOT, String(args.data))
+  : path.join(ROOT, 'scripts/news-pipeline/data', `${date}.mjs`)
 if (!existsSync(dataPath)) {
   console.error(`No digest data at ${path.relative(ROOT, dataPath)}`)
   process.exit(1)
 }
-const { default: items } = await import(pathToFileURL(dataPath).href)
+const items = dataPath.endsWith('.json')
+  ? JSON.parse(readFileSync(dataPath, 'utf8'))
+  : (await import(pathToFileURL(dataPath).href)).default
 console.log(`Manual import — ${date} (${items.length} articles, engine: ${resolveEngine(engine)})`)
 
 const clusters = items.map(item => ({

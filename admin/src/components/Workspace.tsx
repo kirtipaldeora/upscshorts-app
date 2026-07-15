@@ -3,7 +3,7 @@ import type { User } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
 import { allDates, articlesFor, deleteArticle, saveArticle, setStatus } from '@/lib/articles'
 import { emptyRow, toArticle, type ArticleRow } from '@/lib/mapArticle'
-import { publishDate, qualityIssuesFor } from '@/lib/publish'
+import { broadcastFeature, publishDate, qualityIssuesFor } from '@/lib/publish'
 import { ArticleEditor } from './ArticleEditor'
 import { ImportDialog } from './ImportDialog'
 
@@ -23,6 +23,9 @@ export function Workspace({ user }: Props) {
   const [rows, setRows] = useState<ArticleRow[]>([])
   const [editing, setEditing] = useState<ArticleRow | null>(null)
   const [importing, setImporting] = useState(false)
+  const [announcing, setAnnouncing] = useState(false)
+  const [featureTitle, setFeatureTitle] = useState('')
+  const [featureSummary, setFeatureSummary] = useState('')
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -61,8 +64,10 @@ export function Workspace({ user }: Props) {
     setError('')
     try {
       await fn()
-      setFlash(label)
-      window.setTimeout(() => setFlash(''), 3000)
+      if (label) {
+        setFlash(label)
+        window.setTimeout(() => setFlash(''), 3000)
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong.')
     } finally {
@@ -76,6 +81,7 @@ export function Workspace({ user }: Props) {
         <h1>Penni <span>CMS</span></h1>
         <div className="spacer" />
         <span className="who">{user.email}</span>
+        <button className="btn sm" onClick={() => setAnnouncing(true)}>Announce feature</button>
         <button className="btn sm" onClick={() => supabase().auth.signOut()}>Sign out</button>
       </div>
 
@@ -105,8 +111,17 @@ export function Workspace({ user }: Props) {
               className="btn primary sm"
               disabled={busy}
               onClick={() => run(
-                `Published ${published.length} article${published.length === 1 ? '' : 's'} for ${date}. Live within a minute.`,
-                async () => { await publishDate(date) },
+                '',
+                async () => {
+                  const result = await publishDate(date)
+                  const delivery = result.notificationError
+                    ? ' Content is live, but subscriber alerts failed—check the notification function.'
+                    : result.notifications
+                      ? ` Alerts delivered: ${result.notifications.email} email, ${result.notifications.whatsapp} WhatsApp.`
+                      : ' No subscriber alert was sent because this date has no published articles.'
+                  setFlash(`Published ${published.length} article${published.length === 1 ? '' : 's'} for ${date}. Live within a minute.${delivery}`)
+                  window.setTimeout(() => setFlash(''), 5000)
+                },
               )}
             >
               {busy ? 'Publishing…' : 'Publish this date'}
@@ -204,6 +219,46 @@ export function Workspace({ user }: Props) {
             window.setTimeout(() => setFlash(''), 3000)
           }}
         />
+      )}
+
+      {announcing && (
+        <div className="modal-bg" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) setAnnouncing(false) }}>
+          <div className="modal feature-announcement" role="dialog" aria-modal="true" aria-labelledby="feature-announcement-title">
+            <div className="modal-head">
+              <h2 id="feature-announcement-title">Announce a Penni feature</h2>
+              <button className="btn sm" onClick={() => setAnnouncing(false)}>Close</button>
+            </div>
+            <div className="modal-body">
+              <div className="notice warn">This sends immediately to every student who opted in, using their enabled email and WhatsApp channels.</div>
+              <div className="field">
+                <label htmlFor="feature-title">Feature title</label>
+                <input id="feature-title" value={featureTitle} maxLength={90} onChange={event => setFeatureTitle(event.target.value)} placeholder="New revision planner" />
+              </div>
+              <div className="field">
+                <label htmlFor="feature-summary">Short summary</label>
+                <textarea id="feature-summary" value={featureSummary} maxLength={280} rows={4} onChange={event => setFeatureSummary(event.target.value)} placeholder="Tell students what changed and why it is useful." />
+                <div className="hint">{featureSummary.length}/280 characters</div>
+              </div>
+            </div>
+            <div className="modal-foot">
+              <button className="btn" onClick={() => setAnnouncing(false)}>Cancel</button>
+              <button
+                className="btn primary"
+                disabled={busy || !featureTitle.trim() || !featureSummary.trim()}
+                onClick={() => void run('', async () => {
+                  const result = await broadcastFeature(featureTitle, featureSummary)
+                  setAnnouncing(false)
+                  setFeatureTitle('')
+                  setFeatureSummary('')
+                  setFlash(`Feature announced: ${result.email} email, ${result.whatsapp} WhatsApp delivered.`)
+                  window.setTimeout(() => setFlash(''), 5000)
+                })}
+              >
+                {busy ? 'Sending…' : 'Send announcement'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

@@ -22,6 +22,7 @@ import { useHaptic } from '@/hooks/useHaptic'
 interface ProgressDashboardProps {
   stats: PracticeStats
   target: number
+  attemptYear?: string
   mainsRecords: MainsRecord[]
   onClose: () => void
   onPractice: () => void
@@ -74,7 +75,7 @@ function sumDays(days: DayStats[]) {
   }), { attempted: 0, correct: 0, mains: 0, learned: 0, arcadeAttempts: 0, arcadeCorrect: 0, arcadePoints: 0 })
 }
 
-export function ProgressDashboard({ stats, target, mainsRecords, onClose, onPractice }: ProgressDashboardProps) {
+export function ProgressDashboard({ stats, target, attemptYear, mainsRecords, onClose, onPractice }: ProgressDashboardProps) {
   const [tab, setTab] = useState<ProgressTab>('overview')
   const [period, setPeriod] = useState(30)
   const [month, setMonth] = useState(() => {
@@ -90,6 +91,10 @@ export function ProgressDashboard({ stats, target, mainsRecords, onClose, onPrac
   const lifetimeAttempted = Object.keys(stats.a).length
   const lifetimeCorrect = Object.values(stats.a).filter(([correct]) => correct === 1).length
   const lifetimeAccuracy = lifetimeAttempted ? Math.round((lifetimeCorrect / lifetimeAttempted) * 100) : null
+  const pyqEntries = Object.entries(stats.a).filter(([id]) => id.startsWith('pyq-'))
+  const pyqAttempted = pyqEntries.length
+  const pyqCorrect = pyqEntries.filter(([, value]) => value[0] === 1).length
+  const pyqAccuracy = pyqAttempted ? Math.round(pyqCorrect / pyqAttempted * 100) : null
   const allDays = Object.values(stats.d)
   const totals = sumDays(allDays)
   const achievedMilestones = STREAK_MILESTONES.filter(value => streak.longest >= value)
@@ -178,6 +183,11 @@ export function ProgressDashboard({ stats, target, mainsRecords, onClose, onPrac
         <div ref={contentRef} className="progress-scroll">
           {tab === 'overview' && (
             <>
+              {attemptYear && (
+                <section className="progress-exam-banner">
+                  <span>Target attempt</span><b>UPSC CSE {attemptYear}</b><small>Keep the plan steady; your daily targets are the next milestone.</small>
+                </section>
+              )}
               <section className={`progress-streak progress-section ${completesDailyActivity(today, target) ? 'complete' : ''}`}>
                 <div className="progress-fire"><FontAwesomeIcon icon={faFire} /></div>
                 <div>
@@ -262,6 +272,15 @@ export function ProgressDashboard({ stats, target, mainsRecords, onClose, onPrac
                 <div className="progress-section-head"><div><span>Knowledge map</span><h3>Subject performance</h3></div></div>
                 {subjectRows.length ? <div className="progress-subjects">{subjectRows.map(row => <div key={row.subject}><span><b>{row.subject}</b><small>{row.attempted} questions</small></span><i><em style={{ width: `${row.accuracy}%` }} /></i><strong>{row.accuracy}%</strong></div>)}</div> : <EmptyProgress text="Practice a few questions to unlock subject trends." />}
               </section>
+              <section className="progress-section">
+                <div className="progress-section-head"><div><span>Previous years</span><h3>PYQ completion</h3></div></div>
+                <div className="progress-pyq-summary">
+                  <div><b>{pyqAttempted}</b><span>attempted</span></div>
+                  <div><b>{pyqAccuracy === null ? '—' : `${pyqAccuracy}%`}</b><span>accuracy</span></div>
+                  <div><b>{pyqCorrect}</b><span>correct</span></div>
+                </div>
+                {!pyqAttempted && <p className="progress-note">Open PYQ Vault from Practice to begin a year-wise record.</p>}
+              </section>
             </>
           )}
 
@@ -298,7 +317,7 @@ export function ProgressDashboard({ stats, target, mainsRecords, onClose, onPrac
 }
 
 function PeriodControl({ value, onChange }: { value: number; onChange: (value: number) => void }) {
-  return <div className="progress-period">{[7, 30, 90].map(days => <button key={days} className={value === days ? 'active' : ''} onClick={() => onChange(days)}>{days === 90 ? '3 months' : `${days} days`}</button>)}</div>
+  return <div className="progress-period">{[7, 30, 90, 365].map(days => <button key={days} className={value === days ? 'active' : ''} onClick={() => onChange(days)}>{days === 90 ? '3 months' : days === 365 ? '12 months' : `${days} days`}</button>)}</div>
 }
 
 function EmptyProgress({ text }: { text: string }) {
