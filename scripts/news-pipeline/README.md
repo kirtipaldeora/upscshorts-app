@@ -61,7 +61,12 @@ node scripts/news-pipeline/run.mjs --max 10 --dry    # generate but don't touch 
 
 Flags: `--date YYYY-MM-DD`, `--hours N` (lookback window, default 26),
 `--max N` (stories to publish, default 14), `--min-score N` (default 6),
-`--engine api|cli|auto`, `--skip-generate`, `--dry`.
+`--engine api|cli|codex|auto`, `--skip-generate`, `--dry`.
+
+For a curated bulletin import, `manual-import.mjs` normally reads
+`scripts/news-pipeline/data/<date>.mjs`. Pass `--data path/to/items.json` to use
+an extracted JSON array with the same item fields without copying a temporary
+source file into the repository.
 
 ## Automation
 

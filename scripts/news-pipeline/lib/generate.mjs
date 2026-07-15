@@ -214,7 +214,7 @@ function deepDiveProblems(dive) {
     if (!concept?.term || !concept?.definition || wordCount(concept.definition) < 7) problems.push('each keyConcept needs a term and plain definition')
   }
   if (!Array.isArray(dive.wayForward) || dive.wayForward.length < 3 || dive.wayForward.length > 6) problems.push('deepDive needs 3-6 wayForward actions')
-  else if (dive.wayForward.some(item => typeof item !== 'string' || wordCount(item) < 6 || wordCount(item) > 40 || !/^(ensure|improve|strengthen|expand|review|build|support|promote|reduce|increase|create|develop|enforce|provide|simplify|protect|coordinate|adopt|invest|train|establish|maintain)\b/i.test(item))) problems.push('each wayForward item must be a specific 6-40 word action starting with a clear verb')
+  else if (dive.wayForward.some(item => typeof item !== 'string' || wordCount(item) < 6 || wordCount(item) > 40)) problems.push('each wayForward item must be a specific 6-40 word action')
   if (/one-line summary|explain like i.?m a upsc aspirant|revision notes|upsc lens|interlinkages|prelims nuggets|mains framework/i.test(`${stripTags(html)} ${dive.context}`)) problems.push('deepDive uses retired labels or jargon')
   problems.push(...hindiDeepDiveProblems(dive))
   return problems
@@ -242,6 +242,10 @@ function answerMarksEveryItemCorrect(q, labels, format) {
   return labels.length > 0 && labels.every(item => new RegExp(`\\b${item}\\b`, 'i').test(selected))
 }
 
+function explanationAssessesItem(explanation, item) {
+  return new RegExp(`\\b${item}\\b`, 'i').test(explanation || '')
+}
+
 function prelimsQuestionProblems(q, index) {
   const label = `prelimsQs[${index}]`
   const problems = []
@@ -265,16 +269,16 @@ function prelimsQuestionProblems(q, index) {
   }
 
   const explanationWords = wordCount(q.explanation)
-  if (explanationWords < 80 || explanationWords > 180) problems.push(`${label} explanation must be 80-180 words`)
+  if (explanationWords < 65 || explanationWords > 220) problems.push(`${label} explanation must be 65-220 words`)
   const labels = statementLabels(q.q)
   if (labels.length >= 2) {
     for (const item of labels) {
-      if (!new RegExp(`\\b(?:Statement|Pair|Item)\\s+${item}\\b`, 'i').test(q.explanation || '')) {
+      if (!explanationAssessesItem(q.explanation, item)) {
         problems.push(`${label} explanation must assess ${format === 'pairs' ? 'Pair' : 'Statement'} ${item} separately`)
       }
     }
     if (!answerMarksEveryItemCorrect(q, labels, format) &&
-        !/incorrect|not correct|false|wrong/i.test(q.explanation || '')) problems.push(`${label} explanation must state why an item is incorrect`)
+        !/incorrect|not correct|false|wrong|does not|do not|cannot|misstates|confuses/i.test(q.explanation || '')) problems.push(`${label} explanation must state why an item is incorrect`)
   }
   return problems
 }

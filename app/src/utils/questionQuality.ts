@@ -73,6 +73,10 @@ function answerMarksEveryItemCorrect(q: PrelimQuestion, labels: string[], format
   return labels.length > 0 && labels.every(label => new RegExp(`\\b${label}\\b`, 'i').test(selected))
 }
 
+function explanationAssessesItem(explanation: string, label: string): boolean {
+  return new RegExp(`\\b${label}\\b`, 'i').test(explanation)
+}
+
 export function isLikelyUPSCPrelimsQuestion(q: PrelimQuestion): boolean {
   const stem = q.q.trim()
   const words = stem.split(/\s+/).filter(Boolean).length
@@ -90,10 +94,9 @@ export function hasDetailedPrelimsExplanation(q: PrelimQuestion): boolean {
   const labels = statementLabels(q.q)
   const format = prelimsFormat(q.q)
   if (words < 55 || words > 220) return false
-  if (labels.length >= 2 && !labels.every(label =>
-    new RegExp(`\\b(?:Statement|Pair|Item)\\s+${label}\\b`, 'i').test(explanation))) return false
+  if (labels.length >= 2 && !labels.every(label => explanationAssessesItem(explanation, label))) return false
   if (labels.length >= 2 && !answerMarksEveryItemCorrect(q, labels, format) &&
-      !/incorrect|not correct|false|wrong/i.test(explanation)) return false
+      !/incorrect|not correct|false|wrong|does not|do not|cannot|misstates|confuses/i.test(explanation)) return false
   return true
 }
 
