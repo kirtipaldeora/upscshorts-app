@@ -22,7 +22,9 @@ import { useHaptic } from '@/hooks/useHaptic'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { PROFILE_MASCOTS, ProfileMascot } from '@/components/auth/ProfileMascot'
 import { TODAY } from '@/constants/categories'
+import { completesDailyActivity } from '@/utils/streak'
 import { EASE, gsap, reducedMotion } from '@/anim/animations'
+import { ProgressDashboard } from './ProgressDashboard'
 
 interface ProfileScreenProps {
   onOpenSettings: () => void
@@ -39,6 +41,7 @@ export function ProfileScreen({ onOpenSettings, onOpenMainsRecord }: ProfileScre
   const haptic = useHaptic()
   const [mainsRecs, setMainsRecs] = useState<MainsRecord[]>([])
   const [editOpen, setEditOpen] = useState(false)
+  const [progressOpen, setProgressOpen] = useState(false)
   const [draft, setDraft] = useState(() => profile)
 
   const totalBookmarks = bookmarkedIds.length
@@ -46,7 +49,9 @@ export function ProfileScreen({ onOpenSettings, onOpenMainsRecord }: ProfileScre
   const streakCount = stats.streak.count
   const todayDone = stats.d[TODAY]?.n ?? 0
   const target = settings.target || profile?.dailyTarget || 10
-  const targetPct = Math.min(100, Math.round((todayDone / Math.max(1, target)) * 100))
+  const todayStats = stats.d[TODAY] ?? { n: 0, c: 0 }
+  const goalComplete = completesDailyActivity(todayStats, target)
+  const targetPct = goalComplete ? 100 : Math.min(100, Math.round((todayDone / Math.max(1, target)) * 100))
   const displayName = isGuest ? 'Guest Aspirant' : profile?.name || settings.name || 'UPSC Aspirant'
   const profileLine = isGuest ? 'Guest mode - local only' : [profile?.targetExam, profile?.prepStage].filter(Boolean).join(' · ') || 'Civil Services Aspirant'
 
@@ -117,35 +122,35 @@ export function ProfileScreen({ onOpenSettings, onOpenMainsRecord }: ProfileScre
         <div className="account-panel">
           <div className="account-panel-head">
             <div>
-              <span>Today’s target</span>
-              <b>{todayDone} / {target} questions</b>
+              <span>Today’s mission</span>
+              <b>{goalComplete ? 'Complete' : `${todayDone} / ${target} MCQs`}</b>
             </div>
             <strong>{targetPct}%</strong>
           </div>
           <div className="account-progress"><i style={{ width: `${targetPct}%` }} /></div>
-          <p>{todayDone >= target ? 'Target complete. Use revision to protect the streak.' : `${Math.max(0, target - todayDone)} questions left to finish today cleanly.`}</p>
+          <p>{goalComplete ? 'Your daily rhythm is protected. Review or explore whenever you are ready.' : `${Math.max(0, target - todayDone)} MCQs, one Deep Dive, one Mains evaluation, or five Atlas answers completes today.`}</p>
           <button onClick={() => { void haptic(); setScreen('practice') }}>
             <FontAwesomeIcon icon={faDumbbell} />
-            {todayDone ? 'Continue practice' : 'Start practice'}
+              {todayDone ? 'Continue practice' : 'Start practice'}
           </button>
         </div>
 
         <div className="account-action-row">
-          <div>
+          <button onClick={() => { void haptic(); setProgressOpen(true) }}>
             <FontAwesomeIcon icon={faFire} />
             <b>{streakCount}</b>
             <span>streak</span>
-          </div>
-          <div onClick={() => setScreen('bookmarks')}>
+          </button>
+          <button onClick={() => setScreen('bookmarks')}>
             <FontAwesomeIcon icon={faBookmark} />
             <b>{totalBookmarks}</b>
             <span>saved</span>
-          </div>
-          <div onClick={() => setScreen('practice')}>
+          </button>
+          <button onClick={() => setScreen('practice')}>
             <FontAwesomeIcon icon={faBullseye} />
             <b>{attempted}</b>
             <span>attempted</span>
-          </div>
+          </button>
         </div>
 
         <div className="account-list-card">
@@ -210,10 +215,6 @@ export function ProfileScreen({ onOpenSettings, onOpenMainsRecord }: ProfileScre
                 <input value={draft.name} onChange={e => setDraft({ ...draft, name: e.target.value })} />
               </label>
               <label>
-                <span>{user?.method === 'phone' ? 'Verified phone' : 'Phone'}</span>
-                <input value={draft.phone} disabled={user?.method === 'phone'} onChange={e => setDraft({ ...draft, phone: e.target.value })} />
-              </label>
-              <label>
                 <span>Attempt</span>
                 <input value={draft.attemptYear} inputMode="numeric" onChange={e => setDraft({ ...draft, attemptYear: e.target.value })} />
               </label>
@@ -249,6 +250,19 @@ export function ProfileScreen({ onOpenSettings, onOpenMainsRecord }: ProfileScre
             </button>
           </div>
         </div>
+      )}
+
+      {progressOpen && (
+        <ProgressDashboard
+          stats={stats}
+          target={target}
+          mainsRecords={mainsRecs}
+          onClose={() => setProgressOpen(false)}
+          onPractice={() => {
+            setProgressOpen(false)
+            setScreen('practice')
+          }}
+        />
       )}
     </div>
   )

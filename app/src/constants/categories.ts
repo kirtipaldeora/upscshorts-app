@@ -33,7 +33,12 @@ export const CATEGORY_ICONS: Record<Category, string> = {
 export const CATEGORIES = Object.keys(CATEGORY_COLORS) as Category[]
 
 // Date helpers
-export const toDateStr = (d: Date): string => d.toISOString().split('T')[0]
+export const toDateStr = (d: Date): string => {
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
 export const fmtShort = (d: string): string =>
   new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
 export const fmtFull = (d: string): string =>

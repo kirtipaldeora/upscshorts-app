@@ -106,7 +106,7 @@ function parseDeepDiveSections(explanation: string): DiveSection[] {
 
 export function DeepDive({ onShowToast }: DeepDiveProps) {
   const { activeArticle, setActiveArticle, setDeepDiveReturnOverlay, setOverlay, overlayScreen, deepDiveReturnOverlay, articlesByDate, getArticlesForDate, setScreen } = useAppStore()
-  const { settings } = usePracticeStore()
+  const { settings, recordLearningActivity } = usePracticeStore()
   const haptic = useHaptic()
   const narration = useNarration()
   const [activeQuiz, setActiveQuiz] = useState<ActiveQuiz>(null)
@@ -159,6 +159,13 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
     const max = el.scrollHeight - el.clientHeight
     setReadProgress(max > 0 ? Math.min(100, (el.scrollTop / max) * 100) : 0)
   }
+
+  useEffect(() => {
+    if (!a || (readProgress < 70 && narration.progress < 85)) return
+    if (recordLearningActivity(a.id)) {
+      onShowToast('Deep Dive complete. Today’s learning streak is protected.')
+    }
+  }, [a, readProgress, narration.progress, recordLearningActivity, onShowToast])
 
   async function goToArticle(article: Article) {
     await haptic()

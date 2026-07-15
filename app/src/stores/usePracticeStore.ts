@@ -1,5 +1,6 @@
 import { create } from 'zustand'
-import { TODAY } from '@/constants/categories'
+import { TODAY, toDateStr } from '@/constants/categories'
+import { calculateStreak, completesDailyActivity } from '@/utils/streak'
 
 // ─── Badge definitions ────────────────────────────────────────
 export const BADGES = [
@@ -16,12 +17,19 @@ export const BADGES = [
 export interface DayStats {
   n: number  // attempted
   c: number  // correct
+  mains?: number
+  learned?: string[]
+  arcade?: {
+    attempts: number
+    correct: number
+    points: number
+  }
 }
 
 export interface PracticeStats {
   a: Record<string, [number, number, string]>  // qid -> [correct(0|1), timestamp, subject]
   d: Record<string, DayStats>                  // date -> day stats
-  streak: { last: string; count: number }
+  streak: { last: string; count: number; longest: number }
   badges: string[]
 }
 
@@ -33,6 +41,7 @@ export interface PracticeSettings {
   name: string
   feedCosmicBackdrop: boolean
   voiceURI: string   // preferred system TTS voice for Penni Explain narration
+  hapticsEnabled: boolean
 }
 
 export interface PyqItem {
@@ -48,17 +57,32 @@ export interface PyqItem {
   keyPoints?: string[]
 }
 
-function loadStats(): PracticeStats {
+function emptyStats(): PracticeStats {
+  return { a: {}, d: {}, streak: { last: '', count: 0, longest: 0 }, badges: [] }
+}
+
+function normalizeStats(value: Partial<PracticeStats> | null | undefined, target: number): PracticeStats {
+  const base = emptyStats()
+  const stats: PracticeStats = {
+    a: value?.a && typeof value.a === 'object' ? value.a : base.a,
+    d: value?.d && typeof value.d === 'object' ? value.d : base.d,
+    streak: base.streak,
+    badges: Array.isArray(value?.badges) ? value.badges : [],
+  }
+  const streak = calculateStreak(stats.d, target, TODAY)
+  stats.streak = { last: streak.last, count: streak.current, longest: streak.longest }
+  return stats
+}
+
+function loadStats(target: number): PracticeStats {
   try {
-    return JSON.parse(localStorage.getItem('u4stats') || 'null') ?? {
-      a: {}, d: {}, streak: { last: '', count: 0 }, badges: [],
-    }
+    return normalizeStats(JSON.parse(localStorage.getItem('u4stats') || 'null'), target)
   } catch {
-    return { a: {}, d: {}, streak: { last: '', count: 0 }, badges: [] }
+    return emptyStats()
   }
 }
 
-const DEFAULT_SETTINGS: PracticeSettings = { target: 10, remind: false, reminderTime: '19:00', key: '', name: '', feedCosmicBackdrop: true, voiceURI: '' }
+const DEFAULT_SETTINGS: PracticeSettings = { target: 10, remind: false, reminderTime: '19:00', key: '', name: '', feedCosmicBackdrop: true, voiceURI: '', hapticsEnabled: true }
 
 function loadSettings(): PracticeSettings {
   try {
@@ -91,6 +115,8 @@ interface PracticeStore {
   saveSettings: (patch: Partial<PracticeSettings>) => void
   setPyqData: (data: PyqItem[]) => void
   incrementMainsQuota: () => void
+  recordLearningActivity: (articleId: string) => boolean
+  recordArcadeAnswer: (correct: boolean, points: number) => void
   hydrateCloudState: (state: {
     stats?: PracticeStats
     settings?: Partial<PracticeSettings>
@@ -99,9 +125,11 @@ interface PracticeStore {
   }) => void
 }
 
+const initialSettings = loadSettings()
+
 export const usePracticeStore = create<PracticeStore>()((set, get) => ({
-  stats: loadStats(),
-  settings: loadSettings(),
+  stats: loadStats(initialSettings.target),
+  settings: initialSettings,
   questionBookmarks: loadQbm(),
   mainsQuota: loadMq(),
   pyqData: [],
@@ -111,10 +139,11 @@ export const usePracticeStore = create<PracticeStore>()((set, get) => ({
     const s = { ...get().stats }
     const previous = s.a[qid]
     const wasCorrect = previous?.[0] === 1
-    const previousDate = previous ? new Date(previous[1]).toISOString().split('T')[0] : null
+    const previousDate = previous ? toDateStr(new Date(previous[1])) : null
     const isFirstAttempt = !previous
     s.a = { ...s.a, [qid]: [correct ? 1 : 0, Date.now(), subject] }
     const d = { ...(s.d[TODAY] ?? { n: 0, c: 0 }) }
+    const wasComplete = completesDailyActivity(d, target)
     if (isFirstAttempt) {
       d.n++
       if (correct) d.c++
@@ -122,12 +151,8 @@ export const usePracticeStore = create<PracticeStore>()((set, get) => ({
       d.c = Math.max(0, Math.min(d.n, d.c + (correct ? 1 : -1)))
     }
     s.d = { ...s.d, [TODAY]: d }
-    const st = { ...s.streak }
-    if (isFirstAttempt && st.last !== TODAY) {
-      const yesterday = new Date(Date.now() - 864e5).toISOString().split('T')[0]
-      st.count = st.last === yesterday ? st.count + 1 : 1
-      st.last = TODAY
-    }
+    const streakSummary = calculateStreak(s.d, target, TODAY)
+    const st = { last: streakSummary.last, count: streakSummary.current, longest: streakSummary.longest }
     // Check badges
     const newBadges = [...s.badges]
     BADGES.forEach(b => {
@@ -141,8 +166,8 @@ export const usePracticeStore = create<PracticeStore>()((set, get) => ({
     const newStats = s
     localStorage.setItem('u4stats', JSON.stringify(newStats))
     set({ stats: newStats })
-    if (isFirstAttempt && d.n === target) {
-      toast(`🎯 Daily target hit! Streak: ${st.count} 🔥`)
+    if (!wasComplete && completesDailyActivity(d, target)) {
+      toast(`Daily goal complete. ${st.count}-day streak protected.`)
     }
   },
 
@@ -157,22 +182,61 @@ export const usePracticeStore = create<PracticeStore>()((set, get) => ({
 
   saveSettings: (patch) => {
     const next = { ...get().settings, ...patch }
+    const stats = normalizeStats(get().stats, next.target)
     localStorage.setItem('u4set', JSON.stringify(next))
-    set({ settings: next })
+    localStorage.setItem('u4stats', JSON.stringify(stats))
+    set({ settings: next, stats })
   },
 
   setPyqData: (data) => set({ pyqData: data, pyqReady: true }),
 
   incrementMainsQuota: () => {
     const mq = { ...get().mainsQuota, [TODAY]: (get().mainsQuota[TODAY] ?? 0) + 1 }
+    const stats = { ...get().stats, d: { ...get().stats.d } }
+    const day = { ...(stats.d[TODAY] ?? { n: 0, c: 0 }) }
+    day.mains = (day.mains ?? 0) + 1
+    stats.d[TODAY] = day
+    const streak = calculateStreak(stats.d, get().settings.target, TODAY)
+    stats.streak = { last: streak.last, count: streak.current, longest: streak.longest }
     localStorage.setItem('u4mq', JSON.stringify(mq))
-    set({ mainsQuota: mq })
+    localStorage.setItem('u4stats', JSON.stringify(stats))
+    set({ mainsQuota: mq, stats })
+  },
+
+  recordLearningActivity: (articleId) => {
+    const stats = { ...get().stats, d: { ...get().stats.d } }
+    const day = { ...(stats.d[TODAY] ?? { n: 0, c: 0 }) }
+    const learned = [...(day.learned ?? [])]
+    if (learned.includes(articleId)) return false
+    learned.push(articleId)
+    day.learned = learned
+    stats.d[TODAY] = day
+    const streak = calculateStreak(stats.d, get().settings.target, TODAY)
+    stats.streak = { last: streak.last, count: streak.current, longest: streak.longest }
+    localStorage.setItem('u4stats', JSON.stringify(stats))
+    set({ stats })
+    return true
+  },
+
+  recordArcadeAnswer: (correct, points) => {
+    const stats = { ...get().stats, d: { ...get().stats.d } }
+    const day = { ...(stats.d[TODAY] ?? { n: 0, c: 0 }) }
+    day.arcade = {
+      attempts: (day.arcade?.attempts ?? 0) + 1,
+      correct: (day.arcade?.correct ?? 0) + (correct ? 1 : 0),
+      points: (day.arcade?.points ?? 0) + Math.max(0, points),
+    }
+    stats.d[TODAY] = day
+    const streak = calculateStreak(stats.d, get().settings.target, TODAY)
+    stats.streak = { last: streak.last, count: streak.current, longest: streak.longest }
+    localStorage.setItem('u4stats', JSON.stringify(stats))
+    set({ stats })
   },
 
   hydrateCloudState: (cloud) => {
     const current = get()
-    const stats = cloud.stats ?? current.stats
     const settings = { ...DEFAULT_SETTINGS, ...current.settings, ...cloud.settings }
+    const stats = normalizeStats(cloud.stats ?? current.stats, settings.target)
     const questionBookmarks = cloud.questionBookmarks ?? current.questionBookmarks
     const mainsQuota = cloud.mainsQuota ?? current.mainsQuota
     localStorage.setItem('u4stats', JSON.stringify(stats))

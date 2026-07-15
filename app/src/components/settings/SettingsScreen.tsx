@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faArrowLeft,
@@ -55,6 +55,8 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
   const { user, profile, isGuest, signOut, saveProfile } = useAuthStore()
   const previewNarration = useNarration()
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>(() => listNarrationVoices())
+  const [sourcesOpen, setSourcesOpen] = useState(false)
+  const [voicesOpen, setVoicesOpen] = useState(false)
   const [contentToolsOpen, setContentToolsOpen] = useState(false)
   const [dangerOpen, setDangerOpen] = useState(false)
   const settingsRef = useRef<HTMLDivElement>(null)
@@ -62,6 +64,15 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
   const profileMethod = isGuest ? 'not signed in' : user?.method ?? 'local'
   const todayDone = stats.d[TODAY]?.n ?? 0
   const targetPct = Math.min(100, Math.round((todayDone / Math.max(1, settings.target)) * 100))
+  const enabledSourceCount = NEWS_SOURCES.filter(source => sourceFilter[source.key]).length
+  const selectedVoice = voices.find(voice => voice.voiceURI === settings.voiceURI)
+  const curatedVoices = useMemo(() => {
+    const blocked = /bad news|bells|bubbles|boing|whisper|wobble|zarvox/i
+    const preferred = voices.filter(voice => /^(en|hi)-IN$/i.test(voice.lang) && !blocked.test(voice.name))
+    const fallback = voices.filter(voice => /^(en-(GB|US)|hi)/i.test(voice.lang) && !blocked.test(voice.name))
+    const ordered = [selectedVoice, ...preferred, ...fallback].filter(Boolean) as SpeechSynthesisVoice[]
+    return ordered.filter((voice, index) => ordered.findIndex(item => item.voiceURI === voice.voiceURI) === index).slice(0, 6)
+  }, [voices, selectedVoice])
   const gsFilter = (() => {
     try { return JSON.parse(localStorage.getItem('u4gs') || '["GS1","GS2","GS3"]') as string[] }
     catch { return ['GS1', 'GS2', 'GS3'] }
@@ -270,6 +281,17 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
               aria-label="Toggle animated feed backdrop"
             />
           </div>
+          <div className="setting-item" onClick={() => saveSettings({ hapticsEnabled: !settings.hapticsEnabled })}>
+            <div className="setting-left">
+              <FontAwesomeIcon icon={faBullseye} style={{ width: 14 }} />
+              <span>Haptic feedback</span>
+            </div>
+            <button
+              className={`toggle ${settings.hapticsEnabled ? 'on' : ''}`}
+              onClick={event => { event.stopPropagation(); saveSettings({ hapticsEnabled: !settings.hapticsEnabled }) }}
+              aria-label="Toggle haptic feedback"
+            />
+          </div>
           <div className="setting-item" style={{ flexWrap: 'wrap', gap: 8 }}>
             <div className="setting-left">
               <FontAwesomeIcon icon={faSlidersH} style={{ width: 14 }} />
@@ -290,58 +312,48 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
         </div>
 
         {/* News sources */}
-        <div className="setting-group settings-panel">
-          <div className="setting-group-title">News sources</div>
-          {NEWS_SOURCES.map(src => (
-            <div key={src.key} className="setting-item" onClick={() => handleToggleSource(src.key)}>
-              <div className="setting-left">
-                <FontAwesomeIcon icon={faNewspaper} style={{ width: 14 }} />
-                <span>{src.label}</span>
-              </div>
-              <button
-                className={`toggle ${sourceFilter[src.key] ? 'on' : ''}`}
-                onClick={e => { e.stopPropagation(); handleToggleSource(src.key) }}
-                aria-label={`Toggle ${src.label} articles`}
-              />
+        <div className={`setting-group settings-panel settings-disclosure ${sourcesOpen ? 'open' : ''}`}>
+          <button className="settings-summary" onClick={() => setSourcesOpen(value => !value)}>
+            <span className="settings-summary-icon"><FontAwesomeIcon icon={faNewspaper} /></span>
+            <span><b>News sources</b><small>{enabledSourceCount} of {NEWS_SOURCES.length} shown</small></span>
+            <FontAwesomeIcon icon={faChevronDown} />
+          </button>
+          {sourcesOpen && (
+            <div className="settings-options-grid">
+              {NEWS_SOURCES.map(src => (
+                <button key={src.key} className={sourceFilter[src.key] ? 'active' : ''} onClick={() => handleToggleSource(src.key)}>
+                  <span>{src.label}</span><i>{sourceFilter[src.key] ? 'On' : 'Off'}</i>
+                </button>
+              ))}
             </div>
-          ))}
-          <p className="pn-note">Hide or show feed articles by where they were reported. Stories covered by several sources stay visible while any of their sources is on.</p>
+          )}
         </div>
 
         {/* Narration voice */}
-        <div className="setting-group settings-panel">
-          <div className="setting-group-title">Penni Explain narration</div>
-          {voices.length === 0 ? (
-            <p className="pn-note">
-              <FontAwesomeIcon icon={faMicrophone} style={{ marginRight: 6 }} />
-              No narration voices found on this device yet. Reopen Settings after the page finishes loading.
-            </p>
-          ) : (
-            <div className="voice-picker-list">
-              {voices.map(voice => {
-                const active = settings.voiceURI === voice.voiceURI
-                return (
-                  <div key={voice.voiceURI} className={`voice-picker-row ${active ? 'on' : ''}`}>
-                    <button className="voice-picker-select" onClick={() => chooseVoice(voice.voiceURI)}>
-                      <FontAwesomeIcon icon={faMicrophone} />
-                      <span>
-                        <b>{voice.name}</b>
-                        <i>{voice.lang}</i>
-                      </span>
-                    </button>
-                    <button
-                      className="voice-picker-preview"
-                      onClick={() => previewVoice(voice.voiceURI)}
-                      aria-label={`Preview ${voice.name}`}
-                    >
-                      <FontAwesomeIcon icon={faPlay} />
-                    </button>
-                  </div>
-                )
-              })}
-            </div>
+        <div className={`setting-group settings-panel settings-disclosure ${voicesOpen ? 'open' : ''}`}>
+          <button className="settings-summary" onClick={() => setVoicesOpen(value => !value)}>
+            <span className="settings-summary-icon"><FontAwesomeIcon icon={faMicrophone} /></span>
+            <span><b>Narration voice</b><small>{selectedVoice ? `${selectedVoice.name} · ${selectedVoice.lang}` : 'Best available Indian voice'}</small></span>
+            <FontAwesomeIcon icon={faChevronDown} />
+          </button>
+          {voicesOpen && (
+            curatedVoices.length === 0 ? <p className="pn-note">No narration voices are available on this device yet.</p> : (
+              <div className="voice-picker-list compact">
+                {curatedVoices.map(voice => {
+                  const active = settings.voiceURI === voice.voiceURI
+                  return (
+                    <div key={voice.voiceURI} className={`voice-picker-row ${active ? 'on' : ''}`}>
+                      <button className="voice-picker-select" onClick={() => chooseVoice(voice.voiceURI)}>
+                        <FontAwesomeIcon icon={faMicrophone} />
+                        <span><b>{voice.name}</b><i>{voice.lang}</i></span>
+                      </button>
+                      <button className="voice-picker-preview" onClick={() => previewVoice(voice.voiceURI)} aria-label={`Preview ${voice.name}`}><FontAwesomeIcon icon={faPlay} /></button>
+                    </div>
+                  )
+                })}
+              </div>
+            )
           )}
-          <p className="pn-note">Tap a voice to use it for Penni Explain narration, or the play icon to hear a preview first. Voice quality depends on what your device has installed.</p>
         </div>
 
         {/* Daily practice */}

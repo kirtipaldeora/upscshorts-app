@@ -23,6 +23,7 @@ import {
 import type { Feature, FeatureCollection, Geometry } from 'geojson'
 import type { Topology } from 'topojson-specification'
 import { useAppStore } from '@/stores/useAppStore'
+import { usePracticeStore } from '@/stores/usePracticeStore'
 import { PenniLoader } from '@/components/layout/PenniLoader'
 import { asset } from '@/utils/asset'
 import { EASE, gsap, reducedMotion } from '@/anim/animations'
@@ -687,6 +688,7 @@ export function MapsArcade() {
   const setOverlay = useAppStore(s => s.setOverlay)
   const overlayScreen = useAppStore(s => s.overlayScreen)
   const setScreen = useAppStore(s => s.setScreen)
+  const recordArcadeAnswer = usePracticeStore(s => s.recordArcadeAnswer)
   const [loaded, setLoaded] = useState<LoadedData | null>(null)
   const [loading, setLoading] = useState(true)
   const [state, setState] = useState<AtlasState>(INITIAL)
@@ -696,6 +698,7 @@ export function MapsArcade() {
   const panelRef = useRef<HTMLDivElement>(null)
   const toastTimer = useRef<number | null>(null)
   const advanceTimer = useRef<number | null>(null)
+  const recordedArcadeAnswers = useRef(new Set<string>())
   const mapRivers = useMemo(() => curriculumRivers(loaded?.rivers ?? [], null), [loaded])
 
   useEffect(() => {
@@ -891,6 +894,7 @@ export function MapsArcade() {
     }
     const count = sourceList?.length ? sourceList.length : Math.max(1, Math.min(pool.length, state.setupCount || pool.length))
     const queue = shuffle(pool).slice(0, count)
+    recordedArcadeAnswers.current.clear()
     const mode = state.setupMode
     const first = queue[0]
     setState(prev => ({
@@ -1016,6 +1020,11 @@ export function MapsArcade() {
           lat: loaded?.parks.find(p => String(p.id) === String(prev.target?.id))?.lat ?? 0,
         } : undefined,
       }
+      const activityKey = `${prev.qIndex}:${String(prev.target.id)}`
+      if (!recordedArcadeAnswers.current.has(activityKey)) {
+        recordedArcadeAnswers.current.add(activityKey)
+        recordArcadeAnswer(correct, points)
+      }
       const history = prev.answerHistory.slice()
       history[prev.qIndex] = answer
       const wrongList = correct || prev.wrongList.some(w => String(w.id) === String(prev.target?.id))
@@ -1054,7 +1063,7 @@ export function MapsArcade() {
         toast: answer.toast ?? null,
       }
     })
-  }, [loaded])
+  }, [loaded, recordArcadeAnswer])
 
   function skip() {
     if (state.answerHistory[state.qIndex]) {

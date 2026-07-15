@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 import { Haptics, ImpactStyle } from '@capacitor/haptics'
+import { usePracticeStore } from '@/stores/usePracticeStore'
 
 // Detect if running inside Capacitor native container
 function isNative(): boolean {
@@ -13,7 +14,9 @@ function isNative(): boolean {
  * On web: falls back to navigator.vibrate.
  */
 export function useHaptic() {
+  const enabled = usePracticeStore(state => state.settings.hapticsEnabled)
   const haptic = useCallback(async (ms = 8) => {
+    if (!enabled) return
     try {
       if (isNative()) {
         await Haptics.impact({ style: ImpactStyle.Light })
@@ -23,7 +26,7 @@ export function useHaptic() {
     } catch {
       // Silently fail — haptics are enhancement only
     }
-  }, [])
+  }, [enabled])
 
   return haptic
 }
