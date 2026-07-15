@@ -11,7 +11,10 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['fonts/**', 'icons/**', 'data/**'],
+      // Large article, PYQ and map datasets are cached when their feature is
+      // opened. Precaching data/** made a fresh install download geography
+      // assets before a learner ever entered Maps Arcade.
+      includeAssets: ['fonts/**', 'icons/**'],
       manifest: {
         name: 'Penni — UPSC Current Affairs',
         short_name: 'Penni',
@@ -79,7 +82,7 @@ export default defineConfig({
             },
           },
           {
-            urlPattern: /\/data\/(countries|india-rivers|india-national|pyq).+/,
+            urlPattern: /\/data\/(countries|india-(?:rivers|national|states)|pyq).+/,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'geo-data-cache',

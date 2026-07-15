@@ -180,6 +180,18 @@ function relationBonus(relation: SubjectRelation) {
   return relation === 'same' ? 4 : relation === 'adjacent' ? 1 : 0
 }
 
+function singleWordPrintedMatch(
+  phrase: CanonicalPhrase,
+  sourceText: string,
+  targetText: string,
+  relation: SubjectRelation,
+) {
+  return phrase.words.length === 1
+    && relation === 'same'
+    && containsPhrase(sourceText, phrase.normalized)
+    && containsPhrase(targetText, phrase.normalized)
+}
+
 function conceptMatch(
   sourceConcepts: CanonicalPhrase[],
   targetConcepts: CanonicalPhrase[],
@@ -193,6 +205,10 @@ function conceptMatch(
   for (const source of sourceConcepts) {
     const exact = targetConcepts.find(target => target.normalized === source.normalized)
     if (exact) {
+      // A single metadata tag is not evidence by itself. It must occur in both
+      // printed texts and stay inside the same subject domain; this prevents a
+      // broad word such as “agreement” or “committee” linking unrelated items.
+      if (source.words.length === 1 && !singleWordPrintedMatch(source, sourceText, targetText, relation)) continue
       return {
         score: 100 + relationBonus(relation),
         strong: true,
@@ -206,6 +222,7 @@ function conceptMatch(
   // printed PYQ stem instead of relying on a noisy PYQ tag.
   for (const target of targetConcepts) {
     if (containsPhrase(sourceText, target.normalized)) {
+      if (target.words.length === 1 && !singleWordPrintedMatch(target, sourceText, targetText, relation)) continue
       return {
         score: 90 + relationBonus(relation),
         strong: true,
@@ -219,6 +236,7 @@ function conceptMatch(
   // distinctive-term guard above.
   for (const source of sourceConcepts) {
     if (containsPhrase(targetText, source.normalized)) {
+      if (source.words.length === 1 && !singleWordPrintedMatch(source, sourceText, targetText, relation)) continue
       return {
         score: 90 + relationBonus(relation),
         strong: true,
@@ -338,7 +356,9 @@ export function relatedCurrentQuestions(
     ...canonicalPhrases([pyq.topic], true),
     ...canonicalPhrases(pyq.tags),
   ]
-  const sourceText = [pyq.stem, pyq.topic].join(' ')
+  // Topic and tags are matching hints, not printed evidence. In particular,
+  // a one-word taxonomy label must also occur in the actual PYQ stem.
+  const sourceText = pyq.stem
   const bestByArticle = new Map<string, { article: Article; question: Question; score: number; strong: boolean; reason: string }>()
 
   entries.forEach(entry => {

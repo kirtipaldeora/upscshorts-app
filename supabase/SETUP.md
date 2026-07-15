@@ -10,10 +10,20 @@ keep each file as one transaction:
 3. `migrations/0003_launch_account_fields.sql`
 4. `migrations/0004_email_updates.sql`
 5. `migrations/0005_whatsapp_updates.sql`
+6. `migrations/0006_focus_social.sql`
+7. `migrations/0007_focus_usernames.sql`
 
 The account migrations create student profiles, cross-device learning state,
 launch profile fields and explicit email/WhatsApp consent. Their RLS policies
 only allow an authenticated user to access their own rows.
+
+The Focus migration adds privacy-safe exact-contact discovery, focus-session
+sync, friends, blocks, study groups, chat, presence and day/week/month
+rankings. It must be applied before the Focus social tabs can return live data;
+the timer and local analytics continue to work offline without it.
+The username migration adds globally unique public handles and exact
+`@username` friend lookup. Apply both Focus migrations before testing friend
+search or group invitations.
 
 ## 2. Enable login providers
 

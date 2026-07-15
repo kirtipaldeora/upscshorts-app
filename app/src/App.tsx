@@ -14,6 +14,11 @@ import { getSupabase } from '@/lib/authClient'
 import type { MainsRecord } from '@/hooks/useMainsDB'
 import { TODAY, YESTERDAY } from '@/constants/categories'
 import { StreakRecoverySheet } from '@/components/profile/StreakRecoverySheet'
+import { useFocusRuntime } from '@/hooks/useFocusRuntime'
+import { useFocusCloudSync } from '@/hooks/useFocusCloudSync'
+import { useFocusStore } from '@/stores/useFocusStore'
+import type { FocusSession } from '@/types/focus'
+import { BreakAlarm } from '@/components/focus/BreakAlarm'
 
 // Heavy / seldom-used screens are code-split so they never bloat first load.
 const ReviseScreen = lazy(() => import('@/components/revise/ReviseScreen').then(module => ({ default: module.ReviseScreen })))
@@ -29,8 +34,10 @@ const NewsGlobe = lazy(() => import('@/components/news-globe/NewsGlobe'))
 const MapsArcade = lazy(() => import('@/components/maps-arcade/MapsArcade').then(module => ({ default: module.MapsArcade })))
 const PYQVault = lazy(() => import('@/components/pyq-vault/PYQVault').then(module => ({ default: module.PYQVault })))
 const MainsScreen = lazy(() => import('@/components/practice/MainsScreen').then(module => ({ default: module.MainsScreen })))
+const FocusExperience = lazy(() => import('@/components/focus/FocusExperience').then(module => ({ default: module.FocusExperience })))
 
 type AppPhase = 'splash' | 'auth' | 'profile' | 'main'
+type BreakAlarmState = { id: string; phase: 'short-break' | 'long-break' }
 
 function getInitialPhase(): AppPhase {
   return 'splash'
@@ -45,6 +52,46 @@ export default function App() {
   const { user, profile, isGuest, bootstrap } = useAuthStore()
   const { settings, stats } = usePracticeStore()
   const { message: toastMsg, show: showToast, clear: clearToast } = useToast()
+  const [breakAlarm, setBreakAlarm] = useState<BreakAlarmState | null>(null)
+  const [extendingBreak, setExtendingBreak] = useState(false)
+  const focusAlarmSoundEnabled = useFocusStore(state => state.settings.soundsEnabled)
+  const handleFocusComplete = useCallback((session: FocusSession) => {
+    if (session.completionReason !== 'timer' || session.phase === 'focus') return
+    setBreakAlarm({ id: session.id, phase: session.phase })
+  }, [])
+  const focusRuntime = useFocusRuntime({ onComplete: handleFocusComplete, onShowToast: showToast })
+  useFocusCloudSync(showToast)
+
+  const finishBreakAlarm = useCallback(() => {
+    const preparedFocus = useFocusStore.getState().activeTimer
+    let resumed = false
+    if (preparedFocus?.phase === 'focus' && preparedFocus.status === 'paused' && preparedFocus.segments.length === 0) {
+      resumed = focusRuntime.resume(Date.now())
+    }
+    setBreakAlarm(null)
+    showToast(resumed ? 'Break finished. Your next focus block has started.' : 'Break finished. Start again when you are ready.')
+  }, [focusRuntime, showToast])
+
+  const extendBreakAlarm = useCallback(async () => {
+    if (!breakAlarm || extendingBreak) return
+    setExtendingBreak(true)
+    const id = await focusRuntime.replaceWithBreak({
+      kind: breakAlarm.phase,
+      plannedDurationMs: 5 * 60 * 1_000,
+      at: Date.now(),
+    })
+    setExtendingBreak(false)
+    if (!id) {
+      showToast('The break could not be extended. Please try again.')
+      return
+    }
+    setBreakAlarm(null)
+    showToast('Break extended by five minutes.')
+  }, [breakAlarm, extendingBreak, focusRuntime, showToast])
+
+  const changeBreakAlarmSound = useCallback((enabled: boolean) => {
+    useFocusStore.getState().updateSettings({ soundsEnabled: enabled })
+  }, [])
 
   const handleSplashDone = useCallback(async () => {
     await bootstrap()
@@ -202,6 +249,11 @@ export default function App() {
               <MapsArcade />
             </Suspense>
           )}
+          {activeScreen === 'focus' && (
+            <Suspense fallback={<PenniLoader label="Opening Focus" full />}>
+              <FocusExperience runtime={focusRuntime} onShowToast={showToast} />
+            </Suspense>
+          )}
           {activeScreen === 'settings' && (
             <Suspense fallback={<PenniLoader label="Opening settings" full />}>
               <SettingsScreen
@@ -213,8 +265,8 @@ export default function App() {
           )}
         </div>
 
-        {/* Bottom navigation */}
-        <BottomNav />
+        {/* Bottom navigation is reserved for the five core study areas. */}
+        {(['feed', 'revise', 'maps', 'focus', 'practice'] as const).includes(activeScreen as 'feed' | 'revise' | 'maps' | 'focus' | 'practice') && <BottomNav />}
       </div>
 
       {/* ── Overlay screens (slide over the main app) ── */}
@@ -292,6 +344,18 @@ export default function App() {
             dismissStreakRecovery()
             setScreen('practice')
           }}
+        />
+      )}
+
+      {breakAlarm && (
+        <BreakAlarm
+          key={breakAlarm.id}
+          breakKind={breakAlarm.phase}
+          soundEnabled={focusAlarmSoundEnabled}
+          extending={extendingBreak}
+          onFinish={finishBreakAlarm}
+          onExtend={extendBreakAlarm}
+          onSoundChange={changeBreakAlarmSound}
         />
       )}
     </>

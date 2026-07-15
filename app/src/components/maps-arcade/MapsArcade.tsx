@@ -1,6 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
-import * as topojson from 'topojson-client'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faArrowLeft,
@@ -27,20 +26,24 @@ import { usePracticeStore } from '@/stores/usePracticeStore'
 import { PenniLoader } from '@/components/layout/PenniLoader'
 import { asset } from '@/utils/asset'
 import { EASE, gsap, reducedMotion } from '@/anim/animations'
-import {
-  MapSVG,
-  type AtlasAnswer,
-  type AtlasCountry,
-  type AtlasMode,
-  type AtlasPark,
-  type AtlasPhase,
-  type AtlasRiver,
-  type AtlasView,
-  type MapSVGHandle,
+import type {
+  AtlasAnswer,
+  AtlasCountry,
+  AtlasMode,
+  AtlasPark,
+  AtlasPhase,
+  AtlasRiver,
+  AtlasView,
+  MapSVGHandle,
 } from './MapSVG'
-import { WORLD_PHYSICAL_FEATURES } from './worldPhysicalData'
+import type { WorldPhysicalFeature } from './worldPhysicalData'
 
-const AtlasGlobe = lazy(() => import('./AtlasGlobe').then(module => ({ default: module.AtlasGlobe })))
+const loadAtlasGlobeModule = () => import('./AtlasGlobe')
+const loadMapSVGModule = () => import('./MapSVG')
+const loadWorldPhysicalModule = () => import('./worldPhysicalData')
+
+const AtlasGlobe = lazy(() => loadAtlasGlobeModule().then(module => ({ default: module.AtlasGlobe })))
+const MapSVG = lazy(() => loadMapSVGModule().then(module => ({ default: module.MapSVG })))
 
 type Screen = 'home' | 'world-home' | 'world-menu' | 'physical-menu' | 'world-river-menu' | 'india-menu' | 'river-menu' | 'park-menu' | 'park-learn' | 'setup' | 'play' | 'results'
 type AppKind = 'world' | 'india' | null
@@ -77,6 +80,17 @@ interface AtlasState {
 
 interface LoadedData {
   countries: AtlasCountry[]
+  indiaStates: FeatureCollection
+  parks: AtlasPark[]
+  parkRegions: ParkRegion[]
+  rivers: AtlasRiver[]
+}
+
+interface WorldData {
+  countries: AtlasCountry[]
+}
+
+interface IndiaData {
   indiaStates: FeatureCollection
   parks: AtlasPark[]
   parkRegions: ParkRegion[]
@@ -516,14 +530,32 @@ function cleanRegionName(name: string): string {
   return name.replace(/^Region\s+\d+\s+.\s+/, '')
 }
 
-async function loadData(): Promise<LoadedData> {
-  const [world, states, parksRaw, riverRaw, naturalEarthRivers, cwcRivers] = await Promise.all([
-    fetch(asset('data/countries-110m.json')).then(r => r.json()) as Promise<Topology>,
-    fetch(asset('data/india-states.json')).then(r => r.json()) as Promise<FeatureCollection>,
-    fetch(asset('data/india-national-parks.json')).then(r => r.json()) as Promise<{ regions: ParkRegion[]; parks: AtlasPark[] }>,
-    fetch(asset('data/india-rivers-osm.geojson')).then(r => r.json()).catch(() => null) as Promise<FeatureCollection | null>,
-    fetch(asset('data/india-rivers-ne-10m.geojson')).then(r => r.json()).catch(() => null) as Promise<FeatureCollection | null>,
-    fetch(asset('data/india-rivers-curriculum-v2.geojson')).then(r => r.json()).catch(() => null) as Promise<FeatureCollection | null>,
+let cachedWorldData: WorldData | null = null
+let cachedIndiaData: IndiaData | null = null
+let cachedWorldPhysicalFeatures: WorldPhysicalFeature[] | null = null
+let worldDataPromise: Promise<WorldData> | null = null
+let indiaDataPromise: Promise<IndiaData> | null = null
+let worldPhysicalPromise: Promise<WorldPhysicalFeature[]> | null = null
+const EMPTY_FEATURE_COLLECTION: FeatureCollection = { type: 'FeatureCollection', features: [] }
+
+async function fetchJson<T>(path: string): Promise<T> {
+  const response = await fetch(asset(path), { cache: 'force-cache' })
+  if (!response.ok) throw new Error(`Could not load ${path} (${response.status})`)
+  return response.json() as Promise<T>
+}
+
+async function fetchOptionalJson<T>(path: string): Promise<T | null> {
+  try {
+    return await fetchJson<T>(path)
+  } catch {
+    return null
+  }
+}
+
+async function loadWorldData(): Promise<WorldData> {
+  const [topojson, world] = await Promise.all([
+    import('topojson-client'),
+    fetchJson<Topology>('data/countries-110m.json'),
   ])
   const features = (topojson.feature(world, world.objects.countries) as unknown as FeatureCollection).features
   const byFeatureId = new Map(features.map(f => [Number(f.id), f]))
@@ -540,13 +572,61 @@ async function loadData(): Promise<LoadedData> {
       })
     })
   })
+  return { countries }
+}
+
+async function loadIndiaData(): Promise<IndiaData> {
+  const [states, parksRaw, naturalEarthRivers, cwcRivers] = await Promise.all([
+    fetchJson<FeatureCollection>('data/india-states-lite.json'),
+    fetchJson<{ regions: ParkRegion[]; parks: AtlasPark[] }>('data/india-national-parks.json'),
+    fetchOptionalJson<FeatureCollection>('data/india-rivers-ne-10m.geojson'),
+    fetchOptionalJson<FeatureCollection>('data/india-rivers-curriculum-v2.geojson'),
+  ])
   return {
-    countries,
     indiaStates: states,
     parks: parksRaw.parks,
     parkRegions: parksRaw.regions,
-    rivers: loadRiverGeometry(riverRaw, naturalEarthRivers, cwcRivers),
+    rivers: loadRiverGeometry(naturalEarthRivers, cwcRivers),
   }
+}
+
+function ensureWorldData(): Promise<WorldData> {
+  if (cachedWorldData) return Promise.resolve(cachedWorldData)
+  if (!worldDataPromise) {
+    worldDataPromise = loadWorldData()
+      .then(data => (cachedWorldData = data))
+      .catch(error => {
+        worldDataPromise = null
+        throw error
+      })
+  }
+  return worldDataPromise
+}
+
+function ensureIndiaData(): Promise<IndiaData> {
+  if (cachedIndiaData) return Promise.resolve(cachedIndiaData)
+  if (!indiaDataPromise) {
+    indiaDataPromise = loadIndiaData()
+      .then(data => (cachedIndiaData = data))
+      .catch(error => {
+        indiaDataPromise = null
+        throw error
+      })
+  }
+  return indiaDataPromise
+}
+
+function ensureWorldPhysicalFeatures(): Promise<WorldPhysicalFeature[]> {
+  if (cachedWorldPhysicalFeatures) return Promise.resolve(cachedWorldPhysicalFeatures)
+  if (!worldPhysicalPromise) {
+    worldPhysicalPromise = loadWorldPhysicalModule()
+      .then(module => (cachedWorldPhysicalFeatures = module.WORLD_PHYSICAL_FEATURES))
+      .catch(error => {
+        worldPhysicalPromise = null
+        throw error
+      })
+  }
+  return worldPhysicalPromise
 }
 
 const rivers: AtlasRiver[] = RIVER_TRACES.map(r => ({
@@ -641,32 +721,26 @@ function naturalEarthRiverGeometry(data: FeatureCollection | null, riverName: st
 }
 
 function loadRiverGeometry(
-  data: FeatureCollection | null,
   naturalEarthData: FeatureCollection | null,
   cwcData: FeatureCollection | null,
 ): AtlasRiver[] {
-  if (!data?.features?.length && !naturalEarthData?.features.length && !cwcData?.features.length) return []
+  if (!naturalEarthData?.features.length && !cwcData?.features.length) return rivers
   const fallbackByName = new Map(rivers.map(r => [r.name, r]))
-  const osmByName = new Map(
-    (data?.features ?? []).map(feature => [String((feature.properties as { name?: string } | null)?.name ?? ''), feature]),
-  )
   const cwcByName = new Map(
     (cwcData?.features ?? []).map(feature => [String((feature.properties as { name?: string } | null)?.name ?? ''), feature]),
   )
   return [...CURATED_RIVER_SYSTEM.entries()]
     .map(([name, system]) => {
-      const feature = osmByName.get(name)
       const cwcFeature = cwcByName.get(name)
       const naturalEarthGeometry = naturalEarthRiverGeometry(naturalEarthData, name)
-      const osmGeometry = feature?.geometry ? continuousRiverGeometry(feature.geometry) : null
       const cwcGeometry = cwcFeature?.geometry ?? null
+      const fallback = fallbackByName.get(name)
       const candidates = system === 'indus_ref'
-        ? [naturalEarthGeometry, cwcGeometry, osmGeometry]
-        : [cwcGeometry, naturalEarthGeometry, osmGeometry]
+        ? [naturalEarthGeometry, cwcGeometry, fallback?.geometry]
+        : [cwcGeometry, naturalEarthGeometry, fallback?.geometry]
       const geometry = candidates
         .find((candidate): candidate is Geometry => Boolean(candidate && practiceReadyRiverGeometry(candidate)))
       if (!geometry) return null
-      const fallback = fallbackByName.get(name)
       const details = RIVER_DETAILS[name]
       const systemName = RIVER_SYSTEMS.find(item => item.key === system)?.name ?? 'India river system'
       return {
@@ -689,8 +763,13 @@ export function MapsArcade() {
   const overlayScreen = useAppStore(s => s.overlayScreen)
   const setScreen = useAppStore(s => s.setScreen)
   const recordArcadeAnswer = usePracticeStore(s => s.recordArcadeAnswer)
-  const [loaded, setLoaded] = useState<LoadedData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [worldData, setWorldData] = useState<WorldData | null>(() => cachedWorldData)
+  const [indiaData, setIndiaData] = useState<IndiaData | null>(() => cachedIndiaData)
+  const [physicalFeatures, setPhysicalFeatures] = useState<WorldPhysicalFeature[]>(() => cachedWorldPhysicalFeatures ?? [])
+  const [loadingApp, setLoadingApp] = useState<AppKind>(null)
+  const [physicalLoading, setPhysicalLoading] = useState(false)
+  const [dataError, setDataError] = useState<string | null>(null)
+  const [loadAttempt, setLoadAttempt] = useState(0)
   const [state, setState] = useState<AtlasState>(INITIAL)
   const [parkFactsOpen, setParkFactsOpen] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 700)
   const mapRef = useRef<MapSVGHandle>(null)
@@ -699,15 +778,64 @@ export function MapsArcade() {
   const toastTimer = useRef<number | null>(null)
   const advanceTimer = useRef<number | null>(null)
   const recordedArcadeAnswers = useRef(new Set<string>())
-  const mapRivers = useMemo(() => curriculumRivers(loaded?.rivers ?? [], null), [loaded])
+  const loaded = useMemo<LoadedData | null>(() => worldData ? ({
+    countries: worldData.countries,
+    indiaStates: indiaData?.indiaStates ?? EMPTY_FEATURE_COLLECTION,
+    parks: indiaData?.parks ?? [],
+    parkRegions: indiaData?.parkRegions ?? [],
+    rivers: indiaData?.rivers ?? [],
+  }) : null, [indiaData, worldData])
+  const mapRivers = useMemo(() => curriculumRivers(indiaData?.rivers ?? [], null), [indiaData?.rivers])
 
   useEffect(() => {
+    if (!state.app) return
     let live = true
-    loadData()
-      .then(data => { if (live) setLoaded(data) })
-      .finally(() => { if (live) setLoading(false) })
+    const target = state.app
+    const alreadyReady = target === 'world'
+      ? Boolean(worldData)
+      : Boolean(worldData && indiaData)
+    if (alreadyReady) return
+
+    setLoadingApp(target)
+    setDataError(null)
+    if (target === 'world') {
+      void loadAtlasGlobeModule().catch(() => undefined)
+      void ensureWorldData()
+        .then(data => { if (live) setWorldData(data) })
+        .catch(error => { if (live) setDataError(error instanceof Error ? error.message : 'World map data could not be loaded.') })
+        .finally(() => { if (live) setLoadingApp(null) })
+    } else {
+      void loadMapSVGModule().catch(() => undefined)
+      void Promise.all([ensureWorldData(), ensureIndiaData()])
+        .then(([nextWorldData, nextIndiaData]) => {
+          if (!live) return
+          setWorldData(nextWorldData)
+          setIndiaData(nextIndiaData)
+        })
+        .catch(error => { if (live) setDataError(error instanceof Error ? error.message : 'India map data could not be loaded.') })
+        .finally(() => { if (live) setLoadingApp(null) })
+    }
     return () => { live = false }
-  }, [])
+  }, [indiaData, loadAttempt, state.app, worldData])
+
+  const needsPhysicalData = state.app === 'world' && (
+    state.screen === 'physical-menu'
+    || state.screen === 'world-river-menu'
+    || state.category === 'world-rivers'
+    || state.category === 'mountains'
+  )
+
+  useEffect(() => {
+    if (!needsPhysicalData || physicalFeatures.length) return
+    let live = true
+    setPhysicalLoading(true)
+    setDataError(null)
+    void ensureWorldPhysicalFeatures()
+      .then(features => { if (live) setPhysicalFeatures(features) })
+      .catch(error => { if (live) setDataError(error instanceof Error ? error.message : 'Physical map data could not be loaded.') })
+      .finally(() => { if (live) setPhysicalLoading(false) })
+    return () => { live = false }
+  }, [loadAttempt, needsPhysicalData, physicalFeatures.length])
 
   useEffect(() => {
     if (state.category !== 'rivers' || !state.queue.length) return
@@ -759,12 +887,12 @@ export function MapsArcade() {
 
   const countriesByContinent = useMemo(() => {
     const map: Record<string, AtlasCountry[]> = {}
-    loaded?.countries.forEach(c => {
+    worldData?.countries.forEach(c => {
       map[c.continent] = map[c.continent] ?? []
       map[c.continent].push(c)
     })
     return map
-  }, [loaded])
+  }, [worldData])
 
   const currentView: AtlasView = state.screen === 'home' || state.screen === 'world-home' || state.screen === 'world-menu'
     ? 'world'
@@ -791,48 +919,59 @@ export function MapsArcade() {
   const total = currentPool().length
   const accuracy = state.queue.length ? Math.round((state.correctCount / state.queue.length) * 100) : 0
   const activeLearnState = state.screen === 'park-learn' ? currentParkLearnState() : null
-  const activeLearnParks = state.screen === 'park-learn'
-    ? (loaded?.parks ?? []).filter(park => (!state.parkRegion || park.region === state.parkRegion) && (!activeLearnState || park.state === activeLearnState))
-    : []
-  const activeLearnPark = activeLearnParks.find(park => park.id === state.parkLearnParkId) ?? activeLearnParks[0] ?? null
-  const activeLearnRiverNames = activeLearnPark
+  const activeLearnParks = useMemo(() => state.screen === 'park-learn'
+    ? (indiaData?.parks ?? []).filter(park => (!state.parkRegion || park.region === state.parkRegion) && (!activeLearnState || park.state === activeLearnState))
+    : [], [activeLearnState, indiaData?.parks, state.parkRegion, state.screen])
+  const activeLearnPark = useMemo(
+    () => activeLearnParks.find(park => park.id === state.parkLearnParkId) ?? activeLearnParks[0] ?? null,
+    [activeLearnParks, state.parkLearnParkId],
+  )
+  const activeLearnRiverNames = useMemo(() => activeLearnPark
     ? [...(PARK_PRELIMS[activeLearnPark.name]?.mapRivers ?? PARK_STATE_CONTEXT[activeLearnPark.state]?.rivers ?? [])]
-    : []
+    : [], [activeLearnPark])
   const activePracticeRegion = state.screen === 'play' && state.category === 'parks'
     ? (state.target?.region ?? state.parkRegion)
     : null
   const activePracticeState = state.screen === 'play' && state.category === 'parks' && phase === 'answered' && state.target?.state
     ? normalizeStateName(state.target.state)
     : null
-  const useWorldGlobe = currentView === 'world' || currentView === 'continent'
-    || currentView === 'world-physical'
+  const useWorldGlobe = state.app === 'world' && (
+    currentView === 'world' || currentView === 'continent' || currentView === 'world-physical'
+  )
+  const activeDataReady = state.app === null
+    || (state.app === 'world' ? Boolean(worldData) : Boolean(worldData && indiaData))
+  const showIndiaMap = state.app === 'india' && activeDataReady
+  const blockingDataError = dataError && (
+    !activeDataReady || (needsPhysicalData && !physicalFeatures.length)
+  )
+  const mapObscured = overlayScreen !== null && overlayScreen !== 'maps-arcade'
   const physicalKind = state.category === 'world-rivers'
     ? 'river'
     : state.category === 'mountains'
       ? 'mountain'
       : null
 
-  function patch(patchState: Partial<AtlasState>) {
+  const patch = useCallback((patchState: Partial<AtlasState>) => {
     setState(prev => ({ ...prev, ...patchState }))
-  }
+  }, [])
 
-  function showToast(toast: Toast, delay = 1800) {
+  const showToast = useCallback((toast: Toast, delay = 1800) => {
     if (toastTimer.current) window.clearTimeout(toastTimer.current)
     patch({ toast })
     toastTimer.current = window.setTimeout(() => {
       setState(prev => prev.toast === toast ? { ...prev, toast: null } : prev)
     }, delay)
-  }
+  }, [patch])
 
   function currentPool(): QuizItem[] {
     if (!loaded) return []
     if (state.app === 'world' && state.category === 'world-rivers') {
-      return WORLD_PHYSICAL_FEATURES
+      return physicalFeatures
         .filter(feature => feature.kind === 'river' && (!state.continent || feature.continent === state.continent))
         .map(feature => ({ id: feature.id, name: feature.name, region: feature.region, kind: feature.kind }))
     }
     if (state.app === 'world' && state.category === 'mountains') {
-      return WORLD_PHYSICAL_FEATURES
+      return physicalFeatures
         .filter(feature => feature.kind === 'mountain')
         .map(feature => ({ id: feature.id, name: feature.name, region: feature.region, kind: feature.kind }))
     }
@@ -859,7 +998,7 @@ export function MapsArcade() {
       })
       return String((stateFeature?.properties as { NAME_1?: string } | undefined)?.NAME_1 ?? id)
     }
-    const physical = WORLD_PHYSICAL_FEATURES.find(feature => feature.id === idStr)
+    const physical = physicalFeatures.find(feature => feature.id === idStr)
     if (physical) return physical.name
     const river = loaded.rivers.find(r => String(r.id) === idStr)
     if (river) return river.name
@@ -991,7 +1130,7 @@ export function MapsArcade() {
         }
         const river = loaded.rivers.find(r => String(r.id) === idStr)
         if (river) return river.name
-        const physical = WORLD_PHYSICAL_FEATURES.find(feature => feature.id === idStr)
+        const physical = physicalFeatures.find(feature => feature.id === idStr)
         if (physical) return physical.name
         const country = loaded.countries.find(c => String(c.id) === idStr)
         return country?.name ?? null
@@ -1176,9 +1315,9 @@ export function MapsArcade() {
       : next.category === 'parks'
         ? parkItems(loaded?.parks ?? [], next.parkRegion ?? null).length
         : next.category === 'world-rivers'
-          ? WORLD_PHYSICAL_FEATURES.filter(feature => feature.kind === 'river' && (!next.continent || feature.continent === next.continent)).length
+          ? physicalFeatures.filter(feature => feature.kind === 'river' && (!next.continent || feature.continent === next.continent)).length
           : next.category === 'mountains'
-            ? WORLD_PHYSICAL_FEATURES.filter(feature => feature.kind === 'mountain').length
+            ? physicalFeatures.filter(feature => feature.kind === 'mountain').length
             : (countriesByContinent[next.continent ?? ''] ?? []).length
     patch({
       ...next,
@@ -1189,13 +1328,13 @@ export function MapsArcade() {
     })
   }
 
-  function focusPark(park: AtlasPark) {
+  const focusPark = useCallback((park: AtlasPark) => {
     if (state.screen === 'park-learn') {
       patch({ parkLearnParkId: park.id })
       return
     }
     showToast({ kind: 'hint', text: `${park.name.replace(/ National Park/g, '')}: ${park.state}` }, 1800)
-  }
+  }, [patch, showToast, state.screen])
 
   function renderHome() {
     return (
@@ -1222,8 +1361,6 @@ export function MapsArcade() {
   }
 
   function renderWorldHome() {
-    const riverCount = WORLD_PHYSICAL_FEATURES.filter(feature => feature.kind === 'river').length
-    const mountainCount = WORLD_PHYSICAL_FEATURES.filter(feature => feature.kind === 'mountain').length
     return (
       <div ref={panelRef} className="atlas-panel atlas-india-panel">
         <div className="atlas-panel-head">
@@ -1239,7 +1376,7 @@ export function MapsArcade() {
           </button>
           <button className="atlas-india-card mountains" onClick={() => patch({ app: 'world', screen: 'physical-menu', category: null })}>
             <i><FontAwesomeIcon icon={faMountainSun} /></i>
-            <span><b>Physical Features</b><em>{riverCount} rivers · {mountainCount} mountain chains</em></span>
+            <span><b>Physical Features</b><em>Rivers and mountain chains</em></span>
             <FontAwesomeIcon icon={faChevronRight} />
           </button>
         </div>
@@ -1271,8 +1408,8 @@ export function MapsArcade() {
   }
 
   function renderPhysicalMenu() {
-    const riverCount = WORLD_PHYSICAL_FEATURES.filter(feature => feature.kind === 'river').length
-    const mountainCount = WORLD_PHYSICAL_FEATURES.filter(feature => feature.kind === 'mountain').length
+    const riverCount = physicalFeatures.filter(feature => feature.kind === 'river').length
+    const mountainCount = physicalFeatures.filter(feature => feature.kind === 'mountain').length
     return (
       <div ref={panelRef} className="atlas-panel atlas-india-panel">
         <div className="atlas-panel-head">
@@ -1300,10 +1437,10 @@ export function MapsArcade() {
     const continents = ORDER
       .map(name => ({
         name,
-        count: WORLD_PHYSICAL_FEATURES.filter(feature => feature.kind === 'river' && feature.continent === name).length,
+        count: physicalFeatures.filter(feature => feature.kind === 'river' && feature.continent === name).length,
       }))
       .filter(item => item.count > 0)
-    const totalRivers = WORLD_PHYSICAL_FEATURES.filter(feature => feature.kind === 'river').length
+    const totalRivers = physicalFeatures.filter(feature => feature.kind === 'river').length
     return (
       <div ref={panelRef} className="atlas-panel">
         <div className="atlas-panel-head">
@@ -1664,9 +1801,19 @@ export function MapsArcade() {
   }
 
   function renderOverlay() {
-    if (loading) return <PenniLoader label="Loading map data" full />
-    if (!loaded) return <div className="atlas-loading">Map data could not be loaded.</div>
     if (state.screen === 'home') return renderHome()
+    if (blockingDataError) {
+      return (
+        <div className="atlas-loading" role="alert">
+          <span>{dataError}</span>
+          <button onClick={() => setLoadAttempt(attempt => attempt + 1)}>Try again</button>
+        </div>
+      )
+    }
+    if (loadingApp || !activeDataReady || (needsPhysicalData && (physicalLoading || !physicalFeatures.length))) {
+      return <PenniLoader label={state.app === 'india' ? 'Preparing India maps' : 'Preparing world maps'} full />
+    }
+    if (!loaded) return <div className="atlas-loading">Map data could not be loaded.</div>
     if (state.screen === 'world-home') return renderWorldHome()
     if (state.screen === 'world-menu') return renderWorldMenu()
     if (state.screen === 'physical-menu') return renderPhysicalMenu()
@@ -1699,50 +1846,53 @@ export function MapsArcade() {
         ) : <span style={{ width: 42 }} />}
       </div>
 
-      <div className={`atlas-stage ${useWorldGlobe ? 'atlas-stage-globe' : ''} ${state.screen === 'park-learn' ? 'atlas-stage-park-learn' : ''}`}>
-        {loaded && useWorldGlobe ? (
+      <div className={`atlas-stage ${state.screen === 'home' ? 'atlas-stage-home' : ''} ${useWorldGlobe ? 'atlas-stage-globe' : ''} ${state.screen === 'park-learn' ? 'atlas-stage-park-learn' : ''}`}>
+        {loaded && useWorldGlobe && activeDataReady ? (
           <Suspense fallback={<PenniLoader label="Spinning up globe" full />}>
             <AtlasGlobe
               view={currentView}
               mode={state.mode}
               phase={phase}
               countries={loaded.countries}
-              physicalFeatures={WORLD_PHYSICAL_FEATURES}
+              physicalFeatures={physicalFeatures}
               physicalKind={physicalKind}
               activeContinent={state.continent}
               targetId={mapTargetId}
               chosenId={state.chosenId}
               onAnswer={onAnswer}
+              paused={mapObscured}
             />
           </Suspense>
-        ) : loaded && (
-          <MapSVG
-            ref={mapRef}
-            view={currentView}
-            mode={state.mode}
-            phase={phase}
-            countries={loaded.countries}
-            indiaStates={loaded.indiaStates}
-            rivers={mapRivers}
-            parks={loaded.parks}
-            activeContinent={state.continent}
-            activeRiverSystem={state.riverSystem}
-            activeParkRegion={state.parkRegion}
-            activePracticeRegion={activePracticeRegion}
-            activeParkState={activeLearnState}
-            activeParkId={activeLearnPark?.id ?? null}
-            learnRiverNames={activeLearnRiverNames}
-            activePracticeState={activePracticeState}
-            stateName={normalizeStateName}
-            targetId={mapTargetId}
-            chosenId={state.chosenId}
-            history={state.answerHistory}
-            onAnswer={onAnswer}
-            onParkFocus={focusPark}
-          />
+        ) : showIndiaMap && loaded && (
+          <Suspense fallback={<PenniLoader label="Drawing India maps" full />}>
+            <MapSVG
+              ref={mapRef}
+              view={currentView}
+              mode={state.mode}
+              phase={phase}
+              countries={loaded.countries}
+              indiaStates={loaded.indiaStates}
+              rivers={mapRivers}
+              parks={loaded.parks}
+              activeContinent={state.continent}
+              activeRiverSystem={state.riverSystem}
+              activeParkRegion={state.parkRegion}
+              activePracticeRegion={activePracticeRegion}
+              activeParkState={activeLearnState}
+              activeParkId={activeLearnPark?.id ?? null}
+              learnRiverNames={activeLearnRiverNames}
+              activePracticeState={activePracticeState}
+              stateName={normalizeStateName}
+              targetId={mapTargetId}
+              chosenId={state.chosenId}
+              history={state.answerHistory}
+              onAnswer={onAnswer}
+              onParkFocus={focusPark}
+            />
+          </Suspense>
         )}
 
-        {!useWorldGlobe && (
+        {showIndiaMap && (
           <div className="atlas-zoom">
             <button onClick={() => mapRef.current?.zoomIn()} aria-label="Zoom in"><FontAwesomeIcon icon={faPlus} /></button>
             <button onClick={() => mapRef.current?.zoomOut()} aria-label="Zoom out"><FontAwesomeIcon icon={faMinus} /></button>

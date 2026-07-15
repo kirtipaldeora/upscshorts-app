@@ -9,6 +9,8 @@ import type { WorldPhysicalFeature } from './worldPhysicalData'
 type GlobeGeoJsonGeometry = { type: string; coordinates: number[] }
 
 type GlobeWithLayers = GlobeInstance & {
+  pauseAnimation: () => GlobeWithLayers
+  resumeAnimation: () => GlobeWithLayers
   polygonsData: (data: object[]) => GlobeWithLayers
   polygonGeoJsonGeometry: (fn: (d: object) => GlobeGeoJsonGeometry) => GlobeWithLayers
   polygonCapColor: (fn: (d: object) => string) => GlobeWithLayers
@@ -61,6 +63,7 @@ interface AtlasGlobeProps {
   targetId: string | number | null
   chosenId: string | number | null
   onAnswer: (id: string | number) => void
+  paused?: boolean
 }
 
 interface GlobeCountry extends AtlasCountry {
@@ -157,6 +160,7 @@ export function AtlasGlobe({
   targetId,
   chosenId,
   onAnswer,
+  paused = false,
 }: AtlasGlobeProps) {
   const wrapRef = useRef<HTMLDivElement>(null)
   const globeRef = useRef<GlobeWithLayers | null>(null)
@@ -206,7 +210,9 @@ export function AtlasGlobe({
     controls.minDistance = 120
     controls.maxDistance = 470
 
-    try { world.renderer().setPixelRatio(Math.min(2, window.devicePixelRatio || 1)) } catch { /* noop */ }
+    const coarsePointer = window.matchMedia?.('(pointer: coarse)').matches ?? false
+    const pixelRatioCap = coarsePointer ? 1.35 : 2
+    try { world.renderer().setPixelRatio(Math.min(pixelRatioCap, window.devicePixelRatio || 1)) } catch { /* noop */ }
     globeRef.current = world
 
     if (!reducedMotion()) {
@@ -232,6 +238,32 @@ export function AtlasGlobe({
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
   }, [])
+
+  useEffect(() => {
+    const el = wrapRef.current
+    if (!el) return
+    let intersecting = true
+    const syncAnimation = () => {
+      const globe = globeRef.current
+      if (!globe) return
+      if (paused || document.hidden || !intersecting) globe.pauseAnimation()
+      else globe.resumeAnimation()
+    }
+    const observer = typeof IntersectionObserver === 'undefined'
+      ? null
+      : new IntersectionObserver(entries => {
+        intersecting = entries[0]?.isIntersecting ?? true
+        syncAnimation()
+      }, { threshold: 0.01 })
+    observer?.observe(el)
+    document.addEventListener('visibilitychange', syncAnimation)
+    const frame = window.requestAnimationFrame(syncAnimation)
+    return () => {
+      window.cancelAnimationFrame(frame)
+      observer?.disconnect()
+      document.removeEventListener('visibilitychange', syncAnimation)
+    }
+  }, [paused])
 
   useEffect(() => {
     const globe = globeRef.current

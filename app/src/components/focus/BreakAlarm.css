@@ -1,0 +1,132 @@
+.focus-break-alarm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  padding: max(18px, env(safe-area-inset-top)) 18px max(18px, env(safe-area-inset-bottom));
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(116, 130, 224, .34), transparent 42%),
+    rgba(14, 17, 43, .86);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  animation: focus-break-backdrop-in .24s ease-out both;
+}
+
+.focus-break-alarm {
+  width: min(440px, 100%);
+  max-height: calc(100dvh - max(18px, env(safe-area-inset-top)) - max(18px, env(safe-area-inset-bottom)));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: clamp(28px, 7vw, 42px) clamp(20px, 6vw, 34px) clamp(22px, 6vw, 32px);
+  border: 1px solid color-mix(in srgb, var(--focus-blue, #7180dc) 24%, rgba(255,255,255,.7));
+  border-radius: 34px;
+  background: color-mix(in srgb, var(--card, #fff) 96%, #eef0ff);
+  color: var(--ink, #171a32);
+  text-align: center;
+  box-shadow: 0 32px 90px rgba(5, 7, 30, .46);
+  animation: focus-break-alarm-in .32s cubic-bezier(.2,.8,.2,1) both;
+}
+
+.focus-break-alarm-pulse {
+  position: relative;
+  width: 82px;
+  height: 82px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(145deg, #8791e7, #6675d5);
+  color: #fff;
+  font-size: 30px;
+  font-weight: 950;
+  box-shadow: 0 14px 35px rgba(93, 106, 203, .32);
+}
+
+.focus-break-alarm-pulse::before,
+.focus-break-alarm-pulse::after {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  border: 2px solid rgba(113, 128, 220, .28);
+  border-radius: inherit;
+  animation: focus-break-pulse 1.65s ease-out infinite;
+}
+
+.focus-break-alarm-pulse::after { animation-delay: .72s; }
+.focus-break-alarm-eyebrow { margin: 0; color: var(--acc, #6575dc); font-size: 10px; font-weight: 950; letter-spacing: 1.25px; text-transform: uppercase; }
+.focus-break-alarm h2 { margin: 7px 0 0; font-size: clamp(27px, 8vw, 38px); line-height: 1.04; letter-spacing: -1.2px; }
+.focus-break-alarm-copy { max-width: 350px; margin: 13px auto 21px; color: var(--ink2, #656a7d); font-size: 12px; font-weight: 750; line-height: 1.55; }
+
+.focus-break-alarm-sound {
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 14px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--card2, #f2f3f7);
+  border: 1px solid var(--border, #e0e1e7);
+  color: var(--ink2, #656a7d);
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.focus-break-alarm-sound.enabled { background: color-mix(in srgb, #7180dc 9%, var(--card, #fff)); color: var(--acc, #6575dc); }
+.focus-break-swipe { position: relative; height: 68px; margin-top: 14px; padding: 6px; border-radius: 24px; display: grid; place-items: center; overflow: hidden; background: linear-gradient(135deg, #242a59, #32396f); color: rgba(255,255,255,.75); }
+.focus-break-swipe > span { pointer-events: none; font-size: 11px; font-weight: 950; letter-spacing: .2px; }
+.focus-break-swipe > i { position: absolute; right: 17px; opacity: .5; font-size: 15px; font-style: normal; letter-spacing: -2px; }
+.focus-break-swipe > button { touch-action: none; position: absolute; left: 6px; top: 6px; width: 56px; height: 56px; border-radius: 19px; display: grid; place-items: center; background: #fff; color: #283063; font-size: 23px; font-weight: 950; box-shadow: 0 8px 20px rgba(0,0,0,.24); transition: transform .2s cubic-bezier(.2,.8,.2,1); }
+.focus-break-swipe > button.dragging { transition: none; cursor: grabbing; }
+.focus-break-swipe > button:disabled { opacity: .7; cursor: wait; }
+.focus-break-swipe.ready { background: linear-gradient(135deg, #2f7c70, #3b9483); }
+.focus-break-extend { width: 100%; min-height: 50px; margin-top: 10px; border-radius: 17px; display: flex; align-items: center; justify-content: center; gap: 7px; background: color-mix(in srgb, var(--focus-blue, #7180dc) 10%, var(--card2, #f2f3f7)); color: var(--acc, #6575dc); font-size: 11px; font-weight: 950; }
+.focus-break-extend:disabled { opacity: .62; cursor: wait; }
+
+@keyframes focus-break-backdrop-in { from { opacity: 0; } }
+@keyframes focus-break-alarm-in { from { opacity: 0; transform: translateY(22px) scale(.97); } }
+@keyframes focus-break-pulse { 0% { opacity: .72; transform: scale(.78); } 100% { opacity: 0; transform: scale(1.35); } }
+
+@media (max-width: 390px) {
+  .focus-break-alarm-backdrop { padding-inline: 12px; }
+  .focus-break-alarm { border-radius: 29px; }
+  .focus-break-alarm-copy { font-size: 11px; }
+}
+
+@media (max-height: 680px) {
+  .focus-break-alarm-backdrop {
+    padding-top: max(8px, env(safe-area-inset-top));
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+  .focus-break-alarm {
+    max-height: calc(100dvh - max(8px, env(safe-area-inset-top)) - max(8px, env(safe-area-inset-bottom)));
+    padding: 16px 18px;
+    border-radius: 26px;
+  }
+  .focus-break-alarm-pulse {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 11px;
+    font-size: 22px;
+  }
+  .focus-break-alarm-pulse::before,
+  .focus-break-alarm-pulse::after { inset: -6px; }
+  .focus-break-alarm h2 { margin-top: 5px; font-size: clamp(24px, 7vw, 30px); }
+  .focus-break-alarm-copy { margin: 9px auto 12px; line-height: 1.4; }
+  .focus-break-alarm-sound { min-height: 44px; }
+  .focus-break-swipe { height: 60px; margin-top: 10px; border-radius: 21px; }
+  .focus-break-swipe > button { width: 48px; height: 48px; border-radius: 16px; }
+  .focus-break-extend { min-height: 46px; margin-top: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .focus-break-alarm-backdrop,
+  .focus-break-alarm,
+  .focus-break-alarm-pulse::before,
+  .focus-break-alarm-pulse::after { animation: none; }
+}

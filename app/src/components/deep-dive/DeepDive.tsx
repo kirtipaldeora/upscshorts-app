@@ -126,6 +126,10 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
     try { return localStorage.getItem('penni-read-lang') === 'hi' ? 'hi' : 'en' } catch { return 'en' }
   })
   const bodyRef = useRef<HTMLDivElement>(null)
+  const progressBarRef = useRef<HTMLSpanElement>(null)
+  const scrollFrameRef = useRef<number | null>(null)
+  const readThresholdRef = useRef(false)
+  const [readThresholdReached, setReadThresholdReached] = useState(false)
 
   const visible = overlayScreen === 'deep-dive'
   const a = activeArticle
@@ -145,7 +149,9 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
   // Reset scroll to top whenever the shown article changes
   useEffect(() => {
     bodyRef.current?.scrollTo({ top: 0 })
-    setReadProgress(0)
+    readThresholdRef.current = false
+    setReadThresholdReached(false)
+    if (progressBarRef.current) progressBarRef.current.style.width = '0%'
     narration.stop()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [a?.id])
@@ -169,20 +175,32 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [a?.id, visible])
 
-  const [readProgress, setReadProgress] = useState(0)
   function onBodyScroll() {
-    const el = bodyRef.current
-    if (!el) return
-    const max = el.scrollHeight - el.clientHeight
-    setReadProgress(max > 0 ? Math.min(100, (el.scrollTop / max) * 100) : 0)
+    if (scrollFrameRef.current !== null) return
+    scrollFrameRef.current = window.requestAnimationFrame(() => {
+      scrollFrameRef.current = null
+      const el = bodyRef.current
+      if (!el) return
+      const max = el.scrollHeight - el.clientHeight
+      const progress = max > 0 ? Math.min(100, (el.scrollTop / max) * 100) : 0
+      if (progressBarRef.current) progressBarRef.current.style.width = `${progress}%`
+      if (progress >= 70 && !readThresholdRef.current) {
+        readThresholdRef.current = true
+        setReadThresholdReached(true)
+      }
+    })
   }
 
+  useEffect(() => () => {
+    if (scrollFrameRef.current !== null) window.cancelAnimationFrame(scrollFrameRef.current)
+  }, [])
+
   useEffect(() => {
-    if (!a || (readProgress < 70 && narration.progress < 85)) return
+    if (!a || (!readThresholdReached && narration.progress < 85)) return
     if (recordLearningActivity(a.id)) {
       onShowToast('Deep Dive complete. Today’s learning streak is protected.')
     }
-  }, [a, readProgress, narration.progress, recordLearningActivity, onShowToast])
+  }, [a, readThresholdReached, narration.progress, recordLearningActivity, onShowToast])
 
   async function goToArticle(article: Article) {
     await haptic()
@@ -322,8 +340,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
   async function startPrelimsPractice() {
     if (!a) return
     await haptic()
-    const allArticles = Object.values(articlesByDate).flat()
-    const qs = articleQs(allArticles).filter(q => q.aid === a.id)
+    const qs = articleQs([a])
     if (qs.length) setActiveQuiz({ title: 'Article Practice', questions: qs })
   }
 
@@ -338,7 +355,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
         <button onClick={handleShare} aria-label="Share">
           <FontAwesomeIcon icon={faShareAlt} />
         </button>
-        <div className="dd-progress" aria-hidden="true"><span style={{ width: `${readProgress}%` }} /></div>
+        <div className="dd-progress" aria-hidden="true"><span ref={progressBarRef} /></div>
       </div>
 
       {/* Body */}

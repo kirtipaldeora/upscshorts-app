@@ -8,6 +8,7 @@ export type Screen =
   | 'revise'
   | 'search'
   | 'bookmarks'
+  | 'focus'
   | 'profile'
   | 'practice'
   | 'maps'

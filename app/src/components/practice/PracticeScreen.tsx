@@ -5,6 +5,7 @@ import {
   faBookOpen,
   faCalendarDay,
   faChevronRight,
+  faEarthAsia,
   faPenFancy,
   faPlay,
   faScroll,
@@ -39,7 +40,7 @@ type ActiveQuiz = {
 type Panel = null | 'previous'
 
 export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: PracticeScreenProps) {
-  const { articlesByDate, selectedDate, setScreen } = useAppStore()
+  const { articlesByDate, selectedDate, setScreen, setOverlay } = useAppStore()
   const { stats, settings } = usePracticeStore()
   const [activeQuiz, setActiveQuiz] = useState<ActiveQuiz>(null)
   const [panel, setPanel] = useState<Panel>(null)
@@ -167,6 +168,11 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
             <button onClick={() => setPanel('previous')}>
               <FontAwesomeIcon icon={faCalendarDay} />
               <span><b>Previous Daily Tests</b><i>{availableDates.length} dated current-affairs packs</i></span>
+              <FontAwesomeIcon icon={faChevronRight} />
+            </button>
+            <button onClick={() => setOverlay('maps-arcade')}>
+              <FontAwesomeIcon icon={faEarthAsia} />
+              <span><b>Maps Practice</b><i>India and world map drills</i></span>
               <FontAwesomeIcon icon={faChevronRight} />
             </button>
           </div>

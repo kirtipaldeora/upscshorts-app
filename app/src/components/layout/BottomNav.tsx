@@ -1,13 +1,18 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faHouse,
   faBookOpen,
   faDumbbell,
   faEarthAsia,
-  faUser,
+  faStopwatch,
 } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore, type Screen } from '@/stores/useAppStore'
+import {
+  getActiveElapsedMs,
+  getActiveRemainingMs,
+  useFocusStore,
+} from '@/stores/useFocusStore'
 import { useHaptic } from '@/hooks/useHaptic'
 import { EASE, gsap, popElement, reducedMotion } from '@/anim/animations'
 
@@ -18,17 +23,61 @@ interface NavItem {
   action?: () => void
 }
 
+function formatNavTimer(durationMs: number, countdown: boolean) {
+  const totalSeconds = Math.max(0, countdown
+    ? Math.ceil(durationMs / 1_000)
+    : Math.floor(durationMs / 1_000))
+  const seconds = totalSeconds % 60
+  const totalMinutes = Math.floor(totalSeconds / 60)
+  const minutes = totalMinutes % 60
+  const hours = Math.floor(totalMinutes / 60)
+
+  return hours > 0
+    ? `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+    : `${totalMinutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+}
+
 export function BottomNav() {
   const { activeScreen, setScreen } = useAppStore()
+  const activeFocusTimer = useFocusStore((state) => state.activeTimer)
+  const [focusClock, setFocusClock] = useState(() => Date.now())
   const haptic = useHaptic()
   const navRef = useRef<HTMLElement>(null)
+
+  const focusCountsDown = Boolean(
+    activeFocusTimer &&
+    activeFocusTimer.mode !== 'stopwatch' &&
+    activeFocusTimer.plannedDurationMs !== null,
+  )
+  const focusTimeMs = activeFocusTimer
+    ? focusCountsDown
+      ? getActiveRemainingMs(activeFocusTimer, focusClock) ?? 0
+      : getActiveElapsedMs(activeFocusTimer, focusClock)
+    : 0
+  const focusTimeLabel = activeFocusTimer
+    ? formatNavTimer(focusTimeMs, focusCountsDown)
+    : null
+  const focusActivityLabel = activeFocusTimer
+    ? `${activeFocusTimer.phase === 'focus'
+      ? 'Focus session'
+      : activeFocusTimer.phase === 'short-break'
+        ? 'Short break'
+        : 'Long break'} ${activeFocusTimer.status}`
+    : null
+
+  useEffect(() => {
+    if (!activeFocusTimer || activeFocusTimer.status === 'paused') return
+    setFocusClock(Date.now())
+    const tick = window.setInterval(() => setFocusClock(Date.now()), 1_000)
+    return () => window.clearInterval(tick)
+  }, [activeFocusTimer?.id, activeFocusTimer?.status])
 
   const items: NavItem[] = [
     { screen: 'feed',     icon: faHouse,      label: 'Feed' },
     { screen: 'revise',   icon: faBookOpen,   label: 'Revise' },
     { screen: 'maps',     icon: faEarthAsia,  label: 'Maps' },
+    { screen: 'focus',    icon: faStopwatch,  label: 'Focus' },
     { screen: 'practice', icon: faDumbbell,   label: 'Practice' },
-    { screen: 'profile',  icon: faUser,       label: 'Profile' },
   ]
 
   async function handleTap(item: NavItem) {
@@ -73,21 +122,30 @@ export function BottomNav() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 7,
+        gap: 5,
+        width: 'calc(100% - 18px)',
+        maxWidth: 430,
         zIndex: 100,
       }}
     >
       {items.map((item) => {
         const isActive = item.screen ? activeScreen === item.screen : false
+        const isFocusItem = item.screen === 'focus'
+        const itemLabel = isFocusItem && focusActivityLabel && focusTimeLabel
+          ? `${item.label}, ${focusActivityLabel}, ${focusTimeLabel} ${focusCountsDown ? 'remaining' : 'elapsed'}`
+          : item.label
         return (
           <button
             key={item.label}
             onClick={() => handleTap(item)}
-            className={`nav-item ${isActive ? 'active' : ''}`}
-            aria-label={item.label}
+            className={`nav-item ${isActive ? 'active' : ''} ${isFocusItem && activeFocusTimer ? `focus-timer-active focus-timer-${activeFocusTimer.status}` : ''}`}
+            aria-label={itemLabel}
             aria-current={isActive ? 'page' : undefined}
             style={{
-              width: 62,
+              width: 'clamp(46px, 14vw, 62px)',
+              minWidth: 0,
+              flex: '1 1 0',
+              maxWidth: 62,
               height: 58,
               borderRadius: 18,
               display: 'flex',
@@ -123,7 +181,20 @@ export function BottomNav() {
                 transform: isActive ? 'scale(1.08)' : 'scale(1)',
               }}
             />
-            <span className="nav-label" style={{ display: 'block' }}>{item.label}</span>
+            {isFocusItem && activeFocusTimer && (
+              <span
+                className={`focus-nav-status ${activeFocusTimer.status}`}
+                data-phase={activeFocusTimer.phase}
+                title={focusActivityLabel ?? undefined}
+                aria-hidden="true"
+              />
+            )}
+            <span
+              className={`nav-label ${isFocusItem && activeFocusTimer ? `nav-timer-label ${activeFocusTimer.status}` : ''}`}
+              style={{ display: 'block' }}
+            >
+              {isFocusItem && focusTimeLabel ? focusTimeLabel : item.label}
+            </span>
           </button>
         )
       })}

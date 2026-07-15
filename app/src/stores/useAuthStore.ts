@@ -8,6 +8,7 @@ import {
   type PenniAuthProvider,
 } from '@/lib/authClient'
 import { prepareStudentState } from '@/lib/studentDataClient'
+import { useFocusStore } from '@/stores/useFocusStore'
 
 const USER_KEY = 'penni.auth.user'
 const PROFILE_KEY = 'penni.auth.profile'
@@ -129,7 +130,8 @@ async function readCloudProfile(userId: string): Promise<StudentProfile | null> 
 }
 
 function clearAccountCache() {
-  [USER_KEY, PROFILE_KEY, GUEST_KEY, 'u4ob', 'u4stats', 'u4set', 'u4qbm', 'u4mq', 'u4bm']
+  useFocusStore.getState().resetFocusData();
+  [USER_KEY, PROFILE_KEY, GUEST_KEY, 'u4ob', 'u4stats', 'u4set', 'u4qbm', 'u4mq', 'u4bm', 'penni.focus.v1']
     .forEach(key => localStorage.removeItem(key))
 }
 

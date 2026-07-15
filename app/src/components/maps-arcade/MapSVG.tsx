@@ -184,6 +184,7 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
     const { width, height } = wrap.getBoundingClientRect()
     const w = Math.max(320, Math.round(width))
     const h = Math.max(320, Math.round(height))
+    const coarsePointer = window.matchMedia?.('(pointer: coarse)').matches ?? false
     const parkLearnSideDock = view === 'parks' && phase === 'learn' && w >= 700 && w / h > 1.25
     const parkLearnDockWidth = Math.min(330, Math.max(270, w * 0.36))
     const svg = d3.select(svgEl).attr('viewBox', `0 0 ${w} ${h}`)
@@ -750,7 +751,7 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
         })
     }
 
-    if (!reducedMotion()) {
+    if (!reducedMotion() && !coarsePointer) {
       const focusKey = [
         view,
         activeContinent,

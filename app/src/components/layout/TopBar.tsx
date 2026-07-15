@@ -3,14 +3,12 @@ import {
   faArrowLeft,
   faBookmark,
   faMagnifyingGlass,
-  faMoon,
-  faSun,
   faFileImport,
   faMapLocationDot,
 } from '@fortawesome/free-solid-svg-icons'
-import { useThemeStore } from '@/stores/useThemeStore'
 import { useAppStore } from '@/stores/useAppStore'
-import { themeWipe } from '@/anim/animations'
+import { useAuthStore } from '@/stores/useAuthStore'
+import { ProfileAvatar } from '@/components/profile/ProfileAvatar'
 
 interface TopBarProps {
   showBack?: boolean
@@ -19,8 +17,8 @@ interface TopBarProps {
 }
 
 export function TopBar({ showBack, onBack, onOpenUpload }: TopBarProps) {
-  const { theme, toggle } = useThemeStore()
   const { setScreen, setOverlay, categoryFilter, setCategoryFilter } = useAppStore()
+  const { profile, user } = useAuthStore()
 
   function handleBack() {
     if (onBack) {
@@ -34,7 +32,7 @@ export function TopBar({ showBack, onBack, onOpenUpload }: TopBarProps) {
 
   return (
     <div
-      className="top-bar"
+      className={`top-bar ${isBackVisible ? 'has-back' : ''}`}
       style={{
         height: 58,
         display: 'flex',
@@ -48,11 +46,12 @@ export function TopBar({ showBack, onBack, onOpenUpload }: TopBarProps) {
       }}
     >
       {/* Left: back button + title */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div className="top-bar-left" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         {isBackVisible && (
           <button
             onClick={handleBack}
-            className="glass-icon-btn"
+            aria-label="Go back"
+            className="glass-icon-btn top-back-button"
             style={{
               width: 42,
               height: 42,
@@ -78,12 +77,12 @@ export function TopBar({ showBack, onBack, onOpenUpload }: TopBarProps) {
       </div>
 
       {/* Right: action buttons */}
-      <div style={{ display: 'flex', gap: 9 }}>
+      <div className="top-actions" style={{ display: 'flex', gap: 9 }}>
         {onOpenUpload && (
           <button
             onClick={onOpenUpload}
             aria-label="Import content"
-            className="glass-icon-btn"
+            className="glass-icon-btn top-import-button"
             style={{
               width: 42,
               height: 42,
@@ -106,7 +105,7 @@ export function TopBar({ showBack, onBack, onOpenUpload }: TopBarProps) {
         <button
           onClick={() => setScreen('bookmarks')}
           aria-label="Bookmarks"
-          className="glass-icon-btn"
+          className="glass-icon-btn top-bookmarks-button"
           style={{
             width: 42,
             height: 42,
@@ -128,7 +127,7 @@ export function TopBar({ showBack, onBack, onOpenUpload }: TopBarProps) {
         <button
           onClick={() => setOverlay('news-globe')}
           aria-label="Open News Globe"
-          className="glass-icon-btn"
+          className="glass-icon-btn top-maps-button"
           style={{
             width: 42,
             height: 42,
@@ -150,7 +149,7 @@ export function TopBar({ showBack, onBack, onOpenUpload }: TopBarProps) {
         <button
           onClick={() => setScreen('search')}
           aria-label="Search"
-          className="glass-icon-btn"
+          className="glass-icon-btn top-search-button"
           style={{
             width: 42,
             height: 42,
@@ -170,12 +169,9 @@ export function TopBar({ showBack, onBack, onOpenUpload }: TopBarProps) {
           <FontAwesomeIcon icon={faMagnifyingGlass} />
         </button>
         <button
-          onClick={(e) => {
-            const r = e.currentTarget.getBoundingClientRect()
-            themeWipe(r.left + r.width / 2, r.top + r.height / 2, toggle)
-          }}
-          aria-label="Toggle theme"
-          className="glass-icon-btn"
+          onClick={() => setScreen('profile')}
+          aria-label="Open account and profile"
+          className="glass-icon-btn top-account-button"
           style={{
             width: 42,
             height: 42,
@@ -184,7 +180,6 @@ export function TopBar({ showBack, onBack, onOpenUpload }: TopBarProps) {
             background: 'var(--panel)',
             backdropFilter: 'blur(16px)',
             color: 'var(--on)',
-            fontSize: 15,
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -192,7 +187,7 @@ export function TopBar({ showBack, onBack, onOpenUpload }: TopBarProps) {
             transition: 'all 0.2s',
           }}
         >
-          <FontAwesomeIcon icon={theme === 'light' ? faMoon : faSun} />
+          <ProfileAvatar profile={profile} user={user} size="sm" />
         </button>
       </div>
     </div>

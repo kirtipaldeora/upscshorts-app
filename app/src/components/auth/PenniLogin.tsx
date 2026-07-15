@@ -23,7 +23,7 @@ const FEATURE_TRACK = [
   { label: 'Learn', title: 'Deep Dive', icon: faBookOpen, color: '#8b7cf6', body: 'Every article becomes a structured UPSC explanation.' },
   { label: 'Practice', title: 'Daily Mission', icon: faDumbbell, color: '#ff8b8b', body: 'Question journeys that build habit without clutter.' },
   { label: 'Map', title: 'Atlas Arcade', icon: faEarthAsia, color: '#55c99b', body: 'Geography practice with clean motion and memory cues.' },
-  { label: 'Revise', title: 'Recall Loop', icon: faLayerGroup, color: '#ffb23f', body: 'Mistakes, bookmarks and weak areas come back at the right time.' },
+  { label: 'Revise', title: 'Revision Vault', icon: faLayerGroup, color: '#ffb23f', body: 'Articles, mistakes, bookmarks and weak areas stay organised for timely revision.' },
 ]
 
 export function PenniLogin({ onAuthenticated }: PenniLoginProps) {
