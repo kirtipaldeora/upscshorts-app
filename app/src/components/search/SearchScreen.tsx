@@ -9,7 +9,7 @@ import { useHaptic } from '@/hooks/useHaptic'
 import type { Article, Category } from '@/types/article'
 
 export function SearchScreen() {
-  const { setScreen, articlesByDate, setActiveArticle, setOverlay } = useAppStore()
+  const { goBack: goBackScreen, articlesByDate, setActiveArticle, setOverlay } = useAppStore()
   const [query, setQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState<Category | 'all'>('all')
   const rootRef = useRef<HTMLDivElement>(null)
@@ -59,7 +59,7 @@ export function SearchScreen() {
 
   async function goBack() {
     await haptic()
-    setScreen('feed')
+    goBackScreen('feed')
   }
 
   async function chooseCategory(cat: Category | 'all') {

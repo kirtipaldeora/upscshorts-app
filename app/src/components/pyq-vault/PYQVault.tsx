@@ -10,6 +10,7 @@ import {
   faMagnifyingGlass,
   faPlay,
   faRotateLeft,
+  faSliders,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons'
 import { faBookmark as faBookmarkRegular } from '@fortawesome/free-regular-svg-icons'
@@ -80,6 +81,7 @@ export function PYQVault() {
   const [detailMode, setDetailMode] = useState<'question' | 'solution'>('question')
   const [quizQuestions, setQuizQuestions] = useState<PyqQuestion[] | null>(null)
   const [toast, setToast] = useState('')
+  const [filtersOpen, setFiltersOpen] = useState(false)
   useAllArticles()
 
   const currentQuestionEntries = useMemo(() => Object.values(articlesByDate).flat().flatMap(article =>
@@ -186,6 +188,8 @@ export function PYQVault() {
 
   const attempted = useMemo(() => results.filter((question) => stats.a[pyqQuestionId(question)]).length, [results, stats.a])
   const bookmarkedCount = useMemo(() => results.filter((question) => questionBookmarks.includes(pyqQuestionId(question))).length, [questionBookmarks, results])
+  const activeFilterCount = [activeYear, subject, subtopic, difficulty]
+    .filter(value => value !== 'all').length + (bookmarkedOnly ? 1 : 0)
 
   useEffect(() => {
     setVisibleCount(24)
@@ -237,8 +241,8 @@ export function PYQVault() {
           <h2>PYQ Vault</h2>
         </div>
         <div className="pyqv-mode-switch" role="tablist" aria-label="Examination stage">
-          <button className={mode === 'prelims' ? 'active' : ''} onClick={() => { setMode('prelims'); setSelected(null) }}>Prelims</button>
-          <button className={mode === 'mains' ? 'active' : ''} onClick={() => { setMode('mains'); setSelected(null) }}>Mains</button>
+          <button className={mode === 'prelims' ? 'active' : ''} onClick={() => { setMode('prelims'); setSelected(null); setFiltersOpen(false) }}>Prelims</button>
+          <button className={mode === 'mains' ? 'active' : ''} onClick={() => { setMode('mains'); setSelected(null); setFiltersOpen(false) }}>Mains</button>
         </div>
       </header>
 
@@ -264,7 +268,25 @@ export function PYQVault() {
           </div>
         </section>
 
-        <section className="pyqv-controls" aria-label="Question filters">
+        <div className="vault-mobile-tools" aria-label="PYQ tools">
+          <button onClick={() => setFiltersOpen(true)}>
+            <FontAwesomeIcon icon={faMagnifyingGlass} />
+            <span>{query || 'Search PYQs'}</span>
+          </button>
+          <button onClick={() => setFiltersOpen(true)}>
+            <FontAwesomeIcon icon={faSliders} />
+            <span>Filters</span>
+            {activeFilterCount > 0 && <b>{activeFilterCount}</b>}
+          </button>
+        </div>
+        {filtersOpen && <button className="vault-filter-scrim" onClick={() => setFiltersOpen(false)} aria-label="Close filters" />}
+
+        <section className={`pyqv-controls vault-filter-surface ${filtersOpen ? 'mobile-open' : ''}`} aria-label="Question filters">
+          <div className="vault-mobile-sheet-head">
+            <i />
+            <div><b>Search and filters</b><span>{results.length.toLocaleString('en-IN')} questions match</span></div>
+            <button onClick={() => setFiltersOpen(false)} aria-label="Close filters"><FontAwesomeIcon icon={faXmark} /></button>
+          </div>
           <div className="pyqv-search">
             <FontAwesomeIcon icon={faMagnifyingGlass} />
             <input
@@ -315,6 +337,7 @@ export function PYQVault() {
             </button>
             <button className="pyqv-reset" onClick={clearFilters}><FontAwesomeIcon icon={faRotateLeft} /> Reset</button>
           </div>
+          <button className="vault-mobile-apply" onClick={() => setFiltersOpen(false)}>Show {results.length.toLocaleString('en-IN')} questions</button>
         </section>
 
         <section className="pyqv-practice-bar">
@@ -336,7 +359,6 @@ export function PYQVault() {
               placeholder="Custom"
               aria-label="Custom question count"
             />
-            <button className={practiceCount === 'all' ? 'active' : ''} onClick={() => setPracticeCount('all')}>All</button>
           </div>
           <button className="pyqv-start" onClick={() => startPractice(results)} disabled={!results.length || loading}>
             <FontAwesomeIcon icon={faPlay} /> Start test

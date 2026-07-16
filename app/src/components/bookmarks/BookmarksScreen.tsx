@@ -28,7 +28,7 @@ interface BookmarksScreenProps {
 }
 
 export function BookmarksScreen({ onShowToast }: BookmarksScreenProps) {
-  const { setScreen, articlesByDate, setActiveArticle, setOverlay } = useAppStore()
+  const { goBack, articlesByDate, setActiveArticle, setOverlay } = useAppStore()
   const { bookmarkedIds, toggle } = useBookmarkStore()
   const { questionBookmarks, toggleQbm, pyqData } = usePracticeStore()
   const [tab, setTab] = useState<Tab>('articles')
@@ -82,7 +82,7 @@ export function BookmarksScreen({ onShowToast }: BookmarksScreenProps) {
   return (
     <div className="bookmarks-shell">
       <header className="bookmarks-header">
-        <button className="icon-btn" onClick={() => setScreen('feed')} aria-label="Back"><FontAwesomeIcon icon={faArrowLeft} /></button>
+        <button className="icon-btn" onClick={() => goBack('feed')} aria-label="Back"><FontAwesomeIcon icon={faArrowLeft} /></button>
         <div><span>Personal revision library</span><h2>Bookmarks</h2></div>
       </header>
 

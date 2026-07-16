@@ -761,7 +761,7 @@ function loadRiverGeometry(
 export function MapsArcade() {
   const setOverlay = useAppStore(s => s.setOverlay)
   const overlayScreen = useAppStore(s => s.overlayScreen)
-  const setScreen = useAppStore(s => s.setScreen)
+  const goBackScreen = useAppStore(s => s.goBack)
   const recordArcadeAnswer = usePracticeStore(s => s.recordArcadeAnswer)
   const [worldData, setWorldData] = useState<WorldData | null>(() => cachedWorldData)
   const [indiaData, setIndiaData] = useState<IndiaData | null>(() => cachedIndiaData)
@@ -1272,7 +1272,7 @@ export function MapsArcade() {
   function goBack() {
     if (state.screen === 'home') {
       if (overlayScreen === 'maps-arcade') setOverlay(null)
-      else setScreen('feed')
+      else goBackScreen('feed')
       return
     }
     if (state.screen === 'play' || state.screen === 'results') {

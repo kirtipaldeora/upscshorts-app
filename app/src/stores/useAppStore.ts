@@ -35,7 +35,9 @@ interface AppStore {
 
   // ─── Navigation ─────────────────────────────────────────────
   activeScreen: Screen
+  screenHistory: Screen[]
   setScreen: (s: Screen) => void
+  goBack: (fallback?: Screen) => void
   overlayScreen: OverlayScreen
   setOverlay: (s: OverlayScreen) => void
 
@@ -93,7 +95,17 @@ export const useAppStore = create<AppStore>()((set, get) => ({
 
   // Navigation
   activeScreen: 'feed',
-  setScreen: (s) => set({ activeScreen: s }),
+  screenHistory: [],
+  setScreen: (s) => set((state) => {
+    if (state.activeScreen === s) return {}
+    const history = [...state.screenHistory, state.activeScreen]
+    return { activeScreen: s, screenHistory: history.slice(-12) }
+  }),
+  goBack: (fallback = 'feed') => set((state) => {
+    const history = [...state.screenHistory]
+    const previous = history.pop() ?? fallback
+    return { activeScreen: previous, screenHistory: history }
+  }),
   overlayScreen: null,
   setOverlay: (s) => set({ overlayScreen: s }),
 

@@ -10,6 +10,7 @@ import {
   faMagnifyingGlass,
   faPlay,
   faRotateLeft,
+  faSliders,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons'
 import { faBookmark as faBookmarkRegular } from '@fortawesome/free-regular-svg-icons'
@@ -68,24 +69,28 @@ function monthLabel(month: string) {
 function QuestionStem({ text, compact = false }: { text: string; compact?: boolean }) {
   const structured = splitUPSCStem(text)
   if (!structured.statements.length) return <p className="pyqv-question-text">{text}</p>
+  const shownStatements = compact ? structured.statements.slice(0, 2) : structured.statements
   return (
     <div className={`pyqv-question-text structured ${compact ? 'compact' : ''}`}>
       {structured.lead && <p>{structured.lead}</p>}
       <ol className="upsc-statement-list">
-        {structured.statements.map((statement, index) => (
+        {shownStatements.map((statement, index) => (
           <li key={index}>
             <span className="upsc-statement-label">{structured.statementLabels[index] ?? index + 1}</span>
             <span className="upsc-statement-text">{statement}</span>
           </li>
         ))}
       </ol>
+      {compact && structured.statements.length > shownStatements.length && (
+        <span className="pyqv-more-statements">+{structured.statements.length - shownStatements.length} more statement{structured.statements.length - shownStatements.length > 1 ? 's' : ''}</span>
+      )}
       {structured.ask && <p className="qz-ask">{structured.ask}</p>}
     </div>
   )
 }
 
 export function ReviseScreen() {
-  const { setScreen, articlesByDate, setActiveArticle, setOverlay } = useAppStore()
+  const { goBack, articlesByDate, setActiveArticle, setOverlay } = useAppStore()
   const { toggle, isBookmarked } = useBookmarkStore()
   const { stats, questionBookmarks, toggleQbm, pyqData, pyqReady, setPyqData } = usePracticeStore()
   const [mode, setMode] = useState<VaultMode>(loadVaultMode)
@@ -102,6 +107,7 @@ export function ReviseScreen() {
   const [selected, setSelected] = useState<QuestionEntry | null>(null)
   const [showAnswer, setShowAnswer] = useState(false)
   const [toast, setToast] = useState('')
+  const [filtersOpen, setFiltersOpen] = useState(false)
   const { loading: articlesLoading } = useAllArticles()
 
   useEffect(() => {
@@ -211,6 +217,8 @@ export function ReviseScreen() {
   const attempted = questionResults.filter(entry => stats.a[entry.question.id]).length
   const incorrect = questionResults.filter(entry => stats.a[entry.question.id]?.[0] === 0).length
   const resultCount = mode === 'questions' ? questionResults.length : articleResults.length
+  const activeFilterCount = [year, month, subject, gsPaper, subtopic, status]
+    .filter(value => value !== 'all').length
   const linkCandidateArticles = useMemo(() => {
     const candidates = new Map<string, Article>()
     if (mode === 'questions') {
@@ -264,6 +272,7 @@ export function ReviseScreen() {
   function switchMode(next: VaultMode) {
     setMode(next)
     setSelected(null)
+    setFiltersOpen(false)
   }
 
   if (quizQuestions) {
@@ -282,7 +291,7 @@ export function ReviseScreen() {
   return (
     <div className={`pyqv-shell ca-vault-shell mode-${mode}`}>
       <header className="pyqv-header">
-        <button className="pyqv-icon-btn" onClick={() => setScreen('feed')} aria-label="Close Current Affairs Vault">
+        <button className="pyqv-icon-btn" onClick={() => goBack('feed')} aria-label="Back from Current Affairs Vault">
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
         <div>
@@ -317,7 +326,25 @@ export function ReviseScreen() {
           </div>
         </section>
 
-        {mode === 'questions' && <section className="pyqv-controls" aria-label="Current affairs filters">
+        <div className="vault-mobile-tools" aria-label="Archive tools">
+          <button onClick={() => setFiltersOpen(true)}>
+            <FontAwesomeIcon icon={faMagnifyingGlass} />
+            <span>{query || `Search ${mode}`}</span>
+          </button>
+          <button onClick={() => setFiltersOpen(true)}>
+            <FontAwesomeIcon icon={faSliders} />
+            <span>Filters</span>
+            {activeFilterCount > 0 && <b>{activeFilterCount}</b>}
+          </button>
+        </div>
+        {filtersOpen && <button className="vault-filter-scrim" onClick={() => setFiltersOpen(false)} aria-label="Close filters" />}
+
+        {mode === 'questions' && <section className={`pyqv-controls vault-filter-surface ${filtersOpen ? 'mobile-open' : ''}`} aria-label="Current affairs filters">
+          <div className="vault-mobile-sheet-head">
+            <i />
+            <div><b>Search and filters</b><span>{questionResults.length} questions match</span></div>
+            <button onClick={() => setFiltersOpen(false)} aria-label="Close filters"><FontAwesomeIcon icon={faXmark} /></button>
+          </div>
           <div className="pyqv-search">
             <FontAwesomeIcon icon={faMagnifyingGlass} />
             <input value={query} onChange={event => setQuery(event.target.value)} placeholder="Search questions, issues, concepts or sub-topics" />
@@ -337,10 +364,16 @@ export function ReviseScreen() {
             <div className="ca-vault-active-filter">{subtopic !== 'all' ? subtopic : subject !== 'all' ? subject : 'All current affairs'}</div>
             <button className="pyqv-reset" onClick={clearFilters}><FontAwesomeIcon icon={faRotateLeft} /> Reset filters</button>
           </div>
+          <button className="vault-mobile-apply" onClick={() => setFiltersOpen(false)}>Show {questionResults.length} questions</button>
         </section>}
 
         {mode === 'articles' && (
-          <section className="ca-article-toolbar">
+          <section className={`ca-article-toolbar vault-filter-surface ${filtersOpen ? 'mobile-open' : ''}`}>
+            <div className="vault-mobile-sheet-head">
+              <i />
+              <div><b>Search and filters</b><span>{articleResults.length} articles match</span></div>
+              <button onClick={() => setFiltersOpen(false)} aria-label="Close filters"><FontAwesomeIcon icon={faXmark} /></button>
+            </div>
             <div className="pyqv-search"><FontAwesomeIcon icon={faMagnifyingGlass} /><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Search the article archive" />{query && <button onClick={() => setQuery('')}><FontAwesomeIcon icon={faXmark} /></button>}</div>
             <div className="ca-article-filter-grid">
               <label><span>Year</span><div><select value={year} onChange={event => { setYear(event.target.value); setMonth('all') }}><option value="all">All years</option>{years.map(item => <option key={item}>{item}</option>)}</select><FontAwesomeIcon icon={faChevronDown} /></div></label>
@@ -351,6 +384,7 @@ export function ReviseScreen() {
             </div>
             <div className="ca-article-subjects"><button className={subject === 'all' ? 'active' : ''} onClick={() => setSubject('all')}>All</button>{subjects.map(item => <button key={item} className={subject === item ? 'active' : ''} onClick={() => setSubject(item)}>{item}</button>)}</div>
             <div className="ca-article-filter-footer"><span>{articleResults.length} articles match</span><button onClick={clearFilters}><FontAwesomeIcon icon={faRotateLeft} /> Reset</button></div>
+            <button className="vault-mobile-apply" onClick={() => setFiltersOpen(false)}>Show {articleResults.length} articles</button>
           </section>
         )}
 

@@ -68,6 +68,7 @@ async function prepareProfilePhoto(file: File) {
 export function ProfileScreen({ onOpenSettings, onOpenMainsRecord, onShowToast }: ProfileScreenProps) {
   const {
     setScreen,
+    goBack,
   } = useAppStore()
   const { bookmarkedIds } = useBookmarkStore()
   const { stats, settings, saveSettings } = usePracticeStore()
@@ -118,7 +119,7 @@ export function ProfileScreen({ onOpenSettings, onOpenMainsRecord, onShowToast }
   }, [targetPct])
 
   async function handleBack() {
-    await haptic(); setScreen('feed')
+    await haptic(); goBack('feed')
   }
 
   async function handleSaveAccount() {

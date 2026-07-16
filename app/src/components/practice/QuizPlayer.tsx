@@ -1,14 +1,20 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faXmark,
   faCheck,
   faArrowRight,
+  faChevronLeft,
   faBookmark as faBookmarkSolid,
   faClock,
   faBullseye,
   faChevronDown,
+  faFlag,
+  faListOl,
   faRotateLeft,
+  faShieldHalved,
+  faTriangleExclamation,
+  faBookOpen,
 } from '@fortawesome/free-solid-svg-icons'
 import { faBookmark as faBookmarkReg } from '@fortawesome/free-regular-svg-icons'
 import { usePracticeStore } from '@/stores/usePracticeStore'
@@ -32,6 +38,7 @@ interface QuizPlayerProps {
 
 type AnsweredState = { picked: number; correct: boolean } | null
 type TestAnswer = { picked: number | null; correct: boolean; skipped: boolean }
+type FinishReason = 'submitted' | 'time' | 'exit'
 
 export function QuizPlayer({ title, questions, eyebrow, description, onClose, onShowToast }: QuizPlayerProps) {
   const { settings, recordAnswer, toggleQbm, questionBookmarks, pyqData, pyqReady, setPyqData } = usePracticeStore()
@@ -46,6 +53,14 @@ export function QuizPlayer({ title, questions, eyebrow, description, onClose, on
   const [explanationOpen, setExplanationOpen] = useState(false)
   const [startedAt, setStartedAt] = useState(Date.now())
   const [elapsedMs, setElapsedMs] = useState(0)
+  const [remainingSeconds, setRemainingSeconds] = useState(() => Math.max(1, Math.ceil(questions.length * 1.2)) * 60)
+  const [visited, setVisited] = useState<Set<number>>(() => new Set([0]))
+  const [reviewMarked, setReviewMarked] = useState<Set<number>>(new Set())
+  const [paletteOpen, setPaletteOpen] = useState(false)
+  const [exitConfirm, setExitConfirm] = useState(false)
+  const [submitConfirm, setSubmitConfirm] = useState(false)
+  const [finishReason, setFinishReason] = useState<FinishReason>('submitted')
+  const examRecorded = useRef(false)
 
   const q = questions[idx]
   const total = questions.length
@@ -93,31 +108,65 @@ export function QuizPlayer({ title, questions, eyebrow, description, onClose, on
     })
   }
 
+  function goToQuestion(nextIndex: number) {
+    const bounded = Math.max(0, Math.min(total - 1, nextIndex))
+    const saved = answers[bounded]
+    setIdx(bounded)
+    setAnswered(saved?.picked !== null && saved?.picked !== undefined
+      ? { picked: saved.picked, correct: saved.correct }
+      : null)
+    setExplanationOpen(testMode === 'learn' && Boolean(saved?.picked !== null && saved?.picked !== undefined))
+    setVisited(previous => new Set(previous).add(bounded))
+    setPaletteOpen(false)
+  }
+
   function next() {
-    if (testMode === 'exam' && answered) {
-      recordAnswer(q.id, answered.correct, q.subject, settings.target, onShowToast)
+    if (idx + 1 >= total) {
+      if (testMode === 'exam') setPaletteOpen(true)
+      else finish()
+      return
     }
-    if (idx + 1 >= total) { finish(); return }
-    setIdx(i => i + 1)
-    setAnswered(null)
-    setExplanationOpen(false)
+    goToQuestion(idx + 1)
   }
 
   function retry() {
-    setIdx(0); setAnswers({}); setAnswered(null); setDone(false); setReviewMode(false); setExplanationOpen(false); setStartedAt(Date.now()); setElapsedMs(0)
+    const now = Date.now()
+    setIdx(0)
+    setAnswers({})
+    setAnswered(null)
+    setDone(false)
+    setReviewMode(false)
+    setExplanationOpen(false)
+    setStartedAt(now)
+    setElapsedMs(0)
+    setRemainingSeconds(Math.max(1, Math.ceil(total * 1.2)) * 60)
+    setVisited(new Set([0]))
+    setReviewMarked(new Set())
+    setPaletteOpen(false)
+    setExitConfirm(false)
+    setSubmitConfirm(false)
+    setFinishReason('submitted')
+    examRecorded.current = false
   }
 
-  function finish() {
-    setElapsedMs(Date.now() - startedAt)
+  function finish(reason: FinishReason = 'submitted') {
+    setElapsedMs(Math.max(0, Date.now() - startedAt))
+    setFinishReason(reason)
+    setPaletteOpen(false)
+    setExitConfirm(false)
+    setSubmitConfirm(false)
     setDone(true)
   }
 
   function skip() {
     if (answered) return
     setAnswers(prev => ({ ...prev, [idx]: { picked: null, correct: false, skipped: true } }))
-    if (idx + 1 >= total) { finish(); return }
-    setIdx(i => i + 1)
-    setExplanationOpen(false)
+    if (idx + 1 >= total) {
+      if (testMode === 'exam') setPaletteOpen(true)
+      else finish()
+      return
+    }
+    goToQuestion(idx + 1)
   }
 
   function clearSelection() {
@@ -130,10 +179,42 @@ export function QuizPlayer({ title, questions, eyebrow, description, onClose, on
     })
   }
 
+  function toggleReview() {
+    setReviewMarked(previous => {
+      const nextMarked = new Set(previous)
+      if (nextMarked.has(idx)) nextMarked.delete(idx)
+      else nextMarked.add(idx)
+      return nextMarked
+    })
+  }
+
+  function requestClose() {
+    if (started && !done && testMode === 'exam') {
+      setExitConfirm(true)
+      return
+    }
+    onClose()
+  }
+
+  function beginTest() {
+    const now = Date.now()
+    setStartedAt(now)
+    setRemainingSeconds(Math.max(1, Math.ceil(total * 1.2)) * 60)
+    setVisited(new Set([0]))
+    setStarted(true)
+  }
+
   function formatTime(ms: number) {
     const seconds = Math.max(0, Math.round(ms / 1000))
     const mm = String(Math.floor(seconds / 60)).padStart(2, '0')
     const ss = String(seconds % 60).padStart(2, '0')
+    return `${mm}:${ss}`
+  }
+
+  function formatCountdown(seconds: number) {
+    const safe = Math.max(0, seconds)
+    const mm = String(Math.floor(safe / 60)).padStart(2, '0')
+    const ss = String(safe % 60).padStart(2, '0')
     return `${mm}:${ss}`
   }
 
@@ -148,6 +229,9 @@ export function QuizPlayer({ title, questions, eyebrow, description, onClose, on
   const maxMarks = total * 2
   const marksText = `${Number(marks.toFixed(2))} / ${maxMarks}`
   const estimatedMinutes = Math.max(1, Math.ceil(total * 1.2))
+  const examDurationSeconds = estimatedMinutes * 60
+  const examAnsweredCount = Object.values(answers).filter(answer => answer.picked !== null).length
+  const examUnansweredCount = total - examAnsweredCount
   const subjects = Array.from(new Set(questions.map(item => item.subject).filter(Boolean)))
   const subjectAnalysis = subjects.map(subject => {
     const indices = questions.map((item, index) => item.subject === subject ? index : -1).filter(index => index >= 0)
@@ -155,6 +239,44 @@ export function QuizPlayer({ title, questions, eyebrow, description, onClose, on
     const correct = indices.filter(index => answerList[index].correct).length
     return { subject, total: indices.length, attempted, correct }
   })
+
+  useEffect(() => {
+    if (!started || done || testMode !== 'exam') return
+    const tick = () => {
+      const next = Math.max(0, Math.ceil((startedAt + examDurationSeconds * 1_000 - Date.now()) / 1_000))
+      setRemainingSeconds(next)
+      if (next > 0) return
+      setElapsedMs(examDurationSeconds * 1_000)
+      setFinishReason('time')
+      setPaletteOpen(false)
+      setExitConfirm(false)
+      setSubmitConfirm(false)
+      setDone(true)
+    }
+    tick()
+    const timer = window.setInterval(tick, 500)
+    return () => window.clearInterval(timer)
+  }, [done, examDurationSeconds, started, startedAt, testMode])
+
+  useEffect(() => {
+    if (!started || done || testMode !== 'exam') return
+    const guard = (event: BeforeUnloadEvent) => {
+      event.preventDefault()
+      event.returnValue = ''
+    }
+    window.addEventListener('beforeunload', guard)
+    return () => window.removeEventListener('beforeunload', guard)
+  }, [done, started, testMode])
+
+  useEffect(() => {
+    if (!done || testMode !== 'exam' || examRecorded.current) return
+    examRecorded.current = true
+    Object.entries(answers).forEach(([index, answer]) => {
+      if (answer.picked === null) return
+      const question = questions[Number(index)]
+      if (question) recordAnswer(question.id, answer.correct, question.subject, settings.target, onShowToast)
+    })
+  }, [answers, done, onShowToast, questions, recordAnswer, settings.target, testMode])
 
   if (!started) {
     return (
@@ -178,17 +300,35 @@ export function QuizPlayer({ title, questions, eyebrow, description, onClose, on
           </section>
 
           <section className="qz-mode-card">
-            <div><span>Attempt mode</span><p>You can change the feedback style before starting.</p></div>
+            <div><span>Choose your attempt</span><p>Exam is assessed and timed. Learn gives feedback after every answer.</p></div>
             <button className={testMode === 'exam' ? 'active' : ''} onClick={() => setTestMode('exam')}>
-              <b>Exam mode</b><span>No answers or explanations until submission</span>
+              <FontAwesomeIcon icon={faShieldHalved} />
+              <b>Exam mode</b><span>Timed test with UPSC marking and no answers until submission</span>
             </button>
             <button className={testMode === 'learn' ? 'active' : ''} onClick={() => setTestMode('learn')}>
+              <FontAwesomeIcon icon={faBookOpen} />
               <b>Learn mode</b><span>Check each answer and explanation as you go</span>
             </button>
           </section>
 
-          <div className="qz-intro-note"><b>Before you begin</b><p>Unanswered questions receive no penalty. Your result will include accuracy, attempt data and subject-wise performance.</p></div>
-          <button className="pn-btn qz-intro-start" onClick={() => { setStartedAt(Date.now()); setStarted(true) }}>Start test</button>
+          {testMode === 'exam' ? (
+            <section className="qz-rules-card">
+              <div className="qz-rules-title"><FontAwesomeIcon icon={faListOl} /><span><b>Test rules</b><small>Read before starting</small></span></div>
+              <ol>
+                <li><span>1</span><p>You have <b>{estimatedMinutes} minutes</b>. The test auto-submits when the timer reaches zero.</p></li>
+                <li><span>2</span><p>Each correct answer earns <b>2 marks</b>; each incorrect answer deducts <b>0.66 marks</b>.</p></li>
+                <li><span>3</span><p>Use the palette to revisit questions or mark them for review. Unanswered questions have no penalty.</p></li>
+                <li><span>4</span><p>Answers and explanations remain hidden until you submit the entire test.</p></li>
+              </ol>
+              <div className="qz-rules-warning"><FontAwesomeIcon icon={faTriangleExclamation} /><span>Closing the test will ask you to submit the current attempt.</span></div>
+            </section>
+          ) : (
+            <div className="qz-intro-note"><b>Learn at your pace</b><p>Your answer is checked immediately. You can read the explanation before moving to the next question.</p></div>
+          )}
+          <button className="pn-btn qz-intro-start" onClick={beginTest}>
+            {testMode === 'exam' ? 'Start exam' : 'Start learning'}
+            <FontAwesomeIcon icon={faArrowRight} />
+          </button>
         </div>
       </div>
     )
@@ -208,7 +348,10 @@ export function QuizPlayer({ title, questions, eyebrow, description, onClose, on
           {!reviewMode ? (
             <>
               <div className="qz-score-card">
-                <span className="qz-flag">Scorecard</span>
+                <span className={`qz-finish-reason ${finishReason}`}>
+                  <FontAwesomeIcon icon={testMode === 'learn' ? faCheck : finishReason === 'time' ? faClock : finishReason === 'exit' ? faTriangleExclamation : faCheck} />
+                  {testMode === 'learn' ? 'Learning set complete' : finishReason === 'time' ? 'Time expired · Auto-submitted' : finishReason === 'exit' ? 'Submitted while exiting' : 'Test submitted'}
+                </span>
                 <h3>Total Marks</h3>
                 <div className={`qz-marks ${marks >= maxMarks * 0.5 ? 'good' : 'low'}`}>{Number(marks.toFixed(2))}<span>/{maxMarks}</span></div>
                 <p>{pct >= 80 ? 'Excellent control. Keep building speed.' : pct >= 50 ? 'Good attempt. Review errors before the next set.' : "One test does not define you. Review, retry, improve."}</p>
@@ -283,34 +426,51 @@ export function QuizPlayer({ title, questions, eyebrow, description, onClose, on
   const structuredStem = splitUPSCStem(q.q)
 
   return (
-    <div className="quiz-overlay">
+    <div className={`quiz-overlay ${testMode === 'exam' ? 'qz-exam-shell' : 'qz-learn-shell'}`}>
       {/* Header */}
-      <div className="quiz-header">
-        <button className="qz-close" onClick={onClose} aria-label="Close test">
+      <div className={`quiz-header ${testMode === 'exam' ? 'qz-exam-header' : ''}`}>
+        <button className="qz-close" onClick={requestClose} aria-label="Close test">
           <FontAwesomeIcon icon={faXmark} />
         </button>
         <span className="qz-title">{title}</span>
-        <span className="qz-cnt">{idx + 1}<i>/{total}</i></span>
+        {testMode === 'exam' ? (
+          <>
+            <span className={`qz-exam-timer ${remainingSeconds <= Math.max(60, examDurationSeconds * .2) ? 'urgent' : ''}`}>
+              <FontAwesomeIcon icon={faClock} />{formatCountdown(remainingSeconds)}
+            </span>
+            <button className="qz-palette-trigger" onClick={() => setPaletteOpen(true)} aria-label="Open question palette">
+              <FontAwesomeIcon icon={faListOl} />
+            </button>
+          </>
+        ) : <span className="qz-cnt">{idx + 1}<i>/{total}</i></span>}
       </div>
 
-      <div className="qz-timeline" aria-label={`Question ${idx + 1} of ${total}`}>
-        {questions.map((item, i) => {
-          const state = answers[i]
-          const cls = [
-            i === idx ? 'current' : '',
-            testMode === 'exam' && state && !state.skipped ? 'answered' : '',
-            testMode === 'learn' && state?.correct ? 'ok' : '',
-            testMode === 'learn' && state && !state.correct && !state.skipped ? 'no' : '',
-            state?.skipped ? 'skip' : '',
-          ].filter(Boolean).join(' ')
-          return <span key={item.id} className={cls} title={`Question ${i + 1}`} />
-        })}
-      </div>
-
-      <div className={`qz-mode-indicator ${testMode}`}>
-        <b>{testMode === 'exam' ? 'Exam mode' : 'Learn mode'}</b>
-        <span>{testMode === 'exam' ? 'Select or change an option. Answers stay hidden until submission.' : 'Instant feedback and explanation after every answer.'}</span>
-      </div>
+      {testMode === 'exam' ? (
+        <div className="qz-exam-strip">
+          <span><b>Question {idx + 1}</b> of {total}</span>
+          <i>{answers[idx]?.picked !== null && answers[idx]?.picked !== undefined ? 'Response saved' : visited.has(idx) ? 'Not answered' : 'Not visited'}</i>
+          {reviewMarked.has(idx) && <em><FontAwesomeIcon icon={faFlag} /> Review</em>}
+        </div>
+      ) : (
+        <>
+          <div className="qz-timeline" aria-label={`Question ${idx + 1} of ${total}`}>
+            {questions.map((item, i) => {
+              const state = answers[i]
+              const cls = [
+                i === idx ? 'current' : '',
+                state?.correct ? 'ok' : '',
+                state && !state.correct && !state.skipped ? 'no' : '',
+                state?.skipped ? 'skip' : '',
+              ].filter(Boolean).join(' ')
+              return <span key={item.id} className={cls} title={`Question ${i + 1}`} />
+            })}
+          </div>
+          <div className="qz-mode-indicator learn">
+            <b>Learn mode</b>
+            <span>Instant feedback and explanation after every answer.</span>
+          </div>
+        </>
+      )}
 
       {/* Body */}
       <div className="quiz-body">
@@ -345,7 +505,7 @@ export function QuizPlayer({ title, questions, eyebrow, description, onClose, on
           ) : q.q}
         </div>
 
-        {currentRelatedPyqs.length > 0 && (
+        {testMode === 'learn' && currentRelatedPyqs.length > 0 && (
           <details className="question-link-signal qz-link-signal">
             <summary><span>Related PYQ available</span><b>{currentRelatedPyqs.length === 1 ? `UPSC ${currentRelatedPyqs[0].item.year}` : `${currentRelatedPyqs.length} close matches`}</b><FontAwesomeIcon icon={faChevronDown} /></summary>
             <div>{currentRelatedPyqs.map(({ item, reason }) => <p key={item.id}><span>UPSC {item.year} · {item.subject}</span><b>{item.question}</b><i>{reason}</i></p>)}</div>
@@ -408,22 +568,102 @@ export function QuizPlayer({ title, questions, eyebrow, description, onClose, on
       </div>
 
       {/* Sticky footer */}
-      <div className="qz-footer">
-        {answered ? (
-          <div className={`qz-answered-actions ${testMode}`}>
-            {testMode === 'exam' && <button className="qz-clear" onClick={clearSelection}>Clear</button>}
+      {testMode === 'exam' ? (
+        <div className="qz-footer qz-exam-footer">
+          <div className="qz-exam-secondary-actions">
+            <button className={reviewMarked.has(idx) ? 'active' : ''} onClick={toggleReview}>
+              <FontAwesomeIcon icon={faFlag} />{reviewMarked.has(idx) ? 'Marked for review' : 'Mark for review'}
+            </button>
+            <button onClick={clearSelection} disabled={!answered}>Clear response</button>
+          </div>
+          <div className="qz-exam-primary-actions">
+            <button className="qz-exam-previous" onClick={() => goToQuestion(idx - 1)} disabled={idx === 0}>
+              <FontAwesomeIcon icon={faChevronLeft} /> Previous
+            </button>
             <button className="pn-btn qz-next" onClick={next}>
-              {idx + 1 === total ? 'Submit test' : testMode === 'exam' ? 'Save & next' : 'Next question'}
-              <FontAwesomeIcon icon={faArrowRight} style={{ marginLeft: 8 }} />
+              {idx + 1 === total ? 'Review test' : answered ? 'Save & next' : 'Skip & next'}
+              <FontAwesomeIcon icon={idx + 1 === total ? faListOl : faArrowRight} />
             </button>
           </div>
-        ) : (
-          <div className="qz-foot-actions">
-            <button onClick={skip}>Skip</button>
-            <span>Tap an option to answer</span>
-          </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="qz-footer">
+          {answered ? (
+            <button className="pn-btn qz-next" onClick={next}>
+              {idx + 1 === total ? 'Finish learning' : 'Next question'}
+              <FontAwesomeIcon icon={faArrowRight} style={{ marginLeft: 8 }} />
+            </button>
+          ) : (
+            <div className="qz-foot-actions">
+              <button onClick={skip}>Skip</button>
+              <span>Tap an option to answer</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {paletteOpen && testMode === 'exam' && (
+        <div className="qz-sheet-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setPaletteOpen(false) }}>
+          <section className="qz-palette-sheet" role="dialog" aria-modal="true" aria-label="Question palette">
+            <i className="qz-sheet-handle" />
+            <header>
+              <div><span>Test navigation</span><h3>Question palette</h3></div>
+              <button onClick={() => setPaletteOpen(false)} aria-label="Close palette"><FontAwesomeIcon icon={faXmark} /></button>
+            </header>
+            <div className="qz-palette-summary">
+              <span><b>{examAnsweredCount}</b> Answered</span>
+              <span><b>{examUnansweredCount}</b> Unanswered</span>
+              <span><b>{reviewMarked.size}</b> For review</span>
+            </div>
+            <div className="qz-palette-grid">
+              {questions.map((item, questionIndex) => {
+                const response = answers[questionIndex]
+                const isAnswered = response?.picked !== null && response?.picked !== undefined
+                const classes = [
+                  questionIndex === idx ? 'current' : '',
+                  isAnswered ? 'answered' : visited.has(questionIndex) ? 'unanswered' : 'unvisited',
+                  reviewMarked.has(questionIndex) ? 'review' : '',
+                ].filter(Boolean).join(' ')
+                return (
+                  <button key={item.id} className={classes} onClick={() => goToQuestion(questionIndex)} aria-label={`Go to question ${questionIndex + 1}`}>
+                    {questionIndex + 1}
+                    {reviewMarked.has(questionIndex) && <FontAwesomeIcon icon={faFlag} />}
+                  </button>
+                )
+              })}
+            </div>
+            <div className="qz-palette-legend">
+              <span><i className="answered" />Answered</span><span><i className="unanswered" />Not answered</span><span><i className="unvisited" />Not visited</span><span><i className="review" />Review</span>
+            </div>
+            <button className="pn-btn qz-submit-test" onClick={() => { setPaletteOpen(false); setSubmitConfirm(true) }}>Submit test</button>
+          </section>
+        </div>
+      )}
+
+      {submitConfirm && (
+        <div className="qz-dialog-backdrop" role="presentation">
+          <section className="qz-confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="qz-submit-title">
+            <div className="qz-dialog-icon"><FontAwesomeIcon icon={faShieldHalved} /></div>
+            <h3 id="qz-submit-title">Submit this test?</h3>
+            <p>You have answered <b>{examAnsweredCount}</b> of <b>{total}</b> questions. Once submitted, responses cannot be changed.</p>
+            <div className="qz-dialog-stats"><span>{examUnansweredCount}<i>Unanswered</i></span><span>{reviewMarked.size}<i>For review</i></span><span>{formatCountdown(remainingSeconds)}<i>Time left</i></span></div>
+            <button className="pn-btn" onClick={() => finish('submitted')}>Submit and view result</button>
+            <button className="qz-dialog-cancel" onClick={() => setSubmitConfirm(false)}>Continue test</button>
+          </section>
+        </div>
+      )}
+
+      {exitConfirm && (
+        <div className="qz-dialog-backdrop" role="presentation">
+          <section className="qz-confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="qz-exit-title">
+            <div className="qz-dialog-icon warning"><FontAwesomeIcon icon={faTriangleExclamation} /></div>
+            <h3 id="qz-exit-title">Your exam is still running</h3>
+            <p>Leaving now will submit your saved responses and end this attempt.</p>
+            <button className="pn-btn" onClick={() => setExitConfirm(false)}>Continue test</button>
+            <button className="qz-dialog-cancel danger" onClick={() => finish('exit')}>Submit attempt and view result</button>
+          </section>
+        </div>
+      )}
     </div>
   )
 }

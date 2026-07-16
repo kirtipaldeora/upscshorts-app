@@ -40,7 +40,7 @@ type ActiveQuiz = {
 type Panel = null | 'previous'
 
 export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: PracticeScreenProps) {
-  const { articlesByDate, selectedDate, setScreen, setOverlay } = useAppStore()
+  const { articlesByDate, selectedDate, setScreen, goBack, setOverlay } = useAppStore()
   const { stats, settings } = usePracticeStore()
   const [activeQuiz, setActiveQuiz] = useState<ActiveQuiz>(null)
   const [panel, setPanel] = useState<Panel>(null)
@@ -112,7 +112,7 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
   return (
     <div className="screen active" style={{ animation: 'scrIn 0.35s cubic-bezier(0.22,1,0.36,1)' }}>
       <div className="screen-header">
-        <button onClick={() => setScreen('feed')} aria-label="Back">
+        <button onClick={() => goBack('feed')} aria-label="Back">
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
         <h2>Practice</h2>
