@@ -7,6 +7,14 @@ import { getArticleCopy, getPrelimQuestionCopy } from '@/utils/articleLocalizati
 export const CURRENT_AFFAIRS_MCQ_START = '2026-07-15'
 
 // ─── Unified question shape ───────────────────────────────────
+export interface QuestionCopy {
+  q: string
+  options: string[]
+  explanation: string
+  ref?: string
+  srcLabel: string
+}
+
 export interface Question {
   id: string
   src: 'article' | 'pyq'
@@ -18,6 +26,7 @@ export interface Question {
   explanation: string
   ref?: string
   srcLabel: string
+  copies?: { en: QuestionCopy; hi?: QuestionCopy }
   pyq?: {
     year: number
     qno: number
@@ -43,7 +52,25 @@ export function articleQs(articles: Article[], language: ReadingLanguage = getRe
   articles.forEach(a => {
     if (a.date < CURRENT_AFFAIRS_MCQ_START) return
     ;(a.prelimsQs ?? []).forEach((q, i) => {
-      const localized = getPrelimQuestionCopy(q, language)
+      const englishQuestion = getPrelimQuestionCopy(q, 'en')
+      const hindiQuestion = getPrelimQuestionCopy(q, 'hi')
+      const englishArticle = getArticleCopy(a, 'en')
+      const hindiArticle = getArticleCopy(a, 'hi')
+      const en: QuestionCopy = {
+        q: englishQuestion.q,
+        options: englishQuestion.options,
+        explanation: englishQuestion.explanation,
+        ref: englishQuestion.ref,
+        srcLabel: englishArticle.headline,
+      }
+      const hi: QuestionCopy | undefined = hindiQuestion !== q ? {
+        q: hindiQuestion.q,
+        options: hindiQuestion.options,
+        explanation: hindiQuestion.explanation,
+        ref: hindiQuestion.ref,
+        srcLabel: hindiArticle.headline,
+      } : undefined
+      const localized = language === 'hi' && hi ? hi : en
       out.push({
         id: `${a.id}-q${i + 1}`,
         src: 'article',
@@ -51,10 +78,11 @@ export function articleQs(articles: Article[], language: ReadingLanguage = getRe
         subject: a.category,
         q: localized.q,
         options: localized.options,
-        answer: localized.answer,
+        answer: q.answer,
         explanation: localized.explanation,
         ref: localized.ref,
-        srcLabel: getArticleCopy(a, language).headline,
+        srcLabel: localized.srcLabel,
+        copies: { en, hi },
       })
     })
   })

@@ -678,6 +678,80 @@ body:has(.focus-secondary-sheet-backdrop) .bottom-nav-motion {
 .focus-group-simple-form { margin-top: 18px; display: flex; flex-direction: column; gap: 13px; }
 .focus-group-form-error { margin: 0; color: var(--bad); font-size: 9.5px; font-weight: 850; }
 
+/* Friend request inbox and secure QR/link invitations */
+.focus-username-actions { display: flex; align-items: center; gap: 8px; }
+.focus-username-actions > button { min-height: 42px; padding: 0 14px; border-radius: 14px; background: var(--card2); color: var(--ink2); font-size: 10px; font-weight: 950; white-space: nowrap; }
+.focus-username-actions > .focus-friend-qr-trigger { display: flex; align-items: center; gap: 7px; background: var(--focus-blue); color: var(--focus-blue-ink); }
+.focus-username-actions > button:disabled { opacity: .45; cursor: not-allowed; }
+.focus-request-card.empty { padding-block: 17px; }
+.focus-request-empty { min-height: 54px; margin-top: 12px; padding: 10px 12px; border-radius: 16px; display: flex; align-items: center; gap: 10px; background: var(--card2); }
+.focus-request-empty > svg { width: 28px; height: 28px; box-sizing: border-box; padding: 8px; border-radius: 10px; background: color-mix(in srgb, var(--good) 12%, var(--card)); color: var(--good); }
+.focus-request-empty > span { display: flex; flex-direction: column; }
+.focus-request-empty b { font-size: 10px; font-weight: 950; }
+.focus-request-empty small { color: var(--ink3); font-size: 8.5px; font-weight: 750; }
+.focus-request-list article.outgoing { border: 1px dashed color-mix(in srgb, var(--acc) 28%, var(--border)); }
+.focus-request-route { margin: 8px 2px 0; color: var(--good); font-size: 9px; line-height: 1.4; font-weight: 850; }
+
+.focus-invite-backdrop, .focus-invite-prompt-backdrop { position: fixed; inset: 0; z-index: 1240; display: flex; align-items: flex-end; justify-content: center; padding: 18px; background: rgba(10,14,34,.72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.focus-invite-sheet { position: relative; width: min(520px,100%); max-height: min(780px,calc(100dvh - 36px)); overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: 30px 30px 24px 24px; background: var(--card); box-shadow: 0 -28px 80px rgba(0,0,0,.3); color: var(--ink); }
+.focus-invite-handle { display: none; }
+.focus-invite-sheet > header { flex: none; padding: 22px 22px 15px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.focus-invite-sheet > header div { min-width: 0; }
+.focus-invite-sheet > header span { color: var(--acc); font-size: 8px; font-weight: 950; letter-spacing: .75px; text-transform: uppercase; }
+.focus-invite-sheet > header h3 { margin: 3px 0 0; font-size: 22px; line-height: 1.08; font-weight: 950; }
+.focus-invite-sheet > header p { max-width: 430px; margin: 5px 0 0; color: var(--ink2); font-size: 9.5px; line-height: 1.45; font-weight: 750; }
+.focus-invite-sheet > header > button { flex: none; width: 40px; height: 40px; border-radius: 13px; background: var(--card2); color: var(--ink2); }
+.focus-invite-tabs { flex: none; margin: 0 22px 10px; padding: 4px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; border-radius: 15px; background: var(--card2); }
+.focus-invite-tabs button { min-height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 7px; background: transparent; color: var(--ink3); font-size: 9px; font-weight: 950; }
+.focus-invite-tabs button.active { background: var(--card); box-shadow: var(--shadow-soft); color: var(--acc); }
+.focus-invite-body { min-height: 0; overflow-y: auto; padding: 8px 22px calc(22px + env(safe-area-inset-bottom)); }
+.focus-invite-qr { width: min(280px,72vw); aspect-ratio: 1; margin: 3px auto 14px; padding: 13px; border: 1px solid var(--border); border-radius: 24px; display: grid; place-items: center; background: #fff; box-shadow: 0 18px 50px color-mix(in srgb,var(--acc) 13%,transparent); }
+.focus-invite-qr img { display: block; width: 100%; height: 100%; border-radius: 11px; }
+.focus-invite-qr > span { display: flex; flex-direction: column; align-items: center; gap: 9px; color: var(--acc); font-size: 11px; }
+.focus-invite-qr > span svg { font-size: 23px; }
+.focus-invite-qr > span.error { color: var(--bad); }
+.focus-invite-link { min-height: 44px; padding: 0 12px; border-radius: 14px; display: grid; grid-template-columns: auto minmax(0,1fr); align-items: center; gap: 8px; border: 1px solid var(--border); background: var(--card2); color: var(--acc); }
+.focus-invite-link input { min-width: 0; width: 100%; border: 0; outline: 0; background: transparent; color: var(--ink2); font: inherit; font-size: 9.5px; font-weight: 750; text-overflow: ellipsis; }
+.focus-invite-actions { margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.focus-invite-actions button, .focus-invite-retry { min-height: 46px; border-radius: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--card2); color: var(--ink2); font-size: 10px; font-weight: 950; }
+.focus-invite-actions button.primary, .focus-invite-direct > button.primary { background: var(--focus-blue); color: var(--focus-blue-ink); }
+.focus-invite-meta { margin-top: 11px; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; color: var(--ink3); font-size: 8px; line-height: 1.35; font-weight: 750; }
+.focus-invite-meta span { max-width: 310px; }
+.focus-invite-meta b { flex: none; color: var(--ink2); font-weight: 900; }
+.focus-invite-retry { width: 100%; }
+.focus-invite-feedback { margin: 11px 0 0; padding: 9px 11px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 7px; background: var(--card2); color: var(--ink2); font-size: 9px; line-height: 1.35; font-weight: 850; text-align: center; }
+.focus-invite-feedback.success { background: color-mix(in srgb,var(--good) 9%,var(--card2)); color: var(--good); }
+.focus-invite-feedback.error { background: color-mix(in srgb,var(--bad) 8%,var(--card2)); color: var(--bad); }
+.focus-invite-direct { min-height: 350px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.focus-invite-direct-icon { width: 54px; height: 54px; border-radius: 19px; display: grid; place-items: center; background: color-mix(in srgb,var(--focus-blue) 11%,var(--card2)); color: var(--acc); font-size: 19px; }
+.focus-invite-direct h4 { margin: 12px 0 0; font-size: 18px; font-weight: 950; }
+.focus-invite-direct > p { max-width: 380px; margin: 5px auto 17px; color: var(--ink2); font-size: 9.5px; line-height: 1.5; font-weight: 750; }
+.focus-invite-direct label { width: 100%; text-align: left; }
+.focus-invite-direct label > span { display: block; margin: 0 2px 6px; color: var(--ink2); font-size: 8px; font-weight: 950; letter-spacing: .5px; text-transform: uppercase; }
+.focus-invite-direct input { width: 100%; height: 46px; padding: 0 13px; border: 1px solid var(--border); border-radius: 14px; outline: 0; background: var(--card2); color: var(--ink); font: inherit; font-size: 11px; font-weight: 850; }
+.focus-invite-direct > button { width: 100%; min-height: 46px; margin-top: 10px; border-radius: 14px; font-size: 10px; font-weight: 950; }
+
+.focus-invite-prompt-backdrop { z-index: 1300; align-items: center; }
+.focus-invite-prompt { position: relative; width: min(390px,100%); padding: 26px 22px 20px; border: 1px solid var(--border); border-radius: 28px; background: var(--card); box-shadow: 0 30px 90px rgba(0,0,0,.34); color: var(--ink); text-align: center; }
+.focus-invite-prompt-close { position: absolute; top: 13px; right: 13px; width: 38px; height: 38px; border-radius: 13px; background: var(--card2); color: var(--ink2); }
+.focus-invite-prompt-person { position: relative; width: max-content; margin: 2px auto 13px; }
+.focus-invite-prompt-person > i { position: absolute; right: -5px; bottom: -2px; width: 25px; height: 25px; border: 3px solid var(--card); border-radius: 50%; display: grid; place-items: center; background: var(--focus-blue); color: var(--focus-blue-ink); font-size: 8px; }
+.focus-invite-prompt-group { width: 64px; height: 64px; margin: 2px auto 13px; border-radius: 22px; display: grid; place-items: center; background: color-mix(in srgb,var(--focus-blue) 12%,var(--card2)); color: var(--acc); font-size: 22px; }
+.focus-invite-prompt > span { color: var(--acc); font-size: 8px; font-weight: 950; letter-spacing: .7px; text-transform: uppercase; }
+.focus-invite-prompt h2 { margin: 4px 0 0; font-size: 23px; line-height: 1.1; font-weight: 950; }
+.focus-invite-prompt > p { margin: 6px 0 0; color: var(--ink2); font-size: 10.5px; line-height: 1.45; font-weight: 750; }
+.focus-invite-prompt-safety { margin-top: 15px; padding: 11px; border-radius: 15px; display: flex; align-items: flex-start; gap: 9px; background: var(--card2); color: var(--ink2); font-size: 9px; line-height: 1.4; font-weight: 750; text-align: left; }
+.focus-invite-prompt-safety svg { flex: none; margin-top: 2px; color: var(--acc); }
+.focus-invite-prompt-error { padding: 9px; border-radius: 12px; background: color-mix(in srgb,var(--bad) 9%,var(--card2)); color: var(--bad)!important; font-weight: 850!important; }
+.focus-invite-prompt-accept { width: 100%; min-height: 48px; margin-top: 14px; border-radius: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--focus-blue); color: var(--focus-blue-ink); font-size: 10.5px; font-weight: 950; }
+.focus-invite-prompt-accept:disabled { background: color-mix(in srgb,var(--good) 11%,var(--card2)); color: var(--good); opacity: 1; }
+.focus-invite-prompt-later { width: 100%; min-height: 36px; margin-top: 4px; background: transparent; color: var(--ink3); font-size: 9.5px; font-weight: 900; }
+.focus-invite-prompt-loading, .focus-invite-prompt-unavailable { min-height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+.focus-invite-prompt-loading svg, .focus-invite-prompt-unavailable > svg { color: var(--acc); font-size: 25px; }
+.focus-invite-prompt-unavailable h2 { margin: 0; }
+.focus-invite-prompt-unavailable p { max-width: 290px; margin: 0; color: var(--ink2); font-size: 10px; line-height: 1.45; font-weight: 750; }
+.focus-invite-prompt-unavailable button { min-width: 120px; min-height: 40px; border-radius: 13px; background: var(--card2); color: var(--ink); font-size: 10px; font-weight: 950; }
+
 .focus-finish-confirm-backdrop { z-index: 980; align-items: center; }
 .focus-finish-confirm { width: min(430px, 100%); padding: 27px; border-radius: 27px; background: var(--card); border: 1px solid var(--border); color: var(--ink); text-align: center; box-shadow: 0 30px 90px rgba(0,0,0,.32); }
 .focus-finish-confirm > i { width: 48px; height: 48px; margin: 0 auto 12px; border-radius: 17px; display: grid; place-items: center; background: color-mix(in srgb, var(--focus-gold) 13%, var(--card2)); color: #c98b1c; }
@@ -762,7 +836,8 @@ body:has(.focus-secondary-sheet-backdrop) .bottom-nav-motion {
   .focus-username-card > form { flex-wrap: wrap; }
   .focus-username-card > form label { width: 100%; }
   .focus-username-card > form button { flex: 1; }
-  .focus-username-card > button.edit { width: 100%; }
+  .focus-username-actions { width: 100%; }
+  .focus-username-actions > button { flex: 1; }
   .focus-friend-lookup form { grid-template-columns: auto 1fr auto; }
   .focus-friend-lookup form button.find { grid-column: 1/4; width: 100%; }
   .focus-request-list article, .focus-friend-list article { grid-template-columns: auto minmax(0, 1fr) auto; }
@@ -784,6 +859,13 @@ body:has(.focus-secondary-sheet-backdrop) .bottom-nav-motion {
   .focus-group-form { grid-template-columns: 1fr; }
   .focus-group-form .wide { grid-column: auto; }
   .focus-group-form footer, .focus-group-simple-form footer { margin: 0 -16px calc(-16px - env(safe-area-inset-bottom)); padding: 10px 16px calc(16px + env(safe-area-inset-bottom)); }
+  .focus-invite-backdrop { padding: max(8px,env(safe-area-inset-top)) 0 0; }
+  .focus-invite-sheet { width: 100%; max-height: calc(100dvh - max(8px,env(safe-area-inset-top))); border-radius: 26px 26px 0 0; }
+  .focus-invite-handle { display: block; width: 42px; height: 5px; flex: none; margin: 8px auto 0; border-radius: 99px; background: var(--border); }
+  .focus-invite-sheet > header { padding: 14px 16px 12px; }
+  .focus-invite-tabs { margin-inline: 16px; }
+  .focus-invite-body { padding: 6px 16px calc(18px + env(safe-area-inset-bottom)); }
+  .focus-invite-qr { width: min(250px,68vw); }
 }
 
 @media (max-width: 430px) {

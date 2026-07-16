@@ -87,6 +87,7 @@ export function FocusScreen(props: FocusScreenProps) {
     onSessionFinish,
     onSearchPeople,
     onUsernameChange,
+    onCreateInviteLink,
     onFriendAction,
     onOpenGroup,
     onCreateGroup,
@@ -305,8 +306,8 @@ export function FocusScreen(props: FocusScreenProps) {
   }
 
   const secondaryMain = view === 'analytics' ? <FocusAnalytics profile={profile} sessions={source.sessions} activityLog={source.activityLog} subjects={source.analyticsSubjects} />
-      : view === 'friends' ? <FocusFriends username={profile.username} friends={source.friends} requests={source.requests} onSearchPeople={onSearchPeople} onUsernameChange={onUsernameChange} onAction={(action, personId, requestId) => onFriendAction?.(action, personId, requestId) ?? false} />
-        : view === 'groups' ? <FocusGroups profile={profile} groups={source.groups} groupInvites={source.groupInvites} groupJoinRequests={source.groupJoinRequests} people={source.groupMembers} messages={source.groupMessages} rankings={source.rankings} onOpenGroup={groupId => onOpenGroup?.(groupId)} onCreateGroup={draft => onCreateGroup?.(draft) ?? null} onJoinGroup={groupId => onJoinGroup?.(groupId)} onJoinGroupByCode={onJoinGroupByCode} onLeaveGroup={groupId => onLeaveGroup?.(groupId) ?? false} onInviteToGroup={(groupId, exactContact) => onInviteToGroup?.(groupId, exactContact) ?? false} onRespondGroupInvite={(inviteId, accept) => onRespondGroupInvite?.(inviteId, accept) ?? false} onRespondGroupJoinRequest={(requestId, accept) => onRespondGroupJoinRequest?.(requestId, accept) ?? false} onSendMessage={(groupId, text) => onSendGroupMessage?.(groupId, text) ?? false} onMemberAction={(action, groupId, personId) => onGroupMemberAction?.(action, groupId, personId) ?? false} />
+      : view === 'friends' ? <FocusFriends username={profile.username} friends={source.friends} requests={source.requests} onSearchPeople={onSearchPeople} onUsernameChange={onUsernameChange} onCreateInviteLink={onCreateInviteLink} onAction={(action, personId, requestId) => onFriendAction?.(action, personId, requestId) ?? false} />
+        : view === 'groups' ? <FocusGroups profile={profile} groups={source.groups} groupInvites={source.groupInvites} groupJoinRequests={source.groupJoinRequests} people={source.groupMembers} messages={source.groupMessages} rankings={source.rankings} onOpenGroup={groupId => onOpenGroup?.(groupId)} onCreateGroup={draft => onCreateGroup?.(draft) ?? null} onJoinGroup={groupId => onJoinGroup?.(groupId)} onJoinGroupByCode={onJoinGroupByCode} onLeaveGroup={groupId => onLeaveGroup?.(groupId) ?? false} onCreateInviteLink={onCreateInviteLink} onInviteToGroup={(groupId, exactContact) => onInviteToGroup?.(groupId, exactContact) ?? false} onRespondGroupInvite={(inviteId, accept) => onRespondGroupInvite?.(inviteId, accept) ?? false} onRespondGroupJoinRequest={(requestId, accept) => onRespondGroupJoinRequest?.(requestId, accept) ?? false} onSendMessage={(groupId, text) => onSendGroupMessage?.(groupId, text) ?? false} onMemberAction={(action, groupId, personId) => onGroupMemberAction?.(action, groupId, personId) ?? false} />
           : view === 'rankings' ? <FocusRankings profile={profile} entries={source.rankings} onScopeChange={period => onRankingScopeChange?.(period)} />
             : view === 'settings' ? <FocusSettings preferences={preferences} timerSettings={timerSettings} platform={platform} nativeFocusShieldAvailable={nativeFocusShieldAvailable} onChange={changePreference} onTimerChange={changeTimerSetting} onShieldAction={() => onFocusShieldAction?.(platform)} /> : null
 

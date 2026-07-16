@@ -223,6 +223,15 @@ export interface FocusSearchRequest {
   channel: 'username' | 'email' | 'phone'
 }
 
+export interface FocusInviteShare {
+  id: string
+  token: string
+  url: string
+  kind: 'friend' | 'group'
+  groupId: string | null
+  expiresAt: string
+}
+
 export interface FocusScreenProps {
   data?: FocusScreenData
   initialView?: FocusView
@@ -243,6 +252,8 @@ export interface FocusScreenProps {
   onSessionFinish?: (result: FocusSessionResult) => void
   onSearchPeople?: (request: FocusSearchRequest) => Promise<FocusPerson[]> | FocusPerson[]
   onUsernameChange?: (username: string) => Promise<string> | string
+  onCreateInviteLink?: (kind: 'friend' | 'group', groupId?: string) => Promise<FocusInviteShare>
+  onRevokeInviteLink?: (inviteId: string) => Promise<boolean> | boolean
   onFriendAction?: (action: FocusFriendAction, personId: string, requestId?: string) => Promise<boolean> | boolean
   onOpenGroup?: (groupId: string) => Promise<void> | void
   onCreateGroup?: (draft: FocusGroupDraft) => Promise<string | null> | string | null

@@ -8,6 +8,7 @@ import {
 import { useAppStore } from '@/stores/useAppStore'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { ProfileAvatar } from '@/components/profile/ProfileAvatar'
+import { NotificationCenter } from '@/components/notifications/NotificationCenter'
 
 interface TopBarProps {
   showBack?: boolean
@@ -77,6 +78,7 @@ export function TopBar({ showBack, onBack, onOpenUpload }: TopBarProps) {
 
       {/* Right: action buttons */}
       <div className="top-actions" style={{ display: 'flex', gap: 9 }}>
+        <NotificationCenter />
         {onOpenUpload && (
           <button
             onClick={onOpenUpload}

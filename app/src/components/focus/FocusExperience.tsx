@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import type { FocusRuntimeController } from '@/hooks/useFocusRuntime'
 import { useFocusExperience } from '@/hooks/useFocusExperience'
 import { FocusScreen } from './FocusScreen'
+import type { FocusView } from './focusTypes'
 
 interface FocusExperienceProps {
   runtime: FocusRuntimeController
@@ -9,6 +11,13 @@ interface FocusExperienceProps {
 
 /** Connects the lazy Focus UI to the single app-owned runtime. */
 export function FocusExperience({ runtime, onShowToast }: FocusExperienceProps) {
+  const [initialView] = useState<FocusView>(() => {
+    try {
+      const requested = sessionStorage.getItem('penni.focus.initial-view')
+      sessionStorage.removeItem('penni.focus.initial-view')
+      return requested === 'friends' || requested === 'groups' || requested === 'rankings' ? requested : 'today'
+    } catch { return 'today' as const }
+  })
   const experience = useFocusExperience(runtime, { onShowToast })
   const socialState = experience.loading
     ? { kind: 'loading' as const, message: 'Connecting Focus friends and study groups…' }
@@ -23,6 +32,7 @@ export function FocusExperience({ runtime, onShowToast }: FocusExperienceProps) 
             : null
   return <FocusScreen
     {...experience.screenProps}
+    initialView={initialView}
     socialNotice={socialState?.message}
     socialNoticeKind={socialState?.kind}
   />

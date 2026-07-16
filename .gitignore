@@ -131,3 +131,5 @@ michi/
 .tokensave
 .claude
 .codex
+.vercel
+supabase/.temp/

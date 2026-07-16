@@ -20,6 +20,7 @@ import { useFocusStore } from '@/stores/useFocusStore'
 import { useThemeStore } from '@/stores/useThemeStore'
 import type { FocusSession } from '@/types/focus'
 import { BreakAlarm } from '@/components/focus/BreakAlarm'
+import { FocusInvitePrompt } from '@/components/focus/FocusInvitePrompt'
 import { MotivationCelebration } from '@/components/ui/MotivationCelebration'
 import { setReadingLanguage } from '@/hooks/useReadingLanguage'
 
@@ -41,6 +42,25 @@ const FocusExperience = lazy(() => import('@/components/focus/FocusExperience').
 
 type AppPhase = 'splash' | 'auth' | 'profile' | 'main'
 type BreakAlarmState = { id: string; phase: 'short-break' | 'long-break' }
+const FOCUS_INVITE_KEY = 'penni.focus.pending-invite'
+
+function initialFocusInviteToken() {
+  if (typeof window === 'undefined') return ''
+  const fromUrl = new URLSearchParams(window.location.search).get('focusInvite')?.trim() ?? ''
+  if (fromUrl && /^[A-Za-z0-9_-]{32,128}$/.test(fromUrl)) {
+    try { localStorage.setItem(FOCUS_INVITE_KEY, fromUrl) } catch { /* noop */ }
+    return fromUrl
+  }
+  try { return localStorage.getItem(FOCUS_INVITE_KEY) ?? '' } catch { return '' }
+}
+
+function clearFocusInviteLocation() {
+  try { localStorage.removeItem(FOCUS_INVITE_KEY) } catch { /* noop */ }
+  const url = new URL(window.location.href)
+  if (!url.searchParams.has('focusInvite')) return
+  url.searchParams.delete('focusInvite')
+  window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`)
+}
 
 function getInitialPhase(): AppPhase {
   return 'splash'
@@ -65,6 +85,7 @@ export default function App() {
   const { settings, stats } = usePracticeStore()
   const { message: toastMsg, show: showToast, clear: clearToast } = useToast()
   const [breakAlarm, setBreakAlarm] = useState<BreakAlarmState | null>(null)
+  const [focusInviteToken, setFocusInviteToken] = useState(initialFocusInviteToken)
   const [extendingBreak, setExtendingBreak] = useState(false)
   const focusAlarmSoundEnabled = useFocusStore(state => state.settings.soundsEnabled)
   const autoShufflePalette = useThemeStore(state => state.autoShufflePalette)
@@ -212,7 +233,7 @@ export default function App() {
   }
 
   if (phase === 'auth' || (!user && !isGuest)) {
-    return <PenniLogin onAuthenticated={handleAuthenticated} />
+    return <PenniLogin onAuthenticated={handleAuthenticated} invitePending={Boolean(focusInviteToken)} />
   }
 
   if (!isGuest && (phase === 'profile' || !profile)) {
@@ -390,6 +411,22 @@ export default function App() {
 
       {/* Toast notifications */}
       <Toast message={toastMsg} onClear={clearToast} />
+
+      {focusInviteToken && user && !isGuest && (
+        <FocusInvitePrompt
+          token={focusInviteToken}
+          onDismiss={() => { clearFocusInviteLocation(); setFocusInviteToken('') }}
+          onAccepted={(kind, status) => {
+            clearFocusInviteLocation()
+            setFocusInviteToken('')
+            showToast(kind === 'group'
+              ? status === 'member' ? 'You are already in this study group.' : 'Study group joined.'
+              : status === 'friend' ? 'Friend added to your Focus circle.' : 'Friend request sent. They will see it in their Friends request inbox.')
+            try { sessionStorage.setItem('penni.focus.initial-view', kind === 'group' ? 'groups' : 'friends') } catch { /* noop */ }
+            setScreen('focus')
+          }}
+        />
+      )}
 
       {streakRecoveryOpen && (
         <StreakRecoverySheet

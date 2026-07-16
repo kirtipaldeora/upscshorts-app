@@ -15,6 +15,7 @@ export type FocusPresenceStatus = 'offline' | 'available' | 'focusing' | 'break'
 export type FocusPresenceVisibility = 'private' | 'friends' | 'groups'
 export type FocusNudgeKind = 'focus' | 'break' | 'resume' | 'encourage'
 export type FocusRelationship = 'none' | 'friend' | 'incoming' | 'outgoing'
+export type FocusInviteLinkKind = 'friend' | 'group'
 
 export interface FocusResult<T> {
   data: T
@@ -56,6 +57,32 @@ export interface FocusProfileMatch {
   avatarUrl: string
   headline: string
   relationship: FocusRelationship
+}
+
+export interface FocusInviteLink {
+  id: string
+  token: string
+  kind: FocusInviteLinkKind
+  groupId: string | null
+  expiresAt: string
+}
+
+export interface FocusInvitePreview {
+  id: string
+  kind: FocusInviteLinkKind
+  inviterId: string
+  inviterUsername: string
+  inviterDisplayName: string
+  inviterAvatarUrl: string
+  relationship: FocusRelationship | 'self'
+  groupId: string | null
+  groupName: string
+  groupCategory: string
+  groupPrivacy: 'public' | 'private' | ''
+  groupMemberCount: number
+  groupCapacity: number
+  viewerIsMember: boolean
+  expiresAt: string
 }
 
 export interface FocusCategory {
@@ -299,6 +326,9 @@ function throwOnError(error: { message?: string; code?: string } | null) {
 function throwOnAccountLookupError(error: { message?: string } | null, feature = 'Friend lookup') {
   if (!error) return
   const message = error.message || ''
+  if (/column reference ["']?user_id["']? is ambiguous/i.test(message)) {
+    throw new Error(`${feature} is being updated on the connected server. Please try again shortly.`)
+  }
   if (/schema cache|could not find the function|does not exist|undefined function/i.test(message)) {
     throw new Error(`${feature} needs the latest Focus service update. Please try again after it is connected.`)
   }
@@ -1037,6 +1067,68 @@ export function inviteFocusGroupByHash(
     })
     throwOnError(error)
     return typeof data === 'string' ? data : null
+  })
+}
+
+export function createFocusInviteLink(kind: FocusInviteLinkKind, groupId?: string | null) {
+  return withFocus<FocusInviteLink | null>(null, async ({ supabase }) => {
+    const { data, error } = await supabase.rpc('create_focus_invite_link', {
+      p_kind: kind,
+      p_group_id: kind === 'group' ? groupId ?? null : null,
+      p_expires_hours: 168,
+    })
+    throwOnAccountLookupError(error, 'QR invitations')
+    const row = Array.isArray(data) ? data[0] as DbRow | undefined : undefined
+    if (!row) return null
+    return {
+      id: text(row, 'invite_id'),
+      token: text(row, 'invite_token'),
+      kind: text(row, 'invite_kind') as FocusInviteLinkKind,
+      groupId: nullableText(row, 'invite_group_id'),
+      expiresAt: text(row, 'invite_expires_at'),
+    }
+  })
+}
+
+export function resolveFocusInviteLink(token: string) {
+  return withFocus<FocusInvitePreview | null>(null, async ({ supabase }) => {
+    const { data, error } = await supabase.rpc('resolve_focus_invite_link', { p_token: token.trim() })
+    throwOnAccountLookupError(error, 'QR invitations')
+    const row = Array.isArray(data) ? data[0] as DbRow | undefined : undefined
+    if (!row) return null
+    return {
+      id: text(row, 'invite_id'),
+      kind: text(row, 'invite_kind') as FocusInviteLinkKind,
+      inviterId: text(row, 'inviter_id'),
+      inviterUsername: text(row, 'inviter_username'),
+      inviterDisplayName: text(row, 'inviter_display_name'),
+      inviterAvatarUrl: text(row, 'inviter_avatar_url'),
+      relationship: text(row, 'relationship') as FocusInvitePreview['relationship'],
+      groupId: nullableText(row, 'invite_group_id'),
+      groupName: text(row, 'group_name'),
+      groupCategory: text(row, 'group_category'),
+      groupPrivacy: text(row, 'group_privacy') as FocusInvitePreview['groupPrivacy'],
+      groupMemberCount: numberValue(row, 'group_member_count'),
+      groupCapacity: numberValue(row, 'group_capacity'),
+      viewerIsMember: row.viewer_is_member === true,
+      expiresAt: text(row, 'invite_expires_at'),
+    }
+  })
+}
+
+export function acceptFocusInviteLink(token: string) {
+  return withFocus<string | null>(null, async ({ supabase }) => {
+    const { data, error } = await supabase.rpc('accept_focus_invite_link', { p_token: token.trim() })
+    throwOnAccountLookupError(error, 'QR invitations')
+    return typeof data === 'string' ? data : null
+  })
+}
+
+export function revokeFocusInviteLink(inviteId: string) {
+  return withFocus(false, async ({ supabase }) => {
+    const { data, error } = await supabase.rpc('revoke_focus_invite_link', { p_invite_id: inviteId })
+    throwOnAccountLookupError(error, 'QR invitations')
+    return data === true
   })
 }
 

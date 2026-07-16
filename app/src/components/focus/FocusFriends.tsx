@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBan, faCheck, faMagnifyingGlass, faPaperPlane, faPlus, faTrash, faUserGroup, faXmark } from '@fortawesome/free-solid-svg-icons'
-import type { FocusFriendAction, FocusFriendRequest, FocusPerson, FocusSearchRequest } from './focusTypes'
+import { faBan, faCheck, faMagnifyingGlass, faPaperPlane, faPlus, faQrcode, faTrash, faUserGroup, faXmark } from '@fortawesome/free-solid-svg-icons'
+import type { FocusFriendAction, FocusFriendRequest, FocusInviteShare, FocusPerson, FocusSearchRequest } from './focusTypes'
 import { compactFocusTime, FocusAvatar, FocusSectionHeading } from './FocusPrimitives'
+import { FocusInviteSheet } from './FocusInviteSheet'
 
 interface FocusFriendsProps {
   username?: string
@@ -10,15 +11,24 @@ interface FocusFriendsProps {
   requests: FocusFriendRequest[]
   onSearchPeople?: (request: FocusSearchRequest) => Promise<FocusPerson[]> | FocusPerson[]
   onUsernameChange?: (username: string) => Promise<string> | string
+  onCreateInviteLink?: (kind: 'friend' | 'group', groupId?: string) => Promise<FocusInviteShare>
   onAction: (action: FocusFriendAction, personId: string, requestId?: string) => Promise<boolean> | boolean
 }
 
 function searchChannel(query: string): FocusSearchRequest['channel'] | null {
   const value = query.trim()
-  if (/^@[a-zA-Z0-9][a-zA-Z0-9._]{1,22}[a-zA-Z0-9]$/.test(value) && !/[._]{2}/.test(value)) return 'username'
   if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'email'
   if (/^\+?[1-9]\d{7,14}$/.test(value.replace(/[\s()-]/g, ''))) return 'phone'
+  const username = value.replace(/^@/, '')
+  if (/^[a-zA-Z0-9][a-zA-Z0-9._]{1,22}[a-zA-Z0-9]$/.test(username) && !/[._]{2}/.test(username)) return 'username'
   return null
+}
+
+function canonicalSearchValue(query: string, channel: FocusSearchRequest['channel']) {
+  const value = query.trim()
+  if (channel === 'username') return value.toLowerCase().replace(/^@/, '')
+  if (channel === 'email') return value.toLowerCase()
+  return value.replace(/[\s()-]/g, '')
 }
 
 function normalizedUsername(value: string) {
@@ -32,7 +42,7 @@ function normalizedUsername(value: string) {
   return username
 }
 
-export function FocusFriends({ username, friends, requests, onSearchPeople, onUsernameChange, onAction }: FocusFriendsProps) {
+export function FocusFriends({ username, friends, requests, onSearchPeople, onUsernameChange, onCreateInviteLink, onAction }: FocusFriendsProps) {
   const [query, setQuery] = useState('')
   const [searching, setSearching] = useState(false)
   const [searchError, setSearchError] = useState('')
@@ -44,6 +54,7 @@ export function FocusFriends({ username, friends, requests, onSearchPeople, onUs
   const [usernameDraft, setUsernameDraft] = useState(username ?? '')
   const [usernameError, setUsernameError] = useState('')
   const [savingUsername, setSavingUsername] = useState(false)
+  const [inviteTrigger, setInviteTrigger] = useState<HTMLElement | null>(null)
   const searchGenerationRef = useRef(0)
   const liveFriends = friends.filter(friend => friend.isLive)
   const incoming = requests.filter(request => request.direction === 'incoming' && !handledRequests.includes(request.id))
@@ -83,14 +94,14 @@ export function FocusFriends({ username, friends, requests, onSearchPeople, onUs
     const channel = searchChannel(query)
     setSearchError('')
     setSearchResults(null)
-    if (!channel) { setSearching(false); setSearchError('Enter an exact @username, complete email address, or full phone number with country code.'); return }
+    if (!channel) { setSearching(false); setSearchError('Enter an exact username, complete email address, or full phone number with country code.'); return }
     // Verified contact lookup does not depend on claiming a public handle.
     // Only username-to-username discovery asks the current user to claim one.
-    if (!username && channel === 'username') { setSearching(false); setSearchError('Choose your unique username before searching by @username. You can still search by verified email or full phone number now.'); setEditingUsername(true); return }
+    if (!username && channel === 'username') { setSearching(false); setSearchError('Choose your unique username before searching by username. You can still search by verified email or full phone number now.'); setEditingUsername(true); return }
     if (!onSearchPeople) { setSearching(false); setSearchError('Verified account lookup is not connected yet.'); return }
     setSearching(true)
     try {
-      const result = await onSearchPeople({ query: query.trim(), channel })
+      const result = await onSearchPeople({ query: canonicalSearchValue(query, channel), channel })
       if (searchGenerationRef.current === generation) setSearchResults(result)
     } catch (error) {
       if (searchGenerationRef.current === generation) {
@@ -148,20 +159,28 @@ export function FocusFriends({ username, friends, requests, onSearchPeople, onUs
           <label><span aria-hidden="true">@</span><input value={usernameDraft} onChange={event => { setUsernameDraft(event.target.value.toLowerCase().replace(/^@/, '')); setUsernameError('') }} placeholder="your.username" aria-label="Your unique username" autoCapitalize="none" autoCorrect="off" maxLength={24} /></label>
           <button type="submit" disabled={savingUsername}>{savingUsername ? 'Saving…' : username ? 'Save' : 'Claim username'}</button>
           {username && <button type="button" className="cancel" onClick={() => { setUsernameDraft(username); setUsernameError(''); setEditingUsername(false) }}>Cancel</button>}
-        </form> : <button className="edit" type="button" onClick={() => setEditingUsername(true)}>Edit username</button>}
+        </form> : <div className="focus-username-actions"><button className="focus-friend-qr-trigger" type="button" disabled={!username || !onCreateInviteLink} onClick={event => setInviteTrigger(event.currentTarget)}><FontAwesomeIcon icon={faQrcode} /> My QR</button><button className="edit" type="button" onClick={() => setEditingUsername(true)}>Edit username</button></div>}
         {usernameError && <p className="focus-username-error" role="alert">{usernameError}</p>}
       </section>
 
+      <section className={`focus-card focus-request-card ${incoming.length || outgoing.length ? 'has-requests' : 'empty'}`}>
+        <FocusSectionHeading eyebrow="Friend requests" title={incoming.length ? `${incoming.length} waiting for you` : 'Request inbox'} detail="New requests—including QR requests—arrive here. Sent requests remain visible until accepted or cancelled." />
+        {(incoming.length > 0 || outgoing.length > 0) ? <div className="focus-request-list">
+          {incoming.map(request => { const pending = pendingRequests.includes(request.id); return <article key={request.id}><FocusAvatar name={request.person.name} initials={request.person.initials} avatarUrl={request.person.avatarUrl} /><div><b>{request.person.name}</b><span>Wants to join your study circle</span></div><button className="accept" disabled={pending} onClick={() => { void handleRequest(request, 'accept') }}><FontAwesomeIcon icon={faCheck} /> {pending ? 'Saving…' : 'Accept'}</button><button className="decline" disabled={pending} onClick={() => { void handleRequest(request, 'decline') }} aria-label={`Decline ${request.person.name}`}><FontAwesomeIcon icon={faXmark} /></button></article> })}
+          {outgoing.map(request => { const pending = pendingRequests.includes(request.id); return <article key={request.id} className="outgoing"><FocusAvatar name={request.person.name} initials={request.person.initials} avatarUrl={request.person.avatarUrl} /><div><b>{request.person.name}</b><span>Waiting for acceptance</span></div><button className="cancel" disabled={pending} onClick={() => { void handleRequest(request, 'cancel') }}><FontAwesomeIcon icon={faXmark} /> {pending ? 'Cancelling…' : 'Cancel'}</button></article> })}
+        </div> : <div className="focus-request-empty"><FontAwesomeIcon icon={faCheck} /><span><b>No pending requests</b><small>When someone adds you, Accept and Decline will appear here.</small></span></div>}
+      </section>
+
       <section className="focus-friend-lookup">
-        <div><span>Find a specific person</span><h3>Exact account search</h3><p>Use an exact @username, verified email or full phone number. There is no broad name search or browsable people directory.</p></div>
+        <div><span>Find a specific person</span><h3>Exact account search</h3><p>Use a username with or without @, a verified email, or a full phone number. There is no broad name directory.</p></div>
         <form onSubmit={event => { event.preventDefault(); void findAccount() }}>
           <FontAwesomeIcon icon={faMagnifyingGlass} />
-          <input value={query} onChange={event => { searchGenerationRef.current++; setSearching(false); setQuery(event.target.value); setSearchResults(null); setSearchError('') }} placeholder="@username, email or full phone" aria-label="Search by exact username, verified email or full phone number" autoComplete="off" autoCapitalize="none" autoCorrect="off" />
+          <input value={query} onChange={event => { searchGenerationRef.current++; setSearching(false); setQuery(event.target.value); setSearchResults(null); setSearchError('') }} placeholder="username, email or full phone" aria-label="Search by exact username, verified email or full phone number" autoComplete="off" autoCapitalize="none" autoCorrect="off" />
           {query && <button type="button" onClick={() => { searchGenerationRef.current++; setSearching(false); setQuery(''); setSearchResults(null); setSearchError('') }} aria-label="Clear lookup"><FontAwesomeIcon icon={faXmark} /></button>}
           <button className="find" type="submit" disabled={searching}>{searching ? 'Finding…' : 'Find'}</button>
         </form>
         {searchError && <p className="focus-lookup-error">{searchError}</p>}
-        {searchResults && (searchResults.length ? <div className="focus-lookup-results">{searchResults.map(person => { const actionState = actedPeople[person.id]; const requested = actionState === 'add'; const sending = actionState === 'add:pending'; return <article key={person.id}><FocusAvatar name={person.name} initials={person.initials} avatarUrl={person.avatarUrl} /><div><b>{person.name}</b><span>{person.username ? `@${person.username}` : person.emailHint ?? person.phoneHint ?? 'Verified exact match'}</span></div><button onClick={() => { void act('add', person) }} disabled={requested || sending}><FontAwesomeIcon icon={requested ? faCheck : faPlus} /> {sending ? 'Sending…' : requested ? 'Requested' : 'Add friend'}</button></article> })}</div> : <div className="focus-lookup-empty">No opted-in Penni account matched that exact username or contact.</div>)}
+        {searchResults && (searchResults.length ? <div className="focus-lookup-results">{searchResults.map(person => { const actionState = actedPeople[person.id]; const requested = actionState === 'add'; const sending = actionState === 'add:pending'; return <article key={person.id}><FocusAvatar name={person.name} initials={person.initials} avatarUrl={person.avatarUrl} /><div><b>{person.name}</b><span>{requested ? 'Request sent · waiting for acceptance' : person.username ? `@${person.username}` : person.emailHint ?? person.phoneHint ?? 'Verified exact match'}</span></div><button onClick={() => { void act('add', person) }} disabled={requested || sending}><FontAwesomeIcon icon={requested ? faCheck : faPlus} /> {sending ? 'Sending…' : requested ? 'Waiting' : 'Add friend'}</button></article> })}{Object.values(actedPeople).includes('add') && <p className="focus-request-route">They will see it above in their Friends request inbox.</p>}</div> : <div className="focus-lookup-empty">No opted-in Penni account matched that exact username or contact.</div>)}
       </section>
 
       <section className="focus-card focus-live-friends">
@@ -169,18 +188,12 @@ export function FocusFriends({ username, friends, requests, onSearchPeople, onUs
         {liveFriends.length ? <div className="focus-live-friend-grid">{liveFriends.map(person => { const nudged = actedPeople[person.id] === 'nudge'; const sending = actedPeople[person.id] === 'nudge:pending'; return <article key={person.id}><FocusAvatar name={person.name} initials={person.initials} avatarUrl={person.avatarUrl} live size="lg" /><div><span>Focusing · {person.subject}</span><h3>{person.name}</h3><p>{compactFocusTime(person.liveSeconds ?? 0)} in this block · {compactFocusTime(person.todaySeconds)} today</p></div><button className={nudged ? 'sent' : ''} onClick={() => { void act('nudge', person) }} disabled={nudged || sending}><FontAwesomeIcon icon={nudged ? faCheck : faPaperPlane} /> {sending ? 'Sending…' : nudged ? 'Nudge sent' : 'Nudge'}</button></article>})}</div> : <div className="focus-empty-inline"><FontAwesomeIcon icon={faUserGroup} /><p>Friends appear here only when they choose to share live status.</p></div>}
       </section>
 
-      {(incoming.length > 0 || outgoing.length > 0) && <section className="focus-card focus-request-card">
-        <FocusSectionHeading eyebrow="Requests" title="Manage your study circle" detail="Incoming and sent requests stay separate." />
-        <div className="focus-request-list">
-          {incoming.map(request => { const pending = pendingRequests.includes(request.id); return <article key={request.id}><FocusAvatar name={request.person.name} initials={request.person.initials} avatarUrl={request.person.avatarUrl} /><div><b>{request.person.name}</b><span>Incoming request · {request.person.mutualCount ?? 0} mutual</span></div><button className="accept" disabled={pending} onClick={() => { void handleRequest(request, 'accept') }}><FontAwesomeIcon icon={faCheck} /> {pending ? 'Saving…' : 'Accept'}</button><button className="decline" disabled={pending} onClick={() => { void handleRequest(request, 'decline') }} aria-label={`Decline ${request.person.name}`}><FontAwesomeIcon icon={faXmark} /></button></article> })}
-          {outgoing.map(request => { const pending = pendingRequests.includes(request.id); return <article key={request.id}><FocusAvatar name={request.person.name} initials={request.person.initials} avatarUrl={request.person.avatarUrl} /><div><b>{request.person.name}</b><span>Request sent</span></div><button className="cancel" disabled={pending} onClick={() => { void handleRequest(request, 'cancel') }}><FontAwesomeIcon icon={faXmark} /> {pending ? 'Cancelling…' : 'Cancel'}</button></article> })}
-        </div>
-      </section>}
-
       <section className="focus-card focus-friend-list-card">
         <FocusSectionHeading eyebrow="Friends" title={friends.length ? `${friends.length} in your circle` : 'Your circle is empty'} detail="Remove ends the connection. Block also prevents future requests and lookup visibility between both accounts." />
         {friends.length ? <div className="focus-friend-list">{friends.map(person => { const pending = actedPeople[person.id]?.endsWith(':pending'); return <article key={person.id}><FocusAvatar name={person.name} initials={person.initials} avatarUrl={person.avatarUrl} live={person.isLive} /><div><b>{person.name}{person.username && <small> @{person.username}</small>}</b><span>{person.isLive ? `Focusing · ${person.subject}` : `${person.streak}-day streak`}</span><small>{compactFocusTime(person.weeklySeconds)} this week</small></div><button disabled={pending} onClick={() => { void act('remove', person) }}><FontAwesomeIcon icon={faTrash} /> Remove</button><button className="block" disabled={pending} onClick={() => { void act('block', person) }}><FontAwesomeIcon icon={faBan} /> Block</button></article> })}</div> : <div className="focus-empty-inline"><FontAwesomeIcon icon={faUserGroup} /><p>Use exact account search above to send your first friend request.</p></div>}
       </section>
+
+      {inviteTrigger && username && onCreateInviteLink && <FocusInviteSheet kind="friend" title={`Connect with @${username}`} detail="Let a friend scan this QR or open the link. They will see your profile and confirm before a request is sent." handle={username} restoreFocusTo={inviteTrigger} onClose={() => setInviteTrigger(null)} onCreate={onCreateInviteLink} />}
     </div>
   )
 }

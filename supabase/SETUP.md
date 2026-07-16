@@ -13,6 +13,7 @@ keep each file as one transaction:
 6. `migrations/0006_focus_social.sql`
 7. `migrations/0007_focus_usernames.sql`
 8. `migrations/0008_username_availability.sql`
+9. `migrations/0009_focus_invite_links.sql`
 
 The account migrations create student profiles, cross-device learning state,
 launch profile fields and explicit email/WhatsApp consent. Their RLS policies
@@ -27,6 +28,9 @@ The username migration adds globally unique public handles and exact
 rate-limited onboarding check; saving remains protected by the database's
 atomic unique index. Apply all Focus migrations before testing usernames,
 friend search or group invitations.
+The invite-link migration also recompiles both exact-match lookup functions
+with qualified column references. It is required to remove the legacy
+`user_id is ambiguous` error from username, email and phone discovery.
 
 ## 2. Enable login providers
 

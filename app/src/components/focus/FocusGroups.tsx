@@ -12,11 +12,13 @@ import type {
   FocusGroupInviteNotice,
   FocusGroupJoinRequestNotice,
   FocusGroupMessage,
+  FocusInviteShare,
   FocusPerson,
   FocusProfile,
   FocusRankingEntry,
 } from './focusTypes'
 import { compactFocusTime, FocusAvatar, FocusProgress, FocusSectionHeading } from './FocusPrimitives'
+import { FocusInviteSheet } from './FocusInviteSheet'
 
 type GroupTab = 'room' | 'members' | 'rank' | 'chat'
 type GroupSheet =
@@ -37,6 +39,7 @@ interface FocusGroupsProps {
   onJoinGroup: (groupId: string) => void
   onJoinGroupByCode?: (code: string) => void
   onLeaveGroup: (groupId: string) => boolean | Promise<boolean>
+  onCreateInviteLink?: (kind: 'friend' | 'group', groupId?: string) => Promise<FocusInviteShare>
   onInviteToGroup: (groupId: string, exactContact: string) => boolean | Promise<boolean>
   onRespondGroupInvite: (inviteId: string, accept: boolean) => boolean | Promise<boolean>
   onRespondGroupJoinRequest: (requestId: string, accept: boolean) => boolean | Promise<boolean>
@@ -48,7 +51,7 @@ export function FocusGroups(props: FocusGroupsProps) {
   const {
     profile, groups, groupInvites = [], groupJoinRequests = [], people, messages, rankings,
     onOpenGroup, onCreateGroup, onJoinGroup, onJoinGroupByCode, onLeaveGroup,
-    onInviteToGroup, onRespondGroupInvite, onRespondGroupJoinRequest, onSendMessage, onMemberAction,
+    onCreateInviteLink, onInviteToGroup, onRespondGroupInvite, onRespondGroupJoinRequest, onSendMessage, onMemberAction,
   } = props
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null)
   const [tab, setTab] = useState<GroupTab>('room')
@@ -126,7 +129,7 @@ export function FocusGroups(props: FocusGroupsProps) {
 
       {sheet?.kind === 'create' && <CreateGroupSheet restoreFocusTo={sheet.restoreFocusTo} onClose={() => setSheet(null)} onSubmit={onCreateGroup} />}
       {sheet?.kind === 'join' && onJoinGroupByCode && <JoinGroupSheet restoreFocusTo={sheet.restoreFocusTo} onClose={() => setSheet(null)} onSubmit={code => { onJoinGroupByCode(code); setSheet(null) }} />}
-      {sheet?.kind === 'invite' && <InviteGroupSheet restoreFocusTo={sheet.restoreFocusTo} groupName={groups.find(group => group.id === sheet.groupId)?.name ?? 'this group'} onClose={() => setSheet(null)} onSubmit={contact => onInviteToGroup(sheet.groupId, contact)} />}
+      {sheet?.kind === 'invite' && onCreateInviteLink && <FocusInviteSheet kind="group" groupId={sheet.groupId} restoreFocusTo={sheet.restoreFocusTo} title={groups.find(group => group.id === sheet.groupId)?.name ?? 'Study group'} detail="Share one secure QR or link, or send a private invitation to a verified contact." onClose={() => setSheet(null)} onCreate={onCreateInviteLink} onDirectInvite={contact => onInviteToGroup(sheet.groupId, contact)} />}
     </>
   )
 }
@@ -437,43 +440,6 @@ function JoinGroupSheet({ restoreFocusTo, onClose, onSubmit }: { restoreFocusTo:
         <label><span>Invite code</span><input value={code} onChange={event => { setCode(event.target.value); setError('') }} maxLength={80} placeholder="Enter full invite code" autoCapitalize="characters" autoFocus /></label>
         {error && <p className="focus-group-form-error">{error}</p>}
         <footer><button type="button" onClick={onClose}>Cancel</button><button className="primary" disabled={!code.trim()}>Check invite</button></footer>
-      </form>
-    </GroupSheetShell>
-  )
-}
-
-function InviteGroupSheet({ restoreFocusTo, groupName, onClose, onSubmit }: { restoreFocusTo: HTMLElement; groupName: string; onClose: () => void; onSubmit: (exactContact: string) => boolean | Promise<boolean> }) {
-  const [contact, setContact] = useState('')
-  const [error, setError] = useState('')
-  const [feedback, setFeedback] = useState<FormFeedback>({ kind: 'idle', message: '' })
-  const busy = feedback.kind === 'submitting' || feedback.kind === 'success'
-
-  async function submit(event: FormEvent) {
-    event.preventDefault()
-    const raw = contact.trim()
-    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw)
-    const phone = raw.replace(/[\s()-]/g, '')
-    const isPhone = /^\+?[1-9]\d{7,14}$/.test(phone)
-    if (!isEmail && !isPhone) { setError('Enter a complete email address or full phone number with country code.'); setFeedback({ kind: 'error', message: 'Check the highlighted contact and try again.' }); return }
-    setFeedback({ kind: 'submitting', message: 'Sending a secure group invitation…' })
-    try {
-      const sent = await onSubmit(isEmail ? raw.toLowerCase() : phone)
-      if (!sent) { setFeedback({ kind: 'error', message: 'The invitation was not sent. Check the contact or account permissions, then try again.' }); return }
-      setFeedback({ kind: 'success', message: 'Invitation sent.' })
-      await new Promise(resolve => window.setTimeout(resolve, 650))
-      onClose()
-    } catch (submitError) {
-      setFeedback({ kind: 'error', message: readableActionError(submitError, 'The invitation could not be sent. Please try again.') })
-    }
-  }
-
-  return (
-    <GroupSheetShell title={`Invite to ${groupName}`} detail="Invites use an exact contact match. Names and partial numbers are never searched." restoreFocusTo={restoreFocusTo} onClose={onClose} busy={busy}>
-      <form className="focus-group-simple-form" onSubmit={submit} noValidate>
-        <label><span>Verified email or full phone</span><input aria-invalid={Boolean(error)} aria-describedby={error ? 'focus-group-invite-error' : undefined} value={contact} onChange={event => { setContact(event.target.value); setError(''); if (feedback.kind === 'error') setFeedback({ kind: 'idle', message: '' }) }} maxLength={160} placeholder="name@example.com or +91…" inputMode="email" autoCapitalize="none" autoFocus /></label>
-        {error && <p className="focus-group-form-error" id="focus-group-invite-error">{error}</p>}
-        <div className="focus-group-form-note"><FontAwesomeIcon icon={faLock} /><p><b>Exact lookup only</b>The connected service decides whether this account accepts group invitations.</p></div>
-        <footer>{feedback.kind !== 'idle' && <p className={`focus-group-submit-status ${feedback.kind}`} role={feedback.kind === 'error' ? 'alert' : 'status'}>{feedback.kind === 'submitting' && <FontAwesomeIcon icon={faCircleNotch} spin />}{feedback.kind === 'success' && <FontAwesomeIcon icon={faCheck} />}{feedback.message}</p>}<div className="focus-group-footer-actions"><button type="button" onClick={onClose}>Cancel</button><button className="primary" disabled={busy || !contact.trim()}>{feedback.kind === 'submitting' ? 'Sending…' : feedback.kind === 'success' ? 'Sent' : 'Send invite'}</button></div></footer>
       </form>
     </GroupSheetShell>
   )

@@ -4,6 +4,7 @@ import type {
   FocusGroup as ScreenFocusGroup,
   FocusGroupDraft,
   FocusGroupMessage as ScreenFocusGroupMessage,
+  FocusInviteShare,
   FocusPeriod as ScreenFocusPeriod,
   FocusPerson,
   FocusPlatform,
@@ -25,6 +26,7 @@ import {
 } from '@/lib/focusShield'
 import {
   cancelFocusFriendRequest,
+  createFocusInviteLink,
   createFocusGroup,
   findFocusProfile,
   getDeviceTimeZone,
@@ -1156,6 +1158,19 @@ export function useFocusExperience(
     }
   }, [refresh, setActionError, showToast])
 
+  const onCreateInviteLink = useCallback(async (kind: 'friend' | 'group', groupId?: string): Promise<FocusInviteShare> => {
+    try {
+      const invite = resultData(await createFocusInviteLink(kind, groupId))
+      if (!invite?.token) throw new Error('The secure invite could not be created.')
+      const url = new URL(import.meta.env.BASE_URL, window.location.origin)
+      url.searchParams.set('focusInvite', invite.token)
+      return { ...invite, url: url.toString() }
+    } catch (error) {
+      const message = setActionError(error, 'The secure invite could not be created.')
+      throw new Error(message)
+    }
+  }, [setActionError])
+
   const onFriendAction = useCallback(async (action: FocusFriendAction, personId: string, requestId?: string) => {
     try {
       if (action === 'add') {
@@ -1165,7 +1180,7 @@ export function useFocusExperience(
         if (relationship === 'outgoing') { showToast('Your friend request is already pending.'); return false }
         const id = resultData(await sendFocusFriendRequest(personId))
         if (!id) throw new Error('The friend request could not be created.')
-        showToast('Friend request sent.')
+        showToast('Friend request sent. They will see it in their Friends request inbox.')
       } else if (action === 'accept' || action === 'decline') {
         const id = requestId ?? social.requests.find(request =>
           request.senderId === personId && request.status === 'pending')?.id
@@ -1505,6 +1520,7 @@ export function useFocusExperience(
     },
     onSearchPeople,
     onUsernameChange,
+    onCreateInviteLink,
     onFriendAction,
     onOpenGroup: loadGroup,
     onCreateGroup,
@@ -1521,7 +1537,7 @@ export function useFocusExperience(
     onPreferenceChange,
     onTimerSettingsChange,
     onFocusShieldAction,
-  }), [data, loadGroup, onCreateGroup, onFocusShieldAction, onFriendAction, onGroupMemberAction, onInviteToGroup, onJoinGroup, onLeaveGroup, onPreferenceChange, onRankingScopeChange, onRespondGroupInvite, onRespondGroupJoinRequest, onSearchPeople, onSendGroupMessage, onSubjectCreate, onSubjectSelectionChange, onTimerSettingsChange, onUsernameChange, runtime, settings.longBreakMinutes, settings.pomodoroMinutes, settings.shortBreakMinutes, shieldCapability?.appBlockingAvailable, shieldCapability?.platform, showToast])
+  }), [data, loadGroup, onCreateGroup, onCreateInviteLink, onFocusShieldAction, onFriendAction, onGroupMemberAction, onInviteToGroup, onJoinGroup, onLeaveGroup, onPreferenceChange, onRankingScopeChange, onRespondGroupInvite, onRespondGroupJoinRequest, onSearchPeople, onSendGroupMessage, onSubjectCreate, onSubjectSelectionChange, onTimerSettingsChange, onUsernameChange, runtime, settings.longBreakMinutes, settings.pomodoroMinutes, settings.shortBreakMinutes, shieldCapability?.appBlockingAvailable, shieldCapability?.platform, showToast])
 
   return {
     data,

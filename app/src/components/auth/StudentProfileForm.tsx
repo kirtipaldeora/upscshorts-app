@@ -652,15 +652,17 @@ export function StudentProfileForm({ onComplete }: StudentProfileFormProps) {
             <FontAwesomeIcon icon={faArrowLeft} />
           </button>
         ) : <span className="onboarding-back-spacer" />}
-        <button type="button" className="onboarding-next" onClick={next} disabled={loading || submitting || transitioning || (mode === 'setup' && setupStep === 0 && !usernameReady)}>
-          {mode === 'setup'
-            ? setupStep === 2 ? 'Preview Penni' : 'Continue'
-            : tourIndex === TOUR_FEATURES.length - 1 ? 'Start learning' : 'Next feature'}
-          <FontAwesomeIcon icon={mode === 'tour' && tourIndex === TOUR_FEATURES.length - 1 ? faCheck : faArrowRight} />
-        </button>
-        {mode === 'setup' && setupStep === 2 && (
-          <button type="button" className="onboarding-skip-tour" onClick={() => void finish()} disabled={loading || submitting || transitioning}>Save &amp; skip tour</button>
-        )}
+        <div className="onboarding-footer-actions">
+          <button type="button" className="onboarding-next" onClick={next} disabled={loading || submitting || transitioning || (mode === 'setup' && setupStep === 0 && !usernameReady)}>
+            {mode === 'setup'
+              ? setupStep === 2 ? 'Preview Penni' : 'Continue'
+              : tourIndex === TOUR_FEATURES.length - 1 ? 'Start learning' : 'Next feature'}
+            <FontAwesomeIcon icon={mode === 'tour' && tourIndex === TOUR_FEATURES.length - 1 ? faCheck : faArrowRight} />
+          </button>
+          {mode === 'setup' && setupStep === 2 && (
+            <button type="button" className="onboarding-skip-tour" onClick={() => void finish()} disabled={loading || submitting || transitioning}>Save &amp; skip tour</button>
+          )}
+        </div>
       </footer>
 
       {(loading || submitting) && (

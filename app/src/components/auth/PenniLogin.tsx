@@ -4,12 +4,14 @@ import { faGoogle } from '@fortawesome/free-brands-svg-icons'
 import {
   faArrowRight,
   faBookOpen,
+  faCircleNotch,
   faLayerGroup,
   faListCheck,
   faMapLocationDot,
   faNewspaper,
   faScroll,
   faStopwatch,
+  faUserGroup,
 } from '@fortawesome/free-solid-svg-icons'
 import { EASE, gsap, reducedMotion } from '@/anim/animations'
 import { useAuthStore } from '@/stores/useAuthStore'
@@ -18,6 +20,7 @@ import './AuthExperience.css'
 
 interface PenniLoginProps {
   onAuthenticated: () => void
+  invitePending?: boolean
 }
 
 const FEATURE_TRACK = [
@@ -38,7 +41,7 @@ function circularOffset(index: number, active: number) {
   return offset
 }
 
-export function PenniLogin({ onAuthenticated }: PenniLoginProps) {
+export function PenniLogin({ onAuthenticated, invitePending = false }: PenniLoginProps) {
   const {
     user,
     isGuest,
@@ -148,9 +151,10 @@ export function PenniLogin({ onAuthenticated }: PenniLoginProps) {
       </section>
 
       <section className="entry-actions" aria-label="Sign-in options">
-        <button type="button" className="entry-provider primary" onClick={() => void runProvider()} disabled={loading || !supabaseConfigured}>
-          <FontAwesomeIcon icon={faGoogle} />
-          Continue with Google
+        {invitePending && <p className="entry-invite-note"><FontAwesomeIcon icon={faUserGroup} /> Sign in to review your pending Focus invitation.</p>}
+        <button type="button" className="entry-provider primary" onClick={() => void runProvider()} disabled={loading || !supabaseConfigured} aria-busy={loading}>
+          <FontAwesomeIcon icon={loading ? faCircleNotch : faGoogle} spin={loading} />
+          {loading ? 'Opening Google…' : 'Continue with Google'}
         </button>
         {error && <p className="entry-error" role="alert">{error}</p>}
         <button type="button" className="entry-skip" onClick={() => void runGuest()} disabled={loading}>

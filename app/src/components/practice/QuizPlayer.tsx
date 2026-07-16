@@ -26,6 +26,7 @@ import { splitUPSCStem } from '@/utils/questionQuality'
 import { PyqSolutionView } from '@/components/pyq-vault/PyqSolutionView'
 import { relatedPyqs } from '@/utils/questionLinks'
 import { loadPyqManifest, loadPyqYears } from '@/utils/pyqData'
+import { getReadingLanguage, type ReadingLanguage } from '@/hooks/useReadingLanguage'
 
 interface QuizPlayerProps {
   title: string
@@ -57,7 +58,12 @@ type TestAnswer = { picked: number | null; correct: boolean; skipped: boolean }
 type FinishReason = 'submitted' | 'time' | 'exit'
 type ReviewFilter = 'needs' | 'all' | 'correct'
 
-export function QuizPlayer({ title, questions, eyebrow, description, onClose, onShowToast }: QuizPlayerProps) {
+function localizedQuestion(question: Question, language: ReadingLanguage): Question {
+  const copy = language === 'hi' ? question.copies?.hi : question.copies?.en
+  return copy ? { ...question, ...copy } : question.copies?.en ? { ...question, ...question.copies.en } : question
+}
+
+export function QuizPlayer({ title, questions: sourceQuestions, eyebrow, description, onClose, onShowToast }: QuizPlayerProps) {
   const { settings, recordAnswer, toggleQbm, questionBookmarks, pyqData, pyqReady, setPyqData } = usePracticeStore()
   const { articlesByDate } = useAppStore()
   const [started, setStarted] = useState(false)
@@ -78,16 +84,23 @@ export function QuizPlayer({ title, questions, eyebrow, description, onClose, on
   const [exitConfirm, setExitConfirm] = useState(false)
   const [submitConfirm, setSubmitConfirm] = useState(false)
   const [finishReason, setFinishReason] = useState<FinishReason>('submitted')
+  const [questionLanguage, setQuestionLanguage] = useState<ReadingLanguage>(() => getReadingLanguage())
   const examRecorded = useRef(false)
 
+  const questions = useMemo(() => sourceQuestions.map(question => localizedQuestion(question, questionLanguage)), [questionLanguage, sourceQuestions])
+  const bilingualQuestions = useMemo(() => sourceQuestions.some(question => Boolean(question.copies?.hi)), [sourceQuestions])
   const q = questions[idx]
   const total = questions.length
   const articlesById = useMemo(() => new Map(Object.values(articlesByDate).flat().map(article => [article.id, article])), [articlesByDate])
   const linkedArticle = q.aid ? articlesById.get(q.aid) : undefined
   const currentRelatedPyqs = useMemo(
-    () => linkedArticle && pyqData.length > 1000 ? relatedPyqs(linkedArticle, q, pyqData, 2) : [],
-    [linkedArticle, pyqData, q],
+    () => linkedArticle && pyqData.length > 1000 ? relatedPyqs(linkedArticle, sourceQuestions[idx], pyqData, 2) : [],
+    [idx, linkedArticle, pyqData, sourceQuestions],
   )
+
+  useEffect(() => {
+    if (questionLanguage === 'hi' && !sourceQuestions[idx]?.copies?.hi) setQuestionLanguage('en')
+  }, [idx, questionLanguage, sourceQuestions])
 
   useEffect(() => {
     // Related-PYQ hints are only rendered during an active Learn attempt.
@@ -700,6 +713,7 @@ export function QuizPlayer({ title, questions, eyebrow, description, onClose, on
         <div className="qz-meta">
           {q.subject && <span className="pv-tag subject">{q.subject}</span>}
           {q.srcLabel && <span className="qz-src">{q.srcLabel}</span>}
+          {bilingualQuestions && <div className="qz-question-language" role="group" aria-label="Question language"><button type="button" className={questionLanguage === 'en' ? 'active' : ''} onClick={() => setQuestionLanguage('en')} aria-pressed={questionLanguage === 'en'}>EN</button><button type="button" className={questionLanguage === 'hi' ? 'active' : ''} onClick={() => setQuestionLanguage('hi')} aria-pressed={questionLanguage === 'hi'} disabled={!sourceQuestions[idx]?.copies?.hi} title={sourceQuestions[idx]?.copies?.hi ? 'Read this question in Hindi' : 'Hindi is not available for this question'}>हिं</button></div>}
           <button
             className={`qz-bm ${bm ? 'on' : ''}`}
             onClick={() => toggleQbm(q.id, onShowToast)}
