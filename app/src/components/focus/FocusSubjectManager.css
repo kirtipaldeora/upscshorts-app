@@ -146,7 +146,7 @@
   display: grid;
   place-items: center;
   background: var(--focus-blue, #7379db);
-  color: #fff;
+  color: var(--focus-blue-ink, #0b1025);
   font-size: 12px;
   font-weight: 950;
 }
@@ -239,7 +239,7 @@
   outline: 3px solid color-mix(in srgb, var(--focus-blue, #7379db) 34%, transparent);
   outline-offset: 2px;
 }
-.focus-subject-manager-list > label.selected .focus-subject-manager-check { border-color: var(--focus-blue, #7379db); background: var(--focus-blue, #7379db); }
+.focus-subject-manager-list > label.selected .focus-subject-manager-check { border-color: var(--focus-blue, #7379db); background: var(--focus-blue, #7379db); color: var(--focus-blue-ink, #0b1025); }
 .focus-subject-manager-list > label > i { width: 9px; height: 9px; border-radius: 50%; box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 5%, transparent); }
 .focus-subject-manager-choice-copy { min-width: 0; display: flex; flex-direction: column; }
 .focus-subject-manager-choice-copy b { overflow: hidden; color: var(--ink, #252846); font-size: 11px; font-weight: 950; text-overflow: ellipsis; white-space: nowrap; }
@@ -312,7 +312,7 @@
   justify-content: center;
   gap: 7px;
   background: var(--focus-blue, #7379db);
-  color: #fff;
+  color: var(--focus-blue-ink, #0b1025);
   cursor: pointer;
   font-size: 10.5px;
   font-weight: 950;

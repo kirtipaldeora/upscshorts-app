@@ -1,6 +1,7 @@
 .focus-screen {
   --focus-blue: #7379db;
   --focus-blue-deep: #555cad;
+  --focus-blue-ink: #0b1025;
   --focus-gold: #f2bf57;
   --focus-mint: #66b99f;
   --focus-rose: #d8788f;
@@ -152,7 +153,7 @@
 .focus-pomodoro-setup { max-width: 740px; margin: 14px auto 18px; padding: 12px; border-radius: 18px; background: color-mix(in srgb, var(--focus-blue) 6%, var(--card2)); }
 .focus-phase-picker { display: flex; justify-content: center; flex-wrap: wrap; gap: 7px; }
 .focus-phase-picker button { min-height: 34px; padding: 0 13px; border-radius: 12px; background: transparent; color: var(--ink2); font-size: 10.5px; font-weight: 900; text-transform: capitalize; }
-.focus-phase-picker button.active { background: var(--focus-blue); color: #fff; }
+.focus-phase-picker button.active { background: var(--focus-blue); color: var(--focus-blue-ink); }
 .focus-length-picker { margin-top: 12px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; }
 .focus-length-picker > span { color: var(--ink2); font-size: 10px; font-weight: 950; text-transform: uppercase; letter-spacing: .5px; }
 .focus-length-picker button, .focus-length-picker label { min-height: 34px; border-radius: 11px; background: var(--card); border: 1px solid var(--border); color: var(--ink); font-size: 10.5px; font-weight: 900; }
@@ -190,7 +191,7 @@
 .focus-timer-note { margin: 13px auto 0; text-align: center; color: var(--ink2); font-size: 11px; font-weight: 800; }
 .focus-timer-actions { margin-top: 22px; display: flex; justify-content: center; gap: 10px; }
 .focus-timer-actions button { min-width: 150px; height: 50px; border-radius: 18px; display: flex; align-items: center; justify-content: center; gap: 9px; font-size: 12px; font-weight: 950; }
-.focus-timer-actions .primary { background: var(--focus-blue); color: #fff; box-shadow: 0 13px 30px color-mix(in srgb, var(--focus-blue) 30%, transparent); }
+.focus-timer-actions .primary { background: var(--focus-blue); color: var(--focus-blue-ink); box-shadow: 0 13px 30px color-mix(in srgb, var(--focus-blue) 30%, transparent); }
 .focus-timer-actions .primary:disabled { opacity: .45; box-shadow: none; cursor: not-allowed; }
 .focus-timer-actions .secondary { background: var(--card2); color: var(--ink); }
 .focus-today-grid, .focus-analytics-grid, .focus-settings-grid, .focus-room-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
@@ -313,7 +314,7 @@
 .focus-username-card > form { display: flex; align-items: center; gap: 8px; }
 .focus-username-card > form label { width: min(260px, 38vw); height: 46px; padding: 0 13px; border-radius: 15px; display: flex; align-items: center; gap: 3px; background: var(--card); border: 1px solid var(--border); color: var(--acc); font-size: 12px; font-weight: 950; }
 .focus-username-card > form input { min-width: 0; width: 100%; border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 11.5px; font-weight: 900; }
-.focus-username-card > form button, .focus-username-card > button.edit { min-height: 42px; padding: 0 14px; border-radius: 14px; background: var(--focus-blue); color: #fff; font-size: 10px; font-weight: 950; white-space: nowrap; }
+.focus-username-card > form button, .focus-username-card > button.edit { min-height: 42px; padding: 0 14px; border-radius: 14px; background: var(--focus-blue); color: var(--focus-blue-ink); font-size: 10px; font-weight: 950; white-space: nowrap; }
 .focus-username-card > form button:disabled { opacity: .55; cursor: wait; }
 .focus-username-card > form button.cancel { background: var(--card2); color: var(--ink2); }
 .focus-username-error { grid-column: 1/-1; margin: -3px 0 0; color: var(--bad); font-size: 10px; font-weight: 850; }
@@ -325,14 +326,14 @@
 .focus-friend-lookup form > svg { color: var(--acc); }
 .focus-friend-lookup input { min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 12px; font-weight: 850; }
 .focus-friend-lookup form button { width: 34px; height: 34px; border-radius: 12px; background: transparent; color: var(--ink2); }
-.focus-friend-lookup form button.find { width: auto; min-width: 74px; padding: 0 14px; background: var(--focus-blue); color: #fff; font-size: 10.5px; font-weight: 950; }
+.focus-friend-lookup form button.find { width: auto; min-width: 74px; padding: 0 14px; background: var(--focus-blue); color: var(--focus-blue-ink); font-size: 10.5px; font-weight: 950; }
 .focus-lookup-error { margin: 8px 0 0; color: var(--bad); font-size: 10px; font-weight: 850; }
 .focus-lookup-results { margin-top: 12px; }
 .focus-lookup-results article { padding: 11px; border-radius: 17px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 11px; background: var(--card2); }
 .focus-lookup-results article div { display: flex; flex-direction: column; }
 .focus-lookup-results b { font-size: 11.5px; }
 .focus-lookup-results span { color: var(--ink2); font-size: 9px; }
-.focus-lookup-results button { min-height: 36px; padding: 0 12px; border-radius: 12px; background: var(--focus-blue); color: #fff; font-size: 9.5px; font-weight: 950; }
+.focus-lookup-results button { min-height: 36px; padding: 0 12px; border-radius: 12px; background: var(--focus-blue); color: var(--focus-blue-ink); font-size: 9.5px; font-weight: 950; }
 .focus-lookup-empty { margin-top: 12px; padding: 14px; border-radius: 15px; background: var(--card2); color: var(--ink2); font-size: 10px; font-weight: 800; text-align: center; }
 .focus-live-friend-grid { margin-top: 20px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .focus-live-friend-grid article { padding: 15px; border-radius: 20px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 11px; background: var(--card2); }
@@ -350,7 +351,7 @@
 .focus-request-list b, .focus-friend-list b { font-size: 11px; font-weight: 950; }
 .focus-request-list span, .focus-friend-list span, .focus-friend-list small { color: var(--ink2); font-size: 8.5px; font-weight: 800; }
 .focus-request-list button, .focus-friend-list button { min-height: 34px; padding: 0 10px; border-radius: 11px; background: var(--card); color: var(--ink2); font-size: 8.5px; font-weight: 950; }
-.focus-request-list button.accept { background: var(--focus-blue); color: #fff; }
+.focus-request-list button.accept { background: var(--focus-blue); color: var(--focus-blue-ink); }
 .focus-request-list button.decline { width: 34px; padding: 0; }
 .focus-friend-list button.block { color: var(--bad); }
 
@@ -374,7 +375,7 @@
 .focus-group-notice-copy > em { margin-top: 5px; color: var(--bad); font-size: 9px; line-height: 1.35; font-style: normal; font-weight: 850; }
 .focus-group-notice-actions { display: flex; align-items: center; gap: 7px; }
 .focus-group-notice-actions button { min-height: 36px; padding: 0 11px; border-radius: 12px; background: var(--card2); color: var(--ink2); font-size: 9px; font-weight: 950; }
-.focus-group-notice-actions button.primary { background: var(--focus-blue); color: #fff; }
+.focus-group-notice-actions button.primary { background: var(--focus-blue); color: var(--focus-blue-ink); }
 .focus-group-notice-actions button:disabled { opacity: .48; cursor: wait; }
 .focus-group-notice-actions svg { margin-right: 4px; }
 .focus-group-notice-panel.compact { padding: 16px; }
@@ -400,7 +401,7 @@
 .focus-groups-empty h3, .focus-rankings-empty h3 { margin: 5px 0 0; color: var(--ink); font-size: 21px; font-weight: 950; }
 .focus-groups-empty p, .focus-rankings-empty p { max-width: 480px; margin: 7px 0 0; font-size: 10.5px; line-height: 1.5; font-weight: 750; }
 .focus-groups-empty > div { margin-top: 17px; display: flex; gap: 9px; }
-.focus-groups-empty button { min-height: 42px; padding: 0 14px; border-radius: 14px; background: var(--focus-blue); color: #fff; font-size: 10px; font-weight: 950; }
+.focus-groups-empty button { min-height: 42px; padding: 0 14px; border-radius: 14px; background: var(--focus-blue); color: var(--focus-blue-ink); font-size: 10px; font-weight: 950; }
 .focus-groups-empty button + button { background: var(--card2); color: var(--acc); }
 .focus-group-detail-head { padding: 20px; border-radius: 26px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 13px; background: var(--panel); border: 1px solid var(--panel-border); color: var(--on); }
 .focus-group-detail-head > button { width: 42px; height: 42px; border-radius: 14px; background: var(--panel2); color: var(--on); }
@@ -459,10 +460,10 @@
 .focus-chat-messages article > div { max-width: min(74%, 560px); }
 .focus-chat-messages article > div > span { display: flex; gap: 8px; margin: 0 5px 3px; color: var(--ink2); font-size: 7.5px; }
 .focus-chat-messages p { margin: 0; padding: 10px 12px; border-radius: 16px 16px 16px 5px; background: var(--card2); color: var(--ink); font-size: 10.5px; line-height: 1.45; }
-.focus-chat-messages article.self p { border-radius: 16px 16px 5px 16px; background: var(--focus-blue); color: #fff; }
+.focus-chat-messages article.self p { border-radius: 16px 16px 5px 16px; background: var(--focus-blue); color: var(--focus-blue-ink); }
 .focus-chat-composer { margin-top: 18px; padding: 5px 5px 5px 13px; min-height: 50px; border-radius: 17px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px; background: var(--card2); }
 .focus-chat-composer input { border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 10.5px; font-weight: 800; }
-.focus-chat-composer button { min-height: 40px; padding: 0 13px; border-radius: 13px; background: var(--focus-blue); color: #fff; font-size: 9.5px; font-weight: 950; }
+.focus-chat-composer button { min-height: 40px; padding: 0 13px; border-radius: 13px; background: var(--focus-blue); color: var(--focus-blue-ink); font-size: 9.5px; font-weight: 950; }
 .focus-chat-composer button:disabled { opacity: .4; }
 .focus-member-sheet-backdrop { position: fixed; inset: 0; z-index: 1020; display: flex; align-items: flex-end; justify-content: center; background: var(--overlay); backdrop-filter: blur(10px); }
 .focus-member-sheet { position: relative; width: min(620px, 100%); padding: 28px 24px calc(28px + env(safe-area-inset-bottom)); border-radius: 30px 30px 0 0; background: var(--card); color: var(--ink); text-align: center; box-shadow: 0 -30px 80px rgba(0,0,0,.25); }
@@ -668,7 +669,7 @@ body:has(.focus-secondary-sheet-backdrop) .bottom-nav-motion {
 .focus-group-form footer, .focus-group-simple-form footer { position: sticky; bottom: 0; z-index: 3; margin: 0 -24px -24px; padding: 11px 24px calc(24px + env(safe-area-inset-bottom)); display: flex; align-items: center; justify-content: space-between; gap: 12px; background: color-mix(in srgb, var(--card) 94%, transparent); border-top: 1px solid var(--border); box-shadow: 0 -14px 28px color-mix(in srgb, var(--ink) 7%, transparent); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
 .focus-group-footer-actions { margin-left: auto; display: flex; justify-content: flex-end; gap: 8px; }
 .focus-group-form footer button, .focus-group-simple-form footer button { min-width: 112px; min-height: 42px; padding: 0 14px; border-radius: 14px; background: var(--card2); color: var(--ink2); font-size: 10px; font-weight: 950; }
-.focus-group-form footer button.primary, .focus-group-simple-form footer button.primary { background: var(--focus-blue); color: #fff; }
+.focus-group-form footer button.primary, .focus-group-simple-form footer button.primary { background: var(--focus-blue); color: var(--focus-blue-ink); }
 .focus-group-form footer button:disabled, .focus-group-simple-form footer button:disabled { opacity: .42; cursor: not-allowed; }
 .focus-group-submit-status { max-width: 330px; margin: 0; display: flex; align-items: center; gap: 7px; color: var(--ink2); font-size: 9.5px; line-height: 1.35; font-weight: 850; }
 .focus-group-submit-status.error { color: var(--bad); }

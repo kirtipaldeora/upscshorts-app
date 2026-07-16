@@ -45,6 +45,13 @@ function getInitialPhase(): AppPhase {
   return 'splash'
 }
 
+function phaseForCurrentAccount(): Exclude<AppPhase, 'splash'> {
+  const { user, profile, isGuest } = useAuthStore.getState()
+  if (isGuest) return 'main'
+  if (!user) return 'auth'
+  return profile ? 'main' : 'profile'
+}
+
 export default function App() {
   const [phase, setPhase] = useState<AppPhase>(getInitialPhase)
   const [uploadVisible, setUploadVisible] = useState(false)
@@ -111,13 +118,11 @@ export default function App() {
 
   const handleSplashDone = useCallback(async () => {
     await bootstrap()
-    const state = useAuthStore.getState()
-    setPhase(state.isGuest ? 'main' : state.user ? (state.profile ? 'main' : 'profile') : 'auth')
+    setPhase(phaseForCurrentAccount())
   }, [bootstrap])
 
   const handleAuthenticated = useCallback(() => {
-    const state = useAuthStore.getState()
-    setPhase(state.isGuest ? 'main' : state.profile ? 'main' : 'profile')
+    setPhase(phaseForCurrentAccount())
   }, [])
 
   useEffect(() => {
@@ -172,11 +177,31 @@ export default function App() {
   }, [phase, user?.id, isGuest])
 
   useEffect(() => {
+    if (!profile) return
+    try { localStorage.setItem('penni-read-lang', profile.language === 'hindi' ? 'hi' : 'en') } catch { /* noop */ }
+    useAppStore.getState().setGsFilter({
+      'GS 1': profile.gsFocus.includes('GS 1'),
+      'GS 2': profile.gsFocus.includes('GS 2'),
+      'GS 3': profile.gsFocus.includes('GS 3'),
+      'GS 4': profile.gsFocus.includes('GS 4'),
+    })
+    const practice = usePracticeStore.getState()
+    if (practice.settings.name !== profile.name || practice.settings.target !== profile.dailyTarget) {
+      practice.saveSettings({ name: profile.name, target: profile.dailyTarget })
+    }
+  }, [profile])
+
+  useEffect(() => {
     const supabase = getSupabase()
     if (!supabase) return
     const { data } = supabase.auth.onAuthStateChange((event) => {
-      if (event !== 'SIGNED_OUT' && event !== 'USER_UPDATED') return
-      window.setTimeout(() => void bootstrap(), 0)
+      if (event !== 'SIGNED_IN' && event !== 'SIGNED_OUT' && event !== 'USER_UPDATED') return
+      // Supabase warns against awaiting another auth call directly inside its
+      // callback. Move the refresh to the next task, then resolve the visible
+      // phase from the freshly bootstrapped account.
+      window.setTimeout(() => {
+        void bootstrap().then(() => setPhase(phaseForCurrentAccount()))
+      }, 0)
     })
     return () => data.subscription.unsubscribe()
   }, [bootstrap])

@@ -124,7 +124,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
   const [activeQuiz, setActiveQuiz] = useState<ActiveQuiz>(null)
   const [mainsOpen, setMainsOpen] = useState(false)
   const [readSpeed, setReadSpeed] = useState(1)
-  const [readLang, setReadLang] = useState<'en' | 'hi'>(() => {
+  const [preferredReadLang, setPreferredReadLang] = useState<'en' | 'hi'>(() => {
     try { return localStorage.getItem('penni-read-lang') === 'hi' ? 'hi' : 'en' } catch { return 'en' }
   })
   const bodyRef = useRef<HTMLDivElement>(null)
@@ -137,6 +137,10 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
   const visible = overlayScreen === 'deep-dive'
   const a = activeArticle
   const hindiAvailable = a ? hasVerifiedHindiDeepDive(a) : false
+  // Hindi remains the user's preference across articles. When a reviewed
+  // translation is not available, show the English original for that article
+  // without silently overwriting the saved preference.
+  const readLang: 'en' | 'hi' = preferredReadLang === 'hi' && hindiAvailable ? 'hi' : 'en'
 
   // Sibling articles for prev/next navigation — follow the same list the feed
   // shows for this article's day (respects active filters); fall back to the
@@ -158,12 +162,6 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
     narration.stop()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [a?.id])
-
-  useEffect(() => {
-    if (!a || readLang !== 'hi' || hindiAvailable) return
-    setReadLang('en')
-    try { localStorage.setItem('penni-read-lang', 'en') } catch { /* noop */ }
-  }, [a, readLang, hindiAvailable])
 
   // Sections settle in softly when an article opens or changes
   useEffect(() => {
@@ -272,7 +270,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
       onShowToast('Reviewed Hindi Deep Dive is not available for this article yet')
       return
     }
-    setReadLang(next)
+    setPreferredReadLang(next)
     try { localStorage.setItem('penni-read-lang', next) } catch { /* noop */ }
     if (narration.speaking) {
       narration.stop()

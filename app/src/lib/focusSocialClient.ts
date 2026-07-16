@@ -620,6 +620,22 @@ export function setMyFocusUsername(username: string) {
   })
 }
 
+/**
+ * Checks a handle without claiming it. `available: false` on the returned
+ * FocusResult means the service itself is unavailable; `data: false` with an
+ * available service means another user already owns the handle.
+ */
+export function isFocusUsernameAvailable(username: string) {
+  return withFocus(false, async ({ supabase }) => {
+    const canonical = normalizeFocusUsername(username)
+    const { data, error } = await supabase.rpc('is_focus_username_available', {
+      p_username: canonical,
+    })
+    throwOnAccountLookupError(error, 'Username availability')
+    return data === true
+  })
+}
+
 export async function findFocusProfile(kind: FocusLookupKind, value: string) {
   if (kind === 'username') return findFocusProfileByUsername(value)
   const contactHash = await hashFocusContact(kind, value)

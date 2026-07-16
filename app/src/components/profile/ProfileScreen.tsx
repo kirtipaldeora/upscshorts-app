@@ -90,7 +90,7 @@ export function ProfileScreen({ onOpenSettings, onOpenMainsRecord, onShowToast }
   const goalComplete = completesDailyActivity(todayStats, target)
   const targetPct = goalComplete ? 100 : Math.min(100, Math.round((todayDone / Math.max(1, target)) * 100))
   const displayName = isGuest ? 'Guest Aspirant' : profile?.name || settings.name || 'UPSC Aspirant'
-  const profileLine = isGuest ? 'Explore locally. Sign in when you want to sync.' : [profile?.targetExam, profile?.prepStage].filter(Boolean).join(' · ') || 'Civil Services Aspirant'
+  const profileLine = isGuest ? 'Explore locally. Sign in when you want to sync.' : profile?.targetExam || 'Civil Services Aspirant'
   const completion = getProfileCompletion(profile, user)
   const enabledTargets = Object.values(settings.studyTargets).filter(Boolean).length
   const pyqAttempts = Object.keys(stats.a).filter(id => id.startsWith('pyq-')).length
@@ -132,6 +132,7 @@ export function ProfileScreen({ onOpenSettings, onOpenMainsRecord, onShowToast }
       return
     }
     saveSettings({ name: draft.name || 'UPSC Aspirant' })
+    try { localStorage.setItem('penni-read-lang', draft.language === 'hindi' ? 'hi' : 'en') } catch { /* noop */ }
     setEditOpen(false)
     onShowToast('Profile updated')
   }
@@ -373,17 +374,10 @@ export function ProfileScreen({ onOpenSettings, onOpenMainsRecord, onShowToast }
                 </select>
               </label>
               <label>
-                <span>Stage</span>
-                <select value={draft.prepStage} onChange={e => setDraft({ ...draft, prepStage: e.target.value })}>
-                  {['Foundation', 'Prelims focused', 'Mains focused', 'Interview stage'].map(item => <option key={item}>{item}</option>)}
-                </select>
-              </label>
-              <label>
                 <span>Language</span>
                 <select value={draft.language} onChange={e => setDraft({ ...draft, language: e.target.value as typeof draft.language })}>
-                  <option value="english">english</option>
-                  <option value="hinglish">hinglish</option>
-                  <option value="hindi">hindi</option>
+                  <option value="english">English</option>
+                  <option value="hindi">हिन्दी</option>
                 </select>
               </label>
               <label className="wide">

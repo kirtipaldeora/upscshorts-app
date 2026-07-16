@@ -2,18 +2,18 @@ import type { CSSProperties } from 'react'
 import { asset } from '@/utils/asset'
 
 export const PROFILE_MASCOTS = [
-  { id: 'penni-red', name: 'Thoughtful Scholar', x: 2.2, y: 16.1 },
-  { id: 'atlas-blue', name: 'Study Dino', x: 35.3, y: 16.1 },
-  { id: 'mains-violet', name: 'Bookish Cat', x: 68.9, y: 16.1 },
-  { id: 'prelims-green', name: 'Music Ghost', x: 99, y: 16.1 },
-  { id: 'editor-gold', name: 'Campus Scout', x: 2.2, y: 50.8 },
-  { id: 'spark-star', name: 'Little Spark', x: 35.3, y: 50.8 },
-  { id: 'notes-frog', name: 'Notes Frog', x: 68.9, y: 50.8 },
-  { id: 'curious-reader', name: 'Curious Reader', x: 99, y: 50.8 },
-  { id: 'pencil-rabbit', name: 'Pencil Rabbit', x: 2.2, y: 86.2 },
-  { id: 'toast-notes', name: 'Toast Notes', x: 35.3, y: 86.2 },
-  { id: 'focus-bot', name: 'Focus Bot', x: 68.9, y: 86.2 },
-  { id: 'calm-cloud', name: 'Calm Cloud', x: 99, y: 86.2 },
+  { id: 'penni-red', name: 'Thoughtful Scholar', x: 1.9, y: 16.7 },
+  { id: 'atlas-blue', name: 'Study Dino', x: 34.5, y: 16.7 },
+  { id: 'mains-violet', name: 'Bookish Cat', x: 66.8, y: 16.7 },
+  { id: 'prelims-green', name: 'Music Ghost', x: 98.4, y: 16.7 },
+  { id: 'editor-gold', name: 'Campus Scout', x: 1.9, y: 50.3 },
+  { id: 'spark-star', name: 'Little Spark', x: 34.5, y: 50.3 },
+  { id: 'notes-frog', name: 'Notes Frog', x: 66.8, y: 50.3 },
+  { id: 'curious-reader', name: 'Curious Reader', x: 98.4, y: 50.3 },
+  { id: 'pencil-rabbit', name: 'Pencil Rabbit', x: 1.9, y: 85.4 },
+  { id: 'toast-notes', name: 'Toast Notes', x: 34.5, y: 85.4 },
+  { id: 'focus-bot', name: 'Focus Bot', x: 66.8, y: 85.4 },
+  { id: 'calm-cloud', name: 'Calm Cloud', x: 98.4, y: 85.4 },
 ] as const
 
 export type ProfileMascotId = typeof PROFILE_MASCOTS[number]['id']
@@ -46,7 +46,7 @@ export function ProfileMascot({ id, className = '', size = 'md', selected = fals
       className={`profile-mascot profile-mascot-${size} ${selected ? 'selected' : ''} ${className}`}
       style={{
         backgroundImage: `url("${asset('assets/penni-profile-avatars.png')}")`,
-        backgroundSize: '405% 405%',
+        backgroundSize: '440% 440%',
         backgroundPosition: `${mascot.x}% ${mascot.y}%`,
       } as CSSProperties}
       aria-label={`${mascot.name} profile icon`}

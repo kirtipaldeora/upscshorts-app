@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faApple, faGoogle } from '@fortawesome/free-brands-svg-icons'
+import { faGoogle } from '@fortawesome/free-brands-svg-icons'
 import {
   faArrowRight,
   faBookOpen,
-  faDumbbell,
-  faEarthAsia,
   faLayerGroup,
+  faListCheck,
+  faMapLocationDot,
   faNewspaper,
+  faScroll,
+  faStopwatch,
 } from '@fortawesome/free-solid-svg-icons'
 import { EASE, gsap, reducedMotion } from '@/anim/animations'
 import { useAuthStore } from '@/stores/useAuthStore'
@@ -19,11 +21,13 @@ interface PenniLoginProps {
 }
 
 const FEATURE_TRACK = [
-  { label: 'Read', icon: faNewspaper, color: '#278cff' },
-  { label: 'Understand', icon: faBookOpen, color: '#7c67ff' },
-  { label: 'Practice', icon: faDumbbell, color: '#ff667d' },
-  { label: 'Explore', icon: faEarthAsia, color: '#20b98c' },
-  { label: 'Revise', icon: faLayerGroup, color: '#f4a52e' },
+  { label: 'Daily News', icon: faNewspaper, color: '#278cff' },
+  { label: 'Deep Dive', icon: faBookOpen, color: '#7c67ff' },
+  { label: 'Daily MCQs', icon: faListCheck, color: '#ff667d' },
+  { label: 'PYQ Vault', icon: faScroll, color: '#e99b2f' },
+  { label: 'Map Arcade', icon: faMapLocationDot, color: '#20b98c' },
+  { label: 'Focus Timer', icon: faStopwatch, color: '#22a9c5' },
+  { label: 'Revision', icon: faLayerGroup, color: '#ee7f54' },
 ] as const
 
 function circularOffset(index: number, active: number) {
@@ -84,10 +88,10 @@ export function PenniLogin({ onAuthenticated }: PenniLoginProps) {
     gsap.fromTo(word, { opacity: 0.25, y: 8 }, { opacity: 1, y: 0, duration: 0.45, ease: EASE.expo })
   }, [feature])
 
-  async function runProvider(provider: 'google' | 'apple') {
+  async function runProvider() {
     await haptic(8)
     clearError()
-    await signInOAuth(provider)
+    await signInOAuth('google')
   }
 
   async function runGuest() {
@@ -107,7 +111,7 @@ export function PenniLogin({ onAuthenticated }: PenniLoginProps) {
 
       <header className="entry-topline">
         <span className="entry-wordmark">Penni<i>.</i></span>
-        <span>{supabaseConfigured ? 'Your progress, safely synced' : 'Preview mode'}</span>
+        <span>{supabaseConfigured ? 'Progress synced' : 'Guest preview'}</span>
       </header>
 
       <section className="entry-feature-rail" aria-label="What you can do with Penni">
@@ -144,13 +148,9 @@ export function PenniLogin({ onAuthenticated }: PenniLoginProps) {
       </section>
 
       <section className="entry-actions" aria-label="Sign-in options">
-        <button type="button" className="entry-provider primary" onClick={() => void runProvider('google')} disabled={loading}>
+        <button type="button" className="entry-provider primary" onClick={() => void runProvider()} disabled={loading || !supabaseConfigured}>
           <FontAwesomeIcon icon={faGoogle} />
           Continue with Google
-        </button>
-        <button type="button" className="entry-provider secondary" onClick={() => void runProvider('apple')} disabled={loading}>
-          <FontAwesomeIcon icon={faApple} />
-          Continue with Apple
         </button>
         {error && <p className="entry-error" role="alert">{error}</p>}
         <button type="button" className="entry-skip" onClick={() => void runGuest()} disabled={loading}>
@@ -159,7 +159,7 @@ export function PenniLogin({ onAuthenticated }: PenniLoginProps) {
         <small>
           {supabaseConfigured
             ? 'Sign in once to keep your progress across devices.'
-            : 'Google and Apple use a local preview until Supabase keys are added.'}
+            : 'Google sign-in needs Supabase configuration. Guest preview remains available.'}
         </small>
       </section>
 

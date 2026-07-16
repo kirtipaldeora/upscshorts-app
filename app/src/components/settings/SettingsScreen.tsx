@@ -91,6 +91,9 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>(() => listNarrationVoices())
   const [activeSection, setActiveSection] = useState<SettingsSection | null>(null)
   const [dangerOpen, setDangerOpen] = useState(false)
+  const [deviceReadingLanguage, setDeviceReadingLanguage] = useState<'english' | 'hindi'>(() => {
+    try { return localStorage.getItem('penni-read-lang') === 'hi' ? 'hindi' : 'english' } catch { return 'english' }
+  })
   const [gsFilter, setGsFilter] = useState<string[]>(() => {
     try { return JSON.parse(localStorage.getItem('u4gs') || '["GS1","GS2","GS3"]') as string[] }
     catch { return ['GS1', 'GS2', 'GS3'] }
@@ -103,6 +106,7 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
   const targetPct = Math.min(100, Math.round((todayDone / Math.max(1, settings.target)) * 100))
   const enabledSourceCount = NEWS_SOURCES.filter(source => sourceFilter[source.key]).length
   const selectedVoice = voices.find(voice => voice.voiceURI === settings.voiceURI)
+  const readingLanguage = profile?.language ?? deviceReadingLanguage
   const curatedVoices = useMemo(() => {
     const blocked = /bad news|bells|bubbles|boing|whisper|wobble|zarvox/i
     const preferred = voices.filter(voice => /^(en|hi)-IN$/i.test(voice.lang) && !blocked.test(voice.name))
@@ -275,6 +279,19 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
     onShowToast(`Narration voice set to ${label}`)
   }
 
+  async function chooseReadingLanguage(language: StudentProfile['language']) {
+    if (profile && !isGuest) {
+      const saved = await updateStudentProfile({ language }, true)
+      if (!saved) {
+        onShowToast('Could not update the reading language. Please try again.')
+        return
+      }
+    }
+    setDeviceReadingLanguage(language)
+    try { localStorage.setItem('penni-read-lang', language === 'hindi' ? 'hi' : 'en') } catch { /* noop */ }
+    onShowToast(language === 'hindi' ? 'Hindi is now your default reading language' : 'English is now your default reading language')
+  }
+
   function previewVoice(voiceURI: string) {
     const voice = voices.find(v => v.voiceURI === voiceURI)
     previewNarration.speak(VOICE_PREVIEW_TEXT, {
@@ -438,6 +455,14 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
         {activeSection === 'reading' && (
           <div className="settings-section-page">
             <div className="settings-section-intro"><span>Your syllabus</span><h3>Control what reaches the feed.</h3><p>These preferences refine discovery. They do not delete articles or PYQs.</p></div>
+            <section className="settings-control-card">
+              <div className="settings-control-head"><span><FontAwesomeIcon icon={faGlobe} /><b>Reading language</b></span><small>{readingLanguage === 'hindi' ? 'हिन्दी' : 'English'}</small></div>
+              <div className="settings-options-grid clean">
+                <button className={readingLanguage === 'english' ? 'active' : ''} onClick={() => void chooseReadingLanguage('english')} disabled={authSaving}><span>English</span><i>{readingLanguage === 'english' ? 'Default' : 'Choose'}</i></button>
+                <button className={readingLanguage === 'hindi' ? 'active' : ''} onClick={() => void chooseReadingLanguage('hindi')} disabled={authSaving}><span>हिन्दी</span><i>{readingLanguage === 'hindi' ? 'Default' : 'Choose'}</i></button>
+              </div>
+              <p className="settings-empty-note">Deep Dives open in this language when a reviewed translation is available; otherwise Penni shows the English original.</p>
+            </section>
             <section className="settings-control-card">
               <div className="settings-control-head"><span><FontAwesomeIcon icon={faSlidersH} /><b>GS papers</b></span><small>{gsFilter.length} selected</small></div>
               <div className="settings-gs-grid">{['GS1', 'GS2', 'GS3', 'GS4'].map(item => <button key={item} className={gsFilter.includes(item) ? 'active' : ''} onClick={() => toggleGs(item)}>{item.replace('GS', 'GS ')}</button>)}</div>

@@ -14,7 +14,6 @@ export function getProfileCompletion(profile: StudentProfile | null, user?: Penn
     { label: 'email or phone', value: profile?.email || user?.email || profile?.phone || user?.phone },
     { label: 'target exam', value: profile?.targetExam },
     { label: 'attempt year', value: profile?.attemptYear },
-    { label: 'preparation stage', value: profile?.prepStage },
     { label: 'reading language', value: profile?.language },
     { label: 'optional subject', value: profile?.optionalSubject },
     { label: 'gender', value: profile?.gender },

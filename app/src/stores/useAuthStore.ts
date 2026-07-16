@@ -12,6 +12,7 @@ import { useFocusStore } from '@/stores/useFocusStore'
 
 const USER_KEY = 'penni.auth.user'
 const PROFILE_KEY = 'penni.auth.profile'
+const PROFILE_OWNER_KEY = 'penni.auth.profile-owner'
 const GUEST_KEY = 'penni.auth.guest'
 
 export type AuthMethod = PenniAuthProvider | 'phone' | 'local'
@@ -38,7 +39,7 @@ export interface StudentProfile {
   attemptYear: string
   prepStage: string
   targetExam: string
-  language: 'english' | 'hinglish' | 'hindi'
+  language: 'english' | 'hindi'
   dailyTarget: number
   gsFocus: string[]
   optionalSubject: string
@@ -76,6 +77,33 @@ function writeJson<T>(key: string, value: T) {
   try { localStorage.setItem(key, JSON.stringify(value)) } catch { /* noop */ }
 }
 
+function removeLocalAuth() {
+  localStorage.removeItem(USER_KEY)
+  localStorage.removeItem(PROFILE_KEY)
+  localStorage.removeItem(PROFILE_OWNER_KEY)
+}
+
+function authErrorMessage(error: unknown, fallback: string) {
+  const message = error instanceof Error
+    ? error.message
+    : typeof error === 'object' && error && 'message' in error
+      ? String(error.message)
+      : ''
+  if (/failed to fetch|network|load failed|offline/i.test(message)) {
+    return 'You appear to be offline. Check your connection and try again.'
+  }
+  if (/provider.*not enabled|unsupported provider/i.test(message)) {
+    return 'This sign-in option is not enabled yet. Please use another method.'
+  }
+  if (/invalid.*(otp|token)|token.*expired|otp.*expired/i.test(message)) {
+    return 'That code is incorrect or has expired. Request a new code and try again.'
+  }
+  if (/schema cache|column .* does not exist|could not find .* column/i.test(message)) {
+    return 'Account setup is temporarily unavailable. Please try again shortly.'
+  }
+  return message || fallback
+}
+
 function makeLocalUser(method: AuthMethod, patch: Partial<PenniUser> = {}): PenniUser {
   return {
     id: patch.id ?? `local-${Date.now()}`,
@@ -89,8 +117,14 @@ function makeLocalUser(method: AuthMethod, patch: Partial<PenniUser> = {}): Penn
 
 function normalizeProfile(profile: StudentProfile | null): StudentProfile | null {
   if (!profile) return null
+  const nextAttemptYear = String(new Date().getFullYear() + 1)
+  const language = ['english', 'hindi'].includes(profile.language)
+    ? profile.language
+    : 'english'
   return {
     ...profile,
+    name: profile.name || '',
+    phone: profile.phone || '',
     email: profile.email || '',
     gender: profile.gender || '',
     dateOfBirth: profile.dateOfBirth || '',
@@ -98,8 +132,13 @@ function normalizeProfile(profile: StudentProfile | null): StudentProfile | null
     emailUpdates: profile.emailUpdates === true,
     whatsappUpdates: profile.whatsappUpdates === true,
     mascotId: profile.mascotId || 'penni-red',
+    attemptYear: profile.attemptYear || nextAttemptYear,
+    prepStage: profile.prepStage || 'Foundation',
+    targetExam: profile.targetExam || `CSE ${profile.attemptYear || nextAttemptYear}`,
+    language,
     dailyTarget: profile.dailyTarget || 10,
     gsFocus: profile.gsFocus?.length ? profile.gsFocus : ['GS 1', 'GS 2', 'GS 3'],
+    optionalSubject: profile.optionalSubject || '',
   }
 }
 
@@ -131,8 +170,14 @@ async function readCloudProfile(userId: string): Promise<StudentProfile | null> 
 
 function clearAccountCache() {
   useFocusStore.getState().resetFocusData();
-  [USER_KEY, PROFILE_KEY, GUEST_KEY, 'u4ob', 'u4stats', 'u4set', 'u4qbm', 'u4mq', 'u4bm', 'penni.focus.v1']
+  [USER_KEY, PROFILE_KEY, PROFILE_OWNER_KEY, GUEST_KEY, 'u4ob', 'u4stats', 'u4set', 'u4qbm', 'u4mq', 'u4bm', 'penni.focus.v1']
     .forEach(key => localStorage.removeItem(key))
+}
+
+function isMissingUpdatePreferenceColumns(error: { code?: string; message?: string } | null) {
+  if (!error) return false
+  return /email_updates|email_consent_at|whatsapp_updates|whatsapp_consent_at/i.test(error.message || '')
+    && (error.code === '42703' || error.code === 'PGRST204' || /schema cache|does not exist/i.test(error.message || ''))
 }
 
 export const useAuthStore = create<AuthStore>()((set, get) => ({
@@ -147,18 +192,24 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
   bootstrap: async () => {
     set({ loading: true, error: null })
     try {
-      let profile = normalizeProfile(readJson<StudentProfile>(PROFILE_KEY))
       const savedUser = readJson<PenniUser>(USER_KEY)
+      const savedProfile = normalizeProfile(readJson<StudentProfile>(PROFILE_KEY))
+      // Older builds did not record the owner separately. In that case the
+      // cached user is the only safe migration source for the association.
+      const explicitProfileOwner = localStorage.getItem(PROFILE_OWNER_KEY)
+      const cachedProfileOwner = explicitProfileOwner || savedUser?.id || null
+      let profile = savedUser?.id && cachedProfileOwner === savedUser.id ? savedProfile : null
       let isGuest = localStorage.getItem(GUEST_KEY) === '1'
       if (savedUser?.id === 'guest' || savedUser?.method === 'local') {
-        localStorage.removeItem(USER_KEY)
-        localStorage.removeItem(PROFILE_KEY)
+        removeLocalAuth()
+        profile = null
         isGuest = true
         localStorage.setItem(GUEST_KEY, '1')
       }
       const supabase = getSupabase()
       if (supabase) {
-        const { data } = await supabase.auth.getSession()
+        const { data, error: sessionError } = await supabase.auth.getSession()
+        if (sessionError) throw sessionError
         const sessionUser = data.session?.user
         if (sessionUser) {
           const user: PenniUser = {
@@ -169,26 +220,29 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
             phone: sessionUser.phone,
             avatarUrl: sessionUser.user_metadata?.avatar_url,
           }
+          if (cachedProfileOwner !== user.id) profile = null
           writeJson(USER_KEY, user)
           localStorage.removeItem(GUEST_KEY)
-          let syncError: string | null = null
+          const syncErrors: string[] = []
           try {
-            const [cloudProfile] = await Promise.all([
-              readCloudProfile(user.id),
-              prepareStudentState(user.id),
-            ])
+            const cloudProfile = await readCloudProfile(user.id)
             if (cloudProfile) {
               profile = cloudProfile
               writeJson(PROFILE_KEY, cloudProfile)
+              localStorage.setItem(PROFILE_OWNER_KEY, user.id)
             }
           } catch (error) {
-            syncError = error instanceof Error ? error.message : 'Cloud sync is temporarily unavailable'
+            syncErrors.push(authErrorMessage(error, 'Your profile could not be synced just now.'))
           }
-          set({ user, profile, isGuest: false, ready: true, loading: false, error: syncError })
+          try {
+            await prepareStudentState(user.id)
+          } catch (error) {
+            syncErrors.push(authErrorMessage(error, 'Your study progress could not be synced just now.'))
+          }
+          set({ user, profile, isGuest: false, ready: true, loading: false, error: syncErrors[0] ?? null })
           return
         }
-        localStorage.removeItem(USER_KEY)
-        localStorage.removeItem(PROFILE_KEY)
+        removeLocalAuth()
         set({ user: null, profile: null, isGuest, ready: true, loading: false })
         return
       }
@@ -200,7 +254,7 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
         loading: false,
       })
     } catch (error) {
-      set({ error: error instanceof Error ? error.message : 'Could not start login', ready: true, loading: false })
+      set({ error: authErrorMessage(error, 'Could not start login'), ready: true, loading: false })
     }
   },
 
@@ -210,17 +264,18 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
       const result = await signInWithProvider(provider)
       if (result.localFallback) {
         const user = makeLocalUser(provider, {
-          name: provider === 'apple' ? 'Apple Student' : 'Google Student',
-          email: provider === 'google' ? 'student@penni.local' : undefined,
+          name: 'Google Student',
+          email: 'student@penni.local',
         })
+        removeLocalAuth()
         writeJson(USER_KEY, user)
         localStorage.removeItem(GUEST_KEY)
-        set({ user, isGuest: false, loading: false })
+        set({ user, profile: null, isGuest: false, loading: false })
       } else {
         set({ loading: false })
       }
     } catch (error) {
-      set({ error: error instanceof Error ? error.message : 'Login failed', loading: false })
+      set({ error: authErrorMessage(error, 'Login failed'), loading: false })
     }
   },
 
@@ -231,7 +286,7 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
       set({ loading: false })
       return true
     } catch (error) {
-      set({ error: error instanceof Error ? error.message : 'Could not send OTP', loading: false })
+      set({ error: authErrorMessage(error, 'Could not send OTP'), loading: false })
       return false
     }
   },
@@ -243,26 +298,36 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
       const user = result && 'id' in result
         ? makeLocalUser('phone', { id: result.id, phone: result.phone ?? phone })
         : makeLocalUser('phone', { phone })
+      const cachedOwner = localStorage.getItem(PROFILE_OWNER_KEY) || readJson<PenniUser>(USER_KEY)?.id
+      let profile = cachedOwner === user.id
+        ? normalizeProfile(readJson<StudentProfile>(PROFILE_KEY))
+        : null
+      if (cachedOwner !== user.id) {
+        localStorage.removeItem(PROFILE_KEY)
+        localStorage.removeItem(PROFILE_OWNER_KEY)
+      }
       writeJson(USER_KEY, user)
       localStorage.removeItem(GUEST_KEY)
-      let syncError: string | null = null
-      let profile = normalizeProfile(readJson<StudentProfile>(PROFILE_KEY))
+      const syncErrors: string[] = []
       try {
-        const [cloudProfile] = await Promise.all([
-          readCloudProfile(user.id),
-          prepareStudentState(user.id),
-        ])
+        const cloudProfile = await readCloudProfile(user.id)
         if (cloudProfile) {
           profile = cloudProfile
           writeJson(PROFILE_KEY, cloudProfile)
+          localStorage.setItem(PROFILE_OWNER_KEY, user.id)
         }
       } catch (error) {
-        syncError = error instanceof Error ? error.message : 'Signed in, but cloud sync is temporarily unavailable'
+        syncErrors.push(authErrorMessage(error, 'Signed in, but your profile could not be synced just now.'))
       }
-      set({ user, profile, isGuest: false, loading: false, error: syncError })
+      try {
+        await prepareStudentState(user.id)
+      } catch (error) {
+        syncErrors.push(authErrorMessage(error, 'Signed in, but your study progress could not be synced just now.'))
+      }
+      set({ user, profile, isGuest: false, loading: false, error: syncErrors[0] ?? null })
       return true
     } catch (error) {
-      set({ error: error instanceof Error ? error.message : 'OTP verification failed', loading: false })
+      set({ error: authErrorMessage(error, 'OTP verification failed'), loading: false })
       return false
     }
   },
@@ -274,7 +339,7 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
       const user = get().user
       const supabase = getSupabase()
       if (supabase && user) {
-        const profileRow = {
+        const launchProfileRow = {
           id: user.id,
           full_name: cleanProfile.name,
           phone: cleanProfile.phone,
@@ -282,10 +347,6 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
           gender: cleanProfile.gender,
           date_of_birth: cleanProfile.dateOfBirth || null,
           photo_url: cleanProfile.photoUrl,
-          email_updates: cleanProfile.emailUpdates,
-          email_consent_at: cleanProfile.emailUpdates ? new Date().toISOString() : null,
-          whatsapp_updates: cleanProfile.whatsappUpdates,
-          whatsapp_consent_at: cleanProfile.whatsappUpdates ? new Date().toISOString() : null,
           mascot_id: cleanProfile.mascotId,
           attempt_year: cleanProfile.attemptYear,
           prep_stage: cleanProfile.prepStage,
@@ -296,15 +357,33 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
           optional_subject: cleanProfile.optionalSubject,
           updated_at: new Date().toISOString(),
         }
-        const { error } = await supabase.from('profiles').upsert(profileRow)
-        if (error) throw error
-        if (cleanProfile.emailUpdates && (cleanProfile.email || user.email)) {
+        const updatePreferences = {
+          email_updates: cleanProfile.emailUpdates,
+          email_consent_at: cleanProfile.emailUpdates ? new Date().toISOString() : null,
+          whatsapp_updates: cleanProfile.whatsappUpdates,
+          whatsapp_consent_at: cleanProfile.whatsappUpdates ? new Date().toISOString() : null,
+        }
+        const { error } = await supabase.from('profiles').upsert({ ...launchProfileRow, ...updatePreferences })
+        let updatePreferencesPersisted = !error
+        if (isMissingUpdatePreferenceColumns(error) && !cleanProfile.emailUpdates && !cleanProfile.whatsappUpdates) {
+          // A profile should not be trapped in onboarding merely because the
+          // optional messaging migrations are still rolling out. Never use
+          // this fallback for an enabled consent: the UI must not claim an
+          // update preference was saved when the server cannot store it.
+          const { error: launchProfileError } = await supabase.from('profiles').upsert(launchProfileRow)
+          if (launchProfileError) throw launchProfileError
+          updatePreferencesPersisted = false
+        } else if (error) {
+          throw error
+        }
+        if (updatePreferencesPersisted && cleanProfile.emailUpdates && (cleanProfile.email || user.email)) {
           const { error: welcomeError } = await supabase.functions.invoke('send-welcome-email')
           if (welcomeError) console.warn('Penni welcome email was not sent', welcomeError)
         }
       }
       writeJson(PROFILE_KEY, cleanProfile)
       if (user) {
+        localStorage.setItem(PROFILE_OWNER_KEY, user.id)
         const nextUser = { ...user, name: cleanProfile.name, phone: user.method === 'phone' ? user.phone : cleanProfile.phone }
         writeJson(USER_KEY, nextUser)
         set({ user: nextUser })
@@ -314,7 +393,7 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
       set({ profile: cleanProfile, isGuest: false, loading: false })
       return true
     } catch (error) {
-      set({ error: error instanceof Error ? error.message : 'Could not save profile', loading: false })
+      set({ error: authErrorMessage(error, 'Could not save profile'), loading: false })
       return false
     }
   },
@@ -322,8 +401,12 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
   continueAsGuest: async () => {
     set({ loading: true, error: null })
     try {
-      localStorage.removeItem(USER_KEY)
-      localStorage.removeItem(PROFILE_KEY)
+      // Clear any stale local Supabase session so a reload cannot silently
+      // override an explicit choice to continue as a guest.
+      await getSupabase()?.auth.signOut({ scope: 'local' })
+    } catch { /* guest mode must remain available offline */ }
+    try {
+      removeLocalAuth()
       localStorage.setItem(GUEST_KEY, '1')
       localStorage.setItem('u4ob', '1')
     } catch { /* noop */ }
@@ -355,7 +438,7 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
       set({ user: null, profile: null, isGuest: false, loading: false })
       return true
     } catch (error) {
-      set({ error: error instanceof Error ? error.message : 'Could not delete account', loading: false })
+      set({ error: authErrorMessage(error, 'Could not delete account'), loading: false })
       return false
     }
   },

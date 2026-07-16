@@ -641,6 +641,10 @@
     border-radius: 17px;
   }
 
+  .account-identity-avatar .profile-mascot {
+    border-radius: 50%;
+  }
+
   .account-identity-copy h3 {
     font-size: 17px;
   }

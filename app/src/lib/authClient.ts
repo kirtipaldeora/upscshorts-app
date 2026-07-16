@@ -1,6 +1,6 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
-export type PenniAuthProvider = 'google' | 'apple'
+export type PenniAuthProvider = 'google'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string | undefined
 const SUPABASE_KEY = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
@@ -26,6 +26,13 @@ export function getSupabase() {
   return client
 }
 
+function authRedirectUrl() {
+  const redirect = new URL(import.meta.env.BASE_URL, window.location.href)
+  redirect.search = ''
+  redirect.hash = ''
+  return redirect.toString()
+}
+
 export function normalizePhoneNumber(value: string) {
   const trimmed = value.trim()
   const digits = trimmed.replace(/\D/g, '')
@@ -46,8 +53,10 @@ export async function signInWithProvider(provider: PenniAuthProvider) {
   const { error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: window.location.origin,
-      scopes: provider === 'google' ? 'email profile' : undefined,
+      // Keep subpath deployments (for example GitHub Pages `/penni/`) on the
+      // app after the provider redirects back. `origin` alone loses that path.
+      redirectTo: authRedirectUrl(),
+      scopes: 'email profile',
     },
   })
   if (error) throw error

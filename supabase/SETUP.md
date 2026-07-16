@@ -12,6 +12,7 @@ keep each file as one transaction:
 5. `migrations/0005_whatsapp_updates.sql`
 6. `migrations/0006_focus_social.sql`
 7. `migrations/0007_focus_usernames.sql`
+8. `migrations/0008_username_availability.sql`
 
 The account migrations create student profiles, cross-device learning state,
 launch profile fields and explicit email/WhatsApp consent. Their RLS policies
@@ -22,20 +23,44 @@ sync, friends, blocks, study groups, chat, presence and day/week/month
 rankings. It must be applied before the Focus social tabs can return live data;
 the timer and local analytics continue to work offline without it.
 The username migration adds globally unique public handles and exact
-`@username` friend lookup. Apply both Focus migrations before testing friend
-search or group invitations.
+`@username` friend lookup. The availability migration adds the authenticated,
+rate-limited onboarding check; saving remains protected by the database's
+atomic unique index. Apply all Focus migrations before testing usernames,
+friend search or group invitations.
 
 ## 2. Enable login providers
 
 In **Authentication > Providers**:
 
-- Enable **Phone** and configure a supported SMS provider for OTP delivery.
-- Enable Google and Apple only after their OAuth credentials are configured.
+- Enable **Google** and add the production OAuth credentials.
+- Leave **Apple** disabled; Penni no longer presents Apple sign-in.
+- Leave **Phone** disabled unless a phone-login screen is deliberately added in
+  a future release. Phone numbers used for WhatsApp preferences are not an
+  authentication method.
 - Add the production Vercel URL and local development URL to the allowed
   redirect URLs.
 
-Phone OTP cannot deliver messages until the SMS provider is enabled. Provider
-credentials belong in Supabase Dashboard, never in this repository.
+Provider credentials belong in Supabase Dashboard, never in this repository.
+
+In **Authentication > URL Configuration**, set the Site URL to the canonical
+production app and explicitly allow every origin/path Penni is served from,
+for example:
+
+```text
+https://penni.app/
+https://www.penni.app/
+https://<vercel-project>.vercel.app/
+https://<github-user>.github.io/<repository>/
+http://localhost:5173/
+```
+
+Penni preserves `import.meta.env.BASE_URL` during OAuth redirects, so the
+GitHub Pages entry must retain its repository subpath. In Google Cloud, the
+authorised redirect URI is Supabase's callback URL:
+`https://<project-ref>.supabase.co/auth/v1/callback`.
+For phone-on-LAN QA, temporarily allow the exact
+`http://<your-mac-lan-ip>:5173/` URL as well; remove it after testing rather
+than leaving a broad wildcard redirect in production.
 
 Google OAuth signs the user in but does not send a Penni welcome or briefing
 email. Penni product emails are sent by the Edge Functions below through
@@ -55,10 +80,23 @@ VITE_CONTENT_BASE=https://<project-ref>.supabase.co/storage/v1/object/public/con
 Never expose `SUPABASE_SECRET_KEY` or a legacy `service_role` key in a
 `VITE_` variable. The browser apps use RLS and the publishable key.
 
+For Vercel, add all three variables to the Production and Preview environments
+and redeploy; Vite reads them at build time, so adding them after a build does
+not repair that deployment. For GitHub Pages, create repository variables
+`VITE_SUPABASE_URL` and `VITE_CONTENT_BASE`, plus the repository secret
+`VITE_SUPABASE_PUBLISHABLE_KEY`. The workflow passes those values only to the
+build step. A production bundle without these values deliberately runs in
+local-only guest mode.
+
 ## 4. Allow CMS editors
 
 After an editor has authenticated once, add their Auth user UUID to
 `public.editors`. Students do not need an editor row.
+
+Migration `0001_content.sql` also creates the public `content` Storage bucket.
+Before launch, publish at least one daily pack and confirm
+`content/articles/index.json` is publicly readable. Keep the CMS on a separate
+deployment and do not expose an editor account to students.
 
 ## 5. Configure product email
 
@@ -77,6 +115,10 @@ Students are not subscribed automatically. They must enable email updates in
 onboarding or Settings. On first opt-in, `send-welcome-email` sends one welcome
 message. Publishing a daily pack from the CMS sends the briefing email to
 subscribed students.
+
+The sending domain needs the DKIM and SPF records supplied by Resend. Configure
+an MX route for the visible support/reply address and publish a DMARC record;
+an address such as `support@penni.app` cannot receive mail from DNS alone.
 
 ## 6. Configure WhatsApp Business
 
@@ -106,9 +148,16 @@ Settings.
 After migrations and secrets are configured, deploy both functions:
 
 ```bash
+npx supabase link --project-ref <project-ref>
 npx supabase functions deploy send-welcome-email
-npx supabase functions deploy broadcast-updates
+npx supabase functions deploy broadcast-updates --no-verify-jwt
 ```
+
+`send-welcome-email` keeps Supabase's gateway JWT verification because only a
+signed-in student may invoke it. `broadcast-updates` performs its own editor
+JWT or `BROADCAST_SECRET` check, so it is deployed with gateway verification
+disabled; otherwise the documented trusted-server secret route is rejected
+before the function receives the request.
 
 The CMS automatically invokes `broadcast-updates` after a daily pack is
 published. An editor can use **Announce feature** in the CMS for important
@@ -122,3 +171,18 @@ product news. A trusted server can also invoke the function using
   "summary": "Plan and track revision sessions from your Penni dashboard."
 }
 ```
+
+After deployment, test with one consented internal account before enabling a
+real audience. A missing function returns `404`; a deployed protected function
+must reject an unauthorised request instead. Check the Edge Function logs and
+the Resend/Meta delivery logs rather than treating a CMS publish as proof of
+delivery.
+
+## 8. Connect the production domain
+
+Point both the apex and `www` hostnames at the chosen production deployment,
+make one canonical and redirect the other. Remove any legacy S3/CloudFront
+distribution first, then wait for the hosting provider to issue TLS for both
+names. Only after HTTPS works should the canonical domain replace temporary
+Vercel URLs in `APP_URL`, Supabase URL Configuration and OAuth provider
+settings.
