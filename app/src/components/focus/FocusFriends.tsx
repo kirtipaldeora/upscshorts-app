@@ -14,6 +14,8 @@ interface FocusFriendsProps {
   onSearchPeople?: (request: FocusSearchRequest) => Promise<FocusPerson[]> | FocusPerson[]
   onUsernameChange?: (username: string) => Promise<string> | string
   onCreateInviteLink?: (kind: 'friend' | 'group', groupId?: string) => Promise<FocusInviteShare>
+  friendRequestsEnabled?: boolean
+  onFriendRequestsChange?: (enabled: boolean) => void
   onAction: (action: FocusFriendAction, personId: string, requestId?: string) => Promise<boolean> | boolean
 }
 
@@ -44,7 +46,7 @@ function normalizedUsername(value: string) {
   return username
 }
 
-export function FocusFriends({ username, friends, requests, onSearchPeople, onUsernameChange, onCreateInviteLink, onAction }: FocusFriendsProps) {
+export function FocusFriends({ username, friends, requests, onSearchPeople, onUsernameChange, onCreateInviteLink, friendRequestsEnabled = false, onFriendRequestsChange, onAction }: FocusFriendsProps) {
   const [query, setQuery] = useState('')
   const [searching, setSearching] = useState(false)
   const [searchError, setSearchError] = useState('')
@@ -202,7 +204,7 @@ export function FocusFriends({ username, friends, requests, onSearchPeople, onUs
           <div className="focus-friend-lookup">
             <form onSubmit={event => { event.preventDefault(); void findAccount() }}><FontAwesomeIcon icon={faMagnifyingGlass} /><input value={query} onChange={event => { searchGenerationRef.current++; setSearching(false); setQuery(event.target.value); setSearchResults(null); setSearchError('') }} placeholder="username, email or full phone" aria-label="Search by exact username, verified email or full phone number" autoComplete="off" autoCapitalize="none" autoCorrect="off" />{query && <button type="button" onClick={() => { searchGenerationRef.current++; setSearching(false); setQuery(''); setSearchResults(null); setSearchError('') }} aria-label="Clear lookup"><FontAwesomeIcon icon={faXmark} /></button>}<button className="find" type="submit" disabled={searching}>{searching ? <><FontAwesomeIcon icon={faCircleNotch} spin /> Finding…</> : 'Find'}</button></form>
             {searchError && <p className="focus-lookup-error" role="alert">{searchError}</p>}
-            {searchResults && (searchResults.length ? <div className="focus-lookup-results">{searchResults.map(person => { const actionState = actedPeople[person.id]; const requested = actionState === 'add'; const sending = actionState === 'add:pending'; return <article key={person.id}><FocusAvatar name={person.name} initials={person.initials} avatarUrl={person.avatarUrl} /><div><b>{person.name}</b><span>{requested ? 'Request sent · waiting for acceptance' : person.username ? `@${person.username}` : person.emailHint ?? person.phoneHint ?? 'Verified exact match'}</span></div><button type="button" onClick={() => { void act('add', person) }} disabled={requested || sending}><FontAwesomeIcon icon={sending ? faCircleNotch : requested ? faCheck : faPlus} spin={sending} /> {sending ? 'Sending…' : requested ? 'Waiting' : 'Add friend'}</button></article> })}{Object.values(actedPeople).includes('add') && <p className="focus-request-route" role="status">Request sent. They will see it in their Friends inbox.</p>}</div> : <div className="focus-lookup-empty">No opted-in Penni account matched that exact username or contact.</div>)}
+            {searchResults && (searchResults.length ? <div className="focus-lookup-results">{searchResults.map(person => { const actionState = actedPeople[person.id]; const requested = actionState === 'add'; const sending = actionState === 'add:pending'; return <article key={person.id}><FocusAvatar name={person.name} initials={person.initials} avatarUrl={person.avatarUrl} /><div><b>{person.name}</b><span>{requested ? 'Request sent · waiting for acceptance' : person.username ? `@${person.username}` : person.emailHint ?? person.phoneHint ?? 'Verified exact match'}</span></div><button type="button" onClick={() => { void act('add', person) }} disabled={requested || sending}><FontAwesomeIcon icon={sending ? faCircleNotch : requested ? faCheck : faPlus} spin={sending} /> {sending ? 'Sending…' : requested ? 'Waiting' : 'Add friend'}</button></article> })}{Object.values(actedPeople).includes('add') && <p className="focus-request-route" role="status">Request sent. They will see it in their Friends inbox.</p>}</div> : <div className="focus-lookup-empty"><b>No opted-in account matched.</b><span>Ask them to open Friends → Manage → My profile and enable friend requests.</span></div>)}
           </div>
         </section>}
         requestsPanel={<section className="focus-friends-manage-panel focus-friends-requests-panel">
@@ -217,6 +219,10 @@ export function FocusFriends({ username, friends, requests, onSearchPeople, onUs
           <div className={`focus-username-card ${username ? 'claimed' : ''}`}>
             {editingUsername ? <form onSubmit={event => { event.preventDefault(); void saveUsername() }}><label><span aria-hidden="true">@</span><input value={usernameDraft} onChange={event => { setUsernameDraft(event.target.value.toLowerCase().replace(/^@/, '')); setUsernameError('') }} placeholder="your.username" aria-label="Your unique username" autoCapitalize="none" autoCorrect="off" maxLength={24} /></label><button type="submit" disabled={savingUsername}>{savingUsername ? <><FontAwesomeIcon icon={faCircleNotch} spin /> Saving…</> : username ? 'Save username' : 'Claim username'}</button>{username && <button type="button" className="cancel" onClick={() => { setUsernameDraft(username); setUsernameError(''); setEditingUsername(false) }}>Cancel</button>}</form> : <div className="focus-username-actions"><button className="focus-friend-qr-trigger" type="button" disabled={!username || !onCreateInviteLink} onClick={() => { const restore = manageSheet.trigger; setManageSheet(null); setInviteTrigger(restore) }}><FontAwesomeIcon icon={faQrcode} /> Show my QR</button><button className="edit" type="button" onClick={() => setEditingUsername(true)}>Edit username</button></div>}
             {usernameError && <p className="focus-username-error" role="alert">{usernameError}</p>}
+          </div>
+          <div className={`focus-friend-discovery-control ${friendRequestsEnabled ? 'enabled' : ''}`}>
+            <span><b>Accept friend requests</b><small>{friendRequestsEnabled ? 'People who know your exact username, email or phone can find you.' : 'Your account stays hidden from friend search until this is enabled.'}</small></span>
+            <button type="button" role="switch" aria-checked={friendRequestsEnabled} onClick={() => onFriendRequestsChange?.(!friendRequestsEnabled)} disabled={!onFriendRequestsChange}><i /></button>
           </div>
         </section>}
       />}

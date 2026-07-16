@@ -9,9 +9,17 @@ interface ProfileAvatarProps {
 }
 
 export function ProfileAvatar({ profile, user, size = 'md', className = '' }: ProfileAvatarProps) {
-  const photo = profile?.photoUrl || user?.avatarUrl
-  if (photo) {
-    return <img className={`profile-photo profile-photo-${size} ${className}`} src={photo} alt="Profile" />
+  if (profile?.photoUrl) {
+    return <img className={`profile-photo profile-photo-${size} ${className}`} src={profile.photoUrl} alt="Profile" />
   }
-  return <ProfileMascot id={profile?.mascotId} size={size} className={className} />
+  // An explicitly chosen mascot is the intended profile icon and must win over
+  // an OAuth-derived avatar (e.g. Google's default monogram). Fall back to the
+  // provider avatar only before a profile exists.
+  if (profile) {
+    return <ProfileMascot id={profile.mascotId} size={size} className={className} />
+  }
+  if (user?.avatarUrl) {
+    return <img className={`profile-photo profile-photo-${size} ${className}`} src={user.avatarUrl} alt="Profile" />
+  }
+  return <ProfileMascot id={undefined} size={size} className={className} />
 }

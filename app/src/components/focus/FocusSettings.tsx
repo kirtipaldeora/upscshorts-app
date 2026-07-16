@@ -88,7 +88,7 @@ export function FocusSettings({ preferences, timerSettings, platform, nativeFocu
         <div><FontAwesomeIcon icon={faLock} /></div>
         <span>Discovery privacy</span>
         <h3>No browsable people directory</h3>
-        <p>A user can find an account only through an exact, verified email address or full phone number, and only if that account has opted into friend requests. Partial searches must return nothing.</p>
+        <p>A user can find an account only through its exact username, verified email address or full phone number, and only if that account has opted into friend requests. Partial searches return nothing.</p>
         <ul><li><FontAwesomeIcon icon={faEnvelope} /> Email or phone is normalised and SHA-256 hashed on-device; only the one-way hash is sent for lookup.</li><li><FontAwesomeIcon icon={faEyeSlash} /> Blocking removes mutual lookup visibility and future requests.</li><li><FontAwesomeIcon icon={faUserGroup} /> Group visibility follows each room’s public/private setting.</li></ul>
       </section>
 

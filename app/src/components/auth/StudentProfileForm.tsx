@@ -232,7 +232,7 @@ export function StudentProfileForm({ onComplete }: StudentProfileFormProps) {
   const [reminderTime, setReminderTime] = useState(settings.reminderTime || '19:00')
   const [hapticsEnabled, setHapticsEnabled] = useState(settings.hapticsEnabled)
   const [username, setUsername] = useState('')
-  const [usernameFeedback, setUsernameFeedback] = useState<UsernameFeedback>({ kind: 'idle', message: 'Required · friends can find you by this exact handle.' })
+  const [usernameFeedback, setUsernameFeedback] = useState<UsernameFeedback>({ kind: 'idle', message: 'Required · enable friend requests later to be found by this exact handle.' })
   const [submitting, setSubmitting] = useState(false)
   const rootRef = useRef<HTMLElement>(null)
   const sceneRef = useRef<HTMLDivElement>(null)
@@ -280,7 +280,7 @@ export function StudentProfileForm({ onComplete }: StudentProfileFormProps) {
     const generation = ++usernameCheckRef.current
     const value = username.trim()
     if (!value) {
-      setUsernameFeedback({ kind: 'idle', message: 'Required · friends can find you by this exact handle.' })
+      setUsernameFeedback({ kind: 'idle', message: 'Required · enable friend requests later to be found by this exact handle.' })
       return
     }
 

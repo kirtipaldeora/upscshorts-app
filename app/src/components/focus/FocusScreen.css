@@ -1850,6 +1850,10 @@ body:has(.focus-friends-manage-backdrop) .bottom-nav-motion {
 .focus-friends-profile-panel .focus-username-card > form label { flex: 1; width: auto; min-width: 170px; }
 .focus-friends-profile-panel .focus-username-actions { flex-wrap: wrap; }
 .focus-friends-profile-panel .focus-username-error { margin-top: 8px; }
+.focus-friend-discovery-control{margin-top:12px;padding:13px 14px;border:1px solid var(--border);border-radius:16px;background:var(--card2);display:flex;align-items:center;justify-content:space-between;gap:14px;color:var(--ink)}
+.focus-friend-discovery-control>span{min-width:0;display:flex;flex-direction:column;gap:3px}.focus-friend-discovery-control b{font-size:12px;font-weight:950}.focus-friend-discovery-control small{font-size:9.5px;line-height:1.35;font-weight:750;color:var(--ink3)}
+.focus-friend-discovery-control>button{width:45px;height:26px;flex:none;border:0;border-radius:999px;background:var(--border);padding:3px;cursor:pointer;transition:background .2s ease}.focus-friend-discovery-control>button i{display:block;width:20px;height:20px;border-radius:50%;background:var(--card);box-shadow:0 2px 7px rgba(18,25,46,.2);transition:transform .22s ease}.focus-friend-discovery-control.enabled>button{background:var(--focus-mint)}.focus-friend-discovery-control.enabled>button i{transform:translateX(19px)}.focus-friend-discovery-control>button:disabled{opacity:.5;cursor:not-allowed}
+.focus-lookup-empty{display:flex;flex-direction:column;gap:3px}.focus-lookup-empty b{font-size:11px;color:var(--ink)}.focus-lookup-empty span{font-size:9.5px;line-height:1.35;color:var(--ink3)}
 
 .focus-live-people-grid > button:focus-visible,
 .focus-friend-directory > button:focus-visible,

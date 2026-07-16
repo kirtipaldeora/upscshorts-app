@@ -242,7 +242,6 @@ export function PYQVault() {
         </div>
         <div className="pyqv-mode-switch" role="tablist" aria-label="Examination stage">
           <button className={mode === 'prelims' ? 'active' : ''} onClick={() => { setMode('prelims'); setSelected(null); setFiltersOpen(false) }}>Prelims</button>
-          <button className={mode === 'mains' ? 'active' : ''} onClick={() => { setMode('mains'); setSelected(null); setFiltersOpen(false) }}>Mains</button>
         </div>
       </header>
 

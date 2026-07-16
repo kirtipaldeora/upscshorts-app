@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { DeepDive, DeepDiveHindi, PrelimQuestion } from '@penni/types/article'
+import type { Article, DeepDive, DeepDiveHindi, PrelimQuestion } from '@penni/types/article'
 import { CATEGORIES, GS_PAPERS, type ArticleRow } from '@/lib/mapArticle'
 
 interface Props {
@@ -13,6 +13,8 @@ function asQuestions(value: unknown): PrelimQuestion[] {
 }
 
 type EditableDeepDive = Omit<Required<DeepDive>, 'hindi'> & { hindi: DeepDiveHindi }
+type EditableArticleHindi = NonNullable<Article['hindi']>
+type EditableQuestionHindi = NonNullable<PrelimQuestion['hindi']>
 
 function asStringList(value: unknown): string[] {
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : []
@@ -38,6 +40,25 @@ function asHindiDeepDive(value: unknown): DeepDiveHindi {
     keyConcepts: asConcepts(raw.keyConcepts),
     wayForward: asStringList(raw.wayForward),
     possibleMainsQuestion: typeof raw.possibleMainsQuestion === 'string' ? raw.possibleMainsQuestion : '',
+  }
+}
+
+function asArticleHindi(value: unknown): EditableArticleHindi {
+  const raw = (value && typeof value === 'object' ? value : {}) as Record<string, unknown>
+  return {
+    headline: typeof raw.headline === 'string' ? raw.headline : '',
+    summary: typeof raw.summary === 'string' ? raw.summary : '',
+    whyItMatters: typeof raw.whyItMatters === 'string' ? raw.whyItMatters : '',
+  }
+}
+
+function editableQuestionHindi(question: PrelimQuestion): EditableQuestionHindi {
+  const hindi = question.hindi
+  return {
+    q: hindi?.q ?? '',
+    options: question.options.map((_, index) => hindi?.options[index] ?? ''),
+    explanation: hindi?.explanation ?? '',
+    ...(hindi?.ref ? { ref: hindi.ref } : {}),
   }
 }
 
@@ -80,6 +101,7 @@ function asLocation(value: unknown): { lat: string; lon: string; place: string }
 
 export function ArticleEditor({ row, onCancel, onSave }: Props) {
   const [draft, setDraft] = useState<ArticleRow>(row)
+  const [articleHindi, setArticleHindi] = useState(asArticleHindi(row.hindi))
   const [deepDive, setDeepDive] = useState(asDeepDive(row.deep_dive))
   const [questions, setQuestions] = useState<PrelimQuestion[]>(asQuestions(row.prelims_qs))
   const [keyTerms, setKeyTerms] = useState((row.key_terms ?? []).join(', '))
@@ -94,6 +116,12 @@ export function ArticleEditor({ row, onCancel, onSave }: Props) {
     setQuestions(qs => qs.map((q, j) => (j === i ? { ...q, ...patch } : q)))
   }
 
+  function setQuestionHindi(i: number, patch: Partial<EditableQuestionHindi>) {
+    setQuestions(qs => qs.map((question, index) => index === i
+      ? { ...question, hindi: { ...editableQuestionHindi(question), ...patch } }
+      : question))
+  }
+
   async function save() {
     setBusy(true)
     // A location is only emitted when both coordinates parse — a half-filled
@@ -105,6 +133,7 @@ export function ArticleEditor({ row, onCancel, onSave }: Props) {
     try {
       await onSave({
         ...draft,
+        hindi: articleHindi,
         deep_dive: deepDive,
         prelims_qs: questions,
         key_terms: keyTerms.split(',').map(t => t.trim()).filter(Boolean),
@@ -172,6 +201,27 @@ export function ArticleEditor({ row, onCancel, onSave }: Props) {
           <div className="field">
             <label>Why it matters</label>
             <textarea value={draft.why_it_matters} onChange={e => set('why_it_matters', e.target.value)} />
+          </div>
+
+          <div className="card" style={{ margin: '18px 0', padding: 16 }}>
+            <div className="modal-head" style={{ padding: 0, marginBottom: 14 }}>
+              <h2 style={{ fontSize: 16 }}>Feed card — Hindi translation</h2>
+            </div>
+            <div className="hint" style={{ marginBottom: 14 }}>
+              This is what Hindi readers see in the daily feed. Keep all names, facts and numbers aligned with the reviewed English copy.
+            </div>
+            <div className="field">
+              <label>शीर्षक</label>
+              <input value={articleHindi.headline} onChange={event => setArticleHindi(current => ({ ...current, headline: event.target.value }))} />
+            </div>
+            <div className="field">
+              <label>सारांश</label>
+              <textarea rows={4} value={articleHindi.summary} onChange={event => setArticleHindi(current => ({ ...current, summary: event.target.value }))} />
+            </div>
+            <div className="field" style={{ marginBottom: 0 }}>
+              <label>यह क्यों महत्वपूर्ण है</label>
+              <textarea rows={4} value={articleHindi.whyItMatters} onChange={event => setArticleHindi(current => ({ ...current, whyItMatters: event.target.value }))} />
+            </div>
           </div>
 
           <div className="field">
@@ -345,8 +395,9 @@ export function ArticleEditor({ row, onCancel, onSave }: Props) {
 
           <div className="field">
             <label>Prelims MCQs ({questions.length})</label>
-            {questions.map((q, i) => (
-              <div className="card" key={i} style={{ marginTop: 8 }}>
+            {questions.map((q, i) => {
+              const questionHindi = editableQuestionHindi(q)
+              return <div className="card" key={i} style={{ marginTop: 8 }}>
                 <div className="field">
                   <label>Q{i + 1} stem</label>
                   <textarea rows={3} value={q.q} onChange={e => setQuestion(i, { q: e.target.value })} />
@@ -374,6 +425,27 @@ export function ArticleEditor({ row, onCancel, onSave }: Props) {
                   <label>Explanation</label>
                   <textarea rows={3} value={q.explanation} onChange={e => setQuestion(i, { explanation: e.target.value })} />
                 </div>
+                <div className="card" style={{ margin: '14px 0', padding: 14 }}>
+                  <div className="field">
+                    <label>Q{i + 1} — हिन्दी प्रश्न</label>
+                    <textarea rows={3} value={questionHindi.q} onChange={event => setQuestionHindi(i, { q: event.target.value })} />
+                  </div>
+                  {questionHindi.options.map((option, optionIndex) => (
+                    <div className="field" key={optionIndex}>
+                      <label>हिन्दी विकल्प {String.fromCharCode(65 + optionIndex)}{q.answer === optionIndex ? ' · सही उत्तर' : ''}</label>
+                      <input
+                        value={option}
+                        onChange={event => setQuestionHindi(i, {
+                          options: questionHindi.options.map((current, currentIndex) => currentIndex === optionIndex ? event.target.value : current),
+                        })}
+                      />
+                    </div>
+                  ))}
+                  <div className="field" style={{ marginBottom: 0 }}>
+                    <label>हिन्दी व्याख्या</label>
+                    <textarea rows={4} value={questionHindi.explanation} onChange={event => setQuestionHindi(i, { explanation: event.target.value })} />
+                  </div>
+                </div>
                 <button
                   className="btn sm danger"
                   onClick={() => setQuestions(qs => qs.filter((_, j) => j !== i))}
@@ -381,7 +453,7 @@ export function ArticleEditor({ row, onCancel, onSave }: Props) {
                   Remove Q{i + 1}
                 </button>
               </div>
-            ))}
+            })}
             <button
               className="btn sm"
               style={{ marginTop: 8 }}

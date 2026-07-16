@@ -435,6 +435,7 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
             <section className="settings-control-card settings-compact-list">
               <div className="settings-toggle-row"><span><b>Animated feed backdrop</b><small>Depth and motion on the briefing feed</small></span><button className={`toggle ${settings.feedCosmicBackdrop ? 'on' : ''}`} onClick={() => void toggleFeedBackdrop()} aria-label="Toggle animated feed backdrop" /></div>
               <div className="settings-toggle-row"><span><b>Haptic feedback</b><small>Subtle response for study actions</small></span><button className={`toggle ${settings.hapticsEnabled ? 'on' : ''}`} onClick={() => saveSettings({ hapticsEnabled: !settings.hapticsEnabled })} aria-label="Toggle haptic feedback" /></div>
+              <div className="settings-toggle-row"><span><b>Auto-advance Learn mode</b><small>Move on after feedback; tap Stay when you need longer with an explanation</small></span><button className={`toggle ${settings.learnAutoAdvance ? 'on' : ''}`} onClick={() => saveSettings({ learnAutoAdvance: !settings.learnAutoAdvance })} aria-label="Toggle Learn mode auto-advance" /></div>
             </section>
           </div>
         )}

@@ -14,6 +14,8 @@ keep each file as one transaction:
 7. `migrations/0007_focus_usernames.sql`
 8. `migrations/0008_username_availability.sql`
 9. `migrations/0009_focus_invite_links.sql`
+10. `migrations/0010_focus_shared_totals.sql`
+11. `migrations/0011_content_hindi.sql`
 
 The account migrations create student profiles, cross-device learning state,
 launch profile fields and explicit email/WhatsApp consent. Their RLS policies
@@ -31,6 +33,12 @@ friend search or group invitations.
 The invite-link migration also recompiles both exact-match lookup functions
 with qualified column references. It is required to remove the legacy
 `user_id is ambiguous` error from username, email and phone discovery.
+The shared-totals migration separates friend/group aggregate sharing from
+leaderboard visibility. Apply it before testing either Focus privacy toggle;
+raw sessions remain owner-only under RLS.
+The content-Hindi migration preserves the reviewed Hindi feed card in CMS
+drafts and published snapshots. Deep Dive and MCQ Hindi remain in their nested
+JSON fields.
 
 ## 2. Enable login providers
 

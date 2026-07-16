@@ -73,6 +73,7 @@ export interface PracticeSettings {
   feedCosmicBackdrop: boolean
   voiceURI: string   // preferred system TTS voice for Penni Explain narration
   hapticsEnabled: boolean
+  learnAutoAdvance: boolean
 }
 
 export interface StudyTargets {
@@ -127,7 +128,7 @@ export const DEFAULT_STUDY_TARGETS: StudyTargets = {
   gs: false,
 }
 
-const DEFAULT_SETTINGS: PracticeSettings = { target: 10, studyTargets: DEFAULT_STUDY_TARGETS, remind: false, reminderTime: '19:00', key: '', name: '', feedCosmicBackdrop: true, voiceURI: '', hapticsEnabled: true }
+const DEFAULT_SETTINGS: PracticeSettings = { target: 10, studyTargets: DEFAULT_STUDY_TARGETS, remind: false, reminderTime: '19:00', key: '', name: '', feedCosmicBackdrop: true, voiceURI: '', hapticsEnabled: true, learnAutoAdvance: true }
 
 function loadSettings(): PracticeSettings {
   try {

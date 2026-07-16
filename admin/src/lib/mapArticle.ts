@@ -26,6 +26,7 @@ export interface ArticleRow {
   gs_paper: string
   summary: string
   why_it_matters: string
+  hindi: unknown
   deep_dive: unknown
   audio_script: string | null
   audio_script_hi: string | null
@@ -95,6 +96,16 @@ function toHindiDeepDive(value: unknown): DeepDiveHindi | undefined {
   return hasContent ? hindi : undefined
 }
 
+function toHindiArticle(value: unknown): Article['hindi'] | undefined {
+  const raw = asRecord(value)
+  const hindi = {
+    headline: asString(raw.headline).trim(),
+    summary: asString(raw.summary).trim(),
+    whyItMatters: asString(raw.whyItMatters).trim(),
+  }
+  return hindi.headline || hindi.summary || hindi.whyItMatters ? hindi : undefined
+}
+
 function toDeepDive(value: unknown): DeepDive {
   const raw = asRecord(value)
   const keyHighlights = toStringList(raw.keyHighlights)
@@ -122,12 +133,26 @@ function toPrelimsQs(value: unknown): PrelimQuestion[] {
     const answer = typeof raw.answer === 'number' ? raw.answer : -1
     const q = asString(raw.q)
     if (!q || options.length < 2 || answer < 0 || answer >= options.length) return []
+    const rawHindi = asRecord(raw.hindi)
+    const hindiOptions = Array.isArray(rawHindi.options)
+      ? rawHindi.options.filter((option): option is string => typeof option === 'string')
+      : []
+    const hindiQuestion = asString(rawHindi.q).trim()
+    const hindi = hindiQuestion && hindiOptions.length === options.length
+      ? {
+          q: hindiQuestion,
+          options: hindiOptions,
+          explanation: asString(rawHindi.explanation),
+          ...(typeof rawHindi.ref === 'string' && rawHindi.ref ? { ref: rawHindi.ref } : {}),
+        }
+      : undefined
     return [{
       q,
       options,
       answer,
       explanation: asString(raw.explanation),
       ...(typeof raw.ref === 'string' && raw.ref ? { ref: raw.ref } : {}),
+      ...(hindi ? { hindi } : {}),
     }]
   })
 }
@@ -144,6 +169,7 @@ export function toArticle(row: ArticleRow): Article {
   const prelimsQs = toPrelimsQs(row.prelims_qs)
   const keyTerms = (row.key_terms ?? []).filter(Boolean)
   const location = toLocation(row.location)
+  const hindi = toHindiArticle(row.hindi)
   return {
     id: row.id,
     headline: row.headline,
@@ -153,6 +179,7 @@ export function toArticle(row: ArticleRow): Article {
     gsPaper: (GS_PAPERS.includes(row.gs_paper as GsPaper) ? row.gs_paper : 'GS 2') as GsPaper,
     summary: row.summary,
     whyItMatters: row.why_it_matters,
+    ...(hindi ? { hindi } : {}),
     deepDive: toDeepDive(row.deep_dive),
     // Optional fields are omitted rather than set to null: Penni checks
     // `article.audioScript?.trim()`, and null would read as present-but-empty.
@@ -175,6 +202,7 @@ export function toRow(article: Article, status: 'draft' | 'published' = 'draft',
     gs_paper: article.gsPaper,
     summary: article.summary,
     why_it_matters: article.whyItMatters,
+    hindi: article.hindi ?? {},
     deep_dive: article.deepDive ?? { explanation: '', possibleMainsQuestion: '' },
     audio_script: article.audioScript ?? null,
     audio_script_hi: article.audioScriptHi ?? null,
@@ -197,6 +225,11 @@ export function emptyRow(date: string): ArticleRow {
     gs_paper: 'GS 2',
     summary: '',
     why_it_matters: '',
+    hindi: {
+      headline: '',
+      summary: '',
+      whyItMatters: '',
+    },
     deep_dive: {
       syllabusLinkage: '',
       context: '',

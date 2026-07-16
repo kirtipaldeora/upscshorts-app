@@ -77,7 +77,7 @@ export function QuizPlayer({ title, questions: sourceQuestions, eyebrow, descrip
   const [explanationOpen, setExplanationOpen] = useState(false)
   const [startedAt, setStartedAt] = useState(Date.now())
   const [elapsedMs, setElapsedMs] = useState(0)
-  const [remainingSeconds, setRemainingSeconds] = useState(() => Math.max(1, Math.ceil(questions.length * 1.2)) * 60)
+  const [remainingSeconds, setRemainingSeconds] = useState(() => Math.max(1, Math.ceil(sourceQuestions.length * 1.2)) * 60)
   const [visited, setVisited] = useState<Set<number>>(() => new Set([0]))
   const [reviewMarked, setReviewMarked] = useState<Set<number>>(new Set())
   const [paletteOpen, setPaletteOpen] = useState(false)
@@ -85,6 +85,8 @@ export function QuizPlayer({ title, questions: sourceQuestions, eyebrow, descrip
   const [submitConfirm, setSubmitConfirm] = useState(false)
   const [finishReason, setFinishReason] = useState<FinishReason>('submitted')
   const [questionLanguage, setQuestionLanguage] = useState<ReadingLanguage>(() => getReadingLanguage())
+  const [autoAdvancePaused, setAutoAdvancePaused] = useState(false)
+  const [autoAdvanceRemaining, setAutoAdvanceRemaining] = useState(0)
   const examRecorded = useRef(false)
 
   const questions = useMemo(() => sourceQuestions.map(question => localizedQuestion(question, questionLanguage)), [questionLanguage, sourceQuestions])
@@ -138,6 +140,7 @@ export function QuizPlayer({ title, questions: sourceQuestions, eyebrow, descrip
       return
     }
     setExplanationOpen(true)
+    setAutoAdvancePaused(false)
     recordAnswer(q.id, correct, q.subject, settings.target, onShowToast)
     // Feedback motion after the correct/wrong classes render
     requestAnimationFrame(() => {
@@ -156,6 +159,8 @@ export function QuizPlayer({ title, questions: sourceQuestions, eyebrow, descrip
     setExplanationOpen(testMode === 'learn' && Boolean(saved?.picked !== null && saved?.picked !== undefined))
     setVisited(previous => new Set(previous).add(bounded))
     setPaletteOpen(false)
+    setAutoAdvancePaused(false)
+    setAutoAdvanceRemaining(0)
   }
 
   function next() {
@@ -184,6 +189,8 @@ export function QuizPlayer({ title, questions: sourceQuestions, eyebrow, descrip
     setExitConfirm(false)
     setSubmitConfirm(false)
     setFinishReason('submitted')
+    setAutoAdvancePaused(false)
+    setAutoAdvanceRemaining(0)
     examRecorded.current = false
   }
 
@@ -405,6 +412,30 @@ export function QuizPlayer({ title, questions: sourceQuestions, eyebrow, descrip
       if (question) recordAnswer(question.id, answer.picked === question.answer, question.subject, settings.target, onShowToast)
     })
   }, [answers, done, onShowToast, questions, recordAnswer, settings.target, testMode])
+
+  useEffect(() => {
+    if (!started || done || testMode !== 'learn' || !answered || !settings.learnAutoAdvance || autoAdvancePaused) {
+      setAutoAdvanceRemaining(0)
+      return
+    }
+    // Correct answers move briskly; incorrect answers leave longer for the
+    // explanation. "Stay" cancels this question's countdown without changing
+    // the user's global preference.
+    const delay = answered.correct ? 5_000 : 9_000
+    const deadline = Date.now() + delay
+    const tick = () => setAutoAdvanceRemaining(Math.max(1, Math.ceil((deadline - Date.now()) / 1_000)))
+    tick()
+    const interval = window.setInterval(tick, 250)
+    const timeout = window.setTimeout(() => {
+      setAutoAdvanceRemaining(0)
+      if (idx + 1 >= total) finish()
+      else goToQuestion(idx + 1)
+    }, delay)
+    return () => {
+      window.clearInterval(interval)
+      window.clearTimeout(timeout)
+    }
+  }, [answered, autoAdvancePaused, done, idx, settings.learnAutoAdvance, started, testMode, total])
 
   if (!started) {
     return (
@@ -825,10 +856,13 @@ export function QuizPlayer({ title, questions: sourceQuestions, eyebrow, descrip
       ) : (
         <div className="qz-footer">
           {answered ? (
-            <button className="pn-btn qz-next" onClick={next}>
-              {idx + 1 === total ? 'Finish learning' : 'Next question'}
-              <FontAwesomeIcon icon={faArrowRight} style={{ marginLeft: 8 }} />
-            </button>
+            <div className="qz-learn-next-actions">
+              <button className="pn-btn qz-next" onClick={next}>
+                {idx + 1 === total ? 'Finish learning' : 'Next question'}{autoAdvanceRemaining > 0 ? ` · ${autoAdvanceRemaining}s` : ''}
+                <FontAwesomeIcon icon={faArrowRight} style={{ marginLeft: 8 }} />
+              </button>
+              {autoAdvanceRemaining > 0 && <button className="qz-auto-stay" onClick={() => setAutoAdvancePaused(true)}>Stay on explanation</button>}
+            </div>
           ) : (
             <div className="qz-foot-actions">
               <button onClick={skip}>Skip</button>
