@@ -15,6 +15,7 @@ import { ViewToggle } from './ViewToggle'
 import { FeedCard } from './FeedCard'
 import { DeckView } from './DeckCard'
 import { FeedEmptyState } from './FeedEmptyState'
+import { useReadingLanguage } from '@/hooks/useReadingLanguage'
 
 const FeedCosmicBackdrop = lazy(() => import('./FeedCosmicBackdrop').then(module => ({ default: module.FeedCosmicBackdrop })))
 
@@ -26,6 +27,7 @@ interface FeedScreenProps {
 export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
   const { selectedDate, setSelectedDate, viewMode, getArticlesForDate, getAvailableDates, sourceFocus, setSourceFocus, gsFocus, setGsFocus, getFocusableGsPapers } = useAppStore()
   const { settings } = usePracticeStore()
+  const [readLang] = useReadingLanguage()
   const { loading } = useArticles(selectedDate)
   useAllArticles()
 
@@ -81,6 +83,7 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, articles.length, sourceFocus])
   const activeSource = sourceOptions.find(option => option.key === sourceFocus) ?? sourceOptions[0]
+  const briefingTitle = readLang === 'hi' ? 'दैनिक समाचार' : 'Daily Briefing'
 
   // If the feed opens on a date that has no pack yet (e.g. today's hasn't been
   // generated), fall back to the most recent date that actually has stories.
@@ -137,11 +140,13 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
 
       {/* Hero header — characters rise in on load */}
       <div ref={heroRef} className="hero-head" style={{ padding: '4px 20px 12px', position: 'relative', zIndex: 120, flexShrink: 0, textAlign: 'center' }}>
-        <p className="hero-sub" style={{ fontSize: 12.5, color: 'var(--on2)', fontWeight: 700, marginBottom: 3 }}>Hello, aspirant 👋</p>
-        <h2 aria-label="Daily Briefing" style={{ fontSize: 27, fontWeight: 900, letterSpacing: -0.4, lineHeight: 1.08, color: 'var(--on)' }}>
-          {'Daily Briefing'.split('').map((ch, i) => (
-            <span className="hero-ch" aria-hidden="true" key={i}>{ch}</span>
-          ))}
+        <p className="hero-sub" style={{ fontSize: 12.5, color: 'var(--on2)', fontWeight: 700, marginBottom: 3 }}>{readLang === 'hi' ? 'नमस्ते, अभ्यर्थी 👋' : 'Hello, aspirant 👋'}</p>
+        <h2 aria-label={briefingTitle} style={{ fontSize: 27, fontWeight: 900, letterSpacing: -0.4, lineHeight: 1.08, color: 'var(--on)' }}>
+          {readLang === 'hi'
+            ? <span className="hero-ch" aria-hidden="true">{briefingTitle}</span>
+            : briefingTitle.split('').map((ch, i) => (
+                <span className="hero-ch" aria-hidden="true" key={i}>{ch}</span>
+              ))}
         </h2>
         <div className="briefing-rail">
           <div className="briefing-source-dd">
@@ -196,7 +201,7 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
                 aria-haspopup="listbox"
                 aria-expanded={gsMenuOpen}
               >
-                {gsFocus ? <><b>{gsFocus}</b> only</> : <><b>{briefing.gsCount}</b> GS areas</>}
+                {gsFocus ? <><b>{gsFocus}</b> {readLang === 'hi' ? 'केवल' : 'only'}</> : <><b>{briefing.gsCount}</b> {readLang === 'hi' ? 'GS क्षेत्र' : 'GS areas'}</>}
                 <FontAwesomeIcon icon={faChevronDown} className={`briefing-gs-caret ${gsMenuOpen ? 'open' : ''}`} />
               </button>
               {gsMenuOpen && (
@@ -209,7 +214,7 @@ export function FeedScreen({ onShowToast, onOpenUpload }: FeedScreenProps) {
                       className={!gsFocus ? 'on' : ''}
                       onClick={() => chooseGs(null)}
                     >
-                      All GS areas<i>{focusablePapers.reduce((n, p) => n + (gsCounts[p] ?? 0), 0)}</i>
+                      {readLang === 'hi' ? 'सभी GS क्षेत्र' : 'All GS areas'}<i>{focusablePapers.reduce((n, p) => n + (gsCounts[p] ?? 0), 0)}</i>
                     </button>
                     {focusablePapers.map(p => (
                       <button

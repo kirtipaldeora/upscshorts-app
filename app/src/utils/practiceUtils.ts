@@ -1,6 +1,8 @@
 import type { Article } from '@/types/article'
 import type { PyqItem } from '@/stores/usePracticeStore'
 import type { PyqDifficulty, PyqFormat, PyqSolution } from '@/types/pyq'
+import { getReadingLanguage, type ReadingLanguage } from '@/hooks/useReadingLanguage'
+import { getArticleCopy, getPrelimQuestionCopy } from '@/utils/articleLocalization'
 
 export const CURRENT_AFFAIRS_MCQ_START = '2026-07-15'
 
@@ -36,22 +38,23 @@ export interface MainsQuestion {
 }
 
 // ─── Build article question pool ──────────────────────────────
-export function articleQs(articles: Article[]): Question[] {
+export function articleQs(articles: Article[], language: ReadingLanguage = getReadingLanguage()): Question[] {
   const out: Question[] = []
   articles.forEach(a => {
     if (a.date < CURRENT_AFFAIRS_MCQ_START) return
     ;(a.prelimsQs ?? []).forEach((q, i) => {
+      const localized = getPrelimQuestionCopy(q, language)
       out.push({
         id: `${a.id}-q${i + 1}`,
         src: 'article',
         aid: a.id,
         subject: a.category,
-        q: q.q,
-        options: q.options,
-        answer: q.answer,
-        explanation: q.explanation,
-        ref: q.ref,
-        srcLabel: a.headline,
+        q: localized.q,
+        options: localized.options,
+        answer: localized.answer,
+        explanation: localized.explanation,
+        ref: localized.ref,
+        srcLabel: getArticleCopy(a, language).headline,
       })
     })
   })
@@ -75,8 +78,8 @@ export function pyqPrelims(pyq: PyqItem[]): Question[] {
 }
 
 // ─── Combined pool ────────────────────────────────────────────
-export function allQs(articles: Article[], pyq: PyqItem[]): Question[] {
-  return articleQs(articles).concat(pyqPrelims(pyq))
+export function allQs(articles: Article[], pyq: PyqItem[], language: ReadingLanguage = getReadingLanguage()): Question[] {
+  return articleQs(articles, language).concat(pyqPrelims(pyq))
 }
 
 // ─── Mains pool ───────────────────────────────────────────────
@@ -119,8 +122,8 @@ export function seededPick<T>(arr: T[], n: number, seed: string): T[] {
 }
 
 // ─── Daily set ───────────────────────────────────────────────
-export function dailySet(articles: Article[], pyq: PyqItem[], target: number, today: string): Question[] {
-  const pool = allQs(articles, pyq)
+export function dailySet(articles: Article[], pyq: PyqItem[], target: number, today: string, language: ReadingLanguage = getReadingLanguage()): Question[] {
+  const pool = allQs(articles, pyq, language)
   return seededPick(pool, Math.min(target, pool.length), `penni-${today}`)
 }
 

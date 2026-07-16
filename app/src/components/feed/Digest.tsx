@@ -3,6 +3,8 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
 import { useHaptic } from '@/hooks/useHaptic'
 import { CATEGORY_COLORS } from '@/constants/categories'
+import { useReadingLanguage } from '@/hooks/useReadingLanguage'
+import { categoryLabel, getArticleCopy } from '@/utils/articleLocalization'
 
 export function Digest() {
   const { 
@@ -14,6 +16,7 @@ export function Digest() {
   } = useAppStore()
   
   const haptic = useHaptic()
+  const [readLang] = useReadingLanguage()
 
   const visible = overlayScreen === 'digest'
   const articles = getArticlesForDate(selectedDate)
@@ -33,7 +36,7 @@ export function Digest() {
   }
 
   const fdf = (d: string) => {
-    return new Date(d).toLocaleDateString('en-IN', {
+    return new Date(d).toLocaleDateString(readLang === 'hi' ? 'hi-IN' : 'en-IN', {
       day: 'numeric',
       month: 'short',
     }).toUpperCase()
@@ -46,18 +49,19 @@ export function Digest() {
         <button onClick={handleClose} aria-label="Back">
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
-        <h2 id="digest-title">{selectedDate ? `${fdf(selectedDate)} — TOP STORIES` : 'TODAY — TOP STORIES'}</h2>
+        <h2 id="digest-title">{selectedDate ? `${fdf(selectedDate)} — ${readLang === 'hi' ? 'प्रमुख समाचार' : 'TOP STORIES'}` : readLang === 'hi' ? 'आज — प्रमुख समाचार' : 'TODAY — TOP STORIES'}</h2>
       </div>
 
       {/* Body */}
       <div className="dd-body">
         {articles.length === 0 ? (
           <div className="empty-state">
-            <p>No stories for this date.</p>
+            <p>{readLang === 'hi' ? 'इस तारीख के लिए कोई समाचार नहीं है।' : 'No stories for this date.'}</p>
           </div>
         ) : (
           articles.map((a, i) => {
             const catColor = CATEGORY_COLORS[a.category]
+            const copy = getArticleCopy(a, readLang)
             return (
               <div 
                 key={a.id} 
@@ -66,8 +70,8 @@ export function Digest() {
               >
                 <div className="digest-num">{i + 1}</div>
                 <div className="digest-content">
-                  <h4>{a.headline}</h4>
-                  <p>{a.summary}</p>
+                  <h4>{copy.headline}</h4>
+                  <p>{copy.summary}</p>
                   <div style={{ display: 'flex', gap: 5, marginTop: 4 }}>
                     <span 
                       style={{ 
@@ -79,7 +83,7 @@ export function Digest() {
                         fontWeight: 600 
                       }}
                     >
-                      {a.category}
+                      {categoryLabel(a.category, readLang)}
                     </span>
                     <span style={{ fontSize: 9, color: 'var(--teal)', fontWeight: 600 }}>
                       {a.source}

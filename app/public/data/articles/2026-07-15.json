@@ -107,7 +107,17 @@
      ],
      "answer": 0,
      "explanation": "Statement I is correct because the proposal is meant to institutionalise a structured mechanism for urgent judicial intervention beyond ordinary court timings. Statement II is incorrect because the SOP does not replace constitutional remedies; it is an administrative framework to make access to such remedies faster in urgent cases. Statement III is correct because the source specifically mentions illegal detention, demolitions, deportation and custodial violence as examples of urgent matters involving life and liberty. The current development is therefore about improving the mechanism for timely judicial access, not changing the nature of fundamental rights protection.",
-     "ref": "Article 21 and constitutional remedies"
+     "ref": "Article 21 and constitutional remedies",
+     "hindi": {
+      "q": "अत्यावश्यक जीवन और स्वतंत्रता मामलों के लिए प्रस्तावित मानक संचालन प्रक्रिया के संदर्भ में, निम्नलिखित कथनों पर विचार कीजिए:\n1. इसका उद्देश्य नियमित अदालती घंटों के अलावा तत्काल न्यायिक हस्तक्षेप के लिए एक संरचित तंत्र प्रदान करना है।\n2. इसका उद्देश्य मौलिक अधिकारों से जुड़े मामलों में संवैधानिक उपचारों को प्रशासनिक उपचार से बदलना है।\n3. इसमें अवैध हिरासत, विध्वंस, निर्वासन और हिरासत में हिंसा जैसे मामले शामिल हो सकते हैं।\nउपर्युक्त कथनों में से कौन सा/से सही है/हैं?",
+      "options": [
+       "केवल 1 और 3",
+       "केवल 1 और 2",
+       "केवल 2 और 3",
+       "1, 2 और 3"
+      ],
+      "explanation": "कथन 1 सही है क्योंकि प्रस्ताव का उद्देश्य सामान्य अदालती समय से परे तत्काल न्यायिक हस्तक्षेप के लिए एक संरचित तंत्र को संस्थागत बनाना है। कथन 2 गलत है क्योंकि एसओपी संवैधानिक उपचारों को प्रतिस्थापित नहीं करता है; यह अत्यावश्यक मामलों में ऐसे उपायों तक तेजी से पहुंच बनाने के लिए एक प्रशासनिक ढांचा है। कथन 3 सही है क्योंकि स्रोत विशेष रूप से जीवन और स्वतंत्रता से जुड़े अत्यावश्यक मामलों के उदाहरण के रूप में अवैध हिरासत, विध्वंस, निर्वासन और हिरासत में हिंसा का उल्लेख करता है। इसलिए वर्तमान विकास समय पर न्यायिक पहुंच के तंत्र में सुधार के बारे में है, न कि मौलिक अधिकारों की सुरक्षा की प्रकृति को बदलने के बारे में।"
+     }
     },
     {
      "q": "Consider the following pairs:\nI. Article 21: Protection of life and personal liberty\nII. Article 32: Right to move the Supreme Court for enforcement of fundamental rights\nIII. Standard Operating Procedure: A uniform administrative framework for handling recurring matters\nHow many of the above pairs are correctly matched?",
@@ -119,7 +129,17 @@
      ],
      "answer": 2,
      "explanation": "Pair I is correctly matched because Article 21 protects life and personal liberty, subject to procedure established by law. Pair II is correctly matched because Article 32 enables a person to move the Supreme Court for enforcement of fundamental rights and is central to constitutional remedies. Pair III is also correctly matched because a Standard Operating Procedure is a uniform administrative framework meant to handle a situation efficiently and consistently. The static linkage is important because the proposed SOP concerns the practical availability of constitutional remedies when Article 21 rights may be under immediate threat.",
-     "ref": "Articles 21 and 32"
+     "ref": "Articles 21 and 32",
+     "hindi": {
+      "q": "निम्नलिखित जोड़ियों पर विचार करें:\n1. अनुच्छेद 21: जीवन और व्यक्तिगत स्वतंत्रता का संरक्षण\n2. अनुच्छेद 32: मौलिक अधिकारों के प्रवर्तन के लिए सर्वोच्च न्यायालय में जाने का अधिकार\n3. मानक संचालन प्रक्रिया: आवर्ती मामलों से निपटने के लिए एक समान प्रशासनिक ढांचा\nउपरोक्त में से कितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "जोड़ी 1 सही सुमेलित है क्योंकि अनुच्छेद 21 कानून द्वारा स्थापित प्रक्रिया के अधीन जीवन और व्यक्तिगत स्वतंत्रता की रक्षा करता है। जोड़ी 2 सही ढंग से सुमेलित है क्योंकि अनुच्छेद 32 किसी व्यक्ति को मौलिक अधिकारों को लागू करने के लिए सर्वोच्च न्यायालय में जाने में सक्षम बनाता है और संवैधानिक उपचारों का केंद्र है। जोड़ी 3 भी सही ढंग से मेल खाती है क्योंकि एक मानक संचालन प्रक्रिया एक समान प्रशासनिक ढांचा है जिसका उद्देश्य किसी स्थिति को कुशलतापूर्वक और लगातार संभालना है। स्थिर अवधारणा से संबंध महत्वपूर्ण है क्योंकि प्रस्तावित एसओपी संवैधानिक उपायों की व्यावहारिक उपलब्धता से संबंधित है जब अनुच्छेद 21 के अधिकार तत्काल खतरे में हो सकते हैं।"
+     }
     }
    ],
    "keyTerms": [
@@ -134,6 +154,11 @@
     "lat": 28.6229,
     "lon": 77.2393,
     "place": "Supreme Court of India, New Delhi"
+   },
+   "hindi": {
+    "headline": "अदालती समय के बाद जीवन और स्वतंत्रता से जुड़े अत्यावश्यक मामलों के लिए SOP पर सुप्रीम कोर्ट का विचार",
+    "summary": "सुप्रीम कोर्ट नियमित अदालती घंटों के अलावा जीवन और व्यक्तिगत स्वतंत्रता से जुड़े मामलों में तत्काल न्यायिक हस्तक्षेप सुनिश्चित करने के लिए एक मानक संचालन प्रक्रिया पर विचार कर रहा है। प्रस्तावित तंत्र में अवैध हिरासत, विध्वंस, निर्वासन, हिरासत में हिंसा और अन्य मौलिक अधिकारों के उल्लंघन जैसे मामले शामिल होंगे।",
+    "whyItMatters": "यह विकास सीधे तौर पर अनुच्छेद 21, संवैधानिक उपचार और न्याय तक पहुंच, जीएस 2 के सभी केंद्रीय विषयों से संबंधित है। यह इस बारे में भी महत्वपूर्ण सवाल उठाता है कि अदालतें मौलिक अधिकारों की सुरक्षा को समय पर, पूर्वानुमानित और संस्थागत रूप से कैसे उपलब्ध करा सकती हैं।"
    }
   },
   {
@@ -221,7 +246,7 @@
       "भारतीय नागरिकों और वाणिज्यिक shipping की सुरक्षा के लिए Iran और अन्य क्षेत्रीय पक्षों के साथ सतत कूटनीतिक संवाद सुनिश्चित करें।",
       "संघर्ष-प्रवण समुद्री मार्गों में काम कर रहे भारतीय seafarers के लिए maritime security coordination को मजबूत करें।",
       "अंतरराष्ट्रीय जहाजों पर भारतीय crews के लिए real-time advisories और emergency response systems में सुधार करें।",
-      "प्रमुख maritime chokepoints में अस्थिरत��� से जुड़ी energy supply disruptions के लिए contingency planning का विस्तार करें।",
+      "प्रमुख maritime chokepoints में अस्थिरता से जुड़ी energy supply disruptions के लिए contingency planning का विस्तार करें।",
       "समुद्री वाणिज्य को प्रभावित करने वाले क्षेत्रीय तनावों को कम करने के लिए संवाद और कूटनीति का समर्थन करें।"
      ],
      "possibleMainsQuestion": "Strait of Hormuz में अस्थिरता भारत की ऊर्जा सुरक्षा, समुद्री हितों और विदेशों में भारतीय नागरिकों की सुरक्षा को कैसे प्रभावित करती है, इसका परीक्षण कीजिए।"
@@ -241,7 +266,17 @@
      ],
      "answer": 1,
      "explanation": "Statements I and II are correct. The verified development states that India lodged a strong diplomatic protest with Iran after an Indian sailor was killed in missile attacks on commercial vessels, and India reiterated freedom of navigation and uninterrupted maritime commerce. Statement III is incorrect because India called for immediate de-escalation and urged dialogue and diplomacy, not military escalation. The question tests the institutional and diplomatic nature of India’s response rather than simple headline recall.",
-     "ref": "Diplomatic Protest and Freedom of Navigation"
+     "ref": "Diplomatic Protest and Freedom of Navigation",
+     "hindi": {
+      "q": "होर्मुज जलडमरूमध्य घटना पर भारत की प्रतिक्रिया के संबंध में निम्नलिखित कथनों पर विचार कीजिए:\n1. वाणिज्यिक जहाजों पर हमलों में एक भारतीय नाविक के मारे जाने के बाद भारत ने ईरान के समक्ष राजनयिक विरोध दर्ज कराया।\n2. भारत ने इस मुद्दे को नौवहन की स्वतंत्रता और निर्बाध समुद्री व्यापार से जोड़ा।\n3. भारत ने होर्मुज जलडमरूमध्य में सैन्य कार्रवाई के माध्यम से दबाव बढ़ाने का आह्वान किया।\nउपरोक्त में से कितने सही हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "कथन 1 और 2 सही हैं। सत्यापित विकास में कहा गया है कि वाणिज्यिक जहाजों पर मिसाइल हमलों में एक भारतीय नाविक के मारे जाने के बाद भारत ने ईरान के साथ एक मजबूत राजनयिक विरोध दर्ज कराया, और भारत ने नौवहन और निर्बाध समुद्री वाणिज्य की स्वतंत्रता को दोहराया। कथन 3 गलत है क्योंकि भारत ने तत्काल तनाव कम करने का आह्वान किया है और बातचीत और कूटनीति का आग्रह किया है, सैन्य वृद्धि का नहीं। यह प्रश्न साधारण शीर्षक स्मरण के बजाय भारत की प्रतिक्रिया की संस्थागत और कूटनीतिक प्रकृति का परीक्षण करता है।"
+     }
     },
     {
      "q": "With reference to maritime concepts relevant to the Strait of Hormuz, consider the following pairs:\nI. Freedom of Navigation — Movement of commercial vessels through international waters without unlawful interference\nII. Maritime Security — Protection of shipping routes, ports, cargo and seafarers from threats\nIII. Maritime Chokepoint — A wide oceanic zone with many equally practical shipping alternatives\nHow many pairs are correctly matched?",
@@ -253,7 +288,17 @@
      ],
      "answer": 1,
      "explanation": "Pairs I and II are correctly matched. Freedom of navigation concerns the right of vessels to move through international waters without unlawful interference. Maritime security covers the protection of shipping routes, ports, cargo and seafarers from threats such as conflict or piracy. Pair III is incorrect because a maritime chokepoint is not a wide route with many alternatives; it is a narrow and strategically important passage where disruption can affect trade flows. The Strait of Hormuz is relevant because of its importance for global oil and liquefied natural gas trade.",
-     "ref": "Strait of Hormuz"
+     "ref": "Strait of Hormuz",
+     "hindi": {
+      "q": "होर्मुज जलडमरूमध्य से संबंधित समुद्री अवधारणाओं के संदर्भ में, निम्नलिखित जोड़ियों पर विचार करें:\n1. नौवहन की स्वतंत्रता - गैरकानूनी हस्तक्षेप के बिना अंतरराष्ट्रीय जलक्षेत्रों के माध्यम से वाणिज्यिक जहाजों की आवाजाही\n2. समुद्री सुरक्षा - खतरों से शिपिंग मार्गों, बंदरगाहों, कार्गो और नाविकों की सुरक्षा\n3. समुद्री चोकप्वाइंट - कई समान रूप से व्यावहारिक शिपिंग विकल्पों वाला एक विस्तृत समुद्री क्षेत्र\nकितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "जोड़े 1 और 2 सही सुमेलित हैं। नौवहन की स्वतंत्रता जहाजों के गैरकानूनी हस्तक्षेप के बिना अंतरराष्ट्रीय जल क्षेत्र से गुजरने के अधिकार से संबंधित है। समुद्री सुरक्षा में शिपिंग मार्गों, बंदरगाहों, कार्गो और नाविकों को संघर्ष या समुद्री डकैती जैसे खतरों से सुरक्षा शामिल है। जोड़ी 3 गलत है क्योंकि सामरिक संकरा समुद्री मार्ग कई विकल्पों वाला एक विस्तृत मार्ग नहीं है; यह एक संकीर्ण और रणनीतिक रूप से महत्वपूर्ण मार्ग है जहां व्यवधान व्यापार प्रवाह को प्रभावित कर सकता है। होर्मुज जलडमरूमध्य वैश्विक तेल और तरलीकृत प्राकृतिक गैस व्यापार के लिए अपने महत्व के कारण प्रासंगिक है।"
+     }
     }
    ],
    "keyTerms": [
@@ -268,6 +313,11 @@
     "lat": 26.5667,
     "lon": 56.25,
     "place": "Strait of Hormuz"
+   },
+   "hindi": {
+    "headline": "होर्मुज जलडमरूमध्य में भारतीय नाविक की मृत्यु के बाद भारत ने ईरान के समक्ष विरोध दर्ज कराया",
+    "summary": "होर्मुज जलडमरूमध्य में वाणिज्यिक जहाजों पर मिसाइल हमलों में एक भारतीय नाविक के मारे जाने के बाद भारत ने ईरान के समक्ष कड़ा राजनयिक विरोध दर्ज कराया। भारत ने वाणिज्यिक शिपिंग पर हमलों की निंदा की, नौवहन की स्वतंत्रता पर जोर दिया और बातचीत और कूटनीति के माध्यम से तनाव कम करने का आह्वान किया।",
+    "whyItMatters": "यह मुद्दा भारत की विदेश नीति, समुद्री सुरक्षा, ऊर्जा सुरक्षा और विदेशों में भारतीय नागरिकों की सुरक्षा से जुड़ा है। यूपीएससी के लिए, यह भारत की पड़ोस और पश्चिम एशिया नीति, नौवहन की स्वतंत्रता और सामरिक संकरा समुद्री मार्ग्स के रणनीतिक महत्व के लिए प्रासंगिक है।"
    }
   },
   {
@@ -357,7 +407,7 @@
       "District और local levels पर grievance redressal systems को मजबूत करें।",
       "Assisted verification facilities के माध्यम से digital inclusion में सुधार करें।",
       "Implementation data के periodic public disclosure के माध्यम से अधिक पारदर्शिता सुनिश्चित करें।",
-      "Regular monitoring ��र evaluation के माध्यम से मजबूत accountability बनाएं।"
+      "Regular monitoring और evaluation के माध्यम से मजबूत accountability बनाएं।"
      ],
      "possibleMainsQuestion": "बड़ी कल्याणकारी योजनाओं में technology-driven verification और inclusive access के बीच संतुलन बनाने की चुनौतियों का विश्लेषण कीजिए।"
     },
@@ -377,7 +427,17 @@
      ],
      "answer": 1,
      "explanation": "Only two statements are correct. Statement I is correct because verification processes such as KYC can help confirm identity and reduce duplication or wrongful claims. Statement II is also correct because the Maharashtra controversy specifically raises the concern that eligible women may be excluded due to KYC and administrative issues. Statement III is incorrect. Direct Benefit Transfer systems still require grievance redressal because errors in verification, eligibility or administrative processing can affect genuine beneficiaries. The current issue shows that technology must be supported by accessible correction mechanisms.",
-     "ref": "Direct Benefit Transfer"
+     "ref": "Direct Benefit Transfer",
+     "hindi": {
+      "q": "कल्याणकारी योजनाओं में प्रौद्योगिकी-संचालित सत्यापन के संदर्भ में निम्नलिखित कथनों पर विचार कीजिए:\n1. यह लाभार्थी सूचियों में दोहराव और गलत दावों को कम करने में मदद कर सकता है।\n2. यदि सत्यापन प्रक्रियाएं कठिन हैं या खराब समर्थित हैं तो यह वास्तविक लाभार्थियों को बाहर कर सकता है।\n3. यह प्रत्यक्ष लाभ हस्तांतरण योजनाओं में शिकायत निवारण तंत्र की आवश्यकता को हटा देता है।\nउपरोक्त में से कितने सही हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "केवल दो कथन सही हैं। कथन 1 सही है क्योंकि केवाईसी जैसी सत्यापन प्रक्रियाएं पहचान की पुष्टि करने और दोहराव या गलत दावों को कम करने में मदद कर सकती हैं। कथन 2 भी सही है क्योंकि महाराष्ट्र विवाद विशेष रूप से यह चिंता पैदा करता है कि केवाईसी और प्रशासनिक मुद्दों के कारण योग्य महिलाओं को बाहर रखा जा सकता है। कथन 3 गलत है। प्रत्यक्ष लाभ हस्तांतरण प्रणाली को अभी भी शिकायत निवारण की आवश्यकता है क्योंकि सत्यापन, पात्रता या प्रशासनिक प्रसंस्करण में त्रुटियां वास्तविक लाभार्थियों को प्रभावित कर सकती हैं। वर्तमान मुद्दा दर्शाता है कि प्रौद्योगिकी को सुलभ सुधार तंत्र द्वारा समर्थित किया जाना चाहिए।"
+     }
     },
     {
      "q": "Consider the following pairs:\nI. Article 38: Promotion of the welfare of the people\nII. Article 39(a): Adequate means of livelihood for citizens\nIII. Article 41: Public assistance in certain cases\nIV. Article 47: Organisation of village panchayats\nHow many pairs are correctly matched?",
@@ -389,7 +449,17 @@
      ],
      "answer": 2,
      "explanation": "Only three pairs are correctly matched. Pair I is correct because Article 38 directs the State to promote the welfare of the people. Pair II is correct because Article 39(a) refers to adequate means of livelihood for citizens. Pair III is correct because Article 41 concerns the right to work, education and public assistance in certain cases, within the State’s capacity. Pair IV is incorrect because Article 47 deals with nutrition, standard of living and public health, while organisation of village panchayats is linked to Article 40. These Directive Principles form a static link to welfare schemes.",
-     "ref": "Directive Principles of State Policy"
+     "ref": "Directive Principles of State Policy",
+     "hindi": {
+      "q": "निम्नलिखित जोड़ियों पर विचार करें:\n1. अनुच्छेद 38: लोगों के कल्याण को बढ़ावा देना\n2. अनुच्छेद 39(ए): नागरिकों के लिए आजीविका के पर्याप्त साधन\n3. अनुच्छेद 41: कुछ मामलों में सार्वजनिक सहायता\n4. अनुच्छेद 47: ग्राम पंचायतों का संगठन\nकितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "केवल तीन",
+       "चारों"
+      ],
+      "explanation": "केवल तीन जोड़े सही सुमेलित हैं। जोड़ी 1 सही है क्योंकि अनुच्छेद 38 राज्य को लोगों के कल्याण को बढ़ावा देने का निर्देश देता है। जोड़ी 2 सही है क्योंकि अनुच्छेद 39(ए) नागरिकों के लिए आजीविका के पर्याप्त साधनों को संदर्भित करता है। जोड़ी 3 सही है क्योंकि अनुच्छेद 41 राज्य की क्षमता के भीतर कुछ मामलों में काम, शिक्षा और सार्वजनिक सहायता के अधिकार से संबंधित है। जोड़ी IV गलत है क्योंकि अनुच्छेद 47 पोषण, जीवन स्तर और सार्वजनिक स्वास्थ्य से संबंधित है, जबकि ग्राम पंचायतों का संगठन अनुच्छेद 40 से जुड़ा है। ये निदेशक सिद्धांत कल्याणकारी योजनाओं के लिए एक स्थिर कड़ी बनाते हैं।"
+     }
     }
    ],
    "keyTerms": [
@@ -405,6 +475,11 @@
     "lat": 19.076,
     "lon": 72.8777,
     "place": "Mumbai, Maharashtra"
+   },
+   "hindi": {
+    "headline": "महाराष्ट्र की लाडकी बहिन योजना में लाभार्थियों के अपवर्जन और सत्यापन पर चिंता",
+    "summary": "महाराष्ट्र सरकार पर आरोप लगे कि KYC सत्यापन और प्रशासनिक समस्याओं के कारण पात्र महिलाओं को मुख्यमंत्री माझी लाडकी बहिन योजना से बाहर कर दिया गया। इस विवाद ने बड़े स्तर पर कल्याणकारी लाभ पहुंचाने में पारदर्शिता, जवाबदेही और शिकायत निवारण पर सवाल उठाए हैं।",
+    "whyItMatters": "यह मुद्दा यह समझने के लिए महत्वपूर्ण है कि प्रत्यक्ष लाभ हस्तांतरण प्रणाली के माध्यम से कल्याणकारी योजनाओं को कैसे लागू किया जाता है। यह एक आवर्ती शासन चुनौती पर भी प्रकाश डालता है: प्रौद्योगिकी लक्ष्यीकरण में सुधार कर सकती है, लेकिन कमजोर डिज़ाइन वास्तविक लाभार्थियों को बाहर कर सकता है।"
    }
   },
   {
@@ -514,7 +589,17 @@
      ],
      "answer": 1,
      "explanation": "Statements I and II are correct. The agreement reduces tariffs and expands market access across manufacturing, agriculture, services and investment. The Double Contribution Convention prevents eligible professionals from paying mandatory social security contributions in both countries at the same time. Statement III is incorrect because the agreement is not limited to agricultural and manufactured goods. The source specifically mentions services, investment, digital trade, financial services, innovation, sustainable infrastructure and emerging technologies. The current development is therefore a broad economic agreement, not a narrow goods-only trade arrangement.",
-     "ref": "India-UK CETA and Double Contribution Convention"
+     "ref": "India-UK CETA and Double Contribution Convention",
+     "hindi": {
+      "q": "भारत-यूनाइटेड किंगडम व्यापक आर्थिक और व्यापार समझौते और दोहरे योगदान कन्वेंशन के बारे में निम्नलिखित कथनों पर विचार कीजिए:\n1. समझौते का उद्देश्य टैरिफ को कम करना और वस्तुओं, सेवाओं और निवेश के लिए बाजार पहुंच का विस्तार करना है।\n2. डबल कंट्रीब्यूशन कन्वेंशन पात्र पेशेवरों को दोनों देशों में एक साथ अनिवार्य सामाजिक सुरक्षा योगदान का भुगतान करने से रोकता है।\n3. यह समझौता कृषि और विनिर्मित वस्तुओं के व्यापार तक सीमित है और इसमें सेवाएँ शामिल नहीं हैं।\nउपरोक्त में से कितने सही हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "कथन 1 और 2 सही हैं। यह समझौता टैरिफ को कम करता है और विनिर्माण, कृषि, सेवाओं और निवेश में बाजार पहुंच का विस्तार करता है। डबल कंट्रीब्यूशन कन्वेंशन पात्र पेशेवरों को एक ही समय में दोनों देशों में अनिवार्य सामाजिक सुरक्षा योगदान का भुगतान करने से रोकता है। कथन 3 गलत है क्योंकि समझौता कृषि और विनिर्मित वस्तुओं तक सीमित नहीं है। स्रोत में विशेष रूप से सेवाओं, निवेश, डिजिटल व्यापार, वित्तीय सेवाओं, नवाचार, टिकाऊ बुनियादी ढांचे और उभरती प्रौद्योगिकियों का उल्लेख है। इसलिए वर्तमान विकास एक व्यापक आर्थिक समझौता है, न कि कोई संकीर्ण वस्तु-केवल व्यापार व्यवस्था।"
+     }
     },
     {
      "q": "With reference to international trade concepts, consider the following pairs:\nI. Tariff Liberalisation: Phased reduction or elimination of customs duties\nII. Non-Tariff Barriers: Rules, standards and procedures that may restrict trade\nIII. Free Trade Agreement: A treaty that only regulates social security contributions\nHow many of the above pairs are correctly matched?",
@@ -526,7 +611,17 @@
      ],
      "answer": 1,
      "explanation": "Pairs I and II are correctly matched. Tariff liberalisation refers to reducing or removing customs duties, which can make cross-border trade easier. Non-tariff barriers are regulatory measures, standards and procedural requirements that can restrict trade even when tariffs are low. Pair III is incorrectly matched because a Free Trade Agreement is an agreement between countries to reduce or eliminate trade barriers and promote economic cooperation. It is not limited to social security contributions. In this news, social security contributions are addressed through the separate Double Contribution Convention.",
-     "ref": "International Trade: Tariffs and Non-Tariff Barriers"
+     "ref": "International Trade: Tariffs and Non-Tariff Barriers",
+     "hindi": {
+      "q": "अंतर्राष्ट्रीय व्यापार अवधारणाओं के संदर्भ में, निम्नलिखित जोड़ियों पर विचार करें:\n1. टैरिफ उदारीकरण: सीमा शुल्क में चरणबद्ध कटौती या उन्मूलन\n2. गैर-टैरिफ बाधाएँ: नियम, मानक और प्रक्रियाएँ जो व्यापार को प्रतिबंधित कर सकती हैं\n3. मुक्त व्यापार समझौता: एक संधि जो केवल सामाजिक सुरक्षा योगदान को नियंत्रित करती है\nउपरोक्त में से कितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "जोड़े 1 और 2 सही सुमेलित हैं। टैरिफ उदारीकरण का तात्पर्य सीमा शुल्क को कम करने या हटाने से है, जो सीमा पार व्यापार को आसान बना सकता है। गैर-टैरिफ बाधाएं नियामक उपाय, मानक और प्रक्रियात्मक आवश्यकताएं हैं जो टैरिफ कम होने पर भी व्यापार को प्रतिबंधित कर सकती हैं। जोड़ी 3 गलत सुमेलित है क्योंकि मुक्त व्यापार समझौता देशों के बीच व्यापार बाधाओं को कम करने या समाप्त करने और आर्थिक सहयोग को बढ़ावा देने के लिए एक समझौता है। यह सामाजिक सुरक्षा योगदान तक सीमित नहीं है। इस समाचार में, सामाजिक सुरक्षा योगदान को अलग दोहरे योगदान कन्वेंशन के माध्यम से संबोधित किया गया है।"
+     }
     }
    ],
    "keyTerms": [
@@ -542,6 +637,11 @@
     "lat": 28.6139,
     "lon": 77.209,
     "place": "New Delhi, India"
+   },
+   "hindi": {
+    "headline": "भारत-यूके सीईटीए और दोहरा योगदान समझौता लागू हुआ",
+    "summary": "भारत-यूनाइटेड किंगडम व्यापक आर्थिक और व्यापार समझौता और दोहरा योगदान कन्वेंशन लागू हो गए हैं। यह समझौता व्यापार बाधाओं को कम करता है, बाजार पहुंच का विस्तार करता है और वस्तुओं, सेवाओं, निवेश, डिजिटल व्यापार और उभरती प्रौद्योगिकियों में सहयोग का समर्थन करता है।",
+    "whyItMatters": "यह विकास यूपीएससी के लिए महत्वपूर्ण है क्योंकि यह द्विपक्षीय संबंधों को अंतर्राष्ट्रीय व्यापार, निर्यात प्रतिस्पर्धात्मकता और कुशल पेशेवरों के आंदोलन से जोड़ता है। यह यह जांचने में भी मदद करता है कि घरेलू उद्योगों और निर्यातकों के लिए सावधानीपूर्वक कार्यान्वयन की आवश्यकता होने पर व्यापार समझौते कैसे अवसर पैदा कर सकते हैं।"
    }
   },
   {
@@ -649,7 +749,17 @@
      ],
      "answer": 0,
      "explanation": "The correct answer is I and II only. Statement I is correct because the notified framework empowers the government to prohibit imports of goods made using forced labour after investigation and verification. Statement II is correct because the policy marks a shift from treating forced labour only as a domestic labour issue to including it in international trade and investment policy. Statement III is incorrect because the source does not describe an additional customs duty on labour-intensive imports. The measure is a prohibition framework linked to forced-labour findings, not a tariff-based measure applied to all such imports.",
-     "ref": "India’s forced-labour import prohibition framework"
+     "ref": "India’s forced-labour import prohibition framework",
+     "hindi": {
+      "q": "जबरन श्रम का उपयोग करके किए गए आयात पर भारत के अधिसूचित ढांचे के संदर्भ में, निम्नलिखित कथनों पर विचार कीजिए:\n1. यह जांच और सत्यापन के बाद ही आयात पर प्रतिबंध लगाने की अनुमति देता है।\n2. यह जबरन-श्रम अनुपालन को अंतर्राष्ट्रीय व्यापार नीति का एक हिस्सा मानता है।\n3. यह सभी श्रम-प्रधान आयातों पर अतिरिक्त सीमा शुल्क लगाकर संचालित होता है।\nउपर्युक्त कथनों में से कौन सा/से सही है/हैं?",
+      "options": [
+       "केवल 1 और 2",
+       "केवल 2 और 3",
+       "केवल 1 और 3",
+       "1, 2 और 3"
+      ],
+      "explanation": "सही उत्तर केवल 1 और 2 है। कथन 1 सही है क्योंकि अधिसूचित ढांचा सरकार को जांच और सत्यापन के बाद मजबूर श्रम का उपयोग करके बनाए गए सामानों के आयात पर प्रतिबंध लगाने का अधिकार देता है। कथन 2 सही है क्योंकि यह नीति जबरन श्रम को केवल घरेलू श्रम का मुद्दा मानने से हटकर इसे अंतर्राष्ट्रीय व्यापार और निवेश नीति में शामिल करने का संकेत देती है। कथन 3 गलत है क्योंकि स्रोत श्रम-गहन आयात पर अतिरिक्त सीमा शुल्क का वर्णन नहीं करता है। यह उपाय जबरन-श्रम निष्कर्षों से जुड़ा एक निषेध ढांचा है, न कि ऐसे सभी आयातों पर लागू टैरिफ-आधारित उपाय।"
+     }
     },
     {
      "q": "Consider the following pairs:\nI. Forced Labour — Work extracted under threat or coercion without voluntary consent\nII. International Labour Organization Convention No. 29 — Convention seeking elimination of forced or compulsory labour\nIII. Non-Tariff Measures — Measures limited to customs duties on imported goods\nHow many of the above pairs are correctly matched?",
@@ -661,7 +771,17 @@
      ],
      "answer": 1,
      "explanation": "The correct answer is Only two. Pair I is correctly matched because forced labour refers to work or service extracted under threat, coercion or penalty without voluntary consent. Pair II is correctly matched because International Labour Organization Convention No. 29 deals with the elimination of forced or compulsory labour. Pair III is incorrectly matched because non-tariff measures are regulatory measures, standards or restrictions that influence trade beyond customs duties. The current development shows how labour standards can become a trade-related regulatory measure rather than a simple tariff issue.",
-     "ref": "ILO Convention No. 29; Non-Tariff Measures"
+     "ref": "ILO Convention No. 29; Non-Tariff Measures",
+     "hindi": {
+      "q": "निम्नलिखित जोड़ियों पर विचार करें:\n1. जबरन श्रम - स्वैच्छिक सहमति के बिना धमकी या जबरदस्ती के तहत लिया गया कार्य\n2. अंतर्राष्ट्रीय श्रम संगठन कन्वेंशन संख्या 29 - जबरन या अनिवार्य श्रम को समाप्त करने की मांग करने वाला कन्वेंशन\n3. गैर-टैरिफ उपाय - आयातित वस्तुओं पर सीमा शुल्क तक सीमित उपाय\nउपरोक्त में से कितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "सही उत्तर केवल दो है। जोड़ी 1 सही ढंग से सुमेलित है क्योंकि जबरन श्रम का तात्पर्य स्वैच्छिक सहमति के बिना धमकी, जबरदस्ती या दंड के तहत लिए गए कार्य या सेवा से है। जोड़ी 2 सही सुमेलित है क्योंकि अंतर्राष्ट्रीय श्रम संगठन कन्वेंशन संख्या 29 जबरन या अनिवार्य श्रम के उन्मूलन से संबंधित है। जोड़ी 3 गलत तरीके से मेल खाती है क्योंकि गैर-टैरिफ उपाय नियामक उपाय, मानक या प्रतिबंध हैं जो सीमा शुल्क से परे व्यापार को प्रभावित करते हैं। वर्तमान विकास से पता चलता है कि कैसे श्रम मानक एक साधारण टैरिफ मुद्दे के बजाय व्यापार-संबंधित नियामक उपाय बन सकते हैं।"
+     }
     }
    ],
    "keyTerms": [
@@ -676,6 +796,11 @@
     "lat": 28.6139,
     "lon": 77.209,
     "place": "New Delhi, India"
+   },
+   "hindi": {
+    "headline": "भारत ने जबरन श्रम से निर्मित वस्तुओं के आयात पर रोक की रूपरेखा अधिसूचित की",
+    "summary": "भारत ने जांच और सत्यापन के बाद जबरन श्रम के माध्यम से उत्पादित वस्तुओं के आयात पर रोक लगाने के लिए एक रूपरेखा अधिसूचित की है। यह कदम भारत की व्यापार नीति को अंतरराष्ट्रीय श्रम मानकों के अनुरूप बनाता है और संयुक्त राज्य अमेरिका के साथ एक व्यापक व्यापार समझौते को समाप्त करने के प्रयासों के बीच उठाया गया है।",
+    "whyItMatters": "यह मुद्दा अंतर्राष्ट्रीय व्यापार को श्रम अधिकारों, जिम्मेदार आपूर्ति श्रृंखलाओं और गैर-टैरिफ उपायों से जोड़ता है। यूपीएससी के लिए, यह भारत के बाहरी आर्थिक संबंधों और वैश्विक मानकों से जुड़े जीएस 3 अंतर्राष्ट्रीय व्यापार और जीएस 2 विषयों के लिए प्रासंगिक है।"
    }
   },
   {
@@ -783,7 +908,17 @@
      ],
      "answer": 0,
      "explanation": "Statement I reflects the verified development that young voters are no longer passive participants and are shaping electoral narratives through digital platforms. Statement II is correct because the source specifically notes the move from traditional mass campaigns to social media, podcasts, memes and independent creators. Statement III is also correct because parties are adapting outreach through accessibility, authenticity, transparency and direct engagement. Both II and III explain why young voters have become more influential: communication channels have changed and parties are responding to that change.",
-     "ref": "Political Participation and Digital Political Communication"
+     "ref": "Political Participation and Digital Political Communication",
+     "hindi": {
+      "q": "कथन 1: भारत में युवा मतदाता डिजिटल प्लेटफ़ॉर्म के माध्यम से चुनावी कथाओं और पार्टी रणनीतियों को तेजी से प्रभावित कर रहे हैं।\nकथन 2: राजनीतिक संचार का विस्तार पारंपरिक जन अभियानों से लेकर सोशल मीडिया, पॉडकास्ट, मीम्स और स्वतंत्र डिजिटल रचनाकारों तक हो गया है।\nकथन 3: राजनीतिक दल प्रत्यक्ष जुड़ाव, पारदर्शिता, पहुंच और प्रामाणिकता पर जोर देकर अपना रहे हैं।\nउपरोक्त कथनों के संबंध में निम्नलिखित में से कौन सा सही है?",
+      "options": [
+       "कथन 2 और कथन 3 दोनों सही हैं और दोनों कथन 1 की व्याख्या करते हैं",
+       "कथन 2 और कथन 3 दोनों सही हैं, लेकिन केवल कथन 2 ही कथन 1 की व्याख्या करता है",
+       "कथन 2 सही है, लेकिन कथन 3 गलत है",
+       "कथन 1 सही है, लेकिन न तो कथन 2 और न ही कथन 3 इसकी व्याख्या करता है"
+      ],
+      "explanation": "कथन 1 इस सत्यापित विकास को दर्शाता है कि युवा मतदाता अब निष्क्रिय भागीदार नहीं हैं और डिजिटल प्लेटफ़ॉर्म के माध्यम से चुनावी कथाओं को आकार दे रहे हैं। कथन 2 सही है क्योंकि स्रोत विशेष रूप से पारंपरिक जन अभियानों से सोशल मीडिया, पॉडकास्ट, मीम्स और स्वतंत्र रचनाकारों की ओर कदम को नोट करता है। कथन 3 भी सही है क्योंकि पार्टियां पहुंच, प्रामाणिकता, पारदर्शिता और प्रत्यक्ष जुड़ाव के माध्यम से आउटरीच को अपना रही हैं। 2 और 3 दोनों बताते हैं कि युवा मतदाता अधिक प्रभावशाली क्यों हो गए हैं: संचार चैनल बदल गए हैं और पार्टियां उस बदलाव पर प्रतिक्रिया दे रही हैं।"
+     }
     },
     {
      "q": "With reference to elections and political participation in India, consider the following statements:\nI. Article 326 provides for elections to the Lok Sabha and State Legislative Assemblies on the basis of adult suffrage.\nII. The voting age in India was lowered from 21 years to 18 years by the 61st Constitutional Amendment Act.\nIII. The Election Commission of India is responsible for conducting elections to municipalities and panchayats in all States.\nHow many of the above statements are correct?",
@@ -795,7 +930,17 @@
      ],
      "answer": 1,
      "explanation": "Statement I is correct. Article 326 provides for elections to the House of the People and State Legislative Assemblies on the basis of adult suffrage. Statement II is correct. The 61st Constitutional Amendment Act lowered the voting age from 21 years to 18 years, expanding youth participation in elections. Statement III is incorrect. Elections to municipalities and panchayats are conducted by State Election Commissions, not the Election Commission of India. The static link is important because the current issue concerns youth participation in democratic and electoral processes.",
-     "ref": "Article 326 and 61st Constitutional Amendment Act"
+     "ref": "Article 326 and 61st Constitutional Amendment Act",
+     "hindi": {
+      "q": "भारत में चुनाव और राजनीतिक भागीदारी के संदर्भ में, निम्नलिखित कथनों पर विचार कीजिए:\n1. अनुच्छेद 326 वयस्क मताधिकार के आधार पर लोकसभा और राज्य विधानसभाओं के चुनाव का प्रावधान करता है।\n2. 61वें संवैधानिक संशोधन अधिनियम द्वारा भारत में मतदान की आयु 21 वर्ष से घटाकर 18 वर्ष कर दी गई।\n3. भारत का चुनाव आयोग सभी राज्यों में नगर पालिकाओं और पंचायतों के चुनाव कराने के लिए जिम्मेदार है।\nउपरोक्त में से कितने कथन सही हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "कथन 1 सही है। अनुच्छेद 326 वयस्क मताधिकार के आधार पर लोक सभा और राज्य विधान सभाओं के लिए चुनाव का प्रावधान करता है। कथन 2 सही है। 61वें संवैधानिक संशोधन अधिनियम ने चुनावों में युवाओं की भागीदारी को बढ़ाते हुए मतदान की आयु 21 वर्ष से घटाकर 18 वर्ष कर दी। कथन 3 गलत है। नगर पालिकाओं और पंचायतों के चुनाव राज्य चुनाव आयोग द्वारा आयोजित किये जाते हैं, भारत निर्वाचन आयोग द्वारा नहीं। स्थैतिक लिंक महत्वपूर्ण है क्योंकि वर्तमान मुद्दा लोकतांत्रिक और चुनावी प्रक्रियाओं में युवाओं की भागीदारी से संबंधित है।"
+     }
     }
    ],
    "keyTerms": [
@@ -811,6 +956,11 @@
     "lat": 28.6139,
     "lon": 77.209,
     "place": "New Delhi, India"
+   },
+   "hindi": {
+    "headline": "भारत के बदलते लोकतंत्र में युवाओं की भागीदारी और डिजिटल राजनीति",
+    "summary": "भारत डिजिटल रूप से जुड़ी और राजनीतिक रूप से मुखर युवा पीढ़ी का उदय देख रहा है जो राजनीतिक संचार, चुनावी आख्यानों और पार्टी रणनीतियों को प्रभावित कर रही है। यह बदलाव राजनीतिक सहभागिता के लिए सोशल मीडिया, पॉडकास्ट, मीम्स और स्वतंत्र डिजिटल रचनाकारों के बढ़ते उपयोग में दिखाई दे रहा है।",
+    "whyItMatters": "यूपीएससी के लिए यह मुद्दा सीधे तौर पर लोकतंत्र, चुनावी राजनीति, राजनीतिक भागीदारी और नागरिक जुड़ाव से जुड़ता है। यह उम्मीदवारों को यह विश्लेषण करने में भी मदद करता है कि गलत सूचना और सार्वजनिक बहस की गुणवत्ता के बारे में चिंताओं को उठाते हुए प्रौद्योगिकी लोकतांत्रिक भागीदारी को कैसे बदल रही है।"
    }
   },
   {
@@ -900,7 +1050,7 @@
       "iCET, DTTI और INDUS-X के तहत projects के implementation को बेहतर बनाएं।",
       "Critical defence technologies के लिए long-term supply-chain resilience बनाएं।"
      ],
-     "possibleMainsQuestion": "India-U.S. रक्���ा प्रौद्योगिकी सहयोग की महत्वाकांक्षाओं और उसके सीमित परिणामों का विश्लेषण कीजिए। भारत की defence indigenisation strategy के लिए इसके निहितार्थों पर चर्चा कीजिए।"
+     "possibleMainsQuestion": "India-U.S. रक्षा प्रौद्योगिकी सहयोग की महत्वाकांक्षाओं और उसके सीमित परिणामों का विश्लेषण कीजिए। भारत की defence indigenisation strategy के लिए इसके निहितार्थों पर चर्चा कीजिए।"
     },
     "explanation": "<p>India and the United States have built a much closer defence relationship over recent years, and defence trade has expanded significantly. Yet the editorial highlights a major gap: buying defence equipment is not the same as building advanced technology together. The central concern is that meaningful co-development, joint manufacturing and technology transfer remain limited.</p><p>The GE F414 engine programme is an important example of this gap. It reflects India’s ambition to move beyond imports and gain access to advanced defence technology. However, such programmes face constraints because the transfer of sensitive technology depends on what the supplier country is willing and legally able to share. Technology-sharing restrictions, intellectual property concerns and export control rules can all narrow the real scope of collaboration.</p><p>Several institutional frameworks have been created to improve cooperation. The Defence Technology and Trade Initiative, the Initiative on Critical and Emerging Technology and INDUS-X are meant to provide channels for defence innovation, private-sector participation and strategic technology cooperation. Their presence shows that both countries have recognised the need for a structured approach. But the article points out that the actual outcomes in joint manufacturing remain modest.</p><p>This matters for India because defence indigenisation cannot be achieved only through procurement. India needs deeper access to design knowledge, manufacturing capability, testing systems and supply-chain strength. At the same time, the United States has its own legal and commercial constraints, especially where advanced military technologies and intellectual property are involved. This creates a tension between strategic convergence and operational delivery.</p><p>The way forward is therefore not just to announce more initiatives, but to make existing mechanisms more predictable and outcome-oriented. India and the United States need clearer technology-sharing arrangements, more practical co-production projects, stronger private-sector collaboration and faster implementation under iCET, DTTI and INDUS-X. The larger lesson is that defence partnership becomes strategically valuable only when it produces real capabilities, not only trade volumes or policy statements.</p>",
     "possibleMainsQuestion": "Analyse the ambitions and limited outcomes of India-U.S. defence technology cooperation. Discuss its implications for India’s defence indigenisation strategy."
@@ -918,7 +1068,17 @@
      ],
      "answer": 1,
      "explanation": "Statement I is correct because the Defence Technology and Trade Initiative, Initiative on Critical and Emerging Technology and INDUS-X are institutional frameworks for cooperation. Statement II is incorrect because the source says defence trade has expanded significantly; the problem is not absence of trade but limited co-development and technology transfer. Statement III is correct because export control regimes and intellectual property concerns are identified as constraints on deeper defence-industrial cooperation. Therefore, only I and III are correct.",
-     "ref": "DTTI, iCET and INDUS-X"
+     "ref": "DTTI, iCET and INDUS-X",
+     "hindi": {
+      "q": "भारत-अमेरिका के संदर्भ में रक्षा प्रौद्योगिकी सहयोग के संबंध में निम्नलिखित कथनों पर विचार कीजिए:\n1. DTTI, iCET और INDUS-X रक्षा और प्रौद्योगिकी सहयोग के लिए संस्थागत ढांचा प्रदान करते हैं।\n2. सहयोग में पहचानी गई मुख्य चुनौती दोनों देशों के बीच रक्षा व्यापार की पूर्ण अनुपस्थिति है।\n3. निर्यात नियंत्रण नियम और बौद्धिक संपदा संबंधी चिंताएँ प्रौद्योगिकी हस्तांतरण की गहराई को सीमित कर सकती हैं।\nउपर्युक्त कथनों में से कौन सा/से सही है/हैं?",
+      "options": [
+       "केवल 1 और 2",
+       "केवल 1 और 3",
+       "केवल 2 और 3",
+       "1, 2 और 3"
+      ],
+      "explanation": "कथन 1 सही है क्योंकि रक्षा प्रौद्योगिकी और व्यापार पहल, महत्वपूर्ण और उभरती प्रौद्योगिकी पर पहल और INDUS-X सहयोग के लिए संस्थागत ढांचे हैं। कथन 2 गलत है क्योंकि स्रोत के अनुसार है कि रक्षा व्यापार में काफी विस्तार हुआ है; समस्या व्यापार का अभाव नहीं बल्कि सीमित सह-विकास और प्रौद्योगिकी हस्तांतरण है। कथन 3 सही है क्योंकि निर्यात नियंत्रण व्यवस्था और बौद्धिक संपदा संबंधी चिंताओं को गहन रक्षा-औद्योगिक सहयोग पर बाधाओं के रूप में पहचाना जाता है। इसलिए, केवल 1 और 3 सही हैं।"
+     }
     },
     {
      "q": "Consider the following pairs:\nI. Technology transfer: Sharing technical know-how or production methods\nII. Intellectual property rights: Legal rights over inventions and designs\nIII. Export control: Rules that freely permit transfer of all sensitive technologies\nHow many of the above pairs are correctly matched?",
@@ -930,7 +1090,17 @@
      ],
      "answer": 1,
      "explanation": "Pair I is correctly matched because technology transfer involves sharing technical knowledge, design know-how or production methods. Pair II is correctly matched because intellectual property rights protect inventions, designs and technical knowledge, and can affect how technology is shared. Pair III is incorrectly matched because export control does not freely permit all transfers; it restricts or regulates the sale or transfer of sensitive goods, software and technologies. Hence, only two pairs are correctly matched. This static linkage helps explain why defence technology cooperation can remain limited even when strategic relations are strong.",
-     "ref": "Export control regimes"
+     "ref": "Export control regimes",
+     "hindi": {
+      "q": "निम्नलिखित जोड़ियों पर विचार करें:\n1. प्रौद्योगिकी हस्तांतरण: तकनीकी जानकारी या उत्पादन विधियों को साझा करना\n2. बौद्धिक संपदा अधिकार: आविष्कारों और डिजाइनों पर कानूनी अधिकार\n3. निर्यात नियंत्रण: नियम जो सभी संवेदनशील प्रौद्योगिकियों के हस्तांतरण की स्वतंत्र रूप से अनुमति देते हैं\nउपरोक्त में से कितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "जोड़ी 1 सही ढंग से सुमेलित है क्योंकि प्रौद्योगिकी हस्तांतरण में तकनीकी ज्ञान, डिज़ाइन जानकारी या उत्पादन विधियों को साझा करना शामिल है। जोड़ी 2 सही ढंग से सुमेलित है क्योंकि बौद्धिक संपदा अधिकार आविष्कारों, डिजाइनों और तकनीकी ज्ञान की रक्षा करते हैं, और प्रौद्योगिकी को साझा करने के तरीके को प्रभावित कर सकते हैं। जोड़ी 3 गलत तरीके से मेल खाती है क्योंकि निर्यात नियंत्रण सभी हस्तांतरणों की स्वतंत्र रूप से अनुमति नहीं देता है; यह संवेदनशील वस्तुओं, सॉफ्टवेयर और प्रौद्योगिकियों की बिक्री या हस्तांतरण को प्रतिबंधित या नियंत्रित करता है। अतः, केवल दो जोड़े सही सुमेलित हैं। यह स्थिर जुड़ाव यह समझाने में मदद करता है कि रणनीतिक संबंध मजबूत होने पर भी रक्षा प्रौद्योगिकी सहयोग सीमित क्यों रह सकता है।"
+     }
     }
    ],
    "keyTerms": [
@@ -946,6 +1116,11 @@
     "lat": 28.6139,
     "lon": 77.209,
     "place": "New Delhi, India"
+   },
+   "hindi": {
+    "headline": "भारत-अमेरिका रक्षा प्रौद्योगिकी सहयोग को प्रौद्योगिकी हस्तांतरण में सीमाओं का सामना करना पड़ता है",
+    "summary": "भारत और संयुक्त राज्य अमेरिका ने रक्षा व्यापार का विस्तार किया है और कई सहयोग ढाँचे बनाए हैं, लेकिन गहन रक्षा प्रौद्योगिकी हस्तांतरण और सह-विकास सीमित है। GE F414 इंजन प्रोग्राम प्रौद्योगिकी साझाकरण, बौद्धिक संपदा और निर्यात नियंत्रण से जुड़ी बाधाओं के कारण रणनीतिक इरादे और वास्तविक औद्योगिक सहयोग के बीच अंतर को दर्शाता है।",
+    "whyItMatters": "यह मुद्दा द्विपक्षीय संबंधों, रक्षा स्वदेशीकरण और रणनीतिक साझेदारी के माध्यम से उन्नत सैन्य प्रौद्योगिकियों के निर्माण के भारत के उद्देश्य के लिए महत्वपूर्ण है। यूपीएससी के लिए, यह जीएस 2 भारत-अमेरिका को जोड़ता है। जीएस 3 रक्षा प्रौद्योगिकी, स्वदेशी विनिर्माण और आपूर्ति-श्रृंखला लचीलेपन के साथ संबंध।"
    }
   },
   {
@@ -1029,7 +1204,7 @@
       }
      ],
      "wayForward": [
-      "भाषा-नीति के क्र��यान्वयन को इतना लचीला बनाए रखना सुनिश्चित करें कि क्षेत्रीय विविधता और स्कूल-स्तरीय क्षमता का ध्यान रखा जा सके।",
+      "भाषा-नीति के क्रियान्वयन को इतना लचीला बनाए रखना सुनिश्चित करें कि क्षेत्रीय विविधता और स्कूल-स्तरीय क्षमता का ध्यान रखा जा सके।",
       "स्कूलों में भाषा आवश्यकताओं को समान रूप से लागू करने से पहले Indian languages के लिए शिक्षक उपलब्धता में सुधार करें।",
       "पाठ्यक्रम योजना, प्रशिक्षण और उपयुक्त शिक्षण सामग्री के माध्यम से संस्थागत तैयारी को मजबूत करें।",
       "तीन-भाषा नीति की समीक्षा इस तरह करें कि क्षेत्रीय भाषाओं को बढ़ावा देते हुए शैक्षिक पहुंच सुरक्षित रहे।",
@@ -1053,7 +1228,17 @@
      ],
      "answer": 0,
      "explanation": "Statement I is correct because the hearing examined whether English, despite colonial origins, has evolved into an Indian language through widespread use in governance, education and public life. Statement II is correct because the issue involved balancing the National Education Policy, 2020 with the constitutional commitment to promote Indian languages. Statement III is incorrect because the source does not state that the Court held English to be included in the Eighth Schedule. The Eighth Schedule recognises 22 languages, and English is not listed there. The current issue concerns classification and policy implications, not an automatic constitutional listing.",
-     "ref": "Three-Language Formula and Eighth Schedule"
+     "ref": "Three-Language Formula and Eighth Schedule",
+     "hindi": {
+      "q": "सीबीएसई त्रि-भाषा नीति पर सुप्रीम कोर्ट की सुनवाई के संदर्भ में, निम्नलिखित कथनों पर विचार कीजिए:\n1. न्यायालय ने जांच की कि क्या अंग्रेजी शासन, शिक्षा और सार्वजनिक जीवन में इसके उपयोग के माध्यम से एक भारतीय भाषा के रूप में विकसित हुई है।\n2. सुनवाई राष्ट्रीय शिक्षा नीति, 2020 और भारतीय भाषाओं को बढ़ावा देने की संवैधानिक प्रतिबद्धता के बीच संतुलन को लेकर थी।\n3. न्यायालय ने माना कि आठवीं अनुसूची स्वचालित रूप से अंग्रेजी को भारतीय भाषा के रूप में वर्गीकृत करती है।\nउपर्युक्त कथनों में से कौन सा/से सही है/हैं?",
+      "options": [
+       "केवल 1 और 2",
+       "केवल 2 और 3",
+       "केवल 1 और 3",
+       "1, 2 और 3"
+      ],
+      "explanation": "कथन 1 सही है क्योंकि सुनवाई में इस बात की जांच की गई कि क्या अंग्रेजी, औपनिवेशिक मूल के बावजूद, शासन, शिक्षा और सार्वजनिक जीवन में व्यापक उपयोग के माध्यम से एक भारतीय भाषा के रूप में विकसित हुई है। कथन 2 सही है क्योंकि यह मुद्दा भारतीय भाषाओं को बढ़ावा देने की संवैधानिक प्रतिबद्धता के साथ राष्ट्रीय शिक्षा नीति, 2020 को संतुलित करने से जुड़ा है। कथन 3 गलत है क्योंकि स्रोत यह नहीं बताता है कि न्यायालय ने अंग्रेजी को आठवीं अनुसूची में शामिल करने के लिए माना है। आठवीं अनुसूची 22 भाषाओं को मान्यता देती है, और अंग्रेजी वहां सूचीबद्ध नहीं है। वर्तमान मुद्दा वर्गीकरण और नीतिगत निहितार्थों से संबंधित है, न कि स्वचालित संवैधानिक सूची से।"
+     }
     },
     {
      "q": "Consider the following pairs:\nI. Eighth Schedule - Recognises 22 languages for constitutional and administrative purposes\nII. Three-Language Formula - Requires schools to teach only languages listed in the Eighth Schedule\nIII. National Education Policy, 2020 - Encourages multilingualism and the promotion of Indian languages\nHow many of the above pairs are correctly matched?",
@@ -1065,7 +1250,17 @@
      ],
      "answer": 1,
      "explanation": "Pair I is correctly matched because the Eighth Schedule recognises 22 languages for constitutional and administrative purposes. Pair II is incorrectly matched because the three-language formula promotes multilingual learning through the study of three languages, but it is not defined as a rule that schools may teach only Eighth Schedule languages. Pair III is correctly matched because the National Education Policy, 2020 encourages multilingualism and promotion of Indian languages while allowing flexibility in language learning. The static-current link is the relationship between constitutional language recognition and school language policy.",
-     "ref": "Eighth Schedule; National Education Policy, 2020"
+     "ref": "Eighth Schedule; National Education Policy, 2020",
+     "hindi": {
+      "q": "निम्नलिखित जोड़ियों पर विचार करें:\n1. आठवीं अनुसूची - संवैधानिक और प्रशासनिक उद्देश्यों के लिए 22 भाषाओं को मान्यता देती है\n2. त्रि-भाषा फॉर्मूला - स्कूलों को केवल आठवीं अनुसूची में सूचीबद्ध भाषाओं को पढ़ाने की आवश्यकता है\n3. राष्ट्रीय शिक्षा नीति, 2020 - बहुभाषावाद और भारतीय भाषाओं के प्रचार को प्रोत्साहित करती है\nउपरोक्त में से कितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "जोड़ी 1 सही सुमेलित है क्योंकि आठवीं अनुसूची संवैधानिक और प्रशासनिक उद्देश्यों के लिए 22 भाषाओं को मान्यता देती है। जोड़ी 2 गलत सुमेलित है क्योंकि तीन-भाषा फॉर्मूला तीन भाषाओं के अध्ययन के माध्यम से बहुभाषी शिक्षा को बढ़ावा देता है, लेकिन इसे एक नियम के रूप में परिभाषित नहीं किया गया है कि स्कूल केवल आठवीं अनुसूची की भाषाएं पढ़ा सकते हैं। जोड़ी 3 सही ढंग से सुमेलित है क्योंकि राष्ट्रीय शिक्षा नीति, 2020 भाषा सीखने में लचीलेपन की अनुमति देते हुए बहुभाषावाद और भारतीय भाषाओं को बढ़ावा देने को प्रोत्साहित करती है। स्थैतिक-वर्तमान लिंक संवैधानिक भाषा मान्यता और स्कूल भाषा नीति के बीच का संबंध है।"
+     }
     }
    ],
    "keyTerms": [
@@ -1080,6 +1275,11 @@
     "lat": 28.6233,
     "lon": 77.2391,
     "place": "Supreme Court of India, New Delhi"
+   },
+   "hindi": {
+    "headline": "स्कूली शिक्षा में अंग्रेजी और त्रि-भाषा नीति पर सुप्रीम कोर्ट का विचार",
+    "summary": "सुप्रीम कोर्ट ने सीबीएसई की तीन-भाषा नीति पर सुनवाई के दौरान सवाल किया कि क्या अंग्रेजी को भारत में गैर-देशी भाषा माना जाना चाहिए। सुनवाई में राष्ट्रीय शिक्षा नीति, 2020 के तहत बहुभाषी शिक्षा, संवैधानिक भाषा नीति, शिक्षक उपलब्धता और कार्यान्वयन चुनौतियों से जुड़े मुद्दे उठाए गए।",
+    "whyItMatters": "यह मुद्दा सीधे तौर पर भाषा, संघवाद, शिक्षा नीति और सांस्कृतिक अधिकारों पर संवैधानिक प्रावधानों से जुड़ा है। यूपीएससी के लिए, यह महत्वपूर्ण है क्योंकि यह दिखाता है कि अदालतें भारतीय भाषाओं को बढ़ावा देने, शैक्षिक पहुंच बनाए रखने और स्कूलों में व्यावहारिक बाधाओं के प्रबंधन के बीच संतुलन की जांच कैसे करती हैं।"
    }
   },
   {
@@ -1179,7 +1379,17 @@
      ],
      "answer": 1,
      "explanation": "Statements I and II are correct. The reported amendment expands the definition of acid attack victims to cover injuries caused by acid ingestion, and this recognition enables access to disability-related benefits, rehabilitation support and compensation under the Rights of Persons with Disabilities Act, 2016. Statement III is incorrect because the development concerns legal recognition and welfare-related consequences, not transfer of criminal trials to the Supreme Court. The Supreme Court is relevant here because the Union Government informed it about the change, but that does not mean the Court becomes the trial forum for such offences.",
-     "ref": "Rights of Persons with Disabilities Act, 2016"
+     "ref": "Rights of Persons with Disabilities Act, 2016",
+     "hindi": {
+      "q": "दिव्यांगजन अधिकार अधिनियम, 2016 के अंतर्गत जबरन अम्ल पिलाए जाने से पीड़ित व्यक्तियों को शामिल करने के संबंध में निम्नलिखित कथनों पर विचार कीजिए:\n1. इससे ‘अम्ल हमले के पीड़ित’ की परिभाषा में अम्ल पिलाए जाने से हुई चोटें भी शामिल होती हैं।\n2. इससे प्रभावित व्यक्तियों को दिव्यांगता संबंधी लाभ, पुनर्वास सहायता और मुआवजा प्राप्त करने में मदद मिलती है।\n3. इससे ऐसे अपराधों का विचारण नियमित न्यायालयों से सीधे सर्वोच्च न्यायालय को स्थानांतरित हो जाता है।\nउपर्युक्त कथनों में से कितने सही हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "कथन 1 और 2 सही हैं। रिपोर्ट किया गया संशोधन अम्ल हमले के पीड़ितों की परिभाषा को अम्ल के सेवन से होने वाली चोटों को कवर करने के लिए विस्तारित करता है, और यह मान्यता दिव्यांगजन अधिकार अधिनियम, 2016 के तहत दिव्यांगता से संबंधित लाभ, पुनर्वास सहायता और मुआवजे तक पहुंच को सक्षम बनाती है। कथन 3 गलत है क्योंकि विकास कानूनी मान्यता और कल्याण-संबंधी परिणामों से संबंधित है, न कि आपराधिक मुकदमों को सुप्रीम कोर्ट में स्थानांतरित करने से। सुप्रीम कोर्ट यहां प्रासंगिक है क्योंकि केंद्र सरकार ने उसे बदलाव के बारे में सूचित किया है, लेकिन इसका मतलब यह नहीं है कि कोर्ट ऐसे अपराधों के लिए ट्रायल फोरम बन जाता है।"
+     }
     },
     {
      "q": "With reference to disability rights and victim rehabilitation, consider the following pairs:\nI. Rights of Persons with Disabilities Act, 2016: Provides legal protection, equal opportunities and welfare measures for persons with disabilities\nII. Benchmark disability: Disability of not less than 40 percent as certified by the competent authority\nIII. Acid Attack Victim under the amended understanding: A person injured or disfigured by acid or corrosive substances, including through ingestion\nIV. Victim Rehabilitation: Limited only to monetary compensation after conviction\nHow many pairs are correctly matched?",
@@ -1191,7 +1401,17 @@
      ],
      "answer": 2,
      "explanation": "Pairs I, II and III are correctly matched. The Rights of Persons with Disabilities Act, 2016 provides a legal framework for protection, equal opportunities and welfare measures. A benchmark disability is generally understood as a disability of not less than 40 percent, certified by the competent authority. The current development brings acid ingestion within the understanding of acid attack victim for legal recognition. Pair IV is incorrect because victim rehabilitation is not limited only to monetary compensation after conviction. It can include medical care, psychological support, education, livelihood assistance and other forms of survivor support.",
-     "ref": "Rights of Persons with Disabilities Act, 2016"
+     "ref": "Rights of Persons with Disabilities Act, 2016",
+     "hindi": {
+      "q": "दिव्यांगता अधिकार और पीड़ित पुनर्वास के संदर्भ में, निम्नलिखित जोड़ियों पर विचार करें:\n1. दिव्यांगजन अधिकार अधिनियम, 2016: विकलांग व्यक्तियों के लिए कानूनी सुरक्षा, समान अवसर और कल्याणकारी उपाय प्रदान करता है\n2. बेंचमार्क दिव्यांगता: सक्षम प्राधिकारी द्वारा प्रमाणित दिव्यांगता 40 प्रतिशत से कम नहीं होनी चाहिए\n3. संशोधित समझ के तहत अम्ल हमला पीड़ित: अम्ल या संक्षारक पदार्थों से घायल या विकृत व्यक्ति, जिसमें अंतर्ग्रहण भी शामिल है\n4. पीड़ित पुनर्वास: दोषसिद्धि के बाद केवल मौद्रिक मुआवजे तक सीमित\nकितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "केवल तीन",
+       "चारों"
+      ],
+      "explanation": "जोड़े 1, 2 और 3 सही सुमेलित हैं। दिव्यांगजन अधिकार अधिनियम, 2016 सुरक्षा, समान अवसर और कल्याणकारी उपायों के लिए एक कानूनी ढांचा प्रदान करता है। एक बेंचमार्क दिव्यांगता को आम तौर पर सक्षम प्राधिकारी द्वारा प्रमाणित 40 प्रतिशत से कम नहीं की दिव्यांगता के रूप में समझा जाता है। वर्तमान विकास अम्ल हमले की पीड़िता की समझ में अम्ल अंतर्ग्रहण को कानूनी मान्यता प्रदान करता है। जोड़ी IV गलत है क्योंकि सजा के बाद पीड़ित का पुनर्वास केवल मौद्रिक मुआवजे तक सीमित नहीं है। इसमें चिकित्सा देखभाल, मनोवैज्ञानिक सहायता, शिक्षा, आजीविका सहायता और उत्तरजीवी सहायता के अन्य रूप शामिल हो सकते हैं।"
+     }
     }
    ],
    "keyTerms": [
@@ -1207,6 +1427,11 @@
     "lat": 28.6139,
     "lon": 77.209,
     "place": "New Delhi, India"
+   },
+   "hindi": {
+    "headline": "केंद्र ने अम्ल पिलाए जाने से पीड़ित व्यक्तियों को RPwD अधिनियम में शामिल किया",
+    "summary": "केंद्र सरकार ने सुप्रीम कोर्ट को बताया कि दिव्यांगजन अधिकार अधिनियम, 2016 में ‘अम्ल हमले के पीड़ित’ की परिभाषा का विस्तार कर उन व्यक्तियों को भी शामिल किया गया है जिन्हें जबरन अम्ल पिलाया गया हो। इससे ऐसे पीड़ितों को दिव्यांगता संबंधी लाभ, पुनर्वास सहायता और मुआवजा मिल सकेगा।",
+    "whyItMatters": "यह मुद्दा सामाजिक न्याय, कमजोर वर्गों, स्वास्थ्य और दिव्यांगता अधिकारों के जीएस 2 विषयों के लिए महत्वपूर्ण है। यह दर्शाता है कि कानूनी परिभाषाएँ गंभीर हिंसा से बचे लोगों के कल्याण, मुआवजे और पुनर्वास तक पहुंच को कैसे प्रभावित करती हैं।"
    }
   },
   {
@@ -1285,7 +1510,7 @@
       },
       {
        "term": "Data governance",
-       "definition": "डेटा को जिम्मेदारी से एकत्र करने, सुरक्षित रखने, साझा करने औ�� संरक्षित करने के नियम और प्रणालियां।"
+       "definition": "डेटा को जिम्मेदारी से एकत्र करने, सुरक्षित रखने, साझा करने और संरक्षित करने के नियम और प्रणालियां।"
       },
       {
        "term": "Research translation",
@@ -1318,7 +1543,17 @@
      ],
      "answer": 0,
      "explanation": "Statement I is correct because the draft policy proposes priority-setting on the basis of disease burden, scientific opportunity, equity and strategic healthcare requirements. Statement II is correct because the proposed governance structure involves the Department of Health Research, Indian Council of Medical Research and State governments. Statement III is incorrect because the draft does not replace States; it includes State governments in the three-tier framework to strengthen coordination and implementation. The current development is therefore about coordinated and demand-driven health research governance, not complete centralisation.",
-     "ref": "Draft National Health Research Policy, 2026"
+     "ref": "Draft National Health Research Policy, 2026",
+     "hindi": {
+      "q": "राष्ट्रीय स्वास्थ्य अनुसंधान नीति, 2026 के मसौदे के संदर्भ में, निम्नलिखित कथनों पर विचार कीजिए:\n1. यह बीमारी के बोझ, वैज्ञानिक अवसर, समानता और रणनीतिक स्वास्थ्य देखभाल आवश्यकताओं के आधार पर राष्ट्रीय अनुसंधान प्राथमिकताओं का प्रस्ताव करता है।\n2. यह स्वास्थ्य अनुसंधान विभाग, भारतीय चिकित्सा अनुसंधान परिषद और राज्य सरकारों को शामिल करते हुए एक त्रि-स्तरीय शासन ढांचे का प्रस्ताव करता है।\n3. यह स्वास्थ्य अनुसंधान कार्यान्वयन में राज्य सरकारों को एकल केंद्रीकृत अनुसंधान प्राधिकरण से बदलने का प्रयास करता है।\nउपर्युक्त कथनों में से कौन सा/से सही है/हैं?",
+      "options": [
+       "केवल 1 और 2",
+       "केवल 2 और 3",
+       "केवल 1 और 3",
+       "1, 2 और 3"
+      ],
+      "explanation": "कथन 1 सही है क्योंकि मसौदा नीति बीमारी के बोझ, वैज्ञानिक अवसर, समानता और रणनीतिक स्वास्थ्य देखभाल आवश्यकताओं के आधार पर प्राथमिकता-निर्धारण का प्रस्ताव करती है। कथन 2 सही है क्योंकि प्रस्तावित शासन संरचना में स्वास्थ्य अनुसंधान विभाग, भारतीय चिकित्सा अनुसंधान परिषद और राज्य सरकारें शामिल हैं। कथन 3 गलत है क्योंकि मसौदा राज्यों का स्थान नहीं लेता है; इसमें समन्वय और कार्यान्वयन को मजबूत करने के लिए त्रिस्तरीय ढांचे में राज्य सरकारों को शामिल किया गया है। इसलिए वर्तमान विकास समन्वित और मांग-संचालित स्वास्थ्य अनुसंधान प्रशासन के बारे में है, न कि पूर्ण केंद्रीकरण के बारे में।"
+     }
     },
     {
      "q": "Consider the following pairs:\nI. Department of Health Research — Health research policy and coordination under the Union health system\nII. Indian Council of Medical Research — Apex body for biomedical research in India\nIII. Data governance — Rules for responsible collection, storage, sharing and protection of data\nHow many of the above pairs are correctly matched?",
@@ -1330,7 +1565,17 @@
      ],
      "answer": 2,
      "explanation": "Pair I is correctly matched because the Department of Health Research is linked to health research policy, coordination and institutional support under the Union health system. Pair II is correctly matched because the Indian Council of Medical Research is India’s apex body for biomedical research. Pair III is also correctly matched because data governance refers to systems and rules for collecting, storing, sharing and protecting data responsibly. The static-current linkage is important because the draft policy relies on these institutions and governance principles to strengthen health research implementation.",
-     "ref": "Department of Health Research; Indian Council of Medical Research; Data governance"
+     "ref": "Department of Health Research; Indian Council of Medical Research; Data governance",
+     "hindi": {
+      "q": "निम्नलिखित जोड़ियों पर विचार करें:\n1. स्वास्थ्य अनुसंधान विभाग - केंद्रीय स्वास्थ्य प्रणाली के तहत स्वास्थ्य अनुसंधान नीति और समन्वय\n2. भारतीय चिकित्सा अनुसंधान परिषद - भारत में जैव चिकित्सा अनुसंधान के लिए सर्वोच्च निकाय\n3. डेटा गवर्नेंस - डेटा के जिम्मेदार संग्रह, भंडारण, साझाकरण और सुरक्षा के लिए नियम\nउपरोक्त में से कितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "जोड़ी 1 सही सुमेलित है क्योंकि स्वास्थ्य अनुसंधान विभाग केंद्रीय स्वास्थ्य प्रणाली के तहत स्वास्थ्य अनुसंधान नीति, समन्वय और संस्थागत समर्थन से जुड़ा हुआ है। जोड़ी 2 सही सुमेलित है क्योंकि भारतीय चिकित्सा अनुसंधान परिषद जैव चिकित्सा अनुसंधान के लिए भारत की सर्वोच्च संस्था है। जोड़ी 3 भी सही ढंग से मेल खाती है क्योंकि डेटा गवर्नेंस जिम्मेदारी से डेटा एकत्र करने, भंडारण, साझा करने और सुरक्षा करने के लिए सिस्टम और नियमों को संदर्भित करता है। स्थैतिक-वर्तमान लिंकेज महत्वपूर्ण है क्योंकि मसौदा नीति स्वास्थ्य अनुसंधान कार्यान्वयन को मजबूत करने के लिए इन संस्थानों और शासन सिद्धांतों पर निर्भर करती है।"
+     }
     }
    ],
    "keyTerms": [
@@ -1346,6 +1591,11 @@
     "lat": 28.6139,
     "lon": 77.209,
     "place": "New Delhi, India"
+   },
+   "hindi": {
+    "headline": "राष्ट्रीय स्वास्थ्य अनुसंधान नीति, 2026 के मसौदे का उद्देश्य भारत के स्वास्थ्य अनुसंधान पारिस्थितिकी तंत्र में सुधार करना है",
+    "summary": "केंद्र ने भारत के स्वास्थ्य अनुसंधान पारिस्थितिकी तंत्र को अधिक समन्वित, मांग-संचालित और सार्वजनिक स्वास्थ्य आवश्यकताओं के अनुरूप बनाने के लिए राष्ट्रीय स्वास्थ्य अनुसंधान नीति, 2026 का मसौदा जारी किया है। मसौदे में राष्ट्रीय अनुसंधान प्राथमिकताओं, त्रिस्तरीय शासन संरचना, नैतिकता, डेटा प्रशासन, साइबर सुरक्षा, सामुदायिक भागीदारी और न्यायसंगत अनुसंधान क्षमता पर जोर दिया गया है।",
+    "whyItMatters": "यह नीति स्वास्थ्य, शासन और साक्ष्य-आधारित नीति निर्माण के जीएस 2 विषयों और अनुसंधान और विकास के जीएस 3 विषयों के लिए महत्वपूर्ण है। यह दर्शाता है कि भारत कैसे वैज्ञानिक अनुसंधान को सार्वजनिक स्वास्थ्य कार्यक्रमों, नैदानिक ​​​​अभ्यास और अनुसंधान क्षमता में क्षेत्रीय समानता से जोड़ने का प्रयास कर रहा है।"
    }
   },
   {
@@ -1430,7 +1680,7 @@
      ],
      "wayForward": [
       "Indo-Pacific भागीदारों के साथ रक्षा interoperability और समुद्री सहयोग को मजबूत करें।",
-      "Critical minerals और strategic technologies ��े लिए supply chains को विविध बनाएं।",
+      "Critical minerals और strategic technologies के लिए supply chains को विविध बनाएं।",
       "द्विपक्षीय व्यापार और निवेश समझौतों के क्रियान्वयन को तेज करें।",
       "Cybersecurity, artificial intelligence और emerging technologies में सहयोग का विस्तार करें।",
       "एक free, open और inclusive Indo-Pacific का समर्थन करने वाली क्षेत्रीय संस्थाओं को मजबूत बनाएं।"
@@ -1453,7 +1703,17 @@
      ],
      "answer": 1,
      "explanation": "Statement I is correct because the engagement with Australia covered defence, maritime security, critical minerals, supply chains and emerging technologies. Statement II is incorrect because the India-New Zealand engagement covered trade, defence cooperation, education and maritime collaboration, not education alone. Statement III is correct because the source clearly links the visits with India's effort to build resilient supply chains and cooperate with like-minded partners amid geopolitical volatility. Therefore, only I and III are correct.",
-     "ref": "India-Australia and India-New Zealand bilateral cooperation"
+     "ref": "India-Australia and India-New Zealand bilateral cooperation",
+     "hindi": {
+      "q": "ऑस्ट्रेलिया और न्यूजीलैंड के साथ भारत की हालिया इंडो-पैसिफिक गतिविधियों के संदर्भ में, निम्नलिखित कथनों पर विचार कीजिए:\n1. ऑस्ट्रेलिया के साथ सहयोग में रक्षा, समुद्री सुरक्षा, महत्वपूर्ण खनिज, आपूर्ति श्रृंखला और उभरती प्रौद्योगिकियां शामिल हैं।\n2. न्यूजीलैंड के साथ सहयोग शिक्षा तक ही सीमित था और इसमें समुद्री सहयोग शामिल नहीं था।\n3. ये अनुबंध समान विचारधारा वाले साझेदारों के साथ लचीली आपूर्ति श्रृंखला बनाने के भारत के प्रयास को दर्शाते हैं।\nउपर्युक्त कथनों में से कौन सा/से सही है/हैं?",
+      "options": [
+       "केवल 1 और 2",
+       "केवल 1 और 3",
+       "केवल 2 और 3",
+       "1, 2 और 3"
+      ],
+      "explanation": "कथन 1 सही है क्योंकि ऑस्ट्रेलिया के साथ जुड़ाव में रक्षा, समुद्री सुरक्षा, महत्वपूर्ण खनिज, आपूर्ति श्रृंखला और उभरती हुई प्रौद्योगिकियाँ शामिल थीं। कथन 2 गलत है क्योंकि भारत-न्यूजीलैंड भागीदारी में व्यापार, रक्षा सहयोग, शिक्षा और समुद्री सहयोग शामिल थे, न कि केवल शिक्षा। कथन 3 सही है क्योंकि स्रोत स्पष्ट रूप से इन यात्राओं को भू-राजनीतिक अस्थिरता के बीच लचीली आपूर्ति श्रृंखला बनाने और समान विचारधारा वाले भागीदारों के साथ सहयोग करने के भारत के प्रयास से जोड़ता है। इसलिए, केवल 1 और 3 सही हैं।"
+     }
     },
     {
      "q": "Consider the following pairs:\nI. Indo-Pacific: Region linking the Indian and Pacific Oceans\nII. Supply Chain Resilience: Dependence on a single source for critical imports\nIII. Strategic Partnership: Sustained cooperation across defence, economy, technology and regional security\nHow many of the above pairs are correctly matched?",
@@ -1465,7 +1725,17 @@
      ],
      "answer": 1,
      "explanation": "Pair I is correctly matched because the Indo-Pacific refers to the strategic region connecting the Indian and Pacific Oceans. Pair II is incorrectly matched because supply-chain resilience means reducing disruption risks through diversification, not dependence on a single source. Pair III is correctly matched because a strategic partnership involves sustained cooperation across areas such as defence, economy, technology and regional security. Thus, two pairs are correctly matched. This static-current linkage is useful for understanding India's Indo-Pacific diplomacy.",
-     "ref": "Indo-Pacific strategy and supply-chain resilience"
+     "ref": "Indo-Pacific strategy and supply-chain resilience",
+     "hindi": {
+      "q": "निम्नलिखित जोड़ियों पर विचार करें:\n1. इंडो-पैसिफिक: हिंद और प्रशांत महासागरों को जोड़ने वाला क्षेत्र\n2. आपूर्ति श्रृंखला लचीलापन: महत्वपूर्ण आयात के लिए एकल स्रोत पर निर्भरता\n3. रणनीतिक साझेदारी: रक्षा, अर्थव्यवस्था, प्रौद्योगिकी और क्षेत्रीय सुरक्षा में निरंतर सहयोग\nउपरोक्त में से कितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "जोड़ी 1 सही सुमेलित है क्योंकि इंडो-पैसिफिक हिंद और प्रशांत महासागरों को जोड़ने वाले रणनीतिक क्षेत्र को संदर्भित करता है। जोड़ी 2 गलत तरीके से मेल खाती है क्योंकि आपूर्ति-श्रृंखला लचीलेपन का मतलब विविधीकरण के माध्यम से व्यवधान जोखिमों को कम करना है, न कि किसी एक स्रोत पर निर्भरता। जोड़ी 3 सही ढंग से मेल खाती है क्योंकि रणनीतिक साझेदारी में रक्षा, अर्थव्यवस्था, प्रौद्योगिकी और क्षेत्रीय सुरक्षा जैसे क्षेत्रों में निरंतर सहयोग शामिल होता है। इस प्रकार, दो जोड़े सही ढंग से सुमेलित हैं। यह स्थिर-वर्तमान लिंकेज भारत की इंडो-पैसिफिक कूटनीति को समझने के लिए उपयोगी है।"
+     }
     }
    ],
    "keyTerms": [
@@ -1480,6 +1750,11 @@
     "lat": 28.6139,
     "lon": 77.209,
     "place": "New Delhi, India"
+   },
+   "hindi": {
+    "headline": "भारत ने ऑस्ट्रेलिया और न्यूजीलैंड के साथ इंडो-पैसिफिक साझेदारी को गहरा किया",
+    "summary": "प्रधान मंत्री नरेंद्र मोदी की ऑस्ट्रेलिया और न्यूजीलैंड यात्रा ने भारत-प्रशांत क्षेत्र में साझेदारी को मजबूत करने के भारत के प्रयास की पुष्टि की। भागीदारी रक्षा सहयोग, समुद्री सुरक्षा, व्यापार, शिक्षा, महत्वपूर्ण खनिजों, आपूर्ति श्रृंखलाओं और उभरती प्रौद्योगिकियों पर केंद्रित थी।",
+    "whyItMatters": "यूपीएससी के लिए, यह विकास महत्वपूर्ण है क्योंकि यह भारत के द्विपक्षीय संबंधों को उसकी व्यापक इंडो-पैसिफिक रणनीति से जोड़ता है। यह विदेश नीति को आपूर्ति-श्रृंखला लचीलेपन, समुद्री सुरक्षा और भू-राजनीतिक अनिश्चितता के बीच समान विचारधारा वाले भागीदारों के साथ सहयोग से भी जोड़ता है।"
    }
   },
   {
@@ -1564,7 +1839,7 @@
      ],
      "wayForward": [
       "किसी भी Trial in Absentia की अनुमति देने से पहले कड़ी न्यायिक जांच सुनिश्चित करें।",
-      "नोटिस से जुड़े विवादों को कम करने क�� लिए समन की डिजिटल सेवा और सार्वजनिक सूचना प्रणालियों को मजबूत करें।",
+      "नोटिस से जुड़े विवादों को कम करने के लिए समन की डिजिटल सेवा और सार्वजनिक सूचना प्रणालियों को मजबूत करें।",
       "सक्षम defence counsel के माध्यम से अनुपस्थित आरोपी के लिए प्रभावी कानूनी प्रतिनिधित्व सुरक्षित रखें।",
       "गंभीर मामलों में फरार अपराधियों के प्रत्यर्पण के लिए अंतरराष्ट्रीय सहयोग सुधारें।",
       "दुरुपयोग रोकने और due process की रक्षा के लिए क्रियान्वयन की नियमित समीक्षा करें।"
@@ -1587,7 +1862,17 @@
      ],
      "answer": 1,
      "explanation": "Statement I is correct because the provision is limited to proclaimed offenders accused of serious offences punishable with imprisonment of ten years or more, life imprisonment or death. Statement II is incorrect because the source highlights safeguards such as repeated summons, public notices and opportunities to appear before trial begins. A single missed hearing is not enough. Statement III is correct because, if the accused subsequently appears, cross-examination of witnesses may be permitted to protect fair trial rights. The correct answer is therefore I and III only.",
-     "ref": "Bharatiya Nagarik Suraksha Sanhita, 2023"
+     "ref": "Bharatiya Nagarik Suraksha Sanhita, 2023",
+     "hindi": {
+      "q": "भारतीय नागरिक सुरक्षा संहिता के तहत अनुपस्थिति में मुकदमे के संदर्भ में, निम्नलिखित कथनों पर विचार कीजिए:\n1. यह दस साल या उससे अधिक की सजा, आजीवन कारावास या मौत की सजा वाले अपराधों के आरोपी घोषित अपराधियों पर लागू हो सकता है।\n2. एक बार आरोपी के एक सुनवाई की तारीख पर उपस्थित होने में विफल रहने पर यह बिना किसी पूर्व सूचना की आवश्यकता के शुरू हो सकता है।\n3. यदि आरोपी बाद में अदालत के सामने पेश होता है, तो गवाहों से जिरह की अनुमति दी जा सकती है।\nउपर्युक्त कथनों में से कौन सा/से सही है/हैं?",
+      "options": [
+       "केवल 1 और 2",
+       "केवल 1 और 3",
+       "केवल 2 और 3",
+       "1, 2 और 3"
+      ],
+      "explanation": "कथन 1 सही है क्योंकि यह प्रावधान दस साल या उससे अधिक की सजा, आजीवन कारावास या मौत की सजा वाले गंभीर अपराधों के आरोपी घोषित अपराधियों तक सीमित है। कथन 2 गलत है क्योंकि स्रोत बार-बार सम्मन, सार्वजनिक नोटिस और परीक्षण शुरू होने से पहले पेश होने के अवसरों जैसे सुरक्षा उपायों पर प्रकाश डालता है। एक भी चूकी हुई सुनवाई पर्याप्त नहीं है। कथन 3 सही है क्योंकि, यदि आरोपी बाद में पेश होता है, तो निष्पक्ष सुनवाई के अधिकारों की रक्षा के लिए गवाहों से जिरह की अनुमति दी जा सकती है। इसलिए सही उत्तर केवल 1 और 3 है।"
+     }
     },
     {
      "q": "Consider the following pairs:\nI. Natural Justice: Fair opportunity to be heard before an adverse decision\nII. Proclaimed Offender: A person declared by a court to have absconded after failing to comply with summons and warrants\nIII. Right to Fair Trial: A guarantee limited only to quick disposal of criminal cases\nHow many of the above pairs are correctly matched?",
@@ -1599,7 +1884,17 @@
      ],
      "answer": 1,
      "explanation": "Pair I is correctly matched because natural justice requires a fair opportunity to be heard before adverse judicial action. Pair II is also correctly matched because a proclaimed offender is formally declared by a court to have absconded after failing to comply with legal process. Pair III is incorrectly matched. The right to fair trial is not limited to speedy disposal; it includes due process, legal representation and procedural safeguards. This static-current linkage is important because trial in absentia can reduce delay only if it remains consistent with natural justice and fair trial protections.",
-     "ref": "Article 21"
+     "ref": "Article 21",
+     "hindi": {
+      "q": "निम्नलिखित जोड़ियों पर विचार करें:\n1. प्राकृतिक न्याय: किसी प्रतिकूल निर्णय से पहले सुनवाई का उचित अवसर\n2. घोषित अपराधी: समन और वारंट का पालन करने में विफल रहने के बाद अदालत द्वारा भगोड़ा घोषित किया गया व्यक्ति\n3. निष्पक्ष सुनवाई का अधिकार: एक गारंटी जो केवल आपराधिक मामलों के शीघ्र निपटान तक सीमित है\nउपरोक्त में से कितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "जोड़ी 1 सही सुमेलित है क्योंकि प्राकृतिक न्याय के लिए प्रतिकूल न्यायिक कार्रवाई से पहले सुनवाई के लिए उचित अवसर की आवश्यकता होती है। जोड़ी 2 भी सही ढंग से मेल खाती है क्योंकि एक घोषित अपराधी को कानूनी प्रक्रिया का पालन करने में विफल रहने के बाद अदालत द्वारा औपचारिक रूप से फरार घोषित कर दिया जाता है। युग्म 3 ग़लत सुमेलित है। निष्पक्ष सुनवाई का अधिकार त्वरित निपटान तक सीमित नहीं है; इसमें उचित प्रक्रिया, कानूनी प्रतिनिधित्व और प्रक्रियात्मक सुरक्षा उपाय शामिल हैं। यह स्थैतिक-वर्तमान लिंकेज महत्वपूर्ण है क्योंकि अनुपस्थिति में मुकदमे में देरी को केवल तभी कम किया जा सकता है जब यह प्राकृतिक न्याय और निष्पक्ष परीक्षण सुरक्षा के अनुरूप बना रहे।"
+     }
     }
    ],
    "keyTerms": [
@@ -1614,6 +1909,11 @@
     "lat": 28.6139,
     "lon": 77.209,
     "place": "New Delhi, India"
+   },
+   "hindi": {
+    "headline": "BNSS में अनुपस्थिति में विचारण और निष्पक्ष सुनवाई के सुरक्षा उपाय",
+    "summary": "भारतीय नागरिक सुरक्षा संहिता गंभीर अपराधों के आरोपी घोषित अपराधियों के लिए उनकी अनुपस्थिति में सुनवाई शुरू करती है। बार-बार सम्मन, सार्वजनिक नोटिस, बचाव पक्ष के वकील और पेश होने के अवसर जैसे प्रक्रियात्मक सुरक्षा उपाय पूरे होने के बाद ही अदालतें आगे बढ़ सकती हैं।",
+    "whyItMatters": "यह मुद्दा जीएस 2 के लिए महत्वपूर्ण है क्योंकि यह आपराधिक न्याय सुधार, न्यायिक देरी और संवैधानिक उचित प्रक्रिया को जोड़ता है। यह उम्मीदवारों को यह समझने में मदद करता है कि कैसे कानूनी सुधार आरोपी व्यक्ति के निष्पक्ष सुनवाई के अधिकार के साथ त्वरित न्याय को संतुलित करने का प्रयास करते हैं।"
    }
   },
   {
@@ -1701,7 +2001,7 @@
       "Make in India और Production Linked Incentive योजनाओं के माध्यम से घरेलू विनिर्माण को मजबूत करें।",
       "बेहतर market access के माध्यम से pharmaceuticals, agricultural products और high-value manufacturing में निर्यात बढ़ाएं।",
       "महत्वपूर्ण औद्योगिक inputs और strategic goods के लिए आयात स्रोतों का विविधीकरण करें।",
-      "तकनीक अपनाने और बेहतर उत्पादन क्षमताओं के माध्यम से MSME प��रतिस्पर्धात्मकता सुधारें।",
+      "तकनीक अपनाने और बेहतर उत्पादन क्षमताओं के माध्यम से MSME प्रतिस्पर्धात्मकता सुधारें।",
       "आयातित inputs पर निर्भर उद्योगों में अधिक घरेलू value addition का निर्माण करें।",
       "राष्ट्रीय आर्थिक resilience की सुरक्षा करते हुए चीन के साथ संतुलित आर्थिक जुड़ाव जारी रखें।"
      ],
@@ -1723,7 +2023,17 @@
      ],
      "answer": 1,
      "explanation": "Statement I is incorrect because the source specifically says policymakers are concerned about the composition of imports, not only the size of the trade deficit. Statement II is correct because intermediate products are inputs used in making finished goods, so dependence on them affects domestic manufacturing. Statement III is correct because better market access for Indian sectors such as pharmaceuticals, agricultural products and high-value manufacturing exports can support export growth and help balance trade. The current issue therefore links trade numbers with the structure of imports and export competitiveness.",
-     "ref": "External Sector and International Trade"
+     "ref": "External Sector and International Trade",
+     "hindi": {
+      "q": "चीन से भारत के बढ़ते आयात के संदर्भ में, निम्नलिखित कथनों पर विचार कीजिए:\n1. नीति निर्माताओं द्वारा उजागर की गई चिंता व्यापार घाटे के पूर्ण आकार तक सीमित है।\n2. मध्यवर्ती उत्पाद घरेलू विनिर्माण के लिए मायने रख सकते हैं क्योंकि उनका उपयोग अन्य वस्तुओं के उत्पादन में इनपुट के रूप में किया जाता है।\n3. भारतीय निर्यात के लिए बाजार पहुंच का विस्तार द्विपक्षीय व्यापार को और अधिक संतुलित बनाने में मदद कर सकता है।\nउपर्युक्त कथनों में से कौन सा/से सही है/हैं?",
+      "options": [
+       "केवल 1",
+       "केवल 2 और 3",
+       "केवल 1 और 3",
+       "1, 2 और 3"
+      ],
+      "explanation": "कथन 1 गलत है क्योंकि स्रोत विशेष रूप से कहता है कि नीति निर्माता आयात की संरचना के बारे में चिंतित हैं, न कि केवल व्यापार घाटे के आकार के बारे में। कथन 2 सही है क्योंकि मध्यवर्ती उत्पाद तैयार माल बनाने में उपयोग किए जाने वाले इनपुट हैं, इसलिए उन पर निर्भरता घरेलू विनिर्माण को प्रभावित करती है। कथन 3 सही है क्योंकि फार्मास्यूटिकल्स, कृषि उत्पादों और उच्च मूल्य वाले विनिर्माण निर्यात जैसे भारतीय क्षेत्रों के लिए बेहतर बाजार पहुंच निर्यात वृद्धि का समर्थन कर सकती है और व्यापार को संतुलित करने में मदद कर सकती है। इसलिए मौजूदा मुद्दा व्यापार संख्याओं को आयात और निर्यात प्रतिस्पर्धात्मकता की संरचना से जोड़ता है।"
+     }
     },
     {
      "q": "Consider the following pairs:\nI. Trade deficit: Imports exceed exports in a trade relationship\nII. Market access: Ability to sell goods in another country without excessive barriers\nIII. Production Linked Incentive: A scheme that gives incentives for higher domestic manufacturing in selected sectors\nHow many of the above pairs are correctly matched?",
@@ -1735,7 +2045,17 @@
      ],
      "answer": 2,
      "explanation": "Pair I is correctly matched because a trade deficit means a country imports more than it exports in the relevant trade relationship. Pair II is correctly matched because market access refers to the ability of exporters to enter and sell in another market without excessive barriers. Pair III is also correctly matched because the Production Linked Incentive scheme supports domestic manufacturing by linking incentives to production in selected sectors. These concepts are directly relevant to India’s concern over imports from China and its effort to strengthen manufacturing and exports.",
-     "ref": "Trade Deficit, Market Access and Production Linked Incentive"
+     "ref": "Trade Deficit, Market Access and Production Linked Incentive",
+     "hindi": {
+      "q": "निम्नलिखित जोड़ियों पर विचार करें:\n1. व्यापार घाटा: व्यापार संबंध में आयात निर्यात से अधिक होता है\n2. बाज़ार पहुंच: अत्यधिक बाधाओं के बिना दूसरे देश में सामान बेचने की क्षमता\n3. उत्पादन से जुड़ा प्रोत्साहन: एक योजना जो चयनित क्षेत्रों में उच्च घरेलू विनिर्माण के लिए प्रोत्साहन देती है\nउपरोक्त में से कितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "जोड़ी 1 सही ढंग से सुमेलित है क्योंकि व्यापार घाटे का मतलब है कि कोई देश संबंधित व्यापार संबंध में निर्यात की तुलना में अधिक आयात करता है। जोड़ी 2 सही ढंग से सुमेलित है क्योंकि बाजार पहुंच निर्यातकों की अत्यधिक बाधाओं के बिना दूसरे बाजार में प्रवेश करने और बेचने की क्षमता को संदर्भित करती है। जोड़ी 3 भी सही ढंग से मेल खाती है क्योंकि उत्पादन से जुड़ी प्रोत्साहन योजना चयनित क्षेत्रों में उत्पादन के लिए प्रोत्साहन को जोड़कर घरेलू विनिर्माण का समर्थन करती है। ये अवधारणाएँ चीन से आयात पर भारत की चिंता और विनिर्माण और निर्यात को मजबूत करने के प्रयास से सीधे तौर पर प्रासंगिक हैं।"
+     }
     }
    ],
    "keyTerms": [
@@ -1751,6 +2071,11 @@
     "lat": 39.9042,
     "lon": 116.4074,
     "place": "Beijing, China"
+   },
+   "hindi": {
+    "headline": "2026 की पहली छमाही में चीन से भारत का आयात 80 बिलियन डॉलर के करीब",
+    "summary": "2026 की पहली छमाही के दौरान चीन से भारत का आयात लगभग $80 बिलियन तक पहुंच गया, जो द्विपक्षीय व्यापार में निरंतर वृद्धि दर्शाता है। इस घटनाक्रम ने व्यापार असंतुलन, आयात निर्भरता और चीन से आयात की संरचना के बारे में चिंताओं को फिर से जन्म दिया है।",
+    "whyItMatters": "यूपीएससी के लिए, यह मुद्दा बाहरी व्यापार, औद्योगिक नीति, विनिर्माण प्रतिस्पर्धात्मकता और भारत-चीन आर्थिक संबंधों को जोड़ता है। यह महत्वपूर्ण है क्योंकि चिंता न केवल व्यापार घाटा है, बल्कि आयातित निर्मित वस्तुओं और मध्यवर्ती उत्पादों पर भारत की निर्भरता भी है।"
    }
   },
   {
@@ -1850,7 +2175,17 @@
      ],
      "answer": 0,
      "explanation": "Statements I and II are correct. The Index of Services Production is meant to measure monthly changes in the output of different service sectors, and it fills a statistical gap by giving services a high-frequency indicator comparable in purpose to the Index of Industrial Production for industry. Statement III is incorrect because the index does not replace Gross Value Added. Gross Value Added remains a measure of value created after accounting for intermediate consumption, while the ISP is a monthly indicator of changes in services output. The development is therefore about improving timely services-sector monitoring, not replacing national accounts concepts.",
-     "ref": "Index of Services Production"
+     "ref": "Index of Services Production",
+     "hindi": {
+      "q": "सेवा उत्पादन सूचकांक के संदर्भ में, निम्नलिखित कथनों पर विचार कीजिए:\n1. यह विभिन्न सेवा क्षेत्रों के आउटपुट में मासिक परिवर्तन को मापता है।\n2. यह उद्योग के लिए औद्योगिक उत्पादन सूचकांक के उद्देश्य के समान सेवाओं के लिए एक उच्च आवृत्ति संकेतक प्रदान करता है।\n3. यह क्षेत्रीय मूल्य सृजन का अनुमान लगाने के लिए उपयोग किए जाने वाले माप के रूप में सकल मूल्य वर्धित का स्थान लेता है।\nउपर्युक्त कथनों में से कौन सा/से सही है/हैं?",
+      "options": [
+       "केवल 1 और 2",
+       "केवल 2 और 3",
+       "केवल 1 और 3",
+       "1, 2 और 3"
+      ],
+      "explanation": "कथन 1 और 2 सही हैं। सेवा उत्पादन सूचकांक विभिन्न सेवा क्षेत्रों के उत्पादन में मासिक परिवर्तन को मापने के लिए है, और यह उद्योग के लिए औद्योगिक उत्पादन सूचकांक के उद्देश्य से तुलनीय सेवाओं को एक उच्च आवृत्ति संकेतक देकर एक सांख्यिकीय अंतर को भरता है। कथन 3 गलत है क्योंकि सूचकांक सकल मूल्य वर्धित को प्रतिस्थापित नहीं करता है। सकल मूल्य वर्धित मध्यवर्ती खपत के लिए लेखांकन के बाद बनाए गए मूल्य का एक माप है, जबकि आईएसपी सेवाओं के उत्पादन में परिवर्तन का एक मासिक संकेतक है। इसलिए यह विकास समय पर सेवा-क्षेत्र की निगरानी में सुधार लाने के बारे में है, न कि राष्ट्रीय खातों की अवधारणाओं को बदलने के बारे में।"
+     }
     },
     {
      "q": "Consider the following pairs:\nI. Gross Value Added: Value created after deducting intermediate consumption\nII. High-frequency indicator: Regular and timely data used to assess current economic conditions\nIII. Index of Industrial Production: Dedicated indicator for measuring services-sector output\nIV. Administrative datasets: Data sources that can help improve statistical accuracy\nHow many of the above pairs are correctly matched?",
@@ -1862,7 +2197,17 @@
      ],
      "answer": 2,
      "explanation": "Pairs I, II and IV are correctly matched. Gross Value Added measures value created by a sector after subtracting intermediate consumption. A high-frequency indicator provides regular and timely data for assessing current economic conditions. Administrative and digital datasets can improve statistical accuracy when integrated properly. Pair III is incorrectly matched because the Index of Industrial Production tracks industrial output, not services-sector output. The new Index of Services Production is the dedicated services-sector indicator. This static-current linkage is important because the news concerns how India measures economic activity across different sectors.",
-     "ref": "Gross Value Added"
+     "ref": "Gross Value Added",
+     "hindi": {
+      "q": "निम्नलिखित जोड़ियों पर विचार करें:\n1. सकल मूल्य वर्धित: मध्यवर्ती खपत में कटौती के बाद बनाया गया मूल्य\n2. उच्च-आवृत्ति संकेतक: वर्तमान आर्थिक स्थितियों का आकलन करने के लिए नियमित और समय पर डेटा का उपयोग किया जाता है\n3. औद्योगिक उत्पादन सूचकांक: सेवा क्षेत्र के उत्पादन को मापने के लिए समर्पित संकेतक\n4. प्रशासनिक डेटासेट: डेटा स्रोत जो सांख्यिकीय सटीकता को बेहतर बनाने में मदद कर सकते हैं\nउपरोक्त में से कितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "केवल तीन",
+       "चारों"
+      ],
+      "explanation": "जोड़े 1, 2 और IV सही सुमेलित हैं। सकल मूल्य वर्धित मध्यवर्ती खपत को घटाने के बाद एक क्षेत्र द्वारा बनाए गए मूल्य को मापता है। एक उच्च-आवृत्ति संकेतक वर्तमान आर्थिक स्थितियों का आकलन करने के लिए नियमित और समय पर डेटा प्रदान करता है। ठीक से एकीकृत होने पर प्रशासनिक और डिजिटल डेटासेट सांख्यिकीय सटीकता में सुधार कर सकते हैं। जोड़ी 3 का मिलान ग़लत है क्योंकि औद्योगिक उत्पादन सूचकांक औद्योगिक उत्पादन को ट्रैक करता है, सेवा-क्षेत्र के आउटपुट को नहीं। सेवा उत्पादन का नया सूचकांक समर्पित सेवा-क्षेत्र संकेतक है। यह स्थैतिक-वर्तमान लिंकेज महत्वपूर्ण है क्योंकि समाचार इस बात से संबंधित है कि भारत विभिन्न क्षेत्रों में आर्थिक गतिविधियों को कैसे मापता है।"
+     }
     }
    ],
    "keyTerms": [
@@ -1877,6 +2222,11 @@
     "lat": 28.6139,
     "lon": 77.209,
     "place": "New Delhi, India"
+   },
+   "hindi": {
+    "headline": "मासिक सेवा वृद्धि मापने के लिए भारत ने प्रथम सेवा उत्पादन सूचकांक जारी किया",
+    "summary": "भारत ने प्रथम सेवा उत्पादन सूचकांक जारी किया है। यह सेवा क्षेत्र के उत्पादन में मासिक बदलाव मापने वाला एक समर्पित संकेतक है। आरंभिक आंकड़ों में अप्रैल 2026 के दौरान व्यापक वृद्धि दिखी और कई सेवा उप-क्षेत्रों ने दो अंकों की वृद्धि दर्ज की।",
+    "whyItMatters": "सेवा क्षेत्र भारत का सबसे बड़ा आर्थिक क्षेत्र है, इसलिए एक नियमित संकेतक व्यापक आर्थिक विश्लेषण और नीति निगरानी में सुधार कर सकता है। यूपीएससी के लिए, विषय वर्तमान आर्थिक डेटा सुधारों को विकास माप, सकल मूल्य वर्धित और विश्वसनीय उच्च-आवृत्ति आंकड़ों की आवश्यकता से जोड़ता है।"
    }
   },
   {
@@ -1984,7 +2334,17 @@
      ],
      "answer": 1,
      "explanation": "The correct answer is option 2. Statement I is correct because higher wholesale prices can show input cost pressure for businesses before it is fully reflected in consumer prices. Statement II is correct because WPI tracks wholesale-level prices, whereas CPI tracks retail prices paid by households. Statement III is incorrect because India’s flexible inflation-targeting framework is linked to CPI inflation, not WPI inflation. The current rise in WPI is still important because it helps policymakers assess producer-side cost pressures that may later affect retail inflation and production costs.",
-     "ref": "WPI-CPI distinction and inflation targeting"
+     "ref": "WPI-CPI distinction and inflation targeting",
+     "hindi": {
+      "q": "निम्नलिखित कथनों पर विचार कीजिए:\n\nकथन 1: WPI मुद्रास्फीति में वृद्धि खुदरा कीमतों में पूर्ण प्रभाव दिखाई देने से पहले उत्पादकों के लिए उच्च इनपुट लागत दबाव का संकेत दे सकती है।\nकथन 2: WPI थोक स्तर पर मूल्य परिवर्तन को मापता है, जबकि CPI घरों द्वारा सामना की जाने वाली खुदरा कीमतों को मापता है।\nकथन 3: भारत का मुद्रास्फीति-लक्ष्यीकरण ढांचा औपचारिक रूप से WPI मुद्रास्फीति पर आधारित है।\n\nउपरोक्त कथनों के संबंध में निम्नलिखित में से कौन सा सही है?",
+      "options": [
+       "कथन 1, 2 और 3 सही हैं, और कथन 2 और 3 कथन 1 की व्याख्या करते हैं",
+       "कथन 1 और 2 सही हैं, लेकिन कथन 3 गलत है",
+       "कथन 1 सही है, लेकिन कथन 2 और 3 गलत हैं",
+       "कथन 1 गलत है, लेकिन कथन 2 और 3 सही हैं"
+      ],
+      "explanation": "सही उत्तर विकल्प 2 है। कथन 1 सही है क्योंकि उच्च थोक कीमतें उपभोक्ता कीमतों में पूरी तरह से प्रतिबिंबित होने से पहले व्यवसायों के लिए इनपुट लागत दबाव दिखा सकती हैं। कथन 2 सही है क्योंकि WPI थोक-स्तर की कीमतों को ट्रैक करता है, जबकि CPI घरों द्वारा भुगतान की जाने वाली खुदरा कीमतों को ट्रैक करता है। कथन 3 गलत है क्योंकि भारत का लचीला मुद्रास्फीति-लक्ष्यीकरण ढांचा सीपीआई मुद्रास्फीति से जुड़ा है, डब्ल्यूपीआई मुद्रास्फीति से नहीं। WPI में वर्तमान वृद्धि अभी भी महत्वपूर्ण है क्योंकि यह नीति निर्माताओं को उत्पादक-पक्ष लागत दबाव का आकलन करने में मदद करती है जो बाद में खुदरा मुद्रास्फीति और उत्पादन लागत को प्रभावित कर सकती है।"
+     }
     },
     {
      "q": "With reference to inflation concepts in India, consider the following statements:\n\nI. Cost-push inflation may occur when fuel, raw material or food input costs rise.\nII. Core inflation commonly excludes volatile food and fuel prices to capture the underlying price trend.\nIII. WPI is designed to measure only the prices paid directly by final consumers.\n\nWhich of the statements given above is/are correct?",
@@ -1996,7 +2356,17 @@
      ],
      "answer": 0,
      "explanation": "The correct answer is option 1. Statement I is correct because cost-push inflation arises when production costs, such as fuel or raw material costs, increase and push prices higher. Statement II is correct because core inflation excludes volatile food and fuel items to show the more persistent inflation trend. Statement III is incorrect because WPI measures prices at the wholesale level, not only prices paid directly by final consumers. Prices faced by households are measured through CPI. The June 2026 WPI rise is therefore a useful current example of producer-side price pressure.",
-     "ref": "Cost-push inflation and core inflation"
+     "ref": "Cost-push inflation and core inflation",
+     "hindi": {
+      "q": "भारत में मुद्रास्फीति की अवधारणाओं के संदर्भ में, निम्नलिखित कथनों पर विचार कीजिए:\n\n1. लागत-प्रेरित मुद्रास्फीति तब हो सकती है जब ईंधन, कच्चे माल या खाद्य इनपुट लागत में वृद्धि होती है।\n2. मूल मुद्रास्फीति आमतौर पर अंतर्निहित मूल्य प्रवृत्ति को पकड़ने के लिए अस्थिर भोजन और ईंधन की कीमतों को शामिल नहीं करती है।\n3. WPI को केवल अंतिम उपभोक्ताओं द्वारा सीधे भुगतान की गई कीमतों को मापने के लिए डिज़ाइन किया गया है।\n\nउपर्युक्त कथनों में से कौन सा/से सही है/हैं?",
+      "options": [
+       "केवल 1 और 2",
+       "केवल 2 और 3",
+       "केवल 1 और 3",
+       "1, 2 और 3"
+      ],
+      "explanation": "सही उत्तर विकल्प 1 है। कथन 1 सही है क्योंकि लागत-प्रेरित मुद्रास्फीति तब उत्पन्न होती है जब उत्पादन लागत, जैसे कि ईंधन या कच्चे माल की लागत, बढ़ती है और कीमतें ऊंची हो जाती हैं। कथन 2 सही है क्योंकि मुख्य मुद्रास्फीति में अधिक लगातार मुद्रास्फीति की प्रवृत्ति दिखाने के लिए अस्थिर खाद्य और ईंधन वस्तुओं को शामिल नहीं किया गया है। कथन 3 गलत है क्योंकि WPI थोक स्तर पर कीमतों को मापता है, न कि केवल अंतिम उपभोक्ताओं द्वारा सीधे भुगतान की गई कीमतों को। परिवारों द्वारा सामना की जाने वाली कीमतें सीपीआई के माध्यम से मापी जाती हैं। इसलिए जून 2026 में थोक मूल्य सूचकांक में वृद्धि उत्पादक पक्ष के मूल्य दबाव का एक उपयोगी वर्तमान उदाहरण है।"
+     }
     }
    ],
    "keyTerms": [
@@ -2011,6 +2381,11 @@
     "lat": 28.6139,
     "lon": 77.209,
     "place": "New Delhi, India"
+   },
+   "hindi": {
+    "headline": "खाद्य और कमोडिटी मूल्य दबाव के बीच जून 2026 में WPI मुद्रास्फीति बढ़कर 9.87% हो गई",
+    "summary": "जून 2026 में भारत की थोक मूल्य सूचकांक मुद्रास्फीति बढ़कर 9.87% हो गई, जिसका मुख्य कारण खाद्य वस्तुओं, गैर-खाद्य वस्तुओं और खनिज उत्पादों की ऊंची कीमतें थीं। यह वृद्धि निरंतर इनपुट लागत दबाव की ओर इशारा करती है जो उत्पादन लागत को प्रभावित कर सकती है और बाद में खुदरा मुद्रास्फीति को प्रभावित कर सकती है।",
+    "whyItMatters": "मुद्रास्फीति जीएस 3 का मुख्य विषय है क्योंकि यह मौद्रिक नीति, घरेलू कल्याण, उत्पादन लागत और व्यापक आर्थिक स्थिरता को प्रभावित करती है। यूपीएससी के लिए, यह विकास वर्तमान डेटा को डब्ल्यूपीआई, सीपीआई, लागत-प्रेरित मुद्रास्फीति और मुद्रास्फीति लक्ष्यीकरण जैसी अवधारणाओं से जोड़ने में मदद करता है।"
    }
   },
   {
@@ -2118,7 +2493,17 @@
      ],
      "answer": 0,
      "explanation": "The correct answer is I and II only. Statement I is correct because the source states that engineers adopted a sphere-cone configuration to balance stability, lift generation and controlled splashdown in the sea. Statement II is correct because the thermal protection system protects the spacecraft from intense heat generated during atmospheric re-entry. Statement III is incorrect because dynamic stability is about maintaining controlled flight and avoiding excessive tumbling or spinning during descent; it is not about electrical power generation. The question links the current Gaganyaan development with basic spaceflight mechanisms relevant to crew safety.",
-     "ref": "Gaganyaan crew module re-entry technology"
+     "ref": "Gaganyaan crew module re-entry technology",
+     "hindi": {
+      "q": "गगनयान क्रू मॉड्यूल के संदर्भ में, निम्नलिखित कथनों पर विचार कीजिए:\n1. यह स्थिरता और नियंत्रित स्प्लैशडाउन का समर्थन करने के लिए एक गोलाकार-शंकु कॉन्फ़िगरेशन का उपयोग करता है।\n2. इसकी थर्मल सुरक्षा प्रणाली वायुमंडलीय पुनः प्रवेश के दौरान अंतरिक्ष यान की सुरक्षा के लिए है।\n3. गतिशील स्थिरता से तात्पर्य वंश के दौरान विद्युत शक्ति उत्पन्न करने के लिए मॉड्यूल की क्षमता से है।\nउपर्युक्त कथनों में से कौन सा/से सही है/हैं?",
+      "options": [
+       "केवल 1 और 2",
+       "केवल 2 और 3",
+       "केवल 1 और 3",
+       "1, 2 और 3"
+      ],
+      "explanation": "सही उत्तर केवल 1 और 2 है। कथन 1 सही है क्योंकि स्रोत बताता है कि इंजीनियरों ने समुद्र में स्थिरता, लिफ्ट उत्पादन और नियंत्रित स्प्लैशडाउन को संतुलित करने के लिए एक गोलाकार-शंकु विन्यास अपनाया है। कथन 2 सही है क्योंकि थर्मल सुरक्षा प्रणाली अंतरिक्ष यान को वायुमंडलीय पुनः प्रवेश के दौरान उत्पन्न तीव्र गर्मी से बचाती है। कथन 3 गलत है क्योंकि गतिशील स्थिरता नियंत्रित उड़ान को बनाए रखने और वंश के दौरान अत्यधिक गिरने या घूमने से बचने के बारे में है; यह विद्युत ऊर्जा उत्पादन के बारे में नहीं है। प्रश्न वर्तमान गगनयान विकास को चालक दल की सुरक्षा के लिए प्रासंगिक बुनियादी अंतरिक्ष उड़ान तंत्र से जोड़ता है।"
+     }
     },
     {
      "q": "Consider the following pairs:\nI. Crew Module — Pressurised spacecraft section that carries astronauts\nII. Atmospheric Re-entry — Controlled return of a spacecraft into Earth's atmosphere\nIII. Thermal Protection System — Mechanism that provides launch thrust to a spacecraft\nIV. Dynamic Stability — Controlled orientation without excessive tumbling during descent\nHow many of the above pairs are correctly matched?",
@@ -2130,7 +2515,17 @@
      ],
      "answer": 2,
      "explanation": "The correct answer is Only three. Pair I is correctly matched because the crew module is the pressurised section that carries astronauts. Pair II is correct because atmospheric re-entry is the controlled return of a spacecraft into Earth's atmosphere at very high speed. Pair III is incorrectly matched because a thermal protection system shields the spacecraft from re-entry heat; it does not provide launch thrust. Pair IV is correct because dynamic stability refers to maintaining controlled flight without excessive tumbling or spinning during descent. These concepts are directly relevant to understanding human spaceflight safety.",
-     "ref": "Space technology static concepts"
+     "ref": "Space technology static concepts",
+     "hindi": {
+      "q": "निम्नलिखित जोड़ियों पर विचार करें:\n1. क्रू मॉड्यूल - दबावयुक्त अंतरिक्ष यान अनुभाग जो अंतरिक्ष यात्रियों को ले जाता है\n2. वायुमंडलीय पुनः प्रवेश - पृथ्वी के वायुमंडल में एक अंतरिक्ष यान की नियंत्रित वापसी\n3. थर्मल प्रोटेक्शन सिस्टम - तंत्र जो अंतरिक्ष यान को प्रक्षेपण बल प्रदान करता है\n4. गतिशील स्थिरता - वंश के दौरान अत्यधिक लड़खड़ाहट के बिना नियंत्रित अभिविन्यास\nउपरोक्त में से कितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "केवल तीन",
+       "चारों"
+      ],
+      "explanation": "सही उत्तर केवल तीन है। जोड़ी 1 सही ढंग से सुमेलित है क्योंकि क्रू मॉड्यूल दबावयुक्त अनुभाग है जो अंतरिक्ष यात्रियों को ले जाता है। जोड़ी 2 सही है क्योंकि वायुमंडलीय पुनः प्रवेश बहुत तेज़ गति से पृथ्वी के वायुमंडल में एक अंतरिक्ष यान की नियंत्रित वापसी है। जोड़ी 3 का गलत मिलान किया गया है क्योंकि एक थर्मल सुरक्षा प्रणाली अंतरिक्ष यान को पुन: प्रवेश गर्मी से बचाती है; यह लॉन्च थ्रस्ट प्रदान नहीं करता है। जोड़ी IV सही है क्योंकि गतिशील स्थिरता का तात्पर्य वंश के दौरान अत्यधिक डगमगाने या घूमने के बिना नियंत्रित उड़ान बनाए रखने से है। ये अवधारणाएँ मानव अंतरिक्ष उड़ान सुरक्षा को समझने के लिए सीधे तौर पर प्रासंगिक हैं।"
+     }
     }
    ],
    "keyTerms": [
@@ -2145,6 +2540,11 @@
     "lat": 12.9716,
     "lon": 77.5946,
     "place": "Bengaluru, Karnataka"
+   },
+   "hindi": {
+    "headline": "मानव अंतरिक्ष उड़ान के लिए गगनयान क्रू मॉड्यूल और पुनः प्रवेश प्रौद्योगिकी",
+    "summary": "इसरो के गगनयान क्रू मॉड्यूल को प्रक्षेपण, कक्षा और वायुमंडलीय पुनः प्रवेश के दौरान अंतरिक्ष यात्रियों की सुरक्षा के लिए डिज़ाइन किया गया है। इसके गोलाकार-शंकु आकार, थर्मल सुरक्षा प्रणाली और नियंत्रित वंश तंत्र का उद्देश्य स्थिर वापसी और सुरक्षित छींटे सुनिश्चित करना है।",
+    "whyItMatters": "यह विकास जीएस 3 के लिए महत्वपूर्ण है क्योंकि यह स्वदेशी मानव अंतरिक्ष उड़ान और उन्नत एयरोस्पेस इंजीनियरिंग में भारत की प्रगति को दर्शाता है। यूपीएससी के लिए, यह वर्तमान मामलों को अंतरिक्ष प्रौद्योगिकी, गर्मी संरक्षण, पुनः प्रवेश गतिशीलता और चालक दल के मिशनों में सुरक्षा प्रणालियों से जोड़ता है।"
    }
   },
   {
@@ -2254,7 +2654,17 @@
      ],
      "answer": 1,
      "explanation": "Statements I and II are correct. Protein biosensors are designed to detect specific proteins or biomarkers associated with disease, which can help in rapid diagnosis and timely intervention. Aptamers are synthetic nucleic acid molecules that selectively bind to specific biological targets, improving precision in detection. Statement III is incorrect because point-of-care diagnostics are meant to enable testing near the patient without requiring sophisticated laboratory infrastructure. The current development is important because it combines biotechnology with faster and more portable health diagnostics.",
-     "ref": "Protein Biosensors and Point-of-Care Diagnostics"
+     "ref": "Protein Biosensors and Point-of-Care Diagnostics",
+     "hindi": {
+      "q": "प्रोटीन बायोसेंसर के संदर्भ में निम्नलिखित कथनों पर विचार कीजिए:\n1. वे तेजी से निदान का समर्थन करने के लिए रोग-विशिष्ट बायोमार्कर का पता लगा सकते हैं।\n2. आधुनिक बायोसेंसर में उपयोग किए जाने वाले एप्टामर्स सिंथेटिक न्यूक्लिक अम्ल अणु होते हैं जो चुनिंदा रूप से जैविक लक्ष्यों से जुड़ते हैं।\n3. प्वाइंट-ऑफ-केयर डायग्नोस्टिक्स के लिए प्रत्येक परीक्षण के लिए परिष्कृत केंद्रीय प्रयोगशाला बुनियादी ढांचे की आवश्यकता होती है।\nउपरोक्त में से कितने कथन सही हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "कथन 1 और 2 सही हैं। प्रोटीन बायोसेंसर को बीमारी से जुड़े विशिष्ट प्रोटीन या बायोमार्कर का पता लगाने के लिए डिज़ाइन किया गया है, जो तेजी से निदान और समय पर हस्तक्षेप में मदद कर सकता है। एप्टामर्स सिंथेटिक न्यूक्लिक अम्ल अणु हैं जो चुनिंदा रूप से विशिष्ट जैविक लक्ष्यों से जुड़ते हैं, जिससे पता लगाने में सटीकता में सुधार होता है। कथन 3 गलत है क्योंकि पॉइंट-ऑफ-केयर डायग्नोस्टिक्स का उद्देश्य परिष्कृत प्रयोगशाला बुनियादी ढांचे की आवश्यकता के बिना रोगी के निकट परीक्षण को सक्षम करना है। वर्तमान विकास महत्वपूर्ण है क्योंकि यह जैव प्रौद्योगिकी को तेज और अधिक पोर्टेबल स्वास्थ्य निदान के साथ जोड़ता है।"
+     }
     },
     {
      "q": "Consider the following pairs:\nI. Biomarker: Measurable biological molecule indicating normal or abnormal physiological condition\nII. Aptamer: Synthetic nucleic acid molecule that binds selectively to a biological target\nIII. Nanobiosensor: Biosensor using nanomaterials to improve biological detection\nIV. Point-of-care testing: Delayed testing performed only in central laboratories\nHow many pairs are correctly matched?",
@@ -2266,7 +2676,17 @@
      ],
      "answer": 2,
      "explanation": "Pairs I, II and III are correctly matched. A biomarker is a measurable biological molecule that can indicate normal or abnormal conditions or disease. An aptamer is a synthetic nucleic acid molecule that binds selectively to a biological target. A nanobiosensor uses nanomaterials to improve sensitivity, speed and accuracy in detection. Pair IV is incorrect because point-of-care testing refers to rapid testing near the patient, not delayed testing only in central laboratories. This static-current linkage is central to understanding how biosensor technologies can improve medical diagnostics.",
-     "ref": "Biomarkers, Aptamers and Nanobiosensors"
+     "ref": "Biomarkers, Aptamers and Nanobiosensors",
+     "hindi": {
+      "q": "निम्नलिखित जोड़ियों पर विचार करें:\n1. बायोमार्कर: मापने योग्य जैविक अणु जो सामान्य या असामान्य शारीरिक स्थिति का संकेत देता है\n2. एप्टामर: सिंथेटिक न्यूक्लिक अम्ल अणु जो जैविक लक्ष्य को चुनिंदा रूप से बांधता है\n3. नैनोबायोसेंसर: जैविक पहचान में सुधार के लिए नैनोमटेरियल का उपयोग करने वाला बायोसेंसर\n4. प्वाइंट-ऑफ-केयर परीक्षण: विलंबित परीक्षण केवल केंद्रीय प्रयोगशालाओं में किया जाता है\nकितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "केवल तीन",
+       "चारों"
+      ],
+      "explanation": "जोड़े 1, 2 और 3 सही सुमेलित हैं। बायोमार्कर एक मापने योग्य जैविक अणु है जो सामान्य या असामान्य स्थितियों या बीमारी का संकेत दे सकता है। एप्टैमर एक सिंथेटिक न्यूक्लिक अम्ल अणु है जो चुनिंदा रूप से जैविक लक्ष्य से बंधता है। एक नैनोबायोसेंसर पता लगाने में संवेदनशीलता, गति और सटीकता में सुधार करने के लिए नैनोमटेरियल का उपयोग करता है। जोड़ी IV गलत है क्योंकि पॉइंट-ऑफ-केयर परीक्षण का तात्पर्य रोगी के निकट तेजी से परीक्षण से है, न कि केवल केंद्रीय प्रयोगशालाओं में विलंबित परीक्षण से। यह स्थैतिक-वर्तमान लिंकेज यह समझने के लिए केंद्रीय है कि बायोसेंसर प्रौद्योगिकियां चिकित्सा निदान में कैसे सुधार कर सकती हैं।"
+     }
     }
    ],
    "keyTerms": [
@@ -2281,6 +2701,11 @@
     "lat": 20.5937,
     "lon": 78.9629,
     "place": "India"
+   },
+   "hindi": {
+    "headline": "प्रोटीन बायोसेंसर और तीव्र रोग निदान",
+    "summary": "प्रोटीन बायोसेंसर में प्रगति से सेप्सिस और हृदय संबंधी आपात स्थितियों में रोग-विशिष्ट बायोमार्कर का तेजी से पता लगाने में सुधार हो रहा है। एप्टामर्स, नैनोमटेरियल्स और पॉइंट-ऑफ-केयर प्रारूपों का उपयोग निदान के समय को कम कर सकता है और पहले के नैदानिक ​​​​हस्तक्षेप का समर्थन कर सकता है।",
+    "whyItMatters": "यह विषय जैव प्रौद्योगिकी को सार्वजनिक स्वास्थ्य क्षमता, विशेष रूप से तेज़ और अधिक सुलभ निदान की आवश्यकता से जोड़ता है। यूपीएससी के लिए, यह स्वास्थ्य, नवाचार नीति और उन्नत चिकित्सा उपकरणों को किफायती और विश्वसनीय बनाने की नैतिक आवश्यकता में विज्ञान और प्रौद्योगिकी अनुप्रयोगों के लिए प्रासंगिक है।"
    }
   },
   {
@@ -2388,7 +2813,17 @@
      ],
      "answer": 1,
      "explanation": "Statements I and III are correct. The reported development was the direct visual observation of a jumping gene transferring horizontally between two different microbial species. It is relevant to microbial evolution because horizontal gene transfer can help organisms acquire new traits, and it is relevant to antibiotic resistance because microbes may acquire genetic changes that help them survive antimicrobial drugs. Statement II is incorrect because the source specifically says the transfer occurred without the involvement of a biological carrier organism. Therefore, only two statements are correct.",
-     "ref": "Horizontal Gene Transfer"
+     "ref": "Horizontal Gene Transfer",
+     "hindi": {
+      "q": "रोगाणुओं में जीन स्थानांतरण के हालिया अवलोकन के बारे में निम्नलिखित कथनों पर विचार कीजिए:\n1. शोधकर्ताओं ने दो अलग-अलग सूक्ष्मजीवी प्रजातियों के बीच एक चलायमान जीन को एक प्रजाति से दूसरी में स्थानांतरित होते हुए देखा।\n2. स्थानांतरण के लिए एक जैविक वाहक जीव की आवश्यकता होती है।\n3. यह खोज एंटीबायोटिक प्रतिरोध और सूक्ष्मजीवी विकास को समझने के लिए प्रासंगिक है।\nउपरोक्त में से कितने सही हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "कथन 1 और 3 सही हैं। रिपोर्ट किया गया विकास दो अलग-अलग सूक्ष्मजीवी प्रजातियों के बीच क्षैतिज रूप से स्थानांतरित होने वाले जंपिंग जीन का प्रत्यक्ष दृश्य अवलोकन था। यह सूक्ष्मजीवी विकास के लिए प्रासंगिक है क्योंकि क्षैतिज जीन स्थानांतरण जीवों को नए लक्षण प्राप्त करने में मदद कर सकता है, और यह एंटीबायोटिक प्रतिरोध के लिए प्रासंगिक है क्योंकि रोगाणु आनुवंशिक परिवर्तन प्राप्त कर सकते हैं जो उन्हें रोगाणुरोधी दवाओं से जीवित रहने में मदद करते हैं। कथन 2 गलत है क्योंकि स्रोत विशेष रूप से कहता है कि स्थानांतरण जैविक वाहक जीव की भागीदारी के बिना हुआ। इसलिए, केवल दो कथन सही हैं।"
+     }
     },
     {
      "q": "With reference to genetic concepts, consider the following pairs:\nI. Horizontal Gene Transfer: Movement of genetic material between unrelated organisms\nII. Intron: Protein-coding segment that is always retained during gene expression\nIII. Transposable Element: Mobile DNA sequence capable of changing position\nHow many pairs are correctly matched?",
@@ -2400,7 +2835,17 @@
      ],
      "answer": 1,
      "explanation": "Pairs I and III are correctly matched. Horizontal gene transfer refers to movement of genetic material between unrelated organisms, rather than inheritance from parent to offspring. A transposable element is a mobile genetic element, often described as a jumping gene, that can change position within or between genomes. Pair II is incorrectly matched because an intron is a non-coding segment of DNA or RNA that is removed during gene expression, though it may influence gene regulation. Thus, only two pairs are correctly matched.",
-     "ref": "Biotechnology: Gene Expression and Mobile Genetic Elements"
+     "ref": "Biotechnology: Gene Expression and Mobile Genetic Elements",
+     "hindi": {
+      "q": "आनुवंशिक अवधारणाओं के संदर्भ में, निम्नलिखित जोड़ियों पर विचार करें:\n1. क्षैतिज जीन स्थानांतरण: असंबद्ध जीवों के बीच आनुवंशिक सामग्री का संचलन\n2. इंट्रोन: प्रोटीन-कोडिंग खंड जो जीन अभिव्यक्ति के दौरान हमेशा बरकरार रहता है\n3. ट्रांसपोज़ेबल तत्व: स्थिति बदलने में सक्षम मोबाइल डीएनए अनुक्रम\nकितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "जोड़े 1 और 3 सही सुमेलित हैं। क्षैतिज जीन स्थानांतरण माता-पिता से संतानों में विरासत के बजाय असंबद्ध जीवों के बीच आनुवंशिक सामग्री के संचलन को संदर्भित करता है। ट्रांसपोज़ेबल तत्व एक मोबाइल आनुवंशिक तत्व है, जिसे अक्सर जंपिंग जीन के रूप में वर्णित किया जाता है, जो जीनोम के भीतर या उनके बीच स्थिति बदल सकता है। जोड़ी 2 गलत तरीके से मेल खाती है क्योंकि इंट्रोन डीएनए या आरएनए का एक गैर-कोडिंग खंड है जिसे जीन अभिव्यक्ति के दौरान हटा दिया जाता है, हालांकि यह जीन विनियमन को प्रभावित कर सकता है। इस प्रकार, केवल दो जोड़े सही सुमेलित हैं।"
+     }
     }
    ],
    "keyTerms": [
@@ -2416,6 +2861,11 @@
     "lat": 0,
     "lon": 0,
     "place": "Global"
+   },
+   "hindi": {
+    "headline": "सूक्ष्मजीवों में चलायमान जीन के क्षैतिज स्थानांतरण का प्रत्यक्ष अवलोकन",
+    "summary": "वैज्ञानिकों ने सीधे तौर पर एक जंपिंग जीन को बिना किसी जैविक वाहक के दो अलग-अलग सूक्ष्मजीवी प्रजातियों के बीच क्षैतिज रूप से घूमते हुए देखा है। यह खोज सूक्ष्मजीवी विकास, एंटीबायोटिक प्रतिरोध और संभावित जैव प्रौद्योगिकी अनुप्रयोगों की समझ में सुधार करती है।",
+    "whyItMatters": "यूपीएससी के लिए, विकास जैव प्रौद्योगिकी को सार्वजनिक स्वास्थ्य, रोगाणुरोधी प्रतिरोध और जीनोम-आधारित अनुसंधान से जोड़ता है। यह यह समझाने में भी मदद करता है कि सूक्ष्मजीव कैसे तेजी से नए लक्षण प्राप्त कर सकते हैं, जो विज्ञान और प्रौद्योगिकी नीति दोनों के लिए महत्वपूर्ण है।"
    }
   },
   {
@@ -2523,7 +2973,17 @@
      ],
      "answer": 1,
      "explanation": "Statement I is correct because the source says erythrulose was detected in an interstellar molecular cloud using advanced radio telescope observations. Statement II is incorrect because detection of an organic sugar molecule is not detection of life; organic chemistry can occur without living organisms. Statement III is correct because the discovery strengthens the hypothesis that biologically important organic molecules can form naturally in space before planets are formed. Therefore, the correct answer is I and III only. The current development is important as an example of how radio astronomy supports astrochemistry and prebiotic chemistry.",
-     "ref": "Radio Astronomy and Prebiotic Chemistry"
+     "ref": "Radio Astronomy and Prebiotic Chemistry",
+     "hindi": {
+      "q": "अंतरतारकीय अंतरिक्ष में एरिथ्रुलोज़ की हालिया पहचान के संदर्भ में, निम्नलिखित कथनों पर विचार कीजिए:\n1. इसकी पहचान रेडियो टेलीस्कोप अवलोकन के माध्यम से एक अंतरतारकीय आणविक बादल में की गई थी।\n2. यह खोज पृथ्वी के बाहर जीवित जीवों के अस्तित्व को साबित करती है।\n3. यह इस संभावना का समर्थन करता है कि जैविक रूप से महत्वपूर्ण कार्बनिक अणु ग्रह निर्माण से पहले बन सकते हैं।\nउपर्युक्त कथनों में से कौन सा/से सही है/हैं?",
+      "options": [
+       "केवल 1 और 2",
+       "केवल 1 और 3",
+       "केवल 2 और 3",
+       "1, 2 और 3"
+      ],
+      "explanation": "कथन 1 सही है क्योंकि स्रोत का कहना है कि उन्नत रेडियो टेलीस्कोप अवलोकनों का उपयोग करके एक इंटरस्टेलर आणविक बादल में एरिथ्रुलोज़ का पता लगाया गया था। कथन 2 गलत है क्योंकि कार्बनिक शर्करा अणु का पता लगाना जीवन का पता लगाना नहीं है; कार्बनिक रसायन जीवित जीवों के बिना भी हो सकता है। कथन 3 सही है क्योंकि यह खोज इस परिकल्पना को मजबूत करती है कि जैविक रूप से महत्वपूर्ण कार्बनिक अणु ग्रहों के बनने से पहले अंतरिक्ष में प्राकृतिक रूप से बन सकते हैं। इसलिए, सही उत्तर केवल 1 और 3 है। वर्तमान विकास एक उदाहरण के रूप में महत्वपूर्ण है कि कैसे रेडियो खगोल विज्ञान खगोल रसायन और प्रीबायोटिक रसायन विज्ञान का समर्थन करता है।"
+     }
     },
     {
      "q": "Consider the following pairs:\nI. Interstellar Molecular Cloud: Dense region of gas and dust where molecules form\nII. Astrochemistry: Study of chemical compounds in outer space\nIII. Radio Astronomy: Direct physical collection of molecules from celestial bodies\nIV. Prebiotic Chemistry: Study of chemical processes before the emergence of living organisms\nHow many of the above pairs are correctly matched?",
@@ -2535,7 +2995,17 @@
      ],
      "answer": 2,
      "explanation": "Pair I is correctly matched because interstellar molecular clouds are dense regions of gas and dust where molecules form and stars may be born. Pair II is correct because astrochemistry studies the formation, interaction and evolution of chemical compounds in space. Pair III is incorrect because radio astronomy detects electromagnetic signals; it does not mean direct physical collection of molecules from celestial bodies. Pair IV is correct because prebiotic chemistry studies chemical processes that may have produced life’s building blocks before living organisms emerged. Hence, three pairs are correctly matched. This static linkage helps connect the current discovery to basic space science concepts.",
-     "ref": "Astrochemistry and Radio Astronomy"
+     "ref": "Astrochemistry and Radio Astronomy",
+     "hindi": {
+      "q": "निम्नलिखित जोड़ियों पर विचार करें:\n1. अंतरतारकीय आणविक बादल: गैस और धूल का घना क्षेत्र जहां अणु बनते हैं\n2. खगोलरसायन: बाह्य अंतरिक्ष में रासायनिक यौगिकों का अध्ययन\n3. रेडियो खगोल विज्ञान: आकाशीय पिंडों से अणुओं का प्रत्यक्ष भौतिक संग्रह\n4. प्रीबायोटिक रसायन विज्ञान: जीवित जीवों के उद्भव से पहले रासायनिक प्रक्रियाओं का अध्ययन\nउपरोक्त में से कितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "केवल तीन",
+       "चारों"
+      ],
+      "explanation": "जोड़ी 1 सही ढंग से सुमेलित है क्योंकि अंतरतारकीय आणविक बादल गैस और धूल के घने क्षेत्र हैं जहां अणु बनते हैं और तारों का जन्म हो सकता है। जोड़ी 2 सही है क्योंकि खगोल रसायन विज्ञान अंतरिक्ष में रासायनिक यौगिकों के निर्माण, अंतःक्रिया और विकास का अध्ययन करता है। जोड़ी 3 गलत है क्योंकि रेडियो खगोल विज्ञान विद्युत चुम्बकीय संकेतों का पता लगाता है; इसका मतलब आकाशीय पिंडों से अणुओं का प्रत्यक्ष भौतिक संग्रह नहीं है। जोड़ी IV सही है क्योंकि प्रीबायोटिक रसायन विज्ञान उन रासायनिक प्रक्रियाओं का अध्ययन करता है जिन्होंने जीवित जीवों के उभरने से पहले जीवन के निर्माण खंडों का निर्माण किया होगा। अतः, तीन जोड़े सही सुमेलित हैं। यह स्थिर अवधारणा से संबंध वर्तमान खोज को बुनियादी अंतरिक्ष विज्ञान अवधारणाओं से जोड़ने में मदद करता है।"
+     }
     }
    ],
    "keyTerms": [
@@ -2550,6 +3020,11 @@
     "lat": 0,
     "lon": 0,
     "place": "Interstellar molecular cloud in deep space"
+   },
+   "hindi": {
+    "headline": "अंतरतारकीय अंतरिक्ष में एरिथ्रुलोज़ की खोज और पूर्व-जैविक रसायन का अध्ययन",
+    "summary": "खगोलविदों ने उन्नत रेडियो टेलीस्कोप अवलोकनों का उपयोग करके एक अंतरतारकीय आणविक बादल में एरिथ्रुलोज़, एक जटिल चीनी अणु का पता लगाया है। यह खोज इस सबूत को मजबूत करती है कि जैविक रूप से महत्वपूर्ण कार्बनिक अणु ग्रहों के बनने से पहले अंतरिक्ष में बन सकते हैं।",
+    "whyItMatters": "यह खोज जीएस 3 के लिए प्रासंगिक है क्योंकि यह अंतरिक्ष प्रौद्योगिकी, रेडियो खगोल विज्ञान और जीवन की रासायनिक उत्पत्ति के वैज्ञानिक अध्ययन को जोड़ती है। यह उम्मीदवारों को यह समझने में मदद करता है कि कैसे अंतरिक्ष अनुसंधान न केवल अन्वेषण में बल्कि रसायन विज्ञान, जीव विज्ञान और ग्रह विज्ञान के प्रश्नों में भी योगदान देता है।"
    }
   },
   {
@@ -2657,7 +3132,17 @@
      ],
      "answer": 0,
      "explanation": "Statements I and II are correct. The tracker is meant for real-time monitoring of Indian merchant vessels and crew in high-risk maritime regions, and it integrates vessel location, crew information, ownership details and voyage status. Statement III is incorrect because the source says dedicated liaison officers will improve coordination between shipping companies, government agencies and affected seafarers; it does not say shipping companies are replaced. The development is best understood as a coordination and emergency-response tool within digital maritime governance.",
-     "ref": "Digital Maritime Governance"
+     "ref": "Digital Maritime Governance",
+     "hindi": {
+      "q": "नाविक सुरक्षा ट्रैकर के संदर्भ में, निम्नलिखित कथनों पर विचार कीजिए:\n1. यह उच्च जोखिम वाले समुद्री क्षेत्रों में भारतीय व्यापारिक जहाजों और चालक दल की वास्तविक समय पर निगरानी करने में सक्षम बनाता है।\n2. यह जहाज के स्थान, चालक दल की जानकारी, स्वामित्व विवरण और यात्रा की स्थिति को एकीकृत करता है।\n3. यह आपात स्थिति के दौरान सरकारी एजेंसियों के साथ समन्वय में शिपिंग कंपनियों की भूमिका को प्रतिस्थापित करता है।\nउपर्युक्त कथनों में से कौन सा/से सही है/हैं?",
+      "options": [
+       "केवल 1 और 2",
+       "केवल 2 और 3",
+       "केवल 1 और 3",
+       "1, 2 और 3"
+      ],
+      "explanation": "कथन 1 और 2 सही हैं। ट्रैकर उच्च जोखिम वाले समुद्री क्षेत्रों में भारतीय व्यापारी जहाजों और चालक दल की वास्तविक समय की निगरानी के लिए है, और यह जहाज के स्थान, चालक दल की जानकारी, स्वामित्व विवरण और यात्रा की स्थिति को एकीकृत करता है। कथन 3 गलत है क्योंकि स्रोत के अनुसार है कि समर्पित संपर्क अधिकारी शिपिंग कंपनियों, सरकारी एजेंसियों और प्रभावित नाविकों के बीच समन्वय में सुधार करेंगे; यह नहीं कहता कि शिपिंग कंपनियों को बदल दिया गया है। इस विकास को डिजिटल समुद्री प्रशासन के भीतर एक समन्वय और आपातकालीन-प्रतिक्रिया उपकरण के रूप में सबसे अच्छी तरह समझा जाता है।"
+     }
     },
     {
      "q": "Consider the following pairs:\nI. Seafarer Safety - Protection of the lives, welfare and working conditions of maritime personnel\nII. Maritime Domain Awareness - Continuous monitoring of maritime activities for safety and security\nIII. Emergency Response System - A mechanism limited to routine port customs clearance\nHow many of the above pairs are correctly matched?",
@@ -2669,7 +3154,17 @@
      ],
      "answer": 1,
      "explanation": "Pair I is correctly matched because seafarer safety concerns the protection of maritime workers’ lives, welfare and working conditions. Pair II is also correctly matched because Maritime Domain Awareness involves continuous monitoring of activities at sea to improve safety, security and situational awareness. Pair III is incorrectly matched. An Emergency Response System is meant to support timely coordination during maritime emergencies, not routine port customs clearance. The static-current linkage is that digital tracking platforms strengthen maritime governance by improving awareness and response capacity.",
-     "ref": "Maritime Domain Awareness"
+     "ref": "Maritime Domain Awareness",
+     "hindi": {
+      "q": "निम्नलिखित जोड़ियों पर विचार करें:\n1. नाविक सुरक्षा - समुद्री कर्मियों के जीवन, कल्याण और कामकाजी परिस्थितियों की सुरक्षा\n2. समुद्री डोमेन जागरूकता - सुरक्षा और सुरक्षा के लिए समुद्री गतिविधियों की निरंतर निगरानी\n3. आपातकालीन प्रतिक्रिया प्रणाली - नियमित बंदरगाह सीमा शुल्क निकासी तक सीमित एक तंत्र\nउपरोक्त में से कितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "जोड़ी 1 सही सुमेलित है क्योंकि नाविक सुरक्षा समुद्री श्रमिकों के जीवन, कल्याण और कामकाजी परिस्थितियों की सुरक्षा से संबंधित है। जोड़ी 2 भी सही ढंग से मेल खाती है क्योंकि समुद्री डोमेन जागरूकता में सुरक्षा, सुरक्षा और स्थितिजन्य जागरूकता में सुधार के लिए समुद्र में गतिविधियों की निरंतर निगरानी शामिल है। युग्म 3 ग़लत सुमेलित है। आपातकालीन प्रतिक्रिया प्रणाली का उद्देश्य समुद्री आपात स्थितियों के दौरान समय पर समन्वय का समर्थन करना है, न कि नियमित बंदरगाह सीमा शुल्क निकासी का। स्थैतिक-वर्तमान लिंकेज यह है कि डिजिटल ट्रैकिंग प्लेटफ़ॉर्म जागरूकता और प्रतिक्रिया क्षमता में सुधार करके समुद्री शासन को मजबूत करते हैं।"
+     }
     }
    ],
    "keyTerms": [
@@ -2684,6 +3179,11 @@
     "lat": 26.5667,
     "lon": 56.25,
     "place": "Strait of Hormuz"
+   },
+   "hindi": {
+    "headline": "उच्च जोखिम वाले समुद्री क्षेत्रों में भारतीय चालक दल के लिए नाविक सुरक्षा ट्रैकर लॉन्च किया गया",
+    "summary": "केंद्र सरकार ने संघर्ष प्रभावित समुद्री क्षेत्रों, विशेषकर होर्मुज जलडमरूमध्य के आसपास काम करने वाले भारतीय नाविकों और व्यापारिक जहाजों की निगरानी के लिए नाविक सुरक्षा ट्रैकर लॉन्च किया है। यह प्लेटफ़ॉर्म तेजी से आपातकालीन प्रतिक्रिया का समर्थन करने के लिए जहाज, चालक दल, स्वामित्व और यात्रा की जानकारी को जोड़ता है।",
+    "whyItMatters": "यह मुद्दा समुद्री सुरक्षा, डिजिटल प्रशासन और विदेशों में भारतीय श्रमिकों की सुरक्षा से जुड़ा है। यूपीएससी के लिए, यह समुद्री क्षेत्र जागरूकता, संकट प्रतिक्रिया और अंतरराष्ट्रीय शिपिंग को प्रभावित करने वाले भू-राजनीतिक व्यवधानों के दौरान भारत की तैयारियों पर प्रश्नों के लिए प्रासंगिक है।"
    }
   },
   {
@@ -2765,7 +3265,7 @@
       "ऐसे museum labels और अध्ययन सामग्री तैयार करें जो कलात्मक मूल्य और ऐतिहासिक संदर्भ दोनों को समझाएं।",
       "औपनिवेशिक दृश्य स्रोतों की आलोचनात्मक समीक्षा करें क्योंकि वे कलाकार और उस समय के दृष्टिकोण को दर्शा सकते हैं।"
      ],
-     "possibleMainsQuestion": "औपनिवेशिक भारत के राजन��तिक, सामाजिक और सांस्कृतिक इतिहास के पुनर्निर्माण में दृश्य कला के महत्व का विश्लेषण कीजिए।"
+     "possibleMainsQuestion": "औपनिवेशिक भारत के राजनीतिक, सामाजिक और सांस्कृतिक इतिहास के पुनर्निर्माण में दृश्य कला के महत्व का विश्लेषण कीजिए।"
     },
     "explanation": "<p>Emily Eden's paintings are important because they remind us that history is not built only from official files, laws and administrative reports. Visual sources can show how people, places and institutions appeared to an observer at a particular time. In the case of nineteenth-century India, such works can help students see the social and cultural landscape of the colonial period more concretely.</p><p>The exhibition brings together rare artistic records of early nineteenth-century India. The source highlights that Eden's paintings depict Indian rulers, common people, architecture and urban life. This range matters because colonial records often focused on administration, revenue, law and governance. Paintings can add another layer by showing dress, posture, buildings, public spaces and social settings, even when they must be read carefully.</p><p>The collection is also relevant to the study of art under colonial conditions. The Company School of Art is an important concept here because it refers to a style that combined Indian artistic practices with European methods of observation and representation. Lithography also mattered in the nineteenth century because it allowed artworks and illustrations to be reproduced more widely. These techniques shaped how images of India circulated among colonial audiences.</p><p>At the same time, visual material must not be treated as neutral truth. A painting reflects the choices of the artist: what to include, what to omit, how to frame a person, and what kind of audience the image is meant for. Therefore, paintings should be compared with written records, local accounts, architecture, objects and other evidence.</p><p>For GS I, the key lesson is methodological. Emily Eden's works help connect Modern Indian History with Art and Culture by showing how artworks become historical sources. They can reveal everyday life as well as elite settings, and they show why museums, archives and digital catalogues are important for preserving India's historical memory.</p>",
     "possibleMainsQuestion": "Analyse the importance of visual art in reconstructing the political, social and cultural history of colonial India."
@@ -2783,7 +3283,17 @@
      ],
      "answer": 1,
      "explanation": "Statement I is correct because the source highlights that Eden's paintings are useful beyond official British administrative records. Statement II is incorrect because the source specifically says she focused on everyday people alongside royal courts, giving a broader representation of Indian society. Statement III is correct because the paintings depict architecture and urban life. Therefore, two statements are correct. The current development is significant because it shows how exhibitions and visual collections can become sources for studying colonial society, not merely objects of aesthetic interest.",
-     "ref": "Modern Indian History: visual sources and colonial documentation"
+     "ref": "Modern Indian History: visual sources and colonial documentation",
+     "hindi": {
+      "q": "ऐतिहासिक स्रोतों के रूप में एमिली ईडन की पेंटिंग के संदर्भ में निम्नलिखित कथनों पर विचार कीजिए:\n1. वे आधिकारिक प्रशासनिक रिकॉर्ड से परे औपनिवेशिक भारत का अध्ययन करने में मदद करते हैं।\n2. वे केवल शाही दरबारों का चित्रण करते हैं और रोजमर्रा के सामाजिक जीवन को छोड़ देते हैं।\n3. वे वास्तुकला और शहरी जीवन पर दृश्य साक्ष्य प्रदान कर सकते हैं।\nउपरोक्त में से कितने सही हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "कथन 1 सही है क्योंकि स्रोत इस बात पर प्रकाश डालता है कि ईडन की पेंटिंग आधिकारिक ब्रिटिश प्रशासनिक रिकॉर्ड से परे उपयोगी हैं। कथन 2 गलत है क्योंकि स्रोत विशेष रूप से कहता है कि उसने भारतीय समाज का व्यापक प्रतिनिधित्व देते हुए शाही अदालतों के साथ-साथ रोजमर्रा के लोगों पर ध्यान केंद्रित किया। कथन 3 सही है क्योंकि पेंटिंग वास्तुकला और शहरी जीवन को दर्शाती हैं। इसलिए, दो कथन सही हैं। वर्तमान विकास महत्वपूर्ण है क्योंकि यह दर्शाता है कि कैसे प्रदर्शनियाँ और दृश्य संग्रह औपनिवेशिक समाज के अध्ययन के स्रोत बन सकते हैं, न कि केवल सौंदर्य संबंधी रुचि की वस्तुएँ।"
+     }
     },
     {
      "q": "With reference to art and historical methods in colonial India, consider the following pairs:\nI. Company School of Art: Blend of Indian artistic traditions and European techniques\nII. Lithography: Technique used for reproducing paintings and illustrations\nIII. Material Culture: Study of only written administrative records\nHow many pairs are correctly matched?",
@@ -2795,7 +3305,17 @@
      ],
      "answer": 1,
      "explanation": "Pair I is correctly matched because Company School of Art refers to a colonial-period style combining Indian traditions with European techniques. Pair II is also correctly matched because lithography was a nineteenth-century printing technique used to reproduce paintings and illustrations. Pair III is incorrectly matched because material culture studies objects, artworks and artefacts, not only written administrative records. Thus, only two pairs are correct. This static linkage matters because Emily Eden's works are useful not only as art objects but also as material and visual evidence for reconstructing colonial India's social and cultural history.",
-     "ref": "Company School of Art and Material Culture"
+     "ref": "Company School of Art and Material Culture",
+     "hindi": {
+      "q": "औपनिवेशिक भारत में कला और ऐतिहासिक तरीकों के संदर्भ में, निम्नलिखित जोड़ियों पर विचार करें:\n1. कंपनी स्कूल ऑफ आर्ट: भारतीय कलात्मक परंपराओं और यूरोपीय तकनीकों का मिश्रण\n2. लिथोग्राफी: चित्रों और चित्रों को पुन: प्रस्तुत करने के लिए उपयोग की जाने वाली तकनीक\n3. भौतिक संस्कृति: केवल लिखित प्रशासनिक अभिलेखों का अध्ययन\nकितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "जोड़ी 1 सही सुमेलित है क्योंकि कंपनी स्कूल ऑफ आर्ट एक औपनिवेशिक काल की शैली को संदर्भित करता है जो भारतीय परंपराओं को यूरोपीय तकनीकों के साथ जोड़ती है। जोड़ी 2 भी सही ढंग से मेल खाती है क्योंकि लिथोग्राफी उन्नीसवीं शताब्दी की एक मुद्रण तकनीक थी जिसका उपयोग चित्रों और चित्रों को पुन: पेश करने के लिए किया जाता था। जोड़ी 3 गलत तरीके से मेल खाती है क्योंकि भौतिक संस्कृति वस्तुओं, कलाकृतियों और कलाकृतियों का अध्ययन करती है, न कि केवल लिखित प्रशासनिक रिकॉर्ड का। इस प्रकार, केवल दो जोड़े सही हैं। यह स्थिर अवधारणा से संबंध मायने रखता है क्योंकि एमिली ईडन की कृतियाँ न केवल कला वस्तुओं के रूप में उपयोगी हैं, बल्कि औपनिवेशिक भारत के सामाजिक और सांस्कृतिक इतिहास के पुनर्निर्माण के लिए सामग्री और दृश्य साक्ष्य के रूप में भी उपयोगी हैं।"
+     }
     }
    ],
    "keyTerms": [
@@ -2810,6 +3330,11 @@
     "lat": 20.5937,
     "lon": 78.9629,
     "place": "India"
+   },
+   "hindi": {
+    "headline": "19वीं सदी के औपनिवेशिक भारत के लिए दृश्य स्रोत के रूप में एमिली ईडन की पेंटिंग",
+    "summary": "एमिली ईडन की पेंटिंग्स की एक प्रदर्शनी उन्नीसवीं सदी की शुरुआत के भारत के दुर्लभ दृश्य रिकॉर्ड पर प्रकाश डालती है। कार्य शासकों, आम लोगों, वास्तुकला और शहरी जीवन का दस्तावेजीकरण करते हैं, जो उन्हें आधिकारिक प्रशासनिक रिकॉर्ड से परे औपनिवेशिक समाज का अध्ययन करने के लिए उपयोगी स्रोत बनाते हैं।",
+    "whyItMatters": "यूपीएससी के लिए, कहानी आधुनिक भारतीय इतिहास को कला और संस्कृति से जोड़ती है और दिखाती है कि पेंटिंग कैसे ऐतिहासिक साक्ष्य के रूप में काम कर सकती हैं। यह उम्मीदवारों को औपनिवेशिक दस्तावेज़ीकरण, कंपनी स्कूल के प्रभाव और सामाजिक इतिहास के पुनर्निर्माण में भौतिक संस्कृति के उपयोग को समझने में भी मदद करता है।"
    }
   },
   {
@@ -2917,7 +3442,17 @@
      ],
      "answer": 1,
      "explanation": "Statements I and III are correct. The MEA clarified that an Indian passport is a travel document issued under the Passports Act, 1967 for international travel. Citizenship in India is governed separately by the Citizenship Act, 1955. Statement II is incorrect because the clarification specifically says that a passport should not be treated as conclusive proof of citizenship and does not by itself confer Indian citizenship. The question tests the legal distinction between travel documentation and citizenship determination.",
-     "ref": "Passports Act, 1967; Citizenship Act, 1955"
+     "ref": "Passports Act, 1967; Citizenship Act, 1955",
+     "hindi": {
+      "q": "भारतीय पासपोर्ट पर हाल ही में विदेश मंत्रालय के स्पष्टीकरण के संदर्भ में निम्नलिखित कथनों पर विचार कीजिए:\n1. अंतर्राष्ट्रीय यात्रा की सुविधा के लिए पासपोर्ट अधिनियम, 1967 के तहत एक भारतीय पासपोर्ट जारी किया जाता है।\n2. भारतीय पासपोर्ट का होना भारतीय कानून के तहत भारतीय नागरिकता का निर्णायक प्रमाण है।\n3. भारत में नागरिकता नागरिकता अधिनियम, 1955 द्वारा शासित होती है।\nउपरोक्त में से कितने कथन सही हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "कथन 1 और 3 सही हैं। विदेश मंत्रालय ने स्पष्ट किया कि भारतीय पासपोर्ट अंतरराष्ट्रीय यात्रा के लिए पासपोर्ट अधिनियम, 1967 के तहत जारी किया गया एक यात्रा दस्तावेज है। भारत में नागरिकता नागरिकता अधिनियम, 1955 द्वारा अलग से शासित होती है। कथन 2 गलत है क्योंकि स्पष्टीकरण विशेष रूप से कहता है कि पासपोर्ट को नागरिकता के निर्णायक प्रमाण के रूप में नहीं माना जाना चाहिए और यह स्वयं भारतीय नागरिकता प्रदान नहीं करता है। प्रश्न यात्रा दस्तावेज़ीकरण और नागरिकता निर्धारण के बीच कानूनी अंतर का परीक्षण करता है।"
+     }
     },
     {
      "q": "With reference to Indian legal documents and citizenship, consider the following pairs:\nI. Citizenship Act, 1955: Acquisition, determination and termination of Indian citizenship\nII. Passports Act, 1967: Issuance, renewal and cancellation of Indian passports\nIII. Passport: A document that automatically grants Indian citizenship\nHow many of the above pairs are correctly matched?",
@@ -2929,7 +3464,17 @@
      ],
      "answer": 1,
      "explanation": "Pairs I and II are correctly matched. The Citizenship Act, 1955 governs acquisition, determination and termination of Indian citizenship. The Passports Act, 1967 regulates issuance, renewal and cancellation of Indian passports for international travel. Pair III is incorrectly matched because a passport is a travel document; it does not automatically grant or conclusively prove Indian citizenship. This static-current linkage is important because citizenship and travel documentation are governed by separate statutory frameworks.",
-     "ref": "Citizenship Act, 1955; Passports Act, 1967"
+     "ref": "Citizenship Act, 1955; Passports Act, 1967",
+     "hindi": {
+      "q": "भारतीय कानूनी दस्तावेजों और नागरिकता के संदर्भ में, निम्नलिखित जोड़ियों पर विचार करें:\n1. नागरिकता अधिनियम, 1955: भारतीय नागरिकता का अधिग्रहण, निर्धारण और समाप्ति\n2. पासपोर्ट अधिनियम, 1967: भारतीय पासपोर्ट जारी करना, नवीनीकरण और रद्द करना\n3. पासपोर्ट: एक दस्तावेज़ जो स्वचालित रूप से भारतीय नागरिकता प्रदान करता है\nउपरोक्त में से कितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "जोड़े 1 और 2 सही सुमेलित हैं। नागरिकता अधिनियम, 1955 भारतीय नागरिकता के अधिग्रहण, निर्धारण और समाप्ति को नियंत्रित करता है। पासपोर्ट अधिनियम, 1967 अंतरराष्ट्रीय यात्रा के लिए भारतीय पासपोर्ट जारी करने, नवीनीकरण और रद्द करने को नियंत्रित करता है। जोड़ी 3 का मिलान ग़लत है क्योंकि पासपोर्ट एक यात्रा दस्तावेज़ है; यह स्वचालित रूप से भारतीय नागरिकता प्रदान नहीं करता है या निर्णायक रूप से साबित नहीं करता है। यह स्थिर-वर्तमान लिंकेज महत्वपूर्ण है क्योंकि नागरिकता और यात्रा दस्तावेज़ीकरण अलग-अलग वैधानिक ढांचे द्वारा शासित होते हैं।"
+     }
     }
    ],
    "keyTerms": [
@@ -2944,6 +3489,11 @@
     "lat": 28.6139,
     "lon": 77.209,
     "place": "New Delhi, India"
+   },
+   "hindi": {
+    "headline": "विदेश मंत्रालय ने स्पष्ट किया कि पासपोर्ट भारतीय नागरिकता का निर्णायक सबूत नहीं है",
+    "summary": "विदेश मंत्रालय ने स्पष्ट किया कि भारतीय पासपोर्ट पासपोर्ट अधिनियम, 1967 के तहत जारी किया गया एक यात्रा दस्तावेज है और यह अपने आप में भारतीय नागरिकता स्थापित या प्रदान नहीं करता है। नागरिकता नागरिकता अधिनियम, 1955 द्वारा अलग से शासित होती है।",
+    "whyItMatters": "पहचान, यात्रा और नागरिकता दस्तावेजों के बीच कानूनी अंतर को समझने के लिए स्पष्टीकरण महत्वपूर्ण है। यूपीएससी के लिए, यह वैधानिक ढांचे के तहत नागरिकता कानून, शासन, मतदाता-सूची सत्यापन और दस्तावेजी प्रमाण से सीधे जुड़ता है।"
    }
   },
   {
@@ -3029,7 +3579,7 @@
      "wayForward": [
       "मतदाता सत्यापन को पासपोर्ट, कल्याणकारी योजनाओं और अन्य वैधानिक सेवाओं तक पहुंच से स्पष्ट रूप से अलग रखना सुनिश्चित करें।",
       "किसी भी प्रतिकूल प्रशासनिक कार्रवाई से पहले सूचना, सुनवाई और कारणयुक्त आदेश की आवश्यकताओं को मजबूत करें।",
-      "प्रत्येक authority से अपन��� governing law के तहत पात्रता की स्वतंत्र जांच कराना आवश्यक बनाएं।",
+      "प्रत्येक authority से अपने governing law के तहत पात्रता की स्वतंत्र जांच कराना आवश्यक बनाएं।",
       "प्रभावित नागरिकों के लिए grievance redressal और appellate mechanisms में सुधार करें।",
       "स्पष्ट कानूनी सीमाओं, पारदर्शिता और accountability safeguards के साथ database interoperability बनाएं।"
      ],
@@ -3051,7 +3601,17 @@
      ],
      "answer": 1,
      "explanation": "Statements I and III are correct. Electoral roll revision is an election-management exercise meant to update voter entries. The concern in the article is that deletion from such a roll should not automatically affect access to unrelated services. Statement II is incorrect because the editorial cautions against automatic spillover into passports, welfare, taxation, banking or other domains without independent legal scrutiny. Statement III is correct because every statutory authority must examine eligibility under its own governing law before taking adverse action. The current issue therefore tests the limits of administrative coordination under the rule of law.",
-     "ref": "Electoral roll revision and rule of law"
+     "ref": "Electoral roll revision and rule of law",
+     "hindi": {
+      "q": "विशेष गहन पुनरीक्षण के दौरान मतदाता सूची से नाम हटाने की चिंता के संबंध में निम्नलिखित कथनों पर विचार कीजिए:\n1. मतदाता सूची पुनरीक्षण का उद्देश्य चुनाव प्रबंधन उद्देश्यों को पूरा करना है।\n2. मतदाता सूची से नाम हटाने से पासपोर्ट और कल्याणकारी योजनाओं के लिए पात्रता स्वचालित रूप से निर्धारित होनी चाहिए।\n3. अन्य सेवाओं से संबंधित प्राधिकारियों को अपने स्वयं के शासी कानूनों के तहत पात्रता को स्वतंत्र रूप से सत्यापित करना होगा।\nउपरोक्त में से कितने सही हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "कथन 1 और 3 सही हैं। मतदाता सूची पुनरीक्षण एक चुनाव-प्रबंधन अभ्यास है जिसका उद्देश्य मतदाता प्रविष्टियों को अद्यतन करना है। लेख में चिंता यह है कि इस तरह के रोल को हटाने से असंबंधित सेवाओं तक पहुंच स्वचालित रूप से प्रभावित नहीं होनी चाहिए। कथन 2 गलत है क्योंकि संपादकीय स्वतंत्र कानूनी जांच के बिना पासपोर्ट, कल्याण, कराधान, बैंकिंग या अन्य डोमेन में स्वचालित स्पिलओवर के खिलाफ चेतावनी देता है। कथन 3 सही है क्योंकि प्रत्येक वैधानिक प्राधिकारी को प्रतिकूल कार्रवाई करने से पहले अपने स्वयं के शासी कानून के तहत पात्रता की जांच करनी चाहिए। इसलिए वर्तमान मुद्दा कानून के शासन के तहत प्रशासनिक समन्वय की सीमाओं का परीक्षण करता है।"
+     }
     },
     {
      "q": "With reference to constitutional and administrative safeguards in India, consider the following pairs:\nI. Due process: Fair procedure before adverse state action\nII. Proportionality: State action should not be more restrictive than necessary\nIII. Natural justice: Decision-making may ignore hearing the affected person when efficiency is involved\nHow many pairs are correctly matched?",
@@ -3063,7 +3623,17 @@
      ],
      "answer": 1,
      "explanation": "Pairs I and II are correctly matched. Due process requires fair procedure before the state takes action that adversely affects a person. Proportionality requires that a restriction imposed by the state should not go beyond what is needed for a lawful objective. Pair III is incorrectly matched. Natural justice generally requires fairness, including giving the affected person an opportunity to be heard and avoiding biased decision-making. Administrative efficiency cannot by itself justify ignoring these safeguards. The static linkage is relevant because automatic civil consequences from voter-roll deletion may violate these principles.",
-     "ref": "Articles 14 and 21; principles of natural justice"
+     "ref": "Articles 14 and 21; principles of natural justice",
+     "hindi": {
+      "q": "भारत में संवैधानिक और प्रशासनिक सुरक्षा उपायों के संदर्भ में, निम्नलिखित जोड़ियों पर विचार करें:\n1. उचित प्रक्रिया: प्रतिकूल राज्य कार्रवाई से पहले उचित प्रक्रिया\n2. आनुपातिकता: राज्य की कार्रवाई आवश्यकता से अधिक प्रतिबंधात्मक नहीं होनी चाहिए\n3. प्राकृतिक न्याय: जब कार्यकुशलता शामिल हो तो निर्णय लेने में प्रभावित व्यक्ति की बात सुनने की अनदेखी हो सकती है\nकितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "जोड़े 1 और 2 सही सुमेलित हैं। राज्य द्वारा किसी व्यक्ति पर प्रतिकूल प्रभाव डालने वाली कार्रवाई करने से पहले उचित प्रक्रिया की आवश्यकता होती है। आनुपातिकता के लिए आवश्यक है कि राज्य द्वारा लगाया गया प्रतिबंध वैध उद्देश्य के लिए आवश्यक सीमा से आगे नहीं जाना चाहिए। युग्म 3 ग़लत सुमेलित है। प्राकृतिक न्याय के लिए आम तौर पर निष्पक्षता की आवश्यकता होती है, जिसमें प्रभावित व्यक्ति को सुनने का अवसर देना और पक्षपातपूर्ण निर्णय लेने से बचना शामिल है। प्रशासनिक दक्षता अपने आप में इन सुरक्षा उपायों की अनदेखी को उचित नहीं ठहरा सकती। स्थिर अवधारणा से संबंध प्रासंगिक है क्योंकि मतदाता-सूची विलोपन से स्वचालित नागरिक परिणाम इन सिद्धांतों का उल्लंघन कर सकते हैं।"
+     }
     }
    ],
    "keyTerms": [
@@ -3079,6 +3649,11 @@
     "lat": 28.6139,
     "lon": 77.209,
     "place": "New Delhi, India"
+   },
+   "hindi": {
+    "headline": "मतदाता सूची से नाम हटने पर अन्य नागरिक अधिकारों से वंचित होने का जोखिम",
+    "summary": "चिंताएँ व्यक्त की गई हैं कि विशेष गहन पुनरीक्षण के दौरान मतदाता सूची से नाम हटाने से पासपोर्ट, कल्याण योजनाओं और अन्य सार्वजनिक सेवाओं तक पहुंच प्रभावित हो सकती है। मुद्दा यह है कि क्या चुनाव प्रबंधन के लिए किए गए प्रशासनिक निर्णय को स्वतंत्र कानूनी जांच के बिना असंबंधित वैधानिक अधिकारों को प्रभावित करना चाहिए।",
+    "whyItMatters": "यह मुद्दा चुनावी शासन को उचित प्रक्रिया, आनुपातिकता और मनमानी राज्य कार्रवाई के खिलाफ सुरक्षा से जोड़ता है। यूपीएससी के लिए, यह महत्वपूर्ण है क्योंकि यह परीक्षण करता है कि संवैधानिक सुरक्षा उपायों और वैधानिक अधिकारियों द्वारा स्वतंत्र निर्णय लेने के साथ प्रशासनिक दक्षता को कैसे संतुलित किया जाना चाहिए।"
    }
   },
   {
@@ -3188,7 +3763,17 @@
      ],
      "answer": 3,
      "explanation": "All three statements are correct. Statement I is correct because the proposal raised concerns about freedom of navigation and consistency with international maritime law under the United Nations Convention on the Law of the Sea. Statement II is correct because the Strait of Hormuz carries nearly one-fifth of global oil trade, making it a key energy route. Statement III is correct because the reported proposal was to impose a 20 percent fee on commercial vessels transiting the Strait of Hormuz. The issue is therefore not mere political rhetoric; it links maritime law, energy trade and global shipping costs.",
-     "ref": "Freedom of Navigation"
+     "ref": "Freedom of Navigation",
+     "hindi": {
+      "q": "होर्मुज जलडमरूमध्य से गुजरने वाले जहाजों पर प्रस्तावित 20 प्रतिशत पारगमन शुल्क के संदर्भ में, निम्नलिखित कथनों पर विचार कीजिए:\n1. इसने अंतरराष्ट्रीय समुद्री कानून के तहत नौवहन की स्वतंत्रता के संबंध में चिंताएं उठाईं।\n2. इसका संबंध उस मार्ग से है जहां से वैश्विक तेल व्यापार का लगभग पांचवां हिस्सा गुजरता है।\n3. यह होर्मुज जलडमरूमध्य से गुजरने वाले वाणिज्यिक जहाजों पर लागू होता।\nउपर्युक्त कथनों में से कौन सा/से सही है/हैं?",
+      "options": [
+       "केवल 1 और 2",
+       "केवल 2 और 3",
+       "केवल 1 और 3",
+       "1, 2 और 3"
+      ],
+      "explanation": "तीनों कथन सही हैं। कथन 1 सही है क्योंकि प्रस्ताव में समुद्री कानून पर संयुक्त राष्ट्र कन्वेंशन के तहत नौवहन की स्वतंत्रता और अंतरराष्ट्रीय समुद्री कानून के साथ स्थिरता के बारे में चिंताएं उठाई गई हैं। कथन 2 सही है क्योंकि होर्मुज जलडमरूमध्य वैश्विक तेल व्यापार का लगभग पांचवां हिस्सा वहन करता है, जो इसे एक प्रमुख ऊर्जा मार्ग बनाता है। कथन 3 सही है क्योंकि रिपोर्ट किया गया प्रस्ताव होर्मुज जलडमरूमध्य से गुजरने वाले वाणिज्यिक जहाजों पर 20 प्रतिशत शुल्क लगाने का था। इसलिए मुद्दा केवल राजनीतिक बयानबाजी नहीं है; यह समुद्री कानून, ऊर्जा व्यापार और वैश्विक शिपिंग लागत को जोड़ता है।"
+     }
     },
     {
      "q": "Consider the following pairs:\nI. Strait of Hormuz — Connects the Persian Gulf with the Gulf of Oman and the Arabian Sea\nII. Maritime Chokepoint — A narrow strategic waterway carrying significant trade or energy flows\nIII. United Nations Convention on the Law of the Sea — Legal framework governing maritime rights, navigation and ocean resources\nHow many of the above pairs are correctly matched?",
@@ -3200,7 +3785,17 @@
      ],
      "answer": 2,
      "explanation": "All three pairs are correctly matched. Pair I is correct because the Strait of Hormuz links the Persian Gulf with the Gulf of Oman and onward to the Arabian Sea. Pair II is correct because a maritime chokepoint is a narrow strategic waterway through which a large proportion of trade or energy supplies passes. Pair III is correct because the United Nations Convention on the Law of the Sea provides the legal framework for maritime rights, navigation and ocean resources. These static concepts are directly relevant to understanding why a transit fee proposal in the Strait of Hormuz raised legal and economic concerns.",
-     "ref": "United Nations Convention on the Law of the Sea"
+     "ref": "United Nations Convention on the Law of the Sea",
+     "hindi": {
+      "q": "निम्नलिखित जोड़ियों पर विचार करें:\n1. होर्मुज जलडमरूमध्य - फारस की खाड़ी को ओमान की खाड़ी और अरब सागर से जोड़ता है\n2. सामरिक संकरा समुद्री मार्ग - महत्वपूर्ण व्यापार या ऊर्जा प्रवाह को ले जाने वाला एक संकीर्ण रणनीतिक जलमार्ग\n3. समुद्र के कानून पर संयुक्त राष्ट्र कन्वेंशन - समुद्री अधिकारों, नौवहन और समुद्री संसाधनों को नियंत्रित करने वाला कानूनी ढांचा\nउपरोक्त में से कितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "तीनों जोड़े सही सुमेलित हैं। जोड़ी 1 सही है क्योंकि होर्मुज जलडमरूमध्य फारस की खाड़ी को ओमान की खाड़ी और आगे अरब सागर से जोड़ता है। जोड़ी 2 सही है क्योंकि सामरिक संकरा समुद्री मार्ग एक संकीर्ण रणनीतिक जलमार्ग है जिसके माध्यम से व्यापार या ऊर्जा आपूर्ति का एक बड़ा हिस्सा गुजरता है। जोड़ी 3 सही है क्योंकि समुद्री कानून पर संयुक्त राष्ट्र कन्वेंशन समुद्री अधिकारों, नौवहन और समुद्री संसाधनों के लिए कानूनी ढांचा प्रदान करता है। ये स्थिर अवधारणाएँ यह समझने के लिए सीधे तौर पर प्रासंगिक हैं कि होर्मुज़ जलडमरूमध्य में पारगमन शुल्क प्रस्ताव ने कानूनी और आर्थिक चिंताएँ क्यों बढ़ा दीं।"
+     }
     }
    ],
    "keyTerms": [
@@ -3215,6 +3810,11 @@
     "lat": 26.5667,
     "lon": 56.25,
     "place": "Strait of Hormuz"
+   },
+   "hindi": {
+    "headline": "ट्रम्प ने होर्मुज जलडमरूमध्य पर प्रस्तावित 20 प्रतिशत पारगमन शुल्क वापस ले लिया",
+    "summary": "अमेरिकी राष्ट्रपति डोनाल्ड ट्रम्प ने होर्मुज जलडमरूमध्य से गुजरने वाले वाणिज्यिक जहाजों पर 20 प्रतिशत शुल्क लगाने का अपना प्रस्ताव वापस ले लिया। प्रस्ताव में नौवहन की स्वतंत्रता, अंतरराष्ट्रीय समुद्री कानून के साथ अनुकूलता और वैश्विक ऊर्जा कीमतों पर संभावित प्रभावों पर चिंता जताई गई थी।",
+    "whyItMatters": "होर्मुज जलडमरूमध्य एक महत्वपूर्ण सामरिक संकरा समुद्री मार्ग है जिसके माध्यम से वैश्विक तेल व्यापार का लगभग पांचवां हिस्सा गुजरता है। भारत के लिए, जो एक प्रमुख कच्चा तेल आयातक है, इस मार्ग में अस्थिरता या अतिरिक्त लागत ऊर्जा सुरक्षा, माल ढुलाई शुल्क और मुद्रास्फीति के दबाव को प्रभावित कर सकती है।"
    }
   },
   {
@@ -3284,7 +3884,7 @@
       },
       {
        "term": "Article 371",
-       "definition": "व���शिष्ट States के लिए विशेष संवैधानिक प्रावधानों का समूह, जिसका उद्देश्य regional interests और administrative autonomy की रक्षा करना है।"
+       "definition": "विशिष्ट States के लिए विशेष संवैधानिक प्रावधानों का समूह, जिसका उद्देश्य regional interests और administrative autonomy की रक्षा करना है।"
       },
       {
        "term": "Union Territory",
@@ -3314,7 +3914,17 @@
      ],
      "answer": 1,
      "explanation": "Statements I and II are correct. The source states that Ladakh's Apex Body in Leh and the Kargil Democratic Alliance criticised the proposal for seven new Autonomous Hill Development Councils, arguing that it fragments political representation and diverts attention from demands such as Statehood, Sixth Schedule safeguards and an elected legislature. Statement III is incorrect. An Autonomous Hill Development Council is a locally elected body for planning and development in designated hill districts; it does not automatically confer Sixth Schedule protection. Sixth Schedule safeguards require constitutional recognition for notified tribal areas through Autonomous District Councils.",
-     "ref": "Autonomous Hill Development Councils and Sixth Schedule"
+     "ref": "Autonomous Hill Development Councils and Sixth Schedule",
+     "hindi": {
+      "q": "लद्दाख में नई स्वायत्त पहाड़ी विकास परिषदों के हालिया प्रस्ताव के संबंध में निम्नलिखित कथनों पर विचार कीजिए:\n1. इस प्रस्ताव का लेह में लद्दाख की सर्वोच्च संस्था और कारगिल डेमोक्रेटिक अलायंस ने विरोध किया है।\n2. विरोधी संगठनों का तर्क है कि यह कदम राजनीतिक प्रतिनिधित्व को खंडित कर सकता है और राज्य और संवैधानिक सुरक्षा उपायों की मांगों से ध्यान भटका सकता है।\n3. स्वायत्त पर्वतीय विकास परिषदें स्वचालित रूप से किसी क्षेत्र को छठी अनुसूची के सुरक्षा उपाय प्रदान करती हैं।\nउपरोक्त में से कितने कथन सही हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "कथन 1 और 2 सही हैं। स्रोत के अनुसार है कि लेह में लद्दाख की सर्वोच्च संस्था और कारगिल डेमोक्रेटिक अलायंस ने सात नई स्वायत्त पहाड़ी विकास परिषदों के प्रस्ताव की आलोचना की, यह तर्क देते हुए कि यह राजनीतिक प्रतिनिधित्व को खंडित करता है और राज्य का दर्जा, छठी अनुसूची के सुरक्षा उपाय और एक निर्वाचित विधायिका जैसी मांगों से ध्यान भटकाता है। कथन 3 गलत है। एक स्वायत्त पहाड़ी विकास परिषद नामित पहाड़ी जिलों में योजना और विकास के लिए एक स्थानीय रूप से निर्वाचित निकाय है; यह स्वचालित रूप से छठी अनुसूची सुरक्षा प्रदान नहीं करता है। छठी अनुसूची के सुरक्षा उपायों के लिए स्वायत्त जिला परिषदों के माध्यम से अधिसूचित आदिवासी क्षेत्रों के लिए संवैधानिक मान्यता की आवश्यकता है।"
+     }
     },
     {
      "q": "With reference to constitutional and local governance mechanisms relevant to Ladakh, consider the following pairs:\nI. Sixth Schedule: Autonomous administration in notified tribal areas through Autonomous District Councils\nII. Article 371: Special constitutional provisions for specific States to protect regional interests\nIII. Autonomous Hill Development Council: A locally elected body for planning and development in designated hill districts\nHow many of the above pairs are correctly matched?",
@@ -3326,7 +3936,17 @@
      ],
      "answer": 2,
      "explanation": "All three pairs are correctly matched. Pair I is correct because the Sixth Schedule provides constitutional safeguards for autonomous administration in notified tribal areas through Autonomous District Councils. Pair II is correct because Article 371 contains special provisions for specific States to protect regional interests and administrative autonomy. Pair III is correct because an Autonomous Hill Development Council is a locally elected body responsible for planning and development in designated hill districts of Ladakh. The current debate arises because Ladakh groups argue that creating new councils is not the same as granting broader constitutional and legislative safeguards.",
-     "ref": "Sixth Schedule, Article 371 and Autonomous Hill Development Councils"
+     "ref": "Sixth Schedule, Article 371 and Autonomous Hill Development Councils",
+     "hindi": {
+      "q": "लद्दाख से संबंधित संवैधानिक और स्थानीय शासन तंत्र के संदर्भ में, निम्नलिखित जोड़ियों पर विचार करें:\n1. छठी अनुसूची: स्वायत्त जिला परिषदों के माध्यम से अधिसूचित जनजातीय क्षेत्रों में स्वायत्त प्रशासन\n2. अनुच्छेद 371: क्षेत्रीय हितों की रक्षा के लिए विशिष्ट राज्यों के लिए विशेष संवैधानिक प्रावधान\n3. स्वायत्त पहाड़ी विकास परिषद: नामित पहाड़ी जिलों में योजना और विकास के लिए एक स्थानीय रूप से निर्वाचित निकाय\nउपरोक्त में से कितने जोड़े सही सुमेलित हैं?",
+      "options": [
+       "केवल एक",
+       "केवल दो",
+       "तीनों",
+       "कोई नहीं"
+      ],
+      "explanation": "तीनों जोड़े सही सुमेलित हैं। जोड़ी 1 सही है क्योंकि छठी अनुसूची स्वायत्त जिला परिषदों के माध्यम से अधिसूचित आदिवासी क्षेत्रों में स्वायत्त प्रशासन के लिए संवैधानिक सुरक्षा उपाय प्रदान करती है। जोड़ी 2 सही है क्योंकि अनुच्छेद 371 में क्षेत्रीय हितों और प्रशासनिक स्वायत्तता की रक्षा के लिए विशिष्ट राज्यों के लिए विशेष प्रावधान हैं। जोड़ी 3 सही है क्योंकि स्वायत्त पहाड़ी विकास परिषद एक स्थानीय रूप से निर्वाचित निकाय है जो लद्दाख के नामित पहाड़ी जिलों में योजना और विकास के लिए जिम्मेदार है। वर्तमान बहस इसलिए उठती है क्योंकि लद्दाख समूहों का तर्क है कि नई परिषदें बनाना व्यापक संवैधानिक और विधायी सुरक्षा प्रदान करने के समान नहीं है।"
+     }
     }
    ],
    "keyTerms": [
@@ -3341,6 +3961,11 @@
     "lat": 34.1526,
     "lon": 77.5771,
     "place": "Leh, Ladakh"
+   },
+   "hindi": {
+    "headline": "लद्दाख समूह नई स्वायत्त पहाड़ी विकास परिषदों का विरोध करते हैं",
+    "summary": "लद्दाख में नागरिक समाज संगठनों ने सात नई स्वायत्त पहाड़ी विकास परिषदें बनाने के केंद्र के फैसले का विरोध किया है। उनका तर्क है कि यह प्रस्ताव राज्य का दर्जा, छठी अनुसूची के सुरक्षा उपायों और एक प्रतिनिधि विधायिका की व्यापक मांग को कमजोर करता है।",
+    "whyItMatters": "यह मुद्दा सीधे तौर पर संघवाद, केंद्र शासित प्रदेश शासन, लोकतांत्रिक प्रतिनिधित्व और आदिवासी और क्षेत्रीय पहचान के लिए संवैधानिक सुरक्षा उपायों से जुड़ा है। यूपीएससी के लिए, यह महत्वपूर्ण है क्योंकि यह प्रशासनिक विकेंद्रीकरण और गहरी राजनीतिक स्वायत्तता की मांगों के बीच तनाव को दर्शाता है।"
    }
   }
  ]

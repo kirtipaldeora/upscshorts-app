@@ -5,6 +5,12 @@ export interface PrelimQuestion {
   answer: number  // 0-indexed correct option
   explanation: string
   ref?: string
+  hindi?: {
+    q: string
+    options: string[]
+    explanation: string
+    ref?: string
+  }
 }
 
 // ─── DeepDive ────────────────────────────────────────────────
@@ -58,6 +64,11 @@ export interface Article {
   gsPaper: GsPaper
   summary: string
   whyItMatters: string
+  hindi?: {
+    headline: string
+    summary: string
+    whyItMatters: string
+  }
   deepDive: DeepDive
   audioScript?: string          // Optional Penni Explain narration script; fallback is generated in-app
   audioScriptHi?: string        // Hinglish (Hindi-English classroom) narration variant

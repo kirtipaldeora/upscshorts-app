@@ -7,6 +7,8 @@ import { useBookmarkStore } from '@/stores/useBookmarkStore'
 import { useAppStore } from '@/stores/useAppStore'
 import { useHaptic } from '@/hooks/useHaptic'
 import { burstElement, popElement } from '@/anim/animations'
+import { useReadingLanguage } from '@/hooks/useReadingLanguage'
+import { categoryLabel, getArticleCopy } from '@/utils/articleLocalization'
 
 interface FeedCardProps {
   article: Article
@@ -18,7 +20,9 @@ export function FeedCard({ article, animationDelay = 0, onShowToast }: FeedCardP
   const { toggle, isBookmarked } = useBookmarkStore()
   const { setActiveArticle, setOverlay } = useAppStore()
   const haptic = useHaptic()
+  const [readLang] = useReadingLanguage()
   const bookmarked = isBookmarked(article.id)
+  const copy = getArticleCopy(article, readLang)
   const catColor = CATEGORY_COLORS[article.category]
   const catIcon = CATEGORY_ICONS[article.category]
 
@@ -35,10 +39,10 @@ export function FeedCard({ article, animationDelay = 0, onShowToast }: FeedCardP
     e.stopPropagation()
     await haptic()
     try {
-      await navigator.share({ title: article.headline, text: article.summary })
+      await navigator.share({ title: copy.headline, text: copy.summary })
     } catch {
       try {
-        await navigator.clipboard.writeText(article.headline)
+        await navigator.clipboard.writeText(copy.headline)
         onShowToast('Copied to clipboard')
       } catch { /* noop */ }
     }
@@ -86,7 +90,7 @@ export function FeedCard({ article, animationDelay = 0, onShowToast }: FeedCardP
             }}
           >
             <FontAwesomeIcon icon={{ prefix: 'fas', iconName: catIcon.replace('fa-', '') } as never} style={{ marginRight: 5 }} />
-            {article.category}
+            {categoryLabel(article.category, readLang)}
           </span>
           <span
             className="tag tag-gs"
@@ -121,7 +125,7 @@ export function FeedCard({ article, animationDelay = 0, onShowToast }: FeedCardP
 
         {/* Headline */}
         <h2 className="card-headline" style={{ fontSize: 19, fontWeight: 800, lineHeight: 1.25, marginBottom: 7, letterSpacing: -0.2, color: 'var(--ink)' }}>
-          {article.headline}
+          {copy.headline}
         </h2>
 
         {/* Meta */}
@@ -131,16 +135,16 @@ export function FeedCard({ article, animationDelay = 0, onShowToast }: FeedCardP
 
         {/* Summary */}
         <p className="card-summary" style={{ fontSize: 13.5, lineHeight: 1.7, color: 'var(--ink2)', marginBottom: 13, fontWeight: 600 }}>
-          {article.summary}
+          {copy.summary}
         </p>
 
         {/* Why it matters */}
         <div className="card-why" style={{ background: 'var(--card2)', borderRadius: 18, padding: 13, marginBottom: 13 }}>
           <p className="card-why-label" style={{ fontSize: 9.5, fontWeight: 900, color: 'var(--acc)', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 4 }}>
-            Why it matters
+            {readLang === 'hi' ? 'यह क्यों महत्वपूर्ण है' : 'Why it matters'}
           </p>
           <p className="card-why-text" style={{ fontSize: 12, lineHeight: 1.6, color: 'var(--ink2)', fontWeight: 600 }}>
-            {article.whyItMatters}
+            {copy.whyItMatters}
           </p>
         </div>
 
@@ -214,7 +218,7 @@ export function FeedCard({ article, animationDelay = 0, onShowToast }: FeedCardP
             }}
           >
             <FontAwesomeIcon icon={faExpand} style={{ fontSize: 11 }} />
-            Deep Dive
+            {readLang === 'hi' ? 'विस्तृत विश्लेषण' : 'Deep Dive'}
           </button>
         </div>
       </div>

@@ -21,6 +21,7 @@ import { useThemeStore } from '@/stores/useThemeStore'
 import type { FocusSession } from '@/types/focus'
 import { BreakAlarm } from '@/components/focus/BreakAlarm'
 import { MotivationCelebration } from '@/components/ui/MotivationCelebration'
+import { setReadingLanguage } from '@/hooks/useReadingLanguage'
 
 // Heavy / seldom-used screens are code-split so they never bloat first load.
 const ReviseScreen = lazy(() => import('@/components/revise/ReviseScreen').then(module => ({ default: module.ReviseScreen })))
@@ -178,7 +179,7 @@ export default function App() {
 
   useEffect(() => {
     if (!profile) return
-    try { localStorage.setItem('penni-read-lang', profile.language === 'hindi' ? 'hi' : 'en') } catch { /* noop */ }
+    setReadingLanguage(profile.language === 'hindi' ? 'hi' : 'en')
     useAppStore.getState().setGsFilter({
       'GS 1': profile.gsFocus.includes('GS 1'),
       'GS 2': profile.gsFocus.includes('GS 2'),

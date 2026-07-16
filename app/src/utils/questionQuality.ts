@@ -113,7 +113,10 @@ function preservesNumbers(english: string, hindi: string): boolean {
 }
 
 function isHindiText(value: string): boolean {
-  return Boolean(value.trim()) && DEVANAGARI.test(value)
+  // U+FFFD is inserted when source bytes could not be decoded. A string may
+  // still contain enough Devanagari to pass the language check. Treat encoding
+  // damage as an invalid translation so the article safely falls back to English.
+  return Boolean(value.trim()) && DEVANAGARI.test(value) && !value.includes('\uFFFD')
 }
 
 export function hasVerifiedHindiDeepDive(article: Article): boolean {

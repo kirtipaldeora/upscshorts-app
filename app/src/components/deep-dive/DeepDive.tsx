@@ -17,6 +17,8 @@ import type { Article } from '@/types/article'
 import { QuizPlayer } from '@/components/practice/QuizPlayer'
 import { MainsDetail } from '@/components/practice/MainsDetail'
 import { MotivationCelebration } from '@/components/ui/MotivationCelebration'
+import { useReadingLanguage } from '@/hooks/useReadingLanguage'
+import { categoryLabel, getArticleCopy, getPrelimQuestionCopy } from '@/utils/articleLocalization'
 
 interface DeepDiveProps {
   onShowToast: (msg: string) => void
@@ -124,9 +126,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
   const [activeQuiz, setActiveQuiz] = useState<ActiveQuiz>(null)
   const [mainsOpen, setMainsOpen] = useState(false)
   const [readSpeed, setReadSpeed] = useState(1)
-  const [preferredReadLang, setPreferredReadLang] = useState<'en' | 'hi'>(() => {
-    try { return localStorage.getItem('penni-read-lang') === 'hi' ? 'hi' : 'en' } catch { return 'en' }
-  })
+  const [preferredReadLang, setPreferredReadLang] = useReadingLanguage()
   const bodyRef = useRef<HTMLDivElement>(null)
   const progressBarRef = useRef<HTMLSpanElement>(null)
   const scrollFrameRef = useRef<number | null>(null)
@@ -141,6 +141,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
   // translation is not available, show the English original for that article
   // without silently overwriting the saved preference.
   const readLang: 'en' | 'hi' = preferredReadLang === 'hi' && hindiAvailable ? 'hi' : 'en'
+  const articleCopy = a ? getArticleCopy(a, readLang) : null
 
   // Sibling articles for prev/next navigation — follow the same list the feed
   // shows for this article's day (respects active filters); fall back to the
@@ -209,7 +210,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
     setActiveQuiz(null)
     setActiveArticle(article)
   }
-  const prelimQuestions = a?.prelimsQs ?? []
+  const prelimQuestions = a?.prelimsQs?.map(question => getPrelimQuestionCopy(question, readLang)) ?? []
   const previewPrelims = prelimQuestions[0]
   const previewStem = previewPrelims ? splitUPSCStem(previewPrelims.q) : null
   const displayedMainsQuestion = readLang === 'hi'
@@ -219,7 +220,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
     id: `ma-${a.id}`,
     q: displayedMainsQuestion,
     subject: a.category,
-    srcLabel: a.headline,
+    srcLabel: articleCopy?.headline ?? a.headline,
   } : null
 
   async function handleClose() {
@@ -239,14 +240,14 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
     await haptic()
     try {
       if (navigator.share) {
-        await navigator.share({ title: a.headline, text: a.summary })
+        await navigator.share({ title: articleCopy?.headline ?? a.headline, text: articleCopy?.summary ?? a.summary })
       } else {
         throw new Error('Share API not supported')
       }
     } catch {
       try {
-        await navigator.clipboard.writeText(a.headline)
-        onShowToast('Copied to clipboard')
+        await navigator.clipboard.writeText(articleCopy?.headline ?? a.headline)
+        onShowToast(readLang === 'hi' ? 'क्लिपबोर्ड पर कॉपी किया गया' : 'Copied to clipboard')
       } catch { /* noop */ }
     }
   }
@@ -265,13 +266,12 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
   async function toggleReadLang() {
     if (!a) return
     await haptic()
-    const next = readLang === 'en' ? 'hi' : 'en'
+    const next = preferredReadLang === 'hi' ? 'en' : 'hi'
     if (next === 'hi' && !hasVerifiedHindiDeepDive(a)) {
-      onShowToast('Reviewed Hindi Deep Dive is not available for this article yet')
+      onShowToast('इस लेख का सत्यापित हिन्दी विश्लेषण अभी उपलब्ध नहीं है')
       return
     }
     setPreferredReadLang(next)
-    try { localStorage.setItem('penni-read-lang', next) } catch { /* noop */ }
     if (narration.speaking) {
       narration.stop()
       const restarted = startArticleReading(a, readSpeed, next)
@@ -331,7 +331,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
       }
 
   const fdf = (d: string) => {
-    return new Date(d).toLocaleDateString('en-IN', {
+    return new Date(d).toLocaleDateString(readLang === 'hi' ? 'hi-IN' : 'en-IN', {
       day: 'numeric',
       month: 'short',
       year: 'numeric',
@@ -341,8 +341,8 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
   async function startPrelimsPractice() {
     if (!a) return
     await haptic()
-    const qs = articleQs([a])
-    if (qs.length) setActiveQuiz({ title: 'Article Practice', questions: qs })
+    const qs = articleQs([a], readLang)
+    if (qs.length) setActiveQuiz({ title: readLang === 'hi' ? 'लेख आधारित अभ्यास' : 'Article Practice', questions: qs })
   }
 
   return (
@@ -352,7 +352,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
         <button onClick={handleClose} aria-label="Back">
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
-        <h2>{a?.headline ?? ''}</h2>
+        <h2>{articleCopy?.headline ?? ''}</h2>
         <button onClick={handleShare} aria-label="Share">
           <FontAwesomeIcon icon={faShareAlt} />
         </button>
@@ -363,7 +363,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
       {a && (
         <div className="dd-body" ref={bodyRef} onScroll={onBodyScroll}>
           <section className="dd-reader-hero">
-            <h1>{a.headline}</h1>
+            <h1>{articleCopy?.headline ?? a.headline}</h1>
             <div className="dd-read-controls">
               <button
                 className={`dd-read-btn ${narration.speaking ? 'on' : ''}`}
@@ -374,7 +374,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
                 <span className="dd-read-fill" aria-hidden="true" />
                 <span className="dd-read-label">
                   <FontAwesomeIcon icon={narration.speaking ? faStop : faVolumeHigh} />
-                  {narration.speaking ? `${Math.round(narration.progress)}% read` : 'Read article'}
+                  {narration.speaking ? `${Math.round(narration.progress)}% ${readLang === 'hi' ? 'पढ़ा' : 'read'}` : readLang === 'hi' ? 'लेख सुनें' : 'Read article'}
                 </span>
               </button>
               <button className="dd-speed-btn" onClick={increaseReadSpeed} aria-label={`Reading speed ${readSpeed}x`}>
@@ -405,7 +405,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
                 background: col + '10',
               }}
             >
-              {a.category}
+              {categoryLabel(a.category, readLang)}
             </span>
             <span className="tag tag-gs">{a.gsPaper}</span>
             <span className="tag tag-src">
@@ -476,17 +476,17 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
           {previewPrelims && previewStem && (
             <div className="dd-practice-gate" style={{ marginTop: 20 }}>
               <div className="dd-practice-unlock">
-                <span>Practice unlocked</span>
-                <b>{prelimQuestions.length} prelims questions</b>
+                <span>{readLang === 'hi' ? 'अभ्यास उपलब्ध' : 'Practice unlocked'}</span>
+                <b>{prelimQuestions.length} {readLang === 'hi' ? 'प्रारंभिक परीक्षा प्रश्न' : 'prelims questions'}</b>
               </div>
               <div className="dd-section-title">
                 <FontAwesomeIcon icon={faDumbbell} style={{ marginRight: 6 }} />
-                Prelims Practice
+                {readLang === 'hi' ? 'प्रारंभिक परीक्षा अभ्यास' : 'Prelims Practice'}
               </div>
               <div className="dd-prelims-card">
                 <div className="dd-prelims-top">
-                  <span>Question 1</span>
-                  <b>{prelimQuestions.length} total</b>
+                  <span>{readLang === 'hi' ? 'प्रश्न 1' : 'Question 1'}</span>
+                  <b>{readLang === 'hi' ? `कुल ${prelimQuestions.length}` : `${prelimQuestions.length} total`}</b>
                 </div>
                 <div className="dd-prelims-stem">
                   {previewStem.lead && <p>{previewStem.lead}</p>}
@@ -517,7 +517,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
                 onClick={startPrelimsPractice}
               >
                 <FontAwesomeIcon icon={faPlay} style={{ marginRight: 8 }} />
-                Start all {prelimQuestions.length}
+                {readLang === 'hi' ? `सभी ${prelimQuestions.length} प्रश्न शुरू करें` : `Start all ${prelimQuestions.length}`}
               </button>
             </div>
           )}
@@ -526,10 +526,10 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
           {nextArticle && (
             <button className="dd-upnext" onClick={() => goToArticle(nextArticle)}>
               <div className="dd-upnext-head">
-                <span>Up Next · {idx + 2} of {siblings.length}</span>
+                <span>{readLang === 'hi' ? 'अगला लेख' : 'Up Next'} · {idx + 2} {readLang === 'hi' ? 'में से' : 'of'} {siblings.length}</span>
                 <FontAwesomeIcon icon={faArrowRight} />
               </div>
-              <div className="dd-upnext-title">{nextArticle.headline}</div>
+              <div className="dd-upnext-title">{getArticleCopy(nextArticle, readLang).headline}</div>
               <div className="dd-upnext-meta">
                 <span
                   className="tag tag-cat"
@@ -539,7 +539,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
                     background: CATEGORY_COLORS[nextArticle.category] + '10',
                   }}
                 >
-                  {nextArticle.category}
+                  {categoryLabel(nextArticle.category, readLang)}
                 </span>
                 <span className="tag tag-gs">{nextArticle.gsPaper}</span>
               </div>
@@ -583,7 +583,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
           >
             <FontAwesomeIcon icon={faChevronLeft} />
           </button>
-          <span className="dd-nav-count">{idx + 1} <i>of</i> {siblings.length}</span>
+          <span className="dd-nav-count">{idx + 1} <i>{readLang === 'hi' ? 'में से' : 'of'}</i> {siblings.length}</span>
           <button
             className="dd-nav-arrow"
             disabled={!nextArticle}

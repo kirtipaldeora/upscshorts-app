@@ -7,6 +7,8 @@ import { useBookmarkStore } from '@/stores/useBookmarkStore'
 import { useAppStore } from '@/stores/useAppStore'
 import { useHaptic } from '@/hooks/useHaptic'
 import { burstElement, popElement } from '@/anim/animations'
+import { useReadingLanguage } from '@/hooks/useReadingLanguage'
+import { categoryLabel, getArticleCopy } from '@/utils/articleLocalization'
 
 interface DeckViewProps {
   articles: Article[]
@@ -22,6 +24,7 @@ export function DeckView({ articles, onShowToast }: DeckViewProps) {
   const { toggle, isBookmarked } = useBookmarkStore()
   const { setActiveArticle, setOverlay } = useAppStore()
   const haptic = useHaptic()
+  const [readLang] = useReadingLanguage()
 
   const articlesKey = articles.map((a) => a.id).join(',')
 
@@ -97,6 +100,7 @@ export function DeckView({ articles, onShowToast }: DeckViewProps) {
         onTouchEnd={handleTouchEnd}
       >
         {articles.map((a, i) => {
+          const copy = getArticleCopy(a, readLang)
           const d = i - centerIdx
           const isCenter = d === 0
           const bookmarked = isBookmarked(a.id)
@@ -173,11 +177,11 @@ export function DeckView({ articles, onShowToast }: DeckViewProps) {
 
               {/* Core Card Info */}
               <div>
-                <div className="dk-head">{a.headline}</div>
-                <div className="dk-sub">{a.summary}</div>
+                <div className="dk-head">{copy.headline}</div>
+                <div className="dk-sub">{copy.summary}</div>
                 <div className="dk-tags">
                   <span className="dk-tag" style={{ color: catColor }}>
-                    {a.category}
+                    {categoryLabel(a.category, readLang)}
                   </span>
                   <span className="dk-tag">{a.source}</span>
                 </div>
