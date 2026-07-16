@@ -81,7 +81,7 @@ export default function App() {
   const [streakCelebrationOpen, setStreakCelebrationOpen] = useState(false)
   const streakOpeningChecked = useRef(false)
   const { activeScreen, overlayScreen, setOverlay, setScreen, goBack } = useAppStore()
-  const { user, profile, isGuest, bootstrap } = useAuthStore()
+  const { user, profile, isGuest, ready: authReady, bootstrap } = useAuthStore()
   const { settings, stats } = usePracticeStore()
   const { message: toastMsg, show: showToast, clear: clearToast } = useToast()
   const [breakAlarm, setBreakAlarm] = useState<BreakAlarmState | null>(null)
@@ -96,7 +96,11 @@ export default function App() {
     if (session.completionReason !== 'timer' || session.phase === 'focus') return
     setBreakAlarm({ id: session.id, phase: session.phase })
   }, [])
-  const focusRuntime = useFocusRuntime({ onComplete: handleFocusComplete, onShowToast: showToast })
+  const focusRuntime = useFocusRuntime({
+    onComplete: handleFocusComplete,
+    onShowToast: showToast,
+    presenceAccountId: authReady && user && !isGuest ? user.id : null,
+  })
   useFocusCloudSync(showToast)
 
   useEffect(() => {

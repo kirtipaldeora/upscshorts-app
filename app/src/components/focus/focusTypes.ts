@@ -79,6 +79,7 @@ export interface FocusPerson {
   isLive: boolean
   subject?: string
   liveSeconds?: number
+  analyticsShared: boolean
   todaySeconds: number
   weeklySeconds: number
   monthlySeconds: number

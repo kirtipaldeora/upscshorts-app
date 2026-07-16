@@ -19,6 +19,7 @@ import type {
 } from './focusTypes'
 import { compactFocusTime, FocusAvatar, FocusProgress, FocusSectionHeading } from './FocusPrimitives'
 import { FocusInviteSheet } from './FocusInviteSheet'
+import { FocusLivePeopleGrid, FocusPersonDetails } from './FocusPersonDetails'
 
 type GroupTab = 'room' | 'members' | 'rank' | 'chat'
 type GroupSheet =
@@ -178,20 +179,21 @@ function FocusGroupDetail(props: {
   onSendMessage: (groupId: string, text: string) => boolean | Promise<boolean>; onMemberAction: (action: 'nudge' | 'remove' | 'block', groupId: string, personId: string) => boolean | Promise<boolean>
 }) {
   const { profile, group, people, messages, rankings, joinRequests, tab, onTab, onBack, onLeave, onInvite, onRespondJoinRequest, onSendMessage, onMemberAction } = props
-  const [memberDetail, setMemberDetail] = useState<FocusPerson | null>(null)
+  const [selectedMember, setSelectedMember] = useState<{ id: string; trigger: HTMLElement } | null>(null)
   const [messageDraft, setMessageDraft] = useState('')
   const [messageSending, setMessageSending] = useState(false)
   const [messageError, setMessageError] = useState('')
   const [memberAction, setMemberAction] = useState<string | null>(null)
   const members = useMemo(() => people.filter(person => group.memberIds.includes(person.id)), [group.memberIds, people])
   const liveMembers = members.filter(member => member.isLive)
+  const memberDetail = selectedMember ? members.find(member => member.id === selectedMember.id) ?? null : null
   const groupRanking = rankings.filter(entry => group.memberIds.includes(entry.person.id) || entry.person.id === profile.id).sort((a, b) => b.weekSeconds - a.weekSeconds)
   const groupMessages = messages.filter(message => message.groupId === group.id).sort((a, b) => a.createdAt - b.createdAt)
   const pendingJoinRequests = joinRequests.filter(request => request.groupId === group.id)
   const progress = Math.round(group.weeklySeconds / Math.max(group.weeklyGoalSeconds, 1) * 100)
 
   useEffect(() => {
-    setMemberDetail(current => current && !members.some(member => member.id === current.id) ? null : current)
+    setSelectedMember(current => current && !members.some(member => member.id === current.id) ? null : current)
   }, [members])
 
   async function sendMessage() {
@@ -215,7 +217,8 @@ function FocusGroupDetail(props: {
     if (memberAction) return
     setMemberAction(pendingKey)
     try {
-      await onMemberAction(action, group.id, person.id)
+      const saved = await onMemberAction(action, group.id, person.id)
+      if (saved && action !== 'nudge') setSelectedMember(null)
     } finally {
       setMemberAction(null)
     }
@@ -226,21 +229,40 @@ function FocusGroupDetail(props: {
     <div className="focus-group-tabs" role="tablist" aria-label="Group view">{(['room', 'members', 'rank', 'chat'] as GroupTab[]).map(item => <button role="tab" aria-selected={tab === item} className={tab === item ? 'active' : ''} key={item} onClick={() => onTab(item)}>{item === 'room' ? 'Study room' : item}</button>)}</div>
 
     {tab === 'room' && <>
-      <section className="focus-group-room-hero"><div><span>Live room</span><h3>{liveMembers.length ? `${liveMembers.length} members are focusing` : 'The room is quiet'}</h3><p>{liveMembers.length ? 'Enter silently—everyone keeps their own timer and subject.' : 'Start a session and become the first live member.'}</p></div><div className="focus-room-live-stack">{liveMembers.slice(0, 5).map(person => <FocusAvatar key={person.id} name={person.name} initials={person.initials} avatarUrl={person.avatarUrl} live size="lg" />)}</div></section>
-      <div className="focus-room-grid"><section className="focus-card focus-room-member-grid"><FocusSectionHeading eyebrow="In the room" title={liveMembers.length ? 'Studying now' : 'No live members'} detail="Elapsed time is shared only by members who enable live status." />{liveMembers.length ? liveMembers.map(person => <button key={person.id} onClick={() => setMemberDetail(person)}><FocusAvatar name={person.name} initials={person.initials} avatarUrl={person.avatarUrl} live /><div><b>{person.name}</b><span>{person.subject}</span></div><strong>{compactFocusTime(person.liveSeconds ?? 0)}</strong></button>) : <p className="focus-room-empty">Focus sessions will appear here when members choose to share them.</p>}</section><section className="focus-card focus-group-target"><FocusSectionHeading eyebrow="Weekly mission" title={`${progress}% complete`} detail={`${compactFocusTime(group.weeklySeconds)} of ${compactFocusTime(group.weeklyGoalSeconds)}`} /><FocusProgress value={progress} /><div><span><FontAwesomeIcon icon={faTrophy} /> Group rank <b>{group.rank ? `#${group.rank}` : '—'}</b></span><span><FontAwesomeIcon icon={faUsers} /> Capacity <b>{group.memberCount}/{group.capacity}</b></span></div></section></div>
-      <section className="focus-card focus-group-info"><FocusSectionHeading eyebrow="Room information" title="Purpose and rules" detail={group.description} /><div className="focus-group-rule-list">{group.rules.length ? group.rules.map((rule, index) => <span key={rule}><i><FontAwesomeIcon icon={faCheck} /></i><b>{index + 1}</b>{rule}</span>) : <p>No group rules have been added.</p>}</div><div className="focus-group-privacy"><FontAwesomeIcon icon={group.privacy === 'private' ? faLock : faGlobe} /><p><b>{group.privacy === 'private' ? 'Private group' : 'Public group'}</b>{group.privacy === 'private' ? 'Membership requires an invite or approval.' : 'Aspirants can discover this room and request to join.'}</p></div>{group.isOwner ? <div className="focus-group-privacy"><FontAwesomeIcon icon={faCrown} /><p><b>You own this group</b>Owners cannot leave their own room. Group ownership must be transferred or the room deleted from group management when that control is available.</p></div> : <button className="focus-leave-group" onClick={() => { void onLeave(group.id) }}>Leave group</button>}</section>
+      <section className="focus-study-room focus-group-study-room" aria-labelledby="focus-group-room-title">
+        <header className="focus-study-room-head">
+          <div><span><i /> Live room</span><h3 id="focus-group-room-title">{group.name}</h3><p>{liveMembers.length ? `${liveMembers.length} ${liveMembers.length === 1 ? 'member is' : 'members are'} studying now` : 'The room is quiet—start a session to appear here'}</p></div>
+          <strong><b>{liveMembers.length}</b><span>live</span><small>{members.length} members</small></strong>
+        </header>
+        <FocusLivePeopleGrid people={members} selectedId={selectedMember?.id} onSelect={(person, trigger) => setSelectedMember({ id: person.id, trigger })} emptyTitle="No members yet" emptyDetail="Invite study partners to build this room." />
+      </section>
+
+      <section className="focus-room-mission-strip" aria-label="Weekly group mission">
+        <div className="focus-room-mission-copy"><span>Weekly mission</span><b>{compactFocusTime(group.weeklySeconds)} <small>of {compactFocusTime(group.weeklyGoalSeconds)}</small></b></div>
+        <div className="focus-room-mission-progress"><span><b>{progress}%</b><small>complete</small></span><FocusProgress value={progress} /></div>
+        <div className="focus-room-mission-meta"><span><FontAwesomeIcon icon={faTrophy} /><small>Rank</small><b>{group.rank ? `#${group.rank}` : '—'}</b></span><span><FontAwesomeIcon icon={faUsers} /><small>Capacity</small><b>{group.memberCount}/{group.capacity}</b></span></div>
+      </section>
+
+      <details className="focus-room-about">
+        <summary><span><b>Room details &amp; rules</b><small>{group.description}</small></span><em>{group.rules.length} {group.rules.length === 1 ? 'rule' : 'rules'}</em></summary>
+        <div className="focus-room-about-body">
+          <div className="focus-group-rule-list">{group.rules.length ? group.rules.map((rule, index) => <span key={rule}><i><FontAwesomeIcon icon={faCheck} /></i><b>{index + 1}</b>{rule}</span>) : <p>No group rules have been added.</p>}</div>
+          <div className="focus-group-privacy"><FontAwesomeIcon icon={group.privacy === 'private' ? faLock : faGlobe} /><p><b>{group.privacy === 'private' ? 'Private group' : 'Public group'}</b>{group.privacy === 'private' ? 'Membership requires an invite or approval.' : 'Aspirants can discover this room and request to join.'}</p></div>
+          {group.isOwner ? <div className="focus-group-privacy"><FontAwesomeIcon icon={faCrown} /><p><b>You own this group</b>Ownership must be transferred before you can leave this room.</p></div> : <button className="focus-leave-group" onClick={() => { void onLeave(group.id) }}>Leave group</button>}
+        </div>
+      </details>
     </>}
 
     {tab === 'members' && <>
       {group.canManage && pendingJoinRequests.length > 0 && <GroupJoinRequestNotices requests={pendingJoinRequests} onRespond={onRespondJoinRequest} />}
-      <section className="focus-card focus-group-member-list"><FocusSectionHeading eyebrow="Members" title={`${members.length} people in this room`} detail="Live status and elapsed time appear only for members who choose to share them." action={group.canManage ? <button className="focus-primary-small" onClick={event => onInvite(group.id, event.currentTarget)}><FontAwesomeIcon icon={faUserPlus} /> Invite by email or phone</button> : undefined} />{members.length ? members.map(member => <button key={member.id} onClick={() => setMemberDetail(member)}><FocusAvatar name={member.name} initials={member.initials} avatarUrl={member.avatarUrl} live={member.isLive} /><div><b>{member.name}</b><span>{member.isLive ? `Focusing · ${member.subject}` : `${member.streak}-day streak`}</span></div><strong>{member.isLive ? compactFocusTime(member.liveSeconds ?? 0) : compactFocusTime(member.weeklySeconds)}<small>{member.isLive ? 'live now' : 'this week'}</small></strong></button>) : <div className="focus-empty-inline"><FontAwesomeIcon icon={faUsers} /><p>Member records have not loaded.</p></div>}</section>
+      <section className="focus-card focus-group-member-list"><FocusSectionHeading eyebrow="Members" title={`${members.length} people in this room`} detail="Open a member to see their live block and privacy-eligible focus totals." action={group.canManage ? <button className="focus-primary-small" onClick={event => onInvite(group.id, event.currentTarget)}><FontAwesomeIcon icon={faUserPlus} /> Invite members</button> : undefined} />{members.length ? <div className="focus-member-directory">{members.map(member => <button key={member.id} className={selectedMember?.id === member.id ? 'selected' : ''} onClick={event => setSelectedMember({ id: member.id, trigger: event.currentTarget })}><FocusAvatar name={member.name} initials={member.initials} avatarUrl={member.avatarUrl} live={member.isLive} /><div><b>{member.id === profile.id ? 'You' : member.name}</b><span>{member.isLive ? `Studying · ${member.subject}` : member.username ? `@${member.username}` : 'Not studying now'}</span></div><strong>{member.isLive ? compactFocusTime(member.liveSeconds ?? 0) : member.analyticsShared ? compactFocusTime(member.weeklySeconds) : 'Private'}<small>{member.isLive ? 'live block' : 'this week'}</small></strong></button>)}</div> : <div className="focus-empty-inline"><FontAwesomeIcon icon={faUsers} /><p>Member records have not loaded.</p></div>}</section>
     </>}
 
     {tab === 'rank' && <section className="focus-card focus-group-ranking"><FocusSectionHeading eyebrow="Weekly ranking" title="Consistency inside this room" detail="Ranked by server-verified focused time for the current week." />{groupRanking.length ? groupRanking.map((entry, index) => <article key={entry.person.id} className={entry.person.id === profile.id ? 'self' : ''}><span className="focus-rank-number">{index === 0 ? <FontAwesomeIcon icon={faCrown} /> : index + 1}</span><FocusAvatar name={entry.person.name} initials={entry.person.initials} avatarUrl={entry.person.avatarUrl} /><div><b>{entry.person.id === profile.id ? 'You' : entry.person.name}</b><span>{entry.person.streak}-day streak</span></div><strong>{compactFocusTime(entry.weekSeconds)}</strong></article>) : <div className="focus-empty-inline"><FontAwesomeIcon icon={faTrophy} /><p>No verified focus time has been ranked this week.</p></div>}</section>}
 
     {tab === 'chat' && <section className="focus-card focus-group-chat"><FocusSectionHeading eyebrow="Group chat" title="Room messages" detail="Messages come from the connected group service; none are generated locally." />{groupMessages.length ? <div className="focus-chat-messages">{groupMessages.map(message => <article key={message.id} className={message.senderId === profile.id ? 'self' : ''}><FocusAvatar name={message.senderName} initials={message.senderInitials} avatarUrl={message.senderAvatarUrl} size="sm" /><div><span><b>{message.senderId === profile.id ? 'You' : message.senderName}</b><time>{new Date(message.createdAt).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' })}</time></span><p>{message.text}</p></div></article>)}</div> : <div className="focus-empty-inline"><FontAwesomeIcon icon={faCommentDots} /><p>No messages yet. Start with a useful study update.</p></div>}{messageError && <p className="focus-group-form-error" role="alert">{messageError}</p>}<form className="focus-chat-composer" aria-busy={messageSending} onSubmit={event => { event.preventDefault(); void sendMessage() }}><input value={messageDraft} onChange={event => { setMessageDraft(event.target.value); setMessageError('') }} placeholder="Message the group" maxLength={500} disabled={messageSending} /><button disabled={messageSending || !messageDraft.trim()}><FontAwesomeIcon icon={messageSending ? faCircleNotch : faPaperPlane} spin={messageSending} /><span>{messageSending ? 'Sending…' : 'Send'}</span></button></form></section>}
 
-    {memberDetail && <FocusOverlayPortal><div className="focus-member-sheet-backdrop" onClick={() => setMemberDetail(null)}><aside className="focus-member-sheet" aria-busy={Boolean(memberAction)} onClick={event => event.stopPropagation()}><button className="focus-member-close" onClick={() => setMemberDetail(null)} aria-label="Close member details"><FontAwesomeIcon icon={faXmark} /></button><FocusAvatar name={memberDetail.name} initials={memberDetail.initials} avatarUrl={memberDetail.avatarUrl} live={memberDetail.isLive} size="lg" /><span>{memberDetail.isLive ? `Focusing · ${memberDetail.subject}` : 'Not focusing now'}</span><h3>{memberDetail.name}</h3><div className="focus-member-metrics"><div><b>{compactFocusTime(memberDetail.liveSeconds ?? 0)}</b><span>live block</span></div><div><b>{compactFocusTime(memberDetail.todaySeconds)}</b><span>today</span></div><div><b>{compactFocusTime(memberDetail.weeklySeconds)}</b><span>this week</span></div></div><p>These totals are shown only if this member’s sharing settings permit it.</p><div className="focus-member-actions"><button disabled={Boolean(memberAction)} onClick={() => { void actOnMember('nudge', memberDetail) }}><FontAwesomeIcon icon={memberAction === `nudge:${memberDetail.id}` ? faCircleNotch : faPaperPlane} spin={memberAction === `nudge:${memberDetail.id}`} /> {memberAction === `nudge:${memberDetail.id}` ? 'Sending…' : 'Nudge'}</button>{group.canManage && <><button disabled={Boolean(memberAction)} onClick={() => { void actOnMember('remove', memberDetail) }}><FontAwesomeIcon icon={memberAction === `remove:${memberDetail.id}` ? faCircleNotch : faTrash} spin={memberAction === `remove:${memberDetail.id}`} /> {memberAction === `remove:${memberDetail.id}` ? 'Removing…' : 'Remove'}</button><button className="danger" disabled={Boolean(memberAction)} onClick={() => { void actOnMember('block', memberDetail) }}><FontAwesomeIcon icon={memberAction === `block:${memberDetail.id}` ? faCircleNotch : faBan} spin={memberAction === `block:${memberDetail.id}`} /> {memberAction === `block:${memberDetail.id}` ? 'Blocking…' : 'Block'}</button></>}</div></aside></div></FocusOverlayPortal>}
+    {memberDetail && selectedMember && <FocusPersonDetails person={memberDetail} relationshipLabel={memberDetail.id === profile.id ? 'Your group profile' : `${group.name} member`} restoreFocusTo={selectedMember.trigger} busy={Boolean(memberAction)} onClose={() => setSelectedMember(null)} actions={memberDetail.id !== profile.id ? <><button className="primary" disabled={Boolean(memberAction)} onClick={() => { void actOnMember('nudge', memberDetail) }}><FontAwesomeIcon icon={memberAction === `nudge:${memberDetail.id}` ? faCircleNotch : faPaperPlane} spin={memberAction === `nudge:${memberDetail.id}`} /> {memberAction === `nudge:${memberDetail.id}` ? 'Sending…' : 'Nudge'}</button>{group.canManage && <><button disabled={Boolean(memberAction)} onClick={() => { void actOnMember('remove', memberDetail) }}><FontAwesomeIcon icon={memberAction === `remove:${memberDetail.id}` ? faCircleNotch : faTrash} spin={memberAction === `remove:${memberDetail.id}`} /> {memberAction === `remove:${memberDetail.id}` ? 'Removing…' : 'Remove'}</button><button className="danger" disabled={Boolean(memberAction)} onClick={() => { void actOnMember('block', memberDetail) }}><FontAwesomeIcon icon={memberAction === `block:${memberDetail.id}` ? faCircleNotch : faBan} spin={memberAction === `block:${memberDetail.id}`} /> {memberAction === `block:${memberDetail.id}` ? 'Blocking…' : 'Block'}</button></>}</> : undefined} />}
   </div>
 }
 

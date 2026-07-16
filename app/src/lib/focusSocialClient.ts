@@ -3,6 +3,7 @@ import { getSupabase } from '@/lib/authClient'
 import type {
   FocusCompletionReason,
   FocusPhase,
+  FocusSession as LocalFocusSession,
   FocusTimerMode,
 } from '@/types/focus'
 
@@ -16,6 +17,11 @@ export type FocusPresenceVisibility = 'private' | 'friends' | 'groups'
 export type FocusNudgeKind = 'focus' | 'break' | 'resume' | 'encourage'
 export type FocusRelationship = 'none' | 'friend' | 'incoming' | 'outgoing'
 export type FocusInviteLinkKind = 'friend' | 'group'
+
+/** A live row must be renewed several times before this conservative expiry. */
+export const FOCUS_PRESENCE_HEARTBEAT_MS = 30_000
+export const FOCUS_PRESENCE_FRESH_MS = 90_000
+const FOCUS_PRESENCE_MAX_CLOCK_SKEW_MS = 30_000
 
 export interface FocusResult<T> {
   data: T
@@ -33,6 +39,7 @@ export interface FocusProfile {
   discoverable: boolean
   allowFriendRequests: boolean
   allowGroupInvites: boolean
+  shareFocusTotals: boolean
   showInRankings: boolean
   createdAt: string
   updatedAt: string
@@ -47,6 +54,7 @@ export interface FocusProfileInput {
   discoverable?: boolean
   allowFriendRequests?: boolean
   allowGroupInvites?: boolean
+  shareFocusTotals?: boolean
   showInRankings?: boolean
 }
 
@@ -278,6 +286,29 @@ export interface FocusPresence {
   updatedAt: string
 }
 
+/**
+ * Returns zero for malformed/non-focusing rows. `lastSeenAt` is evidence of a
+ * successful authenticated write, not proof that the remote auth session is
+ * still alive now; the short expiry deliberately models that limitation.
+ */
+export function getFocusPresenceExpiresAt(presence: FocusPresence | null | undefined, at = Date.now()) {
+  if (!presence || presence.status !== 'focusing' || !presence.userId) return 0
+  const now = Number.isFinite(at) ? at : Date.now()
+  const startedAt = Date.parse(presence.focusStartedAt ?? '')
+  const lastSeenAt = Date.parse(presence.lastSeenAt)
+  if (!Number.isFinite(startedAt) || !Number.isFinite(lastSeenAt)) return 0
+  // Reject device clocks far in the future so one bad client cannot appear
+  // live indefinitely. Small skew remains tolerated across real devices.
+  if (startedAt > now + FOCUS_PRESENCE_MAX_CLOCK_SKEW_MS ||
+      lastSeenAt > now + FOCUS_PRESENCE_MAX_CLOCK_SKEW_MS ||
+      startedAt > lastSeenAt + FOCUS_PRESENCE_MAX_CLOCK_SKEW_MS) return 0
+  return lastSeenAt + FOCUS_PRESENCE_FRESH_MS
+}
+
+export function isFreshFocusingPresence(presence: FocusPresence | null | undefined, at = Date.now()) {
+  return getFocusPresenceExpiresAt(presence, at) > at
+}
+
 export interface FocusRankingRow {
   userId: string
   displayName: string
@@ -287,6 +318,14 @@ export interface FocusRankingRow {
   rankPosition: number
   periodStart: string
   periodEnd: string
+}
+
+export interface FocusSharedTotals {
+  userId: string
+  daySeconds: number
+  weekSeconds: number
+  monthSeconds: number
+  totalsShared: boolean
 }
 
 interface FocusContext {
@@ -384,7 +423,8 @@ function profileFromRow(value: unknown): FocusProfile {
     discoverable: row.discoverable === true,
     allowFriendRequests: row.allow_friend_requests !== false,
     allowGroupInvites: row.allow_group_invites !== false,
-    showInRankings: row.show_in_rankings !== false,
+    shareFocusTotals: row.share_focus_totals === true,
+    showInRankings: row.show_in_rankings === true,
     createdAt: text(row, 'created_at'),
     updatedAt: text(row, 'updated_at'),
   }
@@ -624,6 +664,7 @@ export function upsertFocusProfile(input: FocusProfileInput) {
     if (input.discoverable !== undefined) row.discoverable = input.discoverable
     if (input.allowFriendRequests !== undefined) row.allow_friend_requests = input.allowFriendRequests
     if (input.allowGroupInvites !== undefined) row.allow_group_invites = input.allowGroupInvites
+    if (input.shareFocusTotals !== undefined) row.share_focus_totals = input.shareFocusTotals
     if (input.showInRankings !== undefined) row.show_in_rankings = input.showInRankings
     const { data, error } = await supabase.from('focus_profiles').upsert(row).select('*').single()
     throwOnError(error)
@@ -812,6 +853,39 @@ export function syncCompletedFocusSession(input: CompletedFocusSessionInput) {
     }, { onConflict: 'user_id,client_session_id' }).select('*').single()
     throwOnError(error)
     return sessionFromRow(data)
+  })
+}
+
+/**
+ * Uploads the canonical local-store representation without making each caller
+ * duplicate the paused/interruption conversion. The upsert remains idempotent
+ * through the stable local timer ID, including a logout flush racing normal
+ * background sync.
+ */
+export function syncLocalCompletedFocusSession(session: LocalFocusSession) {
+  const interruptionMs = session.interruptions.reduce((sum, interruption) => {
+    if (interruption.durationMs !== null) return sum + interruption.durationMs
+    if (interruption.endedAt !== null) return sum + Math.max(0, interruption.endedAt - interruption.startedAt)
+    return sum
+  }, 0)
+  return syncCompletedFocusSession({
+    clientSessionId: session.id,
+    // Local subject tags are stable strings, while cloud categories are UUIDs.
+    // Keep the subject snapshot as the searchable label until IDs are mapped.
+    categoryId: null,
+    label: session.subjectName || session.topic || 'Focus session',
+    note: session.note,
+    mode: session.mode,
+    phase: session.phase,
+    plannedSeconds: session.plannedDurationMs ? Math.round(session.plannedDurationMs / 1_000) : null,
+    startedAt: new Date(session.startedAt).toISOString(),
+    endedAt: new Date(session.endedAt).toISOString(),
+    durationSeconds: Math.round(session.elapsedMs / 1_000),
+    pausedSeconds: Math.round(session.pausedMs / 1_000),
+    pauseCount: session.pauseCount,
+    interruptionCount: session.interruptions.length,
+    interruptionSeconds: Math.round(interruptionMs / 1_000),
+    completionReason: session.completionReason === 'timer' ? 'timer' : 'manual',
   })
 }
 
@@ -1341,8 +1415,13 @@ export function setFocusPresence(input: {
   activeSessionId?: string | null
   message?: string
   focusStartedAt?: string | null
+  /** Prevents a delayed heartbeat from crossing into a newly signed-in user. */
+  expectedUserId?: string | null
 }) {
   return withFocus<FocusPresence | null>(null, async ({ supabase, userId }) => {
+    if (input.expectedUserId && input.expectedUserId !== userId) {
+      throw new Error('Focus account changed before the presence heartbeat was sent')
+    }
     const { data, error } = await supabase.from('focus_presence').upsert({
       user_id: userId,
       status: input.status,
@@ -1384,6 +1463,26 @@ export function getFocusRanking(period: FocusPeriod, options: { timezone?: strin
       rankPosition: numberValue(row, 'rank_position'),
       periodStart: text(row, 'period_start'),
       periodEnd: text(row, 'period_end'),
+    }))
+  })
+}
+
+export function getFocusSharedTotals(userIds: string[], options: { timezone?: string } = {}) {
+  return withFocus<FocusSharedTotals[]>([], async ({ supabase }) => {
+    const targets = [...new Set(userIds.filter(Boolean))]
+    if (!targets.length) return []
+    if (targets.length > 200) throw new Error('At most 200 Focus profiles can be requested at once')
+    const { data, error } = await supabase.rpc('focus_shared_totals', {
+      p_target_user_ids: targets,
+      p_timezone: options.timezone ?? getDeviceTimeZone(),
+    })
+    throwOnError(error)
+    return ((data ?? []) as DbRow[]).map(row => ({
+      userId: text(row, 'user_id'),
+      daySeconds: numberValue(row, 'day_seconds'),
+      weekSeconds: numberValue(row, 'week_seconds'),
+      monthSeconds: numberValue(row, 'month_seconds'),
+      totalsShared: row.totals_shared === true,
     }))
   })
 }

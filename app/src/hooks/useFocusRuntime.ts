@@ -12,11 +12,18 @@ import {
   type FocusGuardHandle,
   type FocusInterruptionEvent,
 } from '@/lib/focusShield'
-import { setFocusPresence } from '@/lib/focusSocialClient'
+import {
+  FOCUS_PRESENCE_FRESH_MS,
+  FOCUS_PRESENCE_HEARTBEAT_MS,
+  setFocusPresence,
+  syncLocalCompletedFocusSession,
+} from '@/lib/focusSocialClient'
+import { queueFocusExitUpload, removeFocusExitUpload } from '@/lib/focusExitOutbox'
 import {
   getActiveElapsedMs,
   getActiveRemainingMs,
   isActiveTimerComplete,
+  MIN_COUNTED_FOCUS_MS,
   useFocusStore,
 } from '@/stores/useFocusStore'
 import type {
@@ -31,7 +38,128 @@ import type {
 
 const MIN_INTERRUPTION_MS = 1_000
 const INTERRUPTION_DEDUPE_WINDOW_MS = 1_500
-const PRESENCE_HEARTBEAT_MS = 60_000
+const ACCOUNT_EXIT_REMOTE_TIMEOUT_MS = 1_800
+const LIVE_PRESENCE_MARKER_KEY = 'penni.focus.live-presence.v1'
+
+interface LivePresenceMarker {
+  accountUserId: string
+  sharedAt: number
+}
+
+function readLivePresenceMarker(): LivePresenceMarker | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(LIVE_PRESENCE_MARKER_KEY) ?? 'null') as Partial<LivePresenceMarker> | null
+    if (!parsed || typeof parsed.accountUserId !== 'string' || !Number.isFinite(parsed.sharedAt)) return null
+    if (Date.now() - Number(parsed.sharedAt) > FOCUS_PRESENCE_FRESH_MS) return null
+    return { accountUserId: parsed.accountUserId, sharedAt: Number(parsed.sharedAt) }
+  } catch {
+    return null
+  }
+}
+
+function rememberLivePresence(accountUserId: string) {
+  const marker = { accountUserId, sharedAt: Date.now() }
+  try { window.localStorage.setItem(LIVE_PRESENCE_MARKER_KEY, JSON.stringify(marker)) } catch { /* in-memory marker still works */ }
+  return marker
+}
+
+function forgetLivePresence(accountUserId: string) {
+  if (typeof window === 'undefined') return
+  try {
+    const marker = readLivePresenceMarker()
+    if (!marker || marker.accountUserId === accountUserId) window.localStorage.removeItem(LIVE_PRESENCE_MARKER_KEY)
+  } catch { /* noop */ }
+}
+
+function settleWithin<T>(promise: Promise<T>, timeoutMs: number, fallback: T): Promise<T> {
+  return new Promise(resolve => {
+    const timeout = globalThis.setTimeout(() => resolve(fallback), timeoutMs)
+    promise.then(
+      value => { globalThis.clearTimeout(timeout); resolve(value) },
+      () => { globalThis.clearTimeout(timeout); resolve(fallback) },
+    )
+  })
+}
+
+export interface StopFocusForAccountExitOptions {
+  /** Fixed click-time boundary: no time after this instant is credited. */
+  at?: number
+  /** Delete-account and emergency paths may deliberately skip saving. */
+  saveElapsed?: boolean
+  /** False only when auth has already disappeared and an RLS write is impossible. */
+  publishOffline?: boolean
+  /** Owner used to isolate a timed-out final-session upload for later retry. */
+  accountUserId?: string | null
+}
+
+export interface FocusAccountExitResult {
+  session: FocusSession | null
+  sessionUploaded: boolean
+  presencePublished: boolean
+}
+
+type FocusAccountExitHandler = (options?: StopFocusForAccountExitOptions) => Promise<FocusAccountExitResult>
+let mountedAccountExitHandler: FocusAccountExitHandler | null = null
+
+function finalizeTimerForAccountExit(at: number, saveElapsed: boolean) {
+  const state = useFocusStore.getState()
+  const timer = state.activeTimer
+  if (!timer) return { timerId: null, session: null }
+
+  const shouldSave = saveElapsed && timer.phase === 'focus' && getActiveElapsedMs(timer, at) >= MIN_COUNTED_FOCUS_MS
+  const closed = shouldSave
+    ? state.finish({ at, reason: 'manual' })
+    : state.cancel({ at, reason: 'account-exit', discard: true })
+
+  // A completed Pomodoro can auto-create a break. Logging out is an explicit
+  // terminal action, so never let that prepared timer cross the account edge.
+  const replacement = useFocusStore.getState().activeTimer
+  if (replacement) {
+    useFocusStore.getState().cancel({ at, reason: 'account-exit-auto-start', discard: true })
+  }
+  return { timerId: timer.id, session: shouldSave && closed?.status === 'completed' ? closed : null }
+}
+
+async function uploadExitSession(session: FocusSession | null, accountUserId?: string | null) {
+  if (!session) return false
+  queueFocusExitUpload(accountUserId, session)
+  try {
+    const result = await syncLocalCompletedFocusSession(session)
+    if (!result.available || !result.data) return false
+    useFocusStore.getState().markSessionSynced(
+      session.id,
+      result.data.id,
+      Date.now(),
+      session.sync.revision,
+    )
+    removeFocusExitUpload(accountUserId, session.id)
+    return true
+  } catch {
+    // Signing out must remain possible offline. The click-time session is
+    // still finalized locally before account data is isolated below.
+    return false
+  }
+}
+
+/**
+ * Stops the local Focus runtime before an authenticated account is released.
+ * The mounted hook supplies full guard/queue teardown; the fallback covers
+ * auth-store tests and early lifecycle exits where no runtime has mounted.
+ */
+export async function stopFocusForAccountExit(options: StopFocusForAccountExitOptions = {}): Promise<FocusAccountExitResult> {
+  if (mountedAccountExitHandler) return mountedAccountExitHandler(options)
+  const at = options.at ?? Date.now()
+  const { timerId, session } = finalizeTimerForAccountExit(at, options.saveElapsed !== false)
+  // Without a mounted runtime there is no trustworthy evidence that this
+  // account actually published live presence. Privacy wins: do not reveal an
+  // otherwise private sign-out timestamp merely to overwrite a row.
+  const [sessionUploaded] = await Promise.all([
+    settleWithin(uploadExitSession(session, options.accountUserId), ACCOUNT_EXIT_REMOTE_TIMEOUT_MS, false),
+    timerId ? cancelFocusCompletion(timerId).then(() => true, () => false) : Promise.resolve(false),
+  ])
+  return { session, sessionUploaded, presencePublished: false }
+}
 
 export interface FocusRuntimeGuardState {
   starting: boolean
@@ -44,6 +172,8 @@ export interface FocusRuntimeGuardState {
 export interface UseFocusRuntimeOptions {
   /** Timestamp refresh cadence. Elapsed time itself is always derived from timestamps. */
   tickMs?: number
+  /** Auth-store identity already validated against the current device session. */
+  presenceAccountId?: string | null
   onComplete?: (session: FocusSession) => void
   onShowToast?: (message: string) => void
 }
@@ -110,6 +240,7 @@ export function useFocusRuntime(options: UseFocusRuntimeOptions = {}): FocusRunt
   const mountedRef = useRef(false)
   const onCompleteRef = useRef(options.onComplete)
   const onShowToastRef = useRef(options.onShowToast)
+  const presenceAccountIdRef = useRef(options.presenceAccountId ?? null)
   const guardRef = useRef<GuardSlot>({ generation: 0, sessionId: null, handle: null, pending: null })
   const guardCleanupRef = useRef<Promise<void> | null>(null)
   const notificationGenerationRef = useRef(0)
@@ -125,7 +256,9 @@ export function useFocusRuntime(options: UseFocusRuntimeOptions = {}): FocusRunt
   const presenceQueueRef = useRef<Promise<void>>(Promise.resolve())
   const presenceWasSharedRef = useRef(false)
   const presenceSignatureRef = useRef<string | null>(null)
+  const publishedLivePresenceRef = useRef<LivePresenceMarker | null>(readLivePresenceMarker())
   const observedTimerIdRef = useRef<string | null>(activeTimer?.id ?? null)
+  presenceAccountIdRef.current = options.presenceAccountId ?? null
 
   useEffect(() => { onCompleteRef.current = options.onComplete }, [options.onComplete])
   useEffect(() => { onShowToastRef.current = options.onShowToast }, [options.onShowToast])
@@ -282,6 +415,13 @@ export function useFocusRuntime(options: UseFocusRuntimeOptions = {}): FocusRunt
 
   const enqueuePresence = useCallback((timer: ActiveFocusTimer | null, force = false) => {
     const state = useFocusStore.getState()
+    const expectedUserId = presenceAccountIdRef.current
+    if (!expectedUserId) {
+      presenceWasSharedRef.current = false
+      presenceSignatureRef.current = null
+      presenceGenerationRef.current++
+      return
+    }
     const shouldShare = state.privacy.shareLiveStatus
     const previouslyShared = presenceWasSharedRef.current
     presenceWasSharedRef.current = shouldShare && Boolean(timer)
@@ -301,11 +441,22 @@ export function useFocusRuntime(options: UseFocusRuntimeOptions = {}): FocusRunt
     presenceQueueRef.current = presenceQueueRef.current.catch(() => undefined).then(async () => {
       if (generation !== presenceGenerationRef.current) return
       if (!shouldShare || !timer) {
-        await setFocusPresence({ status: 'offline', visibility: 'private', activeSessionId: null, focusStartedAt: null })
+        const marker = publishedLivePresenceRef.current
+        if (!marker || marker.accountUserId !== expectedUserId ||
+            Date.now() - marker.sharedAt > FOCUS_PRESENCE_FRESH_MS) return
+        // Keep the terminal row in the same RLS audience so existing friends
+        // receive the realtime `offline` update instead of retaining a live
+        // row until its safety TTL expires.
+        const result = await setFocusPresence({ status: 'offline', visibility: 'friends', activeSessionId: null, focusStartedAt: null, expectedUserId })
+        if (result.available) {
+          publishedLivePresenceRef.current = null
+          forgetLivePresence(expectedUserId)
+        }
         return
       }
-      await setFocusPresence({
-        status: timer.status === 'paused' ? 'available' : timer.phase === 'focus' ? 'focusing' : 'break',
+      const status = timer.status === 'paused' ? 'available' : timer.phase === 'focus' ? 'focusing' : 'break'
+      const result = await setFocusPresence({
+        status,
         visibility,
         // Local timer IDs are not UUIDs and cannot satisfy the server-session
         // foreign key. The sync adapter may attach a server UUID later.
@@ -314,8 +465,58 @@ export function useFocusRuntime(options: UseFocusRuntimeOptions = {}): FocusRunt
         // Reconstruct an effective start from focused elapsed time so a
         // pause does not inflate what group peers see as the live block.
         focusStartedAt: new Date(Date.now() - getActiveElapsedMs(timer, Date.now())).toISOString(),
+        expectedUserId,
       })
+      if (!result.available) return
+      if (status === 'focusing') {
+        publishedLivePresenceRef.current = rememberLivePresence(expectedUserId)
+      } else if (publishedLivePresenceRef.current?.accountUserId === expectedUserId) {
+        publishedLivePresenceRef.current = null
+        forgetLivePresence(expectedUserId)
+      }
     }).then(() => undefined, () => undefined)
+  }, [])
+
+  const forceOfflinePresence = useCallback(async () => {
+    presenceWasSharedRef.current = false
+    presenceSignatureRef.current = 'offline'
+    // Invalidate queued live heartbeats. The terminal write itself is always
+    // executed (rather than generation-skipped), so two fast sign-out calls
+    // still make the first caller wait for a real offline write.
+    presenceGenerationRef.current++
+    let published = false
+    const terminalWrite = presenceQueueRef.current.catch(() => undefined).then(async () => {
+      try {
+        const expectedUserId = presenceAccountIdRef.current
+        if (!expectedUserId) return
+        const marker = publishedLivePresenceRef.current
+        if (!marker || marker.accountUserId !== expectedUserId ||
+            Date.now() - marker.sharedAt > FOCUS_PRESENCE_FRESH_MS) {
+          if (marker?.accountUserId === expectedUserId) {
+            publishedLivePresenceRef.current = null
+            forgetLivePresence(expectedUserId)
+          }
+          return
+        }
+        const result = await setFocusPresence({
+          status: 'offline',
+          visibility: 'friends',
+          activeSessionId: null,
+          focusStartedAt: null,
+          expectedUserId,
+        })
+        published = result.available
+        if (published) {
+          publishedLivePresenceRef.current = null
+          forgetLivePresence(expectedUserId)
+        }
+      } catch {
+        published = false
+      }
+    })
+    presenceQueueRef.current = terminalWrite.then(() => undefined, () => undefined)
+    await terminalWrite
+    return published
   }, [])
 
   const emitCompletionOnce = useCallback((session: FocusSession) => {
@@ -460,6 +661,44 @@ export function useFocusRuntime(options: UseFocusRuntimeOptions = {}): FocusRunt
     return session
   }, [cancelNotification, enqueuePresence, stopGuard])
 
+  const stopForAccountExit = useCallback<FocusAccountExitHandler>(async (options = {}) => {
+    // Freeze the accounting boundary before awaiting any native or network
+    // cleanup. Slow sign-out calls can never inflate the saved duration.
+    const at = options.at ?? Date.now()
+    const { timerId, session } = finalizeTimerForAccountExit(at, options.saveElapsed !== false)
+    backgroundRef.current = null
+    interruptionsRef.current = []
+    completionInFlightRef.current = null
+    if (mountedRef.current) setNow(at)
+
+    if (timerId) cancelNotification(timerId)
+    else cancelNotification()
+    const notificationCleanup = notificationQueueRef.current.catch(() => undefined)
+    const guardCleanup = stopGuard(timerId ?? undefined)
+    const accountUserId = options.accountUserId ?? presenceAccountIdRef.current
+    const sessionUpload = uploadExitSession(session, accountUserId)
+    const offlineWrite = options.publishOffline === false ? Promise.resolve(false) : forceOfflinePresence()
+    const remoteCleanup = Promise.all([sessionUpload, offlineWrite]).then(([sessionUploaded, presencePublished]) => ({
+      sessionUploaded,
+      presencePublished,
+    }))
+    const [remoteResult] = await Promise.all([
+      settleWithin(remoteCleanup, ACCOUNT_EXIT_REMOTE_TIMEOUT_MS, { sessionUploaded: false, presencePublished: false }),
+      // Device cleanup is bounded by local/native APIs, not the network
+      // deadline. We still await it so wake locks and notifications cannot
+      // survive after the account UI has disappeared.
+      Promise.all([notificationCleanup, guardCleanup]),
+    ])
+    return { session, ...remoteResult }
+  }, [cancelNotification, forceOfflinePresence, stopGuard])
+
+  useEffect(() => {
+    mountedAccountExitHandler = stopForAccountExit
+    return () => {
+      if (mountedAccountExitHandler === stopForAccountExit) mountedAccountExitHandler = null
+    }
+  }, [stopForAccountExit])
+
   useEffect(() => {
     mountedRef.current = true
     return () => {
@@ -524,19 +763,20 @@ export function useFocusRuntime(options: UseFocusRuntimeOptions = {}): FocusRunt
     const timer = useFocusStore.getState().activeTimer
     if (timer) enqueuePresence(timer)
     else if (presenceWasSharedRef.current) enqueuePresence(null)
-  }, [activeTimer?.id, activeTimer?.phase, activeTimer?.status, enqueuePresence, privacy.shareLiveStatus, privacy.profileVisibility])
+  }, [activeTimer?.id, activeTimer?.phase, activeTimer?.status, enqueuePresence, options.presenceAccountId, privacy.shareLiveStatus, privacy.profileVisibility])
 
-  // Group cards consider a presence stale after two minutes. Refresh the
-  // server timestamp without touching React state so a long-running session
-  // remains visibly live across friends and shared study groups.
+  // A focusing row is only renewed while the local store still owns a running
+  // focus timer. `setFocusPresence` checks authentication for every heartbeat.
   useEffect(() => {
-    if (!hasHydrated || !activeTimer || !privacy.shareLiveStatus) return
+    if (!options.presenceAccountId || !hasHydrated || !activeTimer || activeTimer.phase !== 'focus' ||
+        activeTimer.status !== 'running' || !privacy.shareLiveStatus) return
     const heartbeat = () => {
       const state = useFocusStore.getState()
-      if (!state.privacy.shareLiveStatus || !state.activeTimer) return
-      enqueuePresence(state.activeTimer, true)
+      const timer = state.activeTimer
+      if (!state.privacy.shareLiveStatus || timer?.phase !== 'focus' || timer.status !== 'running') return
+      enqueuePresence(timer, true)
     }
-    const interval = window.setInterval(heartbeat, PRESENCE_HEARTBEAT_MS)
+    const interval = window.setInterval(heartbeat, FOCUS_PRESENCE_HEARTBEAT_MS)
     const onVisibilityChange = () => {
       if (document.visibilityState === 'visible') heartbeat()
     }
@@ -545,7 +785,7 @@ export function useFocusRuntime(options: UseFocusRuntimeOptions = {}): FocusRunt
       window.clearInterval(interval)
       document.removeEventListener('visibilitychange', onVisibilityChange)
     }
-  }, [activeTimer?.id, enqueuePresence, hasHydrated, privacy.shareLiveStatus])
+  }, [activeTimer?.id, activeTimer?.phase, activeTimer?.status, enqueuePresence, hasHydrated, options.presenceAccountId, privacy.shareLiveStatus])
 
   // Account resets or other external store actions may clear/replace a timer
   // without going through this controller. Release every disposable tied to

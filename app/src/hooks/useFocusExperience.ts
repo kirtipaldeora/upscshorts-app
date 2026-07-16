@@ -29,11 +29,14 @@ import {
   createFocusInviteLink,
   createFocusGroup,
   findFocusProfile,
+  getFocusPresenceExpiresAt,
   getDeviceTimeZone,
   getFocusRanking,
+  getFocusSharedTotals,
   getFocusSocialAvailability,
   getMyFocusProfile,
   inviteFocusGroupByContact,
+  isFreshFocusingPresence,
   joinOrRequestFocusGroup,
   leaveFocusGroup,
   listDiscoverableFocusGroups,
@@ -72,6 +75,7 @@ import {
   type FocusProfileMatch,
   type FocusRankingRow,
   type FocusResult,
+  type FocusSharedTotals,
   type FocusUnavailableReason,
 } from '@/lib/focusSocialClient'
 import { useAuthStore } from '@/stores/useAuthStore'
@@ -86,13 +90,13 @@ import {
 } from '@/stores/useFocusStore'
 
 const SECOND_MS = 1_000
-const MINUTE_MS = 60_000
-const REMOTE_PRESENCE_TTL_MS = 3 * 60 * MINUTE_MS
 const GENERAL_SUBJECT_ID = 'focus-subject-untagged'
+const TIMER_MODE_STORAGE_KEY = 'penni.focus.preferred-timer-mode'
 const BUILT_IN_SUBJECT_IDS = new Set(DEFAULT_FOCUS_SUBJECT_TAGS.map(subject => subject.id))
 const CUSTOM_SUBJECT_COLORS = ['#8FA3BF', '#7CB8A5', '#A994D3', '#D59B72', '#719FC9', '#C382A5']
 
 type RankingSets = Record<SocialFocusPeriod, FocusRankingRow[]>
+type SharedTotalsByUser = Record<string, FocusSharedTotals>
 type GroupMemberSets = Record<string, FocusGroupMember[]>
 type GroupMessageSets = Record<string, FocusGroupMessage[]>
 type GroupRankingSets = Record<string, RankingSets>
@@ -101,10 +105,12 @@ interface ProfileFlags {
   discoverable: boolean
   allowFriendRequests: boolean
   allowGroupInvites: boolean
+  shareFocusTotals: boolean
   showInRankings: boolean
 }
 
 interface FocusSocialState {
+  accountUserId: string | null
   availability: 'ready' | FocusUnavailableReason
   loading: boolean
   error: string | null
@@ -115,6 +121,7 @@ interface FocusSocialState {
   groups: SocialFocusGroup[]
   groupInvites: FocusGroupInvite[]
   groupJoinRequests: FocusGroupJoinRequest[]
+  sharedTotals: SharedTotalsByUser
   rankings: RankingSets
   groupMembers: GroupMemberSets
   groupMessages: GroupMessageSets
@@ -142,6 +149,7 @@ function emptyRankings(): RankingSets {
 
 function emptySocialState(availability: FocusSocialState['availability'] = 'guest'): FocusSocialState {
   return {
+    accountUserId: null,
     availability,
     loading: false,
     error: null,
@@ -152,6 +160,7 @@ function emptySocialState(availability: FocusSocialState['availability'] = 'gues
     groups: [],
     groupInvites: [],
     groupJoinRequests: [],
+    sharedTotals: {},
     rankings: emptyRankings(),
     groupMembers: {},
     groupMessages: {},
@@ -173,6 +182,16 @@ function timestamp(value: string | null | undefined) {
   if (!value) return 0
   const parsed = Date.parse(value)
   return Number.isFinite(parsed) ? parsed : 0
+}
+
+function preferredTimerMode(): FocusTimerSnapshot['mode'] {
+  if (typeof window === 'undefined') return 'pomodoro'
+  try { return window.localStorage.getItem(TIMER_MODE_STORAGE_KEY) === 'stopwatch' ? 'stopwatch' : 'pomodoro' } catch { return 'pomodoro' }
+}
+
+function rememberTimerMode(mode: FocusTimerSnapshot['mode']) {
+  if (typeof window === 'undefined') return
+  try { window.localStorage.setItem(TIMER_MODE_STORAGE_KEY, mode) } catch { /* the timer still works when storage is blocked */ }
 }
 
 function unavailableMessage(reason: FocusUnavailableReason) {
@@ -240,12 +259,24 @@ function rankingValue(rankings: RankingSets, period: SocialFocusPeriod, userId: 
   return rankings[period].find(row => row.userId === userId)?.totalSeconds ?? 0
 }
 
+function replaceSharedTotals(
+  current: SharedTotalsByUser,
+  requestedUserIds: string[],
+  summaries: FocusSharedTotals[],
+) {
+  const next = { ...current }
+  requestedUserIds.forEach(userId => { delete next[userId] })
+  summaries.forEach(summary => { next[summary.userId] = summary })
+  return next
+}
+
 function profileFlags(profile: SocialFocusProfile | null, fallback: ProfileFlags): ProfileFlags {
   if (!profile) return fallback
   return {
     discoverable: profile.discoverable,
     allowFriendRequests: profile.allowFriendRequests,
     allowGroupInvites: profile.allowGroupInvites,
+    shareFocusTotals: profile.shareFocusTotals,
     showInRankings: profile.showInRankings,
   }
 }
@@ -280,7 +311,7 @@ export function useFocusExperience(
   const [social, setSocial] = useState<FocusSocialState>(() => emptySocialState())
   const [shieldCapability, setShieldCapability] = useState<FocusShieldCapability | null>(null)
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null)
-  const [idleMode, setIdleMode] = useState<FocusTimerSnapshot['mode']>('pomodoro')
+  const [idleMode, setIdleMode] = useState<FocusTimerSnapshot['mode']>(preferredTimerMode)
   const [idlePhase, setIdlePhase] = useState<FocusTimerSnapshot['phase']>('focus')
   const [idleSubjectId, setIdleSubjectId] = useState(() =>
     useFocusStore.getState().subjectTags.find(tag => tag.archivedAt === null)?.id ?? '')
@@ -298,7 +329,8 @@ export function useFocusExperience(
     discoverable: privacy.discoverable,
     allowFriendRequests: privacy.discoverable,
     allowGroupInvites: privacy.allowStudyInvites,
-    showInRankings: privacy.shareAggregateStats && privacy.profileVisibility === 'public',
+    shareFocusTotals: privacy.shareAggregateStats,
+    showInRankings: privacy.appearInRankings,
   })
   const profileWriteQueueRef = useRef<Promise<void>>(Promise.resolve())
   const profileWriteGenerationRef = useRef(0)
@@ -336,8 +368,11 @@ export function useFocusExperience(
       }
       return
     }
+    const accountUserId = user.id
 
-    if (mountedRef.current) setSocial(current => ({ ...current, loading: true, error: null }))
+    if (mountedRef.current) setSocial(current => current.accountUserId === accountUserId
+      ? { ...current, loading: true, error: null }
+      : { ...emptySocialState(current.availability), accountUserId, loading: true })
     let availability: Awaited<ReturnType<typeof getFocusSocialAvailability>>
     try {
       availability = await getFocusSocialAvailability()
@@ -376,8 +411,14 @@ export function useFocusExperience(
     ])
     if (generation !== refreshGenerationRef.current) return
 
+    const sharedTotalTargetIds = friendsRead.result?.available
+      ? friendsRead.result.data.map(friend => friend.userId)
+      : []
+    const sharedTotalsRead = await safeResult(getFocusSharedTotals(sharedTotalTargetIds))
+    if (generation !== refreshGenerationRef.current) return
+
     let nextProfile = profileRead.result?.available ? profileRead.result.data : null
-    let firstError = [profileRead, contactHashRead, friendsRead, requestsRead, presenceRead, groupsRead, discoverRead, invitesRead, joinRequestsRead, dayRead, weekRead, monthRead]
+    let firstError = [profileRead, contactHashRead, friendsRead, requestsRead, presenceRead, groupsRead, discoverRead, invitesRead, joinRequestsRead, dayRead, weekRead, monthRead, sharedTotalsRead]
       .map(read => read.error)
       .find(Boolean) ?? null
 
@@ -394,7 +435,7 @@ export function useFocusExperience(
       firstError ??= created.error
     }
 
-    const unavailable = [profileRead, contactHashRead, friendsRead, requestsRead, presenceRead, groupsRead, discoverRead, invitesRead, joinRequestsRead, dayRead, weekRead, monthRead]
+    const unavailable = [profileRead, contactHashRead, friendsRead, requestsRead, presenceRead, groupsRead, discoverRead, invitesRead, joinRequestsRead, dayRead, weekRead, monthRead, sharedTotalsRead]
       .map(read => read.result)
       .find(result => result && !result.available)?.reason
     if (unavailable) {
@@ -403,11 +444,9 @@ export function useFocusExperience(
     }
 
     if (nextProfile) {
-      const localPrivacy = useFocusStore.getState().privacy
-      const desiredRankingVisibility = localPrivacy.shareAggregateStats && localPrivacy.profileVisibility === 'public'
       const identityChanged = nextProfile.displayName !== identityRef.current.displayName || nextProfile.avatarUrl !== identityRef.current.avatarUrl
-      if (nextProfile.showInRankings !== desiredRankingVisibility || identityChanged) {
-        const rankingSafeProfile = await safeResult(upsertFocusProfile({
+      if (identityChanged) {
+        const identityProfile = await safeResult(upsertFocusProfile({
           displayName: identityRef.current.displayName,
           avatarUrl: identityRef.current.avatarUrl,
           headline: nextProfile.headline,
@@ -415,13 +454,14 @@ export function useFocusExperience(
           discoverable: nextProfile.discoverable,
           allowFriendRequests: nextProfile.allowFriendRequests,
           allowGroupInvites: nextProfile.allowGroupInvites,
-          showInRankings: desiredRankingVisibility,
+          shareFocusTotals: nextProfile.shareFocusTotals,
+          showInRankings: nextProfile.showInRankings,
         }))
         if (generation !== refreshGenerationRef.current) return
-        if (rankingSafeProfile.result?.available && rankingSafeProfile.result.data) {
-          nextProfile = rankingSafeProfile.result.data
+        if (identityProfile.result?.available && identityProfile.result.data) {
+          nextProfile = identityProfile.result.data
         } else {
-          firstError ??= rankingSafeProfile.error
+          firstError ??= identityProfile.error
         }
       }
       const flags = profileFlags(nextProfile, profileFlagsRef.current)
@@ -429,6 +469,8 @@ export function useFocusExperience(
       updatePrivacy({
         discoverable: flags.discoverable && flags.allowFriendRequests,
         allowStudyInvites: flags.allowGroupInvites,
+        shareAggregateStats: flags.shareFocusTotals,
+        appearInRankings: flags.showInRankings,
       })
     }
 
@@ -444,6 +486,7 @@ export function useFocusExperience(
       : null
     setSocial(current => ({
       ...current,
+      accountUserId,
       availability: 'ready',
       loading: false,
       error: firstError,
@@ -454,6 +497,9 @@ export function useFocusExperience(
       groups: refreshedGroups ?? current.groups,
       groupInvites: invitesRead.result?.available ? invitesRead.result.data : current.groupInvites,
       groupJoinRequests: adminJoinRequests ?? current.groupJoinRequests,
+      sharedTotals: sharedTotalsRead.result?.available
+        ? replaceSharedTotals(current.sharedTotals, sharedTotalTargetIds, sharedTotalsRead.result.data)
+        : current.sharedTotals,
       rankings: {
         day: dayRead.result?.available ? dayRead.result.data : current.rankings.day,
         week: weekRead.result?.available ? weekRead.result.data : current.rankings.week,
@@ -477,13 +523,18 @@ export function useFocusExperience(
     return () => window.removeEventListener('online', handleOnline)
   }, [refresh])
 
+  const presenceAccountReady = Boolean(
+    authReady && !isGuest && user?.id && social.availability === 'ready' && social.accountUserId === user.id,
+  )
+
   useEffect(() => {
     let disposed = false
     let unsubscribe: (() => void) | null = null
-    if (social.availability !== 'ready') return
+    if (!presenceAccountReady || !user?.id) return
+    const subscribedUserId = user.id
     void subscribeToFocusPresence(presence => {
       if (!disposed && mountedRef.current) {
-        setSocial(current => ({
+        setSocial(current => current.accountUserId !== subscribedUserId ? current : ({
           ...current,
           presence: [presence, ...current.presence.filter(item => item.userId !== presence.userId)],
         }))
@@ -496,22 +547,26 @@ export function useFocusExperience(
       disposed = true
       unsubscribe?.()
     }
-  }, [social.availability, user?.id])
+  }, [presenceAccountReady, user?.id])
 
-  const livePresenceExpiry = useMemo(() => social.presence.reduce((latest, presence) =>
-    presence.status === 'focusing'
-      ? Math.max(latest, timestamp(presence.lastSeenAt) + REMOTE_PRESENCE_TTL_MS)
-      : latest, 0), [social.presence])
+  const livePresenceExpiry = useMemo(() => {
+    if (!presenceAccountReady) return 0
+    const at = Date.now()
+    return social.presence.reduce((latest, presence) =>
+      Math.max(latest, getFocusPresenceExpiresAt(presence, at)), 0)
+  }, [presenceAccountReady, social.presence])
 
   useEffect(() => {
     if (livePresenceExpiry <= Date.now()) return
     setSocialNow(Date.now())
     const interval = window.setInterval(() => {
-      if (Date.now() > livePresenceExpiry) {
+      const at = Date.now()
+      // Render once at/after expiry before stopping the ticker; otherwise the
+      // last pre-expiry timestamp could leave a stale person visually live.
+      setSocialNow(at)
+      if (at >= livePresenceExpiry) {
         window.clearInterval(interval)
-        return
       }
-      setSocialNow(Date.now())
     }, SECOND_MS)
     return () => window.clearInterval(interval)
   }, [livePresenceExpiry])
@@ -607,22 +662,21 @@ export function useFocusExperience(
     emailHint?: string
     phoneHint?: string
   }): FocusPerson => {
-    const activityNow = Math.max(runtime.now, socialNow)
+    const activityNow = Math.max(Date.now(), runtime.now, socialNow)
     const isSelf = input.id === user?.id
     const presence = presenceById.get(input.id)
     const remoteLive = Boolean(
-      presence?.status === 'focusing' &&
-      timestamp(presence.focusStartedAt) > 0 &&
-      activityNow - timestamp(presence.lastSeenAt) <= REMOTE_PRESENCE_TTL_MS,
+      presenceAccountReady && !isSelf && isFreshFocusingPresence(presence, activityNow),
     )
     const localLive = Boolean(
-      isSelf && privacy.shareLiveStatus &&
+      presenceAccountReady && isSelf && privacy.shareLiveStatus &&
       runtime.activeTimer?.phase === 'focus' && runtime.activeTimer.status === 'running',
     )
     const localSubject = isSelf && runtime.activeTimer
       ? availableSubjects.find(subject => subject.id === runtime.activeTimer?.subjectTagId)?.name || runtime.activeTimer.topic
       : ''
-    const liveStartedAt = remoteLive ? timestamp(presence?.focusStartedAt) : 0
+    const focusedAnchor = remoteLive ? timestamp(presence?.focusStartedAt) : 0
+    const sharedSummary = social.sharedTotals[input.id]
     return {
       id: input.id,
       username: input.username || undefined,
@@ -633,13 +687,14 @@ export function useFocusExperience(
       phoneHint: input.phoneHint,
       isLive: localLive || remoteLive,
       subject: localLive ? (localSubject || 'Focus session') : remoteLive ? (presence?.message || 'Focus session') : undefined,
-      liveSeconds: localLive ? seconds(runtime.elapsedMs) : remoteLive ? seconds(activityNow - liveStartedAt) : undefined,
-      todaySeconds: isSelf ? seconds(dayStats.focusedMs) : rankingValue(allRankings, 'day', input.id),
-      weeklySeconds: isSelf ? seconds(weekStats.focusedMs) : rankingValue(allRankings, 'week', input.id),
-      monthlySeconds: isSelf ? seconds(monthStats.focusedMs) : rankingValue(allRankings, 'month', input.id),
+      liveSeconds: localLive ? seconds(runtime.elapsedMs) : remoteLive ? seconds(activityNow - focusedAnchor) : undefined,
+      analyticsShared: isSelf || sharedSummary?.totalsShared === true,
+      todaySeconds: isSelf ? seconds(dayStats.focusedMs) : sharedSummary?.totalsShared ? sharedSummary.daySeconds : 0,
+      weeklySeconds: isSelf ? seconds(weekStats.focusedMs) : sharedSummary?.totalsShared ? sharedSummary.weekSeconds : 0,
+      monthlySeconds: isSelf ? seconds(monthStats.focusedMs) : sharedSummary?.totalsShared ? sharedSummary.monthSeconds : 0,
       streak: isSelf ? streak.current : 0,
     }
-  }, [allRankings, availableSubjects, dayStats.focusedMs, monthStats.focusedMs, presenceById, privacy.shareLiveStatus, runtime.activeTimer, runtime.elapsedMs, runtime.now, socialNow, streak.current, user?.id, weekStats.focusedMs])
+  }, [availableSubjects, dayStats.focusedMs, monthStats.focusedMs, presenceAccountReady, presenceById, privacy.shareLiveStatus, runtime.activeTimer, runtime.elapsedMs, runtime.now, social.sharedTotals, socialNow, streak.current, user?.id, weekStats.focusedMs])
 
   const profileName = social.profile?.displayName || authProfile?.name || user?.name || 'UPSC Aspirant'
   const screenProfile = useMemo(() => ({
@@ -795,12 +850,20 @@ export function useFocusExperience(
         .map(period => allRankings[period].find(row => row.userId === id))
         .find(Boolean)
       const profile = socialProfilesById.get(id)
-      const person = personFor({
-        id,
-        username: profile?.username,
-        name: profile?.displayName || rankingProfile?.displayName || (id === user?.id ? profileName : 'Penni member'),
-        avatarUrl: profile?.avatarUrl || rankingProfile?.avatarUrl,
-      })
+      const person = {
+        ...personFor({
+          id,
+          username: profile?.username,
+          name: profile?.displayName || rankingProfile?.displayName || (id === user?.id ? profileName : 'Penni member'),
+          avatarUrl: profile?.avatarUrl || rankingProfile?.avatarUrl,
+        }),
+        // Ranking values remain governed exclusively by show_in_rankings and
+        // never borrow the independent friend/group aggregate-sharing flag.
+        analyticsShared: true,
+        todaySeconds: rankingValue(allRankings, 'day', id),
+        weeklySeconds: rankingValue(allRankings, 'week', id),
+        monthlySeconds: rankingValue(allRankings, 'month', id),
+      }
       return {
         person,
         daySeconds: person.todaySeconds,
@@ -826,12 +889,16 @@ export function useFocusExperience(
 
   const groups = useMemo<ScreenFocusGroup[]>(() => social.groups.map(group => {
     const members = social.groupMembers[group.id] ?? []
-    const rankings = social.groupRankings[group.id]
-    const weeklySeconds = rankings?.week.reduce((total, row) => total + row.totalSeconds, 0) ?? 0
+    const weeklySeconds = members.reduce((total, member) => {
+      const summary = social.sharedTotals[member.userId]
+      return total + (summary?.totalsShared ? summary.weekSeconds : 0)
+    }, 0)
     const owner = members.find(member => member.userId === group.ownerId)?.profile || socialProfilesById.get(group.ownerId)
     const liveCount = members.length
       ? members.filter(member => groupMembers.find(person => person.id === member.userId)?.isLive).length
-      : group.liveCount
+      // The aggregate RPC cannot carry each member heartbeat timestamp to the
+      // client. Stay conservative until scoped member presence has loaded.
+      : 0
     return {
       id: group.id,
       name: group.name,
@@ -850,7 +917,7 @@ export function useFocusExperience(
       rules: group.rules,
       memberIds: members.map(member => member.userId),
     }
-  }), [groupMembers, profileName, social.groupMembers, social.groupRankings, social.groups, socialProfilesById, user?.id])
+  }), [groupMembers, profileName, social.groupMembers, social.groups, social.sharedTotals, socialProfilesById, user?.id])
 
   const groupMessages = useMemo<ScreenFocusGroupMessage[]>(() => Object.values(social.groupMessages).flat().map(message => {
     const sender = socialProfilesById.get(message.senderId)
@@ -902,7 +969,7 @@ export function useFocusExperience(
     groupInvites: social.profile?.allowGroupInvites ?? privacy.allowStudyInvites,
     showLiveStatus: privacy.shareLiveStatus,
     shareFocusTime: privacy.shareAggregateStats,
-    publicProfile: privacy.profileVisibility === 'public',
+    publicProfile: privacy.appearInRankings,
     focusShield: settings.focusShieldEnabled,
   }), [privacy, settings.focusShieldEnabled, social.profile])
 
@@ -995,10 +1062,10 @@ export function useFocusExperience(
       updatePrivacy({ allowStudyInvites: enabled })
     } else if (key === 'shareFocusTime') {
       updatePrivacy({ shareAggregateStats: enabled })
-      next.showInRankings = enabled && previousPrivacy.profileVisibility === 'public'
+      next.shareFocusTotals = enabled
     } else if (key === 'publicProfile') {
-      updatePrivacy({ profileVisibility: enabled ? 'public' : 'private' })
-      next.showInRankings = enabled && previousPrivacy.shareAggregateStats
+      updatePrivacy({ appearInRankings: enabled })
+      next.showInRankings = enabled
     } else {
       return
     }
@@ -1011,6 +1078,7 @@ export function useFocusExperience(
         discoverable: next.discoverable,
         allowFriendRequests: next.allowFriendRequests,
         allowGroupInvites: next.allowGroupInvites,
+        shareFocusTotals: next.shareFocusTotals,
         showInRankings: next.showInRankings,
       } : current.profile,
     }))
@@ -1024,7 +1092,7 @@ export function useFocusExperience(
         if (key === 'friendRequests') updatePrivacy({ discoverable: previous.discoverable && previous.allowFriendRequests })
         if (key === 'groupInvites') updatePrivacy({ allowStudyInvites: previous.allowGroupInvites })
         if (key === 'shareFocusTime') updatePrivacy({ shareAggregateStats: previousPrivacy.shareAggregateStats })
-        if (key === 'publicProfile') updatePrivacy({ profileVisibility: previousPrivacy.profileVisibility })
+        if (key === 'publicProfile') updatePrivacy({ appearInRankings: previousPrivacy.appearInRankings })
         if (mountedRef.current) setSocial(current => ({
           ...current,
           profile: current.profile ? {
@@ -1032,6 +1100,7 @@ export function useFocusExperience(
             discoverable: previous.discoverable,
             allowFriendRequests: previous.allowFriendRequests,
             allowGroupInvites: previous.allowGroupInvites,
+            shareFocusTotals: previous.shareFocusTotals,
             showInRankings: previous.showInRankings,
           } : current.profile,
         }))
@@ -1083,8 +1152,13 @@ export function useFocusExperience(
       safeResult(getFocusRanking('month', { groupId })),
     ])
     if (!mountedRef.current || groupLoadGenerationRef.current.get(groupId) !== generation) return false
-    const failure = [membersRead, messagesRead, dayRead, weekRead, monthRead].map(read => read.error).find(Boolean)
-    const unavailable = [membersRead, messagesRead, dayRead, weekRead, monthRead]
+    const sharedTotalTargetIds = membersRead.result?.available
+      ? membersRead.result.data.map(member => member.userId)
+      : []
+    const sharedTotalsRead = await safeResult(getFocusSharedTotals(sharedTotalTargetIds))
+    if (!mountedRef.current || groupLoadGenerationRef.current.get(groupId) !== generation) return false
+    const failure = [membersRead, messagesRead, dayRead, weekRead, monthRead, sharedTotalsRead].map(read => read.error).find(Boolean)
+    const unavailable = [membersRead, messagesRead, dayRead, weekRead, monthRead, sharedTotalsRead]
       .map(read => read.result)
       .find(result => result && !result.available)?.reason
     if (failure || unavailable) {
@@ -1101,6 +1175,9 @@ export function useFocusExperience(
       groupMessages: messagesRead.result?.available
         ? { ...current.groupMessages, [groupId]: messagesRead.result.data }
         : current.groupMessages,
+      sharedTotals: sharedTotalsRead.result?.available
+        ? replaceSharedTotals(current.sharedTotals, sharedTotalTargetIds, sharedTotalsRead.result.data)
+        : current.sharedTotals,
       groupRankings: dayRead.result?.available && weekRead.result?.available && monthRead.result?.available
         ? { ...current.groupRankings, [groupId]: {
             day: dayRead.result.data,
@@ -1474,6 +1551,7 @@ export function useFocusExperience(
     onTimerModeChange: mode => {
       if (runtime.activeTimer) return
       setIdleMode(mode)
+      rememberTimerMode(mode)
       if (mode === 'stopwatch') setIdlePhase('focus')
     },
     onSubjectChange: subjectId => {

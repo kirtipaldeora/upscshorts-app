@@ -27,7 +27,7 @@ import type {
 } from '@/types/focus'
 
 const STORAGE_KEY = 'penni.focus.v1'
-const STORAGE_VERSION = 4
+const STORAGE_VERSION = 5
 const UNSELECTED_SUBJECT_AT = 1
 const MINUTE_MS = 60_000
 const MAX_HISTORY = 10_000
@@ -55,6 +55,7 @@ export const DEFAULT_FOCUS_PRIVACY: FocusPrivacyPreferences = {
   profileVisibility: 'private',
   shareLiveStatus: false,
   shareAggregateStats: false,
+  appearInRankings: false,
   discoverable: false,
   allowStudyInvites: false,
 }
@@ -242,10 +243,18 @@ function normalizePrivacy(value: unknown): FocusPrivacyPreferences {
   const profileVisibility = record.profileVisibility === 'followers' || record.profileVisibility === 'public'
     ? record.profileVisibility
     : 'private'
+  const shareAggregateStats = record.shareAggregateStats === true
+  // Before v5, rankings were derived from the combination of aggregate
+  // sharing and public profile visibility. Preserve that explicit legacy
+  // choice once, then keep the two controls independent.
+  const appearInRankings = typeof record.appearInRankings === 'boolean'
+    ? record.appearInRankings
+    : shareAggregateStats && profileVisibility === 'public'
   return {
     profileVisibility,
     shareLiveStatus: record.shareLiveStatus === true,
-    shareAggregateStats: record.shareAggregateStats === true,
+    shareAggregateStats,
+    appearInRankings,
     discoverable: record.discoverable === true,
     allowStudyInvites: record.allowStudyInvites === true,
   }

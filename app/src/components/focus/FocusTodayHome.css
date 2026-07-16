@@ -150,6 +150,18 @@ html.dark .focus-today-home {
 .fth-session-setup input:disabled,
 .fth-shortcuts button:disabled { opacity: .48; cursor: not-allowed; }
 
+.fth-mode-hint {
+  min-height: 13px;
+  margin: -4px auto 0;
+  color: var(--ink3);
+  text-align: center;
+  font-size: 8.5px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.mode-stopwatch .fth-mode-hint { color: color-mix(in srgb, var(--fth-accent-deep) 78%, var(--ink2)); }
+
 .fth-session-setup {
   width: min(690px, 100%);
   margin: 0 auto;
@@ -509,6 +521,7 @@ body:has(.focus-finish-confirm-backdrop) .bottom-nav-motion {
   .fth-streak { min-height: 34px; padding-inline: 10px; }
   .fth-mode-switch { min-height: 34px; padding: 3px; }
   .fth-mode-switch button { min-height: 28px; font-size: 9px; }
+  .fth-mode-hint { margin-top: -3px; padding-inline: 6px; font-size: 8px; }
   .fth-session-setup,
   .mode-stopwatch .fth-session-setup { width: 100%; grid-template-columns: 1fr; gap: 6px; }
   .fth-subject-select { gap: 0; }
@@ -549,6 +562,7 @@ body:has(.focus-finish-confirm-backdrop) .bottom-nav-motion {
   .fth-streak { min-height: 28px; padding-inline: 8px; }
   .fth-mode-switch { min-height: 31px; }
   .fth-mode-switch button { min-height: 25px; }
+  .fth-mode-hint { display: none; }
   .fth-subject-select > div,
   .fth-subject-empty { min-height: 35px; }
   .fth-subject-select select { height: 33px; }

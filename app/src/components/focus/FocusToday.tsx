@@ -199,6 +199,9 @@ export function FocusToday(props: FocusTodayProps) {
           <button role="tab" aria-selected={timerMode === 'pomodoro'} className={timerMode === 'pomodoro' ? 'active' : ''} disabled={timerState !== 'idle'} onClick={() => onModeChange('pomodoro')}><FontAwesomeIcon icon={faClock} /> Pomodoro</button>
           <button role="tab" aria-selected={timerMode === 'stopwatch'} className={timerMode === 'stopwatch' ? 'active' : ''} disabled={timerState !== 'idle'} onClick={() => onModeChange('stopwatch')}><FontAwesomeIcon icon={faBolt} /> Stopwatch</button>
         </div>
+        <p className="fth-mode-hint" aria-live="polite" data-focus-home-enter>{timerMode === 'stopwatch'
+          ? 'No countdown · pause and continue the same session, then save it once.'
+          : 'A timed focus block followed by a short or long break.'}</p>
 
         <div className="fth-session-setup" data-focus-home-enter>
           {subjects.length ? (
@@ -252,7 +255,7 @@ export function FocusToday(props: FocusTodayProps) {
             <div>
               <span>{sessionLabel}</span>
               <b>{timerClock(timerDisplay)}</b>
-              <small>{timerState === 'paused' ? 'Paused' : timerState === 'running' ? (timerMode === 'pomodoro' ? `${Math.round(timerProgress)}% complete` : 'Counting focused time') : selectedSubject?.label ?? 'General Focus'}</small>
+              <small>{timerState === 'paused' ? (timerMode === 'stopwatch' ? 'Paused · focused time is safe' : 'Paused') : timerState === 'running' ? (timerMode === 'pomodoro' ? `${Math.round(timerProgress)}% complete` : 'No countdown · counting up') : selectedSubject?.label ?? 'General Focus'}</small>
             </div>
           </div>
         </div>
@@ -276,7 +279,7 @@ export function FocusToday(props: FocusTodayProps) {
         <div className="focus-session-layer" role="dialog" aria-modal="true" aria-label="Active focus session">
           <div className="focus-session-sheet">
             <div className="focus-session-head"><span>{timerMode === 'pomodoro' ? phaseLabel(pomodoroPhase) : 'Stopwatch'} · {selectedSubject?.label ?? 'General Focus'}</span><button onClick={requestFinish}>Finish</button></div>
-            <div className={`focus-session-orbit ${timerState}`}><i><FontAwesomeIcon icon={timerState === 'running' ? faBolt : faPause} /></i><div><span>{timerState === 'running' ? 'Focusing' : 'Paused'}</span><b>{formatFocusTime(timerDisplay, true)}</b><small>{timerMode === 'pomodoro' ? `${compactFocusTime(elapsedSeconds)} completed` : 'Focused time'}</small></div></div>
+            <div className={`focus-session-orbit ${timerState}`}><i><FontAwesomeIcon icon={timerState === 'running' ? faBolt : faPause} /></i><div><span>{timerState === 'running' ? 'Focusing' : 'Paused'}</span><b>{formatFocusTime(timerDisplay, true)}</b><small>{timerMode === 'pomodoro' ? `${compactFocusTime(elapsedSeconds)} completed` : timerState === 'paused' ? 'Paused time is not counted' : 'One continuous saved session'}</small></div></div>
             <div className="focus-session-actions">{timerState === 'running' ? <button className="primary" onClick={onPause}><FontAwesomeIcon icon={faPause} /> Pause</button> : <button className="primary" onClick={onResume}><FontAwesomeIcon icon={faPlay} /> Resume</button>}<button onClick={requestFinish}><FontAwesomeIcon icon={faStop} /> Save & finish</button></div>
             <div className="focus-session-truth"><FontAwesomeIcon icon={faShieldHalved} /><p><b>{platform === 'web' ? 'Web session' : `${platform.toUpperCase()} session`}</b>{platform === 'web' ? 'This timer cannot block other apps or tabs. Focus Shield provides guidance and tab-awareness only.' : nativeFocusShieldAvailable ? 'Native restrictions apply only after the device permission is granted.' : 'No app-blocking capability is active in this build.'}</p></div>
           </div>

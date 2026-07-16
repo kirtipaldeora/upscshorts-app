@@ -899,3 +899,1071 @@ body:has(.focus-secondary-sheet-backdrop) .bottom-nav-motion {
   .focus-view { animation: none; }
   .focus-progress > i, .focus-switch em { transition: none; }
 }
+
+/* Focus circle: compact live rooms, friend management and shared details */
+.focus-friends-main-head {
+  min-height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+.focus-friends-main-head > div { min-width: 0; }
+.focus-friends-main-head > div > span,
+.focus-friends-live-copy > span,
+.focus-friends-panel-copy > span {
+  display: block;
+  color: var(--acc);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: .7px;
+  text-transform: uppercase;
+}
+.focus-friends-main-head h2 {
+  margin: 2px 0 0;
+  color: var(--on);
+  font-size: clamp(25px, 3vw, 33px);
+  line-height: 1;
+  font-weight: 950;
+  letter-spacing: -.65px;
+}
+.focus-friends-main-head p {
+  margin: 6px 0 0;
+  color: var(--on2);
+  font-size: 13px;
+  line-height: 1.45;
+  font-weight: 750;
+}
+.focus-friends-manage-trigger {
+  position: relative;
+  flex: none;
+  min-height: 44px;
+  padding: 0 15px;
+  border-radius: 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  color: var(--on);
+  box-shadow: var(--shadow-soft);
+  font-size: 13px;
+  font-weight: 950;
+}
+.focus-friends-manage-trigger > b {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
+  border-radius: 99px;
+  display: grid;
+  place-items: center;
+  background: var(--yellow);
+  color: var(--yellow-ink);
+  box-shadow: 0 0 0 3px var(--app-bg, var(--bg2));
+  font-size: 11px;
+}
+
+.focus-friends-live-hero {
+  position: relative;
+  min-height: 190px;
+  padding: clamp(20px, 3vw, 28px);
+  overflow: hidden;
+  border-radius: 29px;
+  display: grid;
+  grid-template-columns: minmax(210px, .68fr) minmax(0, 1.32fr);
+  align-items: center;
+  gap: clamp(18px, 4vw, 42px);
+  background:
+    radial-gradient(circle at 94% -10%, rgba(255, 255, 255, .17), transparent 34%),
+    linear-gradient(135deg, color-mix(in srgb, var(--focus-blue-deep) 92%, #282d66), color-mix(in srgb, var(--focus-mint) 48%, var(--focus-blue)));
+  color: #fff;
+  box-shadow: 0 20px 48px color-mix(in srgb, var(--focus-blue-deep) 22%, transparent);
+}
+.focus-friends-live-copy { position: relative; z-index: 1; min-width: 0; }
+.focus-friends-live-copy > span { color: rgba(255, 255, 255, .72); }
+.focus-friends-live-copy h3 {
+  margin: 5px 0 0;
+  font-size: clamp(22px, 3vw, 30px);
+  line-height: 1.05;
+  font-weight: 950;
+  letter-spacing: -.5px;
+}
+.focus-friends-live-copy p {
+  max-width: 360px;
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, .76);
+  font-size: 13px;
+  line-height: 1.48;
+  font-weight: 750;
+}
+.focus-friends-live-hero > .focus-live-people-grid {
+  position: relative;
+  z-index: 1;
+  margin-top: 0;
+}
+.focus-friends-live-hero .focus-live-people-grid > button {
+  background: rgba(255, 255, 255, .12);
+  border-color: rgba(255, 255, 255, .2);
+  color: #fff;
+  box-shadow: none;
+}
+.focus-friends-live-hero .focus-live-people-grid > button:hover {
+  background: rgba(255, 255, 255, .18);
+  border-color: rgba(255, 255, 255, .32);
+}
+.focus-friends-live-hero .focus-live-people-grid > button:focus-visible {
+  outline-color: #fff;
+}
+.focus-friends-live-hero .focus-live-people-grid > button > span,
+.focus-friends-live-hero .focus-live-people-grid > button > small,
+.focus-friends-live-hero .focus-live-people-grid > button > em { color: rgba(255, 255, 255, .75); }
+.focus-friends-live-hero .focus-live-people-grid > button > strong { color: #fff; }
+.focus-friends-live-hero .focus-live-people-grid > button > span::before { background: #70e2ae; }
+.focus-friends-live-hero .focus-live-people-empty { color: rgba(255, 255, 255, .72); }
+.focus-friends-live-hero .focus-live-people-empty > svg { background: rgba(255, 255, 255, .12); color: #fff; }
+.focus-friends-live-hero .focus-live-people-empty b { color: #fff; }
+.focus-friends-live-hero .focus-live-people-empty p { color: rgba(255, 255, 255, .72); }
+
+.focus-friends-request-banner {
+  width: 100%;
+  min-height: 64px;
+  padding: 10px 13px;
+  border-radius: 19px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 11px;
+  background: color-mix(in srgb, var(--yellow) 11%, var(--panel));
+  border: 1px solid color-mix(in srgb, var(--yellow) 30%, var(--panel-border));
+  color: var(--on);
+  box-shadow: var(--shadow-soft);
+  text-align: left;
+}
+.focus-friends-request-banner-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--yellow) 26%, var(--panel2));
+  color: color-mix(in srgb, var(--yellow-ink) 80%, var(--on));
+}
+.focus-friends-request-banner > span:nth-child(2) { min-width: 0; display: flex; flex-direction: column; }
+.focus-friends-request-banner b { font-size: 14px; line-height: 1.25; font-weight: 950; }
+.focus-friends-request-banner small { margin-top: 2px; color: var(--on2); font-size: 12px; font-weight: 750; }
+.focus-friends-request-banner > em {
+  min-width: 26px;
+  height: 26px;
+  padding: 0 7px;
+  border-radius: 99px;
+  display: grid;
+  place-items: center;
+  background: var(--yellow);
+  color: var(--yellow-ink);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 950;
+}
+.focus-friends-request-banner > svg:last-child { color: var(--on2); }
+
+.focus-study-room {
+  min-width: 0;
+  padding: 16px;
+  border-radius: 23px;
+  background: color-mix(in srgb, var(--card) 94%, var(--panel2));
+  border: 1px solid var(--border);
+  color: var(--ink);
+  box-shadow: var(--shadow-soft);
+}
+.focus-study-room-head {
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+.focus-study-room-head > div { min-width: 0; }
+.focus-study-room-head > div > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--good);
+  font-size: 9px;
+  font-weight: 950;
+  letter-spacing: .65px;
+  text-transform: uppercase;
+}
+.focus-study-room-head > div > span i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--good);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--good) 13%, transparent);
+}
+.focus-study-room-head h3 {
+  margin: 3px 0 0;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 20px;
+  line-height: 1.08;
+  font-weight: 950;
+  letter-spacing: -.35px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.focus-study-room-head p {
+  margin: 3px 0 0;
+  overflow: hidden;
+  color: var(--ink2);
+  font-size: 10.5px;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.focus-study-room-head > strong {
+  flex: none;
+  min-width: 70px;
+  padding-left: 14px;
+  border-left: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: end;
+  column-gap: 5px;
+  color: var(--ink);
+}
+.focus-study-room-head > strong b { font-size: 23px; line-height: .9; font-variant-numeric: tabular-nums; }
+.focus-study-room-head > strong span { color: var(--good); font-size: 8.5px; font-weight: 950; letter-spacing: .35px; text-transform: uppercase; }
+.focus-study-room-head > strong small { grid-column: 1 / 3; margin-top: 4px; color: var(--ink3); font-size: 8.5px; font-weight: 800; white-space: nowrap; }
+
+.focus-live-people-grid {
+  margin-top: 13px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(86px, 100%), 1fr));
+  gap: 6px;
+}
+.focus-live-people-grid > button {
+  position: relative;
+  min-width: 0;
+  min-height: 121px;
+  padding: 7px 5px 8px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--ink3);
+  text-align: center;
+  transition: background .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+.focus-live-people-grid > button.live {
+  background: color-mix(in srgb, var(--acc) 7%, transparent);
+  border-color: color-mix(in srgb, var(--acc) 22%, var(--border));
+  color: var(--acc);
+}
+.focus-live-people-grid > button:hover {
+  background: color-mix(in srgb, var(--acc) 10%, var(--card2));
+  border-color: color-mix(in srgb, var(--acc) 36%, var(--border));
+}
+.focus-live-people-grid > button.selected {
+  border-color: var(--acc);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--acc) 13%, transparent);
+}
+.focus-study-desk {
+  position: relative;
+  width: 55px;
+  height: 47px;
+  flex: none;
+  display: block;
+  color: currentColor;
+}
+.focus-study-desk svg { width: 100%; height: 100%; overflow: visible; }
+.focus-study-desk .desk,
+.focus-study-desk .person {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.focus-study-desk > i {
+  position: absolute;
+  top: 0;
+  right: 1px;
+  width: 7px;
+  height: 7px;
+  border: 2px solid var(--card);
+  border-radius: 50%;
+  background: var(--good);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--good) 15%, transparent);
+}
+.focus-live-people-grid > button > b {
+  width: 100%;
+  margin-top: 3px;
+  overflow: hidden;
+  color: var(--ink2);
+  font-size: 11px;
+  line-height: 1.18;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.focus-live-people-grid > button.live > b { color: var(--ink); }
+.focus-live-people-grid > button > strong {
+  width: 100%;
+  margin-top: 3px;
+  overflow: hidden;
+  color: currentColor;
+  font-size: 11.5px;
+  line-height: 1;
+  font-weight: 950;
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.focus-live-people-grid > button > small {
+  width: 100%;
+  margin-top: 4px;
+  overflow: hidden;
+  color: var(--ink3);
+  font-size: 8.5px;
+  line-height: 1.1;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.focus-live-people-empty {
+  min-height: 148px;
+  padding: 18px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink2);
+  text-align: center;
+}
+.focus-live-people-empty > svg {
+  width: 40px;
+  height: 40px;
+  box-sizing: border-box;
+  padding: 11px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--acc) 10%, var(--card2));
+  color: var(--acc);
+}
+.focus-live-people-empty b { margin-top: 9px; color: var(--ink); font-size: 14px; font-weight: 950; }
+.focus-live-people-empty p { max-width: 340px; margin: 4px 0 0; color: var(--ink2); font-size: 12px; line-height: 1.42; font-weight: 750; }
+.focus-friends-live-room .focus-live-people-grid { margin-top: 17px; }
+
+.focus-friend-directory,
+.focus-member-directory {
+  margin-top: 17px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.focus-friend-directory > button,
+.focus-member-directory > button {
+  width: 100%;
+  min-height: 68px;
+  padding: 10px 12px;
+  border-radius: 18px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 11px;
+  background: var(--card2);
+  border: 1px solid transparent;
+  color: var(--ink);
+  text-align: left;
+  transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+.focus-member-directory > button { grid-template-columns: auto minmax(0, 1fr) auto; }
+.focus-friend-directory > button:hover,
+.focus-member-directory > button:hover {
+  transform: translateX(2px);
+  background: color-mix(in srgb, var(--acc) 7%, var(--card2));
+}
+.focus-friend-directory > button.selected,
+.focus-member-directory > button.selected {
+  border-color: color-mix(in srgb, var(--acc) 48%, var(--border));
+  background: color-mix(in srgb, var(--acc) 10%, var(--card2));
+}
+.focus-friend-directory > button > div,
+.focus-member-directory > button > div { min-width: 0; display: flex; flex-direction: column; }
+.focus-friend-directory > button > div b,
+.focus-member-directory > button > div b {
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 1.28;
+  font-weight: 950;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.focus-friend-directory > button > div span,
+.focus-member-directory > button > div span {
+  margin-top: 2px;
+  overflow: hidden;
+  color: var(--ink2);
+  font-size: 12px;
+  line-height: 1.25;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.focus-friend-directory > button > strong,
+.focus-member-directory > button > strong {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  color: var(--acc);
+  font-size: 13px;
+  line-height: 1.15;
+  font-weight: 950;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.focus-friend-directory > button > strong small,
+.focus-member-directory > button > strong small {
+  margin-top: 2px;
+  color: var(--ink3);
+  font-size: 12px;
+  font-weight: 750;
+}
+.focus-friend-directory > button > svg { color: var(--ink3); font-size: 12px; }
+.focus-friend-list-card .focus-empty-inline > button {
+  min-height: 44px;
+  padding: 0 15px;
+  border-radius: 14px;
+  background: var(--focus-blue);
+  color: var(--focus-blue-ink);
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.focus-friends-view,
+.focus-group-detail { gap: 12px; }
+.focus-group-detail .focus-group-detail-head {
+  min-height: 62px;
+  padding: 9px 11px;
+  border-radius: 19px;
+  gap: 10px;
+}
+.focus-group-detail .focus-group-detail-head > button {
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
+}
+.focus-group-detail .focus-group-detail-head > button.focus-group-invite-trigger {
+  grid-column: auto;
+  width: auto;
+  min-width: 0;
+  min-height: 40px;
+  padding-inline: 12px;
+}
+.focus-group-detail .focus-group-detail-head h2 { margin-top: 1px; font-size: 18px; line-height: 1.05; }
+.focus-group-detail .focus-group-detail-head span,
+.focus-group-detail .focus-group-detail-head p { font-size: 9px; }
+.focus-group-detail .focus-group-tabs {
+  padding: 3px;
+  border-radius: 14px;
+  gap: 3px;
+}
+.focus-group-detail .focus-group-tabs button { min-height: 36px; border-radius: 11px; font-size: 10px; }
+
+.focus-room-mission-strip {
+  min-width: 0;
+  min-height: 76px;
+  padding: 12px 14px;
+  border-radius: 19px;
+  display: grid;
+  grid-template-columns: minmax(120px, .78fr) minmax(190px, 1.25fr) auto;
+  align-items: center;
+  gap: 18px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--ink);
+}
+.focus-room-mission-copy { min-width: 0; display: flex; flex-direction: column; }
+.focus-room-mission-copy > span { color: var(--acc); font-size: 8.5px; font-weight: 950; letter-spacing: .55px; text-transform: uppercase; }
+.focus-room-mission-copy > b { margin-top: 3px; overflow: hidden; font-size: 13px; font-weight: 950; text-overflow: ellipsis; white-space: nowrap; }
+.focus-room-mission-copy > b small { color: var(--ink3); font-size: 9px; font-weight: 800; }
+.focus-room-mission-progress { min-width: 0; }
+.focus-room-mission-progress > span { margin-bottom: 6px; display: flex; align-items: baseline; justify-content: space-between; }
+.focus-room-mission-progress > span b { color: var(--ink); font-size: 11px; }
+.focus-room-mission-progress > span small { color: var(--ink3); font-size: 8.5px; font-weight: 800; }
+.focus-room-mission-progress .focus-progress { height: 6px; margin: 0; }
+.focus-room-mission-meta { display: flex; align-items: center; gap: 6px; }
+.focus-room-mission-meta > span {
+  min-width: 74px;
+  padding: 8px 9px;
+  border-radius: 13px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 6px;
+  background: var(--card2);
+}
+.focus-room-mission-meta svg { grid-row: 1 / 3; color: var(--acc); font-size: 11px; }
+.focus-room-mission-meta small { color: var(--ink3); font-size: 7.5px; font-weight: 850; text-transform: uppercase; }
+.focus-room-mission-meta b { font-size: 10px; font-weight: 950; }
+
+.focus-room-about {
+  border-radius: 18px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--ink);
+  overflow: hidden;
+}
+.focus-room-about > summary {
+  min-height: 62px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  list-style: none;
+}
+.focus-room-about > summary::-webkit-details-marker { display: none; }
+.focus-room-about > summary > span { min-width: 0; display: flex; flex-direction: column; }
+.focus-room-about > summary b { font-size: 12px; font-weight: 950; }
+.focus-room-about > summary small { margin-top: 3px; overflow: hidden; color: var(--ink2); font-size: 9.5px; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; }
+.focus-room-about > summary > em {
+  flex: none;
+  padding: 6px 9px;
+  border-radius: 10px;
+  background: var(--card2);
+  color: var(--ink2);
+  font-size: 8.5px;
+  font-style: normal;
+  font-weight: 900;
+}
+.focus-room-about > summary::after { content: '+'; flex: none; color: var(--acc); font-size: 19px; font-weight: 750; line-height: 1; }
+.focus-room-about[open] > summary::after { content: '\2212'; }
+.focus-room-about[open] > summary { border-bottom: 1px solid var(--border); }
+.focus-room-about-body { padding: 0 14px 14px; }
+.focus-room-about .focus-group-rule-list { margin-top: 13px; }
+.focus-room-about .focus-group-rule-list span,
+.focus-room-about .focus-group-privacy p { font-size: 10px; }
+.focus-room-about .focus-leave-group { min-height: 40px; font-size: 10px; }
+
+body:has(.focus-person-sheet-backdrop) .bottom-nav-motion,
+body:has(.focus-friends-manage-backdrop) .bottom-nav-motion {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.focus-person-sheet-backdrop,
+.focus-friends-manage-portal {
+  --focus-blue: #7379db;
+  --focus-blue-deep: #555cad;
+  --focus-blue-ink: #0b1025;
+  --focus-gold: #f2bf57;
+  --focus-mint: #66b99f;
+  --focus-rose: #d8788f;
+  --focus-social-blue: var(--focus-blue, #7379db);
+  --focus-social-blue-ink: var(--focus-blue-ink, #0b1025);
+  font-family: 'Nunito', system-ui, sans-serif;
+}
+.focus-person-sheet-backdrop *,
+.focus-person-sheet-backdrop *::before,
+.focus-person-sheet-backdrop *::after,
+.focus-friends-manage-portal *,
+.focus-friends-manage-portal *::before,
+.focus-friends-manage-portal *::after { box-sizing: border-box; }
+.focus-person-sheet-backdrop button,
+.focus-friends-manage-portal button,
+.focus-friends-manage-portal input { font: inherit; }
+.focus-person-sheet-backdrop button,
+.focus-friends-manage-portal button { border: 0; cursor: pointer; }
+
+.focus-person-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1380;
+  padding: max(14px, env(safe-area-inset-top)) 14px 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(10, 13, 31, .72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: focusSocialBackdropIn .2s ease-out both;
+}
+.focus-person-sheet {
+  --focus-person-drag: 0px;
+  position: relative;
+  width: min(590px, 100%);
+  max-height: min(88dvh, 760px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 22px calc(22px + env(safe-area-inset-bottom));
+  border: 1px solid var(--border);
+  border-bottom: 0;
+  border-radius: 30px 30px 0 0;
+  outline: 0;
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: 0 -28px 90px rgba(0, 0, 0, .36);
+  transform: translateY(var(--focus-person-drag));
+  transition: transform .18s cubic-bezier(.22, 1, .36, 1);
+  animation: focusPersonSheetIn .3s cubic-bezier(.22, 1, .36, 1) both;
+}
+.focus-person-sheet-handle {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  min-height: 44px;
+  margin: 0 -22px;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--card) 94%, transparent);
+  touch-action: none;
+  cursor: grab;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+.focus-person-sheet-handle:active { cursor: grabbing; }
+.focus-person-sheet-handle i {
+  width: 44px;
+  height: 5px;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--ink2) 30%, transparent);
+}
+.focus-person-sheet-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  z-index: 4;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: var(--card2);
+  color: var(--ink2);
+}
+.focus-person-sheet-profile {
+  min-height: 78px;
+  padding: 8px 54px 15px 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 13px;
+  border-bottom: 1px solid var(--border);
+}
+.focus-person-sheet-profile > div { min-width: 0; }
+.focus-person-sheet-profile > div > span {
+  display: block;
+  color: var(--acc);
+  font-size: 12px;
+  line-height: 1.1;
+  font-weight: 950;
+  letter-spacing: .45px;
+  text-transform: uppercase;
+}
+.focus-person-sheet-profile h2 {
+  margin: 3px 0 0;
+  overflow: hidden;
+  font-size: 22px;
+  line-height: 1.08;
+  font-weight: 950;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.focus-person-sheet-profile p { margin: 2px 0 0; color: var(--ink2); font-size: 12px; font-weight: 750; }
+.focus-person-sheet-profile > em {
+  min-height: 32px;
+  padding: 0 10px;
+  border-radius: 99px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--card2);
+  color: var(--ink2);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 900;
+  white-space: nowrap;
+}
+.focus-person-sheet-profile > em::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ink3);
+}
+.focus-person-sheet-profile > em.live { background: color-mix(in srgb, var(--good) 11%, var(--card2)); color: var(--good); }
+.focus-person-sheet-profile > em.live::before { background: var(--good); box-shadow: 0 0 0 3px color-mix(in srgb, var(--good) 14%, transparent); }
+
+.focus-person-current {
+  margin-top: 15px;
+  min-height: 82px;
+  padding: 14px;
+  border-radius: 19px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+}
+.focus-person-current.live {
+  background: color-mix(in srgb, var(--good) 8%, var(--card2));
+  border-color: color-mix(in srgb, var(--good) 24%, var(--border));
+}
+.focus-person-current > div { min-width: 0; display: flex; flex-direction: column; }
+.focus-person-current > div span { color: var(--ink2); font-size: 12px; line-height: 1.2; font-weight: 800; }
+.focus-person-current > div b { margin-top: 3px; overflow: hidden; font-size: 15px; line-height: 1.25; font-weight: 950; text-overflow: ellipsis; white-space: nowrap; }
+.focus-person-current > p {
+  min-width: 142px;
+  margin: 0;
+  padding: 9px 11px;
+  border-radius: 14px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 1px 7px;
+  background: var(--card);
+  color: var(--acc);
+}
+.focus-person-current > p > svg { grid-row: 1 / 3; }
+.focus-person-current > p > span { color: var(--ink3); font-size: 12px; line-height: 1; font-weight: 800; }
+.focus-person-current > p > b { color: var(--ink); font-size: 13px; line-height: 1.15; font-weight: 950; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.focus-person-analytics {
+  margin-top: 14px;
+  padding: 15px;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--acc) 5%, var(--card2));
+  border: 1px solid var(--border);
+}
+.focus-person-analytics-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.focus-person-analytics-head > div > span { color: var(--acc); font-size: 12px; font-weight: 950; letter-spacing: .45px; text-transform: uppercase; }
+.focus-person-analytics-head h3 { margin: 2px 0 0; font-size: 18px; line-height: 1.15; font-weight: 950; }
+.focus-person-analytics-head > svg {
+  width: 38px;
+  height: 38px;
+  box-sizing: border-box;
+  padding: 10px;
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--acc) 11%, var(--card));
+  color: var(--acc);
+}
+.focus-person-periods {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.focus-person-periods article {
+  min-width: 0;
+  min-height: 70px;
+  padding: 11px 8px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: var(--card);
+  border: 1px solid var(--border);
+  text-align: center;
+}
+.focus-person-periods span { color: var(--ink2); font-size: 12px; line-height: 1.2; font-weight: 800; }
+.focus-person-periods b { margin-top: 4px; overflow: hidden; color: var(--ink); font-size: 14px; line-height: 1.1; font-weight: 950; text-overflow: ellipsis; white-space: nowrap; }
+.focus-person-periods.private article { border-style: dashed; background: color-mix(in srgb, var(--card) 72%, transparent); }
+.focus-person-periods.private b { color: var(--ink3); }
+.focus-person-analytics > p { margin: 10px 2px 0; color: var(--ink2); font-size: 12px; line-height: 1.45; font-weight: 750; }
+.focus-person-sheet-actions {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+}
+.focus-person-sheet-actions button {
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--card2);
+  color: var(--ink2);
+  font-size: 12px;
+  font-weight: 950;
+}
+.focus-person-sheet-actions button.primary { background: var(--focus-social-blue); color: var(--focus-social-blue-ink); }
+.focus-person-sheet-actions button.danger { background: color-mix(in srgb, var(--bad) 10%, var(--card2)); color: var(--bad); }
+.focus-person-sheet-actions button:disabled { opacity: .48; cursor: wait; }
+
+.focus-friends-manage-portal { position: fixed; inset: 0; z-index: 1360; }
+.focus-friends-manage-backdrop {
+  position: absolute;
+  inset: 0;
+  padding: max(14px, env(safe-area-inset-top)) 14px 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(10, 13, 31, .72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: focusSocialBackdropIn .2s ease-out both;
+}
+.focus-friends-manage-sheet {
+  --focus-friends-manage-drag: 0px;
+  width: min(650px, 100%);
+  max-height: min(88dvh, 790px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-bottom: 0;
+  border-radius: 30px 30px 0 0;
+  outline: 0;
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: 0 -28px 90px rgba(0, 0, 0, .36);
+  transform: translateY(var(--focus-friends-manage-drag));
+  transition: transform .18s cubic-bezier(.22, 1, .36, 1);
+  animation: focusFriendsManageIn .3s cubic-bezier(.22, 1, .36, 1) both;
+}
+.focus-friends-manage-sheet.dragging { transition: none; }
+.focus-friends-manage-handle {
+  flex: none;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  touch-action: none;
+  cursor: grab;
+}
+.focus-friends-manage-handle i { width: 44px; height: 5px; border-radius: 99px; background: color-mix(in srgb, var(--ink2) 30%, transparent); }
+.focus-friends-manage-head {
+  flex: none;
+  min-height: 58px;
+  padding: 0 20px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.focus-friends-manage-head > div > span { color: var(--acc); font-size: 12px; font-weight: 950; letter-spacing: .55px; text-transform: uppercase; }
+.focus-friends-manage-head h2 { margin: 2px 0 0; font-size: 23px; line-height: 1; font-weight: 950; }
+.focus-friends-manage-close {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: var(--card2);
+  color: var(--ink2);
+}
+.focus-friends-manage-tabs {
+  flex: none;
+  margin: 11px 20px 0;
+  padding: 4px;
+  border-radius: 16px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  background: var(--card2);
+}
+.focus-friends-manage-tabs button {
+  position: relative;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 9px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  background: transparent;
+  color: var(--ink2);
+  font-size: 12px;
+  font-weight: 900;
+}
+.focus-friends-manage-tabs button.active { background: var(--card); color: var(--acc); box-shadow: var(--shadow-soft); }
+.focus-friends-manage-tabs button > b {
+  min-width: 19px;
+  height: 19px;
+  padding: 0 4px;
+  border-radius: 99px;
+  display: grid;
+  place-items: center;
+  background: var(--yellow);
+  color: var(--yellow-ink);
+  font-size: 10px;
+}
+.focus-friends-manage-body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 18px 20px calc(22px + env(safe-area-inset-bottom));
+  scroll-padding-bottom: calc(22px + env(safe-area-inset-bottom));
+}
+.focus-friends-manage-panel { min-width: 0; }
+.focus-friends-panel-copy h3 { margin: 4px 0 0; font-size: 21px; line-height: 1.12; font-weight: 950; }
+.focus-friends-panel-copy p { max-width: 540px; margin: 6px 0 0; color: var(--ink2); font-size: 12px; line-height: 1.48; font-weight: 750; }
+.focus-friends-manage-panel .focus-friend-lookup,
+.focus-friends-manage-panel .focus-username-card {
+  margin-top: 15px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.focus-friends-manage-panel .focus-friend-lookup form { margin-top: 0; }
+.focus-friends-manage-panel .focus-friend-lookup form button { width: 44px; height: 44px; }
+.focus-friends-manage-panel .focus-friend-lookup form button.find { width: auto; }
+.focus-friends-manage-panel .focus-request-list { margin-top: 15px; }
+.focus-friends-manage-panel .focus-request-list article { min-height: 64px; }
+.focus-friends-manage-panel .focus-request-list button,
+.focus-friends-manage-panel .focus-lookup-results button,
+.focus-friends-manage-panel .focus-username-actions > button,
+.focus-friends-manage-panel .focus-username-card > form button { min-height: 44px; font-size: 12px; }
+.focus-friends-manage-panel .focus-request-list b,
+.focus-friends-manage-panel .focus-lookup-results b { font-size: 14px; }
+.focus-friends-manage-panel .focus-request-list span,
+.focus-friends-manage-panel .focus-lookup-results span,
+.focus-friends-manage-panel .focus-request-empty small { font-size: 12px; }
+.focus-friends-manage-panel .focus-request-empty b { font-size: 14px; }
+.focus-friends-manage-panel .focus-lookup-error,
+.focus-friends-manage-panel .focus-lookup-empty,
+.focus-friends-manage-panel .focus-request-route { font-size: 12px; }
+.focus-friends-manage-panel .focus-username-card > form input { font-size: 13px; }
+.focus-friends-profile-panel .focus-username-card { display: block; }
+.focus-friends-profile-panel .focus-username-card > form { align-items: stretch; }
+.focus-friends-profile-panel .focus-username-card > form label { flex: 1; width: auto; min-width: 170px; }
+.focus-friends-profile-panel .focus-username-actions { flex-wrap: wrap; }
+.focus-friends-profile-panel .focus-username-error { margin-top: 8px; }
+
+.focus-live-people-grid > button:focus-visible,
+.focus-friend-directory > button:focus-visible,
+.focus-member-directory > button:focus-visible,
+.focus-friends-main-head button:focus-visible,
+.focus-friends-request-banner:focus-visible,
+.focus-person-sheet button:focus-visible,
+.focus-friends-manage-sheet button:focus-visible,
+.focus-friends-manage-sheet input:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--acc) 62%, #fff);
+  outline-offset: 2px;
+}
+
+@keyframes focusSocialBackdropIn { from { opacity: 0; } }
+@keyframes focusPersonSheetIn { from { transform: translateY(100%); } to { transform: translateY(var(--focus-person-drag)); } }
+@keyframes focusFriendsManageIn { from { transform: translateY(100%); } to { transform: translateY(var(--focus-friends-manage-drag)); } }
+
+@media (max-width: 680px) {
+  .focus-friends-main-head { min-height: 54px; gap: 12px; }
+  .focus-friends-main-head h2 { font-size: 26px; }
+  .focus-friends-main-head p { display: none; }
+  .focus-friends-manage-trigger { padding-inline: 13px; }
+  .focus-study-room { padding: 12px; border-radius: 19px; }
+  .focus-live-people-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
+  .focus-live-people-grid > button { min-height: 108px; padding: 4px 2px 6px; border-radius: 12px; }
+  .focus-study-desk { width: 47px; height: 40px; }
+  .focus-live-people-empty { min-height: 122px; padding: 12px; }
+  .focus-room-mission-strip { grid-template-columns: minmax(110px, 1fr) auto; gap: 9px 12px; }
+  .focus-room-mission-progress { grid-column: 1 / -1; grid-row: 2; }
+  .focus-room-mission-meta { grid-column: 2; grid-row: 1; }
+  .focus-room-mission-meta > span { min-width: 65px; padding-inline: 7px; }
+  .focus-person-sheet-backdrop,
+  .focus-friends-manage-backdrop { padding: max(8px, env(safe-area-inset-top)) 0 0; }
+  .focus-person-sheet,
+  .focus-friends-manage-sheet {
+    width: 100%;
+    max-height: calc(88dvh - max(0px, env(safe-area-inset-top)));
+    border-inline: 0;
+    border-radius: 27px 27px 0 0;
+  }
+  .focus-person-sheet { padding-inline: 16px; }
+  .focus-person-sheet-handle { margin-inline: -16px; }
+  .focus-person-sheet-profile { padding-right: 50px; grid-template-columns: auto minmax(0, 1fr); }
+  .focus-person-sheet-profile > em { grid-column: 2; width: max-content; max-width: 100%; min-height: 28px; margin-top: -3px; }
+  .focus-person-current { grid-template-columns: 1fr; }
+  .focus-person-current > p { min-width: 0; width: 100%; }
+  .focus-friends-manage-head { padding-inline: 16px; }
+  .focus-friends-manage-tabs { margin-inline: 12px; }
+  .focus-friends-manage-body { padding: 16px 16px calc(20px + env(safe-area-inset-bottom)); }
+}
+
+@media (max-width: 430px) {
+  .focus-friends-main-head > div > span { font-size: 11px; }
+  .focus-friends-manage-trigger > span { display: none; }
+  .focus-friends-manage-trigger { width: 40px; min-height: 40px; padding: 0; border-radius: 13px; }
+  .focus-study-room-head h3 { font-size: 18px; }
+  .focus-study-room-head p { max-width: 220px; font-size: 9px; }
+  .focus-group-detail .focus-group-detail-head > button.focus-group-invite-trigger { width: 40px; padding: 0; }
+  .focus-group-detail .focus-group-detail-head > button.focus-group-invite-trigger span { display: none; }
+  .focus-group-detail .focus-group-tabs button { padding-inline: 3px; font-size: 9px; }
+  .focus-room-mission-strip { padding: 10px 11px; }
+  .focus-room-mission-meta { gap: 4px; }
+  .focus-room-mission-meta > span { min-width: 60px; padding: 7px 6px; }
+  .focus-room-about > summary { padding-inline: 11px; }
+  .focus-friends-request-banner { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .focus-friends-request-banner > em { display: none; }
+  .focus-friends-request-banner b { font-size: 13px; }
+  .focus-friend-list-card { padding: 16px; }
+  .focus-friend-directory > button,
+  .focus-member-directory > button { min-height: 64px; padding-inline: 9px; gap: 9px; }
+  .focus-friend-directory > button > .focus-avatar,
+  .focus-member-directory > button > .focus-avatar { width: 40px; height: 40px; border-radius: 14px; }
+  .focus-friend-directory > button > strong,
+  .focus-member-directory > button > strong { font-size: 12px; }
+  .focus-friend-directory > button > svg { display: none; }
+  .focus-friend-directory > button { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .focus-friends-manage-tabs button { gap: 5px; padding-inline: 5px; font-size: 11px; }
+  .focus-friends-manage-tabs button svg { display: none; }
+  .focus-friends-manage-panel .focus-friend-lookup form { grid-template-columns: auto minmax(0, 1fr) auto; padding-left: 12px; }
+  .focus-friends-manage-panel .focus-friend-lookup form button.find { grid-column: 1 / -1; width: 100%; min-height: 44px; }
+  .focus-friends-manage-panel .focus-request-list article { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .focus-friends-manage-panel .focus-request-list article button + button { grid-column: 3; }
+  .focus-friends-profile-panel .focus-username-card > form { flex-wrap: wrap; }
+  .focus-friends-profile-panel .focus-username-card > form label { width: 100%; flex-basis: 100%; }
+  .focus-friends-profile-panel .focus-username-card > form button { flex: 1; }
+  .focus-person-sheet-profile h2 { font-size: 20px; }
+  .focus-person-periods { gap: 6px; }
+  .focus-person-periods article { min-height: 66px; padding-inline: 5px; }
+  .focus-person-periods span { font-size: 11px; }
+  .focus-person-periods b { font-size: 13px; }
+  .focus-person-sheet-actions { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 350px) {
+  .focus-live-people-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .focus-study-room { padding-inline: 10px; }
+  .focus-study-room-head > strong { min-width: 62px; padding-left: 9px; }
+  .focus-study-room-head p { max-width: 170px; }
+  .focus-room-mission-meta small { display: none; }
+  .focus-room-mission-meta > span { min-width: 46px; grid-template-columns: auto auto; }
+  .focus-room-about > summary > em { display: none; }
+  .focus-friends-request-banner-icon { display: none; }
+  .focus-friends-request-banner { grid-template-columns: minmax(0, 1fr) auto; }
+  .focus-person-sheet-profile > .focus-avatar { width: 50px; height: 50px; border-radius: 17px; }
+  .focus-person-sheet-profile > em { grid-column: 1 / -1; margin-top: 2px; }
+  .focus-friends-manage-tabs button { font-size: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .focus-live-people-grid > button,
+  .focus-friend-directory > button,
+  .focus-member-directory > button,
+  .focus-person-sheet,
+  .focus-friends-manage-sheet { animation: none; transition: none; }
+  .focus-person-sheet-backdrop,
+  .focus-friends-manage-backdrop { animation: none; }
+}

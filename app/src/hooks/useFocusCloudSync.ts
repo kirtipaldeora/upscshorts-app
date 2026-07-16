@@ -1,38 +1,8 @@
 import { useCallback, useEffect, useRef } from 'react'
-import { syncCompletedFocusSession } from '@/lib/focusSocialClient'
+import { listFocusExitUploads, removeFocusExitUpload } from '@/lib/focusExitOutbox'
+import { syncLocalCompletedFocusSession } from '@/lib/focusSocialClient'
 import { MIN_COUNTED_FOCUS_MS, useFocusStore } from '@/stores/useFocusStore'
 import { useAuthStore } from '@/stores/useAuthStore'
-import type { FocusSession } from '@/types/focus'
-
-function interruptionDurationMs(session: FocusSession) {
-  return session.interruptions.reduce((sum, interruption) => {
-    if (interruption.durationMs !== null) return sum + interruption.durationMs
-    if (interruption.endedAt !== null) return sum + Math.max(0, interruption.endedAt - interruption.startedAt)
-    return sum
-  }, 0)
-}
-
-async function uploadSession(session: FocusSession) {
-  return syncCompletedFocusSession({
-    clientSessionId: session.id,
-    // Local subject tags are stable strings, while cloud categories are UUIDs.
-    // Preserve the subject snapshot in the label until a category mapping exists.
-    categoryId: null,
-    label: session.subjectName || session.topic || 'Focus session',
-    note: session.note,
-    mode: session.mode,
-    phase: session.phase,
-    plannedSeconds: session.plannedDurationMs ? Math.round(session.plannedDurationMs / 1_000) : null,
-    startedAt: new Date(session.startedAt).toISOString(),
-    endedAt: new Date(session.endedAt).toISOString(),
-    durationSeconds: Math.round(session.elapsedMs / 1_000),
-    pausedSeconds: Math.round(session.pausedMs / 1_000),
-    pauseCount: session.pauseCount,
-    interruptionCount: session.interruptions.length,
-    interruptionSeconds: Math.round(interruptionDurationMs(session) / 1_000),
-    completionReason: session.completionReason === 'timer' ? 'timer' : 'manual',
-  })
-}
 
 /** Uploads completed local sessions idempotently whenever authentication/network return. */
 export function useFocusCloudSync(onError?: (message: string) => void) {
@@ -68,7 +38,7 @@ export function useFocusCloudSync(onError?: (message: string) => void) {
             continue
           }
           try {
-            const result = await uploadSession(session)
+            const result = await syncLocalCompletedFocusSession(session)
             if (!result.available || !result.data) break
             useFocusStore.getState().markSessionSynced(
               session.id,
@@ -78,6 +48,19 @@ export function useFocusCloudSync(onError?: (message: string) => void) {
             )
           } catch (error) {
             onErrorRef.current?.(error instanceof Error ? error.message : 'Focus history could not sync')
+            break
+          }
+        }
+        // A logout network deadline may expire after the local account store
+        // has already been isolated. Retry only the outbox owned by this same
+        // authenticated user; the stable client ID keeps this idempotent.
+        for (const session of listFocusExitUploads(userId)) {
+          try {
+            const result = await syncLocalCompletedFocusSession(session)
+            if (!result.available || !result.data) break
+            removeFocusExitUpload(userId, session.id)
+          } catch (error) {
+            onErrorRef.current?.(error instanceof Error ? error.message : 'A session saved during logout could not sync')
             break
           }
         }

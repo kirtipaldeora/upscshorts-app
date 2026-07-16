@@ -114,6 +114,7 @@ export interface FocusPrivacyPreferences {
   profileVisibility: FocusProfileVisibility
   shareLiveStatus: boolean
   shareAggregateStats: boolean
+  appearInRankings: boolean
   discoverable: boolean
   allowStudyInvites: boolean
 }

@@ -8,6 +8,8 @@ import {
   type PenniAuthProvider,
 } from '@/lib/authClient'
 import { prepareStudentState } from '@/lib/studentDataClient'
+import { clearFocusExitUploads } from '@/lib/focusExitOutbox'
+import { stopFocusForAccountExit } from '@/hooks/useFocusRuntime'
 import { useFocusStore } from '@/stores/useFocusStore'
 
 const USER_KEY = 'penni.auth.user'
@@ -220,6 +222,17 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
             phone: sessionUser.phone,
             avatarUrl: sessionUser.user_metadata?.avatar_url,
           }
+          const cachedAccountId = savedUser?.id || explicitProfileOwner
+          const accountChanged = isGuest || (cachedAccountId !== null && cachedAccountId !== user.id) ||
+            (!cachedAccountId && Boolean(useFocusStore.getState().activeTimer))
+          if (accountChanged) {
+            // The Supabase callback can deliver a newly authenticated identity
+            // before React remounts. Stop device-only runtime state without
+            // writing it under the new user's credentials.
+            await stopFocusForAccountExit({ saveElapsed: false, publishOffline: false })
+            clearAccountCache()
+            profile = null
+          }
           if (cachedProfileOwner !== user.id) profile = null
           writeJson(USER_KEY, user)
           localStorage.removeItem(GUEST_KEY)
@@ -242,7 +255,15 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
           set({ user, profile, isGuest: false, ready: true, loading: false, error: syncErrors[0] ?? null })
           return
         }
-        removeLocalAuth()
+        if (!isGuest && (savedUser || explicitProfileOwner)) {
+          // A server-side/session-expiry sign-out has already lost RLS access,
+          // but local timers and native guards still must not survive it.
+          await stopFocusForAccountExit({ saveElapsed: false, publishOffline: false })
+          clearAccountCache()
+          profile = null
+        } else {
+          removeLocalAuth()
+        }
         set({ user: null, profile: null, isGuest, ready: true, loading: false })
         return
       }
@@ -267,7 +288,8 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
           name: 'Google Student',
           email: 'student@penni.local',
         })
-        removeLocalAuth()
+        await stopFocusForAccountExit({ saveElapsed: false, publishOffline: false })
+        clearAccountCache()
         writeJson(USER_KEY, user)
         localStorage.removeItem(GUEST_KEY)
         set({ user, profile: null, isGuest: false, loading: false })
@@ -299,6 +321,12 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
         ? makeLocalUser('phone', { id: result.id, phone: result.phone ?? phone })
         : makeLocalUser('phone', { phone })
       const cachedOwner = localStorage.getItem(PROFILE_OWNER_KEY) || readJson<PenniUser>(USER_KEY)?.id
+      const previousUser = get().user
+      if (get().isGuest || (previousUser && previousUser.id !== user.id) || (cachedOwner && cachedOwner !== user.id) ||
+        (!cachedOwner && Boolean(useFocusStore.getState().activeTimer))) {
+        await stopFocusForAccountExit({ saveElapsed: false, publishOffline: false })
+        clearAccountCache()
+      }
       let profile = cachedOwner === user.id
         ? normalizeProfile(readJson<StudentProfile>(PROFILE_KEY))
         : null
@@ -401,12 +429,17 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
   continueAsGuest: async () => {
     set({ loading: true, error: null })
     try {
+      // Preserve the same ordering as sign-out: stop local/native work and
+      // publish offline while any authenticated session is still available.
+      await stopFocusForAccountExit({ accountUserId: get().user?.id })
+    } catch { /* guest mode must remain reachable if Focus cleanup is unavailable */ }
+    try {
       // Clear any stale local Supabase session so a reload cannot silently
       // override an explicit choice to continue as a guest.
       await getSupabase()?.auth.signOut({ scope: 'local' })
     } catch { /* guest mode must remain available offline */ }
     try {
-      removeLocalAuth()
+      clearAccountCache()
       localStorage.setItem(GUEST_KEY, '1')
       localStorage.setItem('u4ob', '1')
     } catch { /* noop */ }
@@ -415,6 +448,11 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
 
   signOut: async () => {
     set({ loading: true, error: null })
+    try {
+      // This must finish before auth.signOut: focus_presence RLS and the final
+      // idempotent session upload both require the current authenticated JWT.
+      await stopFocusForAccountExit({ at: Date.now(), accountUserId: get().user?.id })
+    } catch { /* authentication must still be releasable if device cleanup fails */ }
     try {
       await getSupabase()?.auth.signOut()
     } catch { /* local sign out should still proceed */ }
@@ -429,9 +467,15 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
     try {
       const supabase = getSupabase()
       const user = get().user
+      try {
+        // Deletion discards the active block, but native guard and presence
+        // cleanup still need to run before the account/RLS rows disappear.
+        await stopFocusForAccountExit({ saveElapsed: false, accountUserId: user?.id })
+      } catch { /* the account deletion request remains authoritative */ }
       if (supabase && user) {
         const { error } = await supabase.rpc('delete_own_account')
         if (error) throw error
+        clearFocusExitUploads(user.id)
         await supabase.auth.signOut()
       }
       clearAccountCache()
