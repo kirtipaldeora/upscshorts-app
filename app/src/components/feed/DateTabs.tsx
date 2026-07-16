@@ -1,6 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCalendarDays, faCheck, faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import {
+  faCalendarDays,
+  faCheck,
+  faChevronDown,
+  faMagnifyingGlass,
+  faXmark,
+} from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
 import { fmtFull, fmtShort, dayName, TODAY, YESTERDAY } from '@/constants/categories'
 import { useHaptic } from '@/hooks/useHaptic'
@@ -10,197 +16,259 @@ interface DateTabsProps {
   variant?: 'feed' | 'globe'
 }
 
+interface DateDraft {
+  year: number
+  month: number
+  day: number
+}
+
+interface WheelOption {
+  value: number
+  label: string
+  hasNews: boolean
+}
+
+const MONTHS = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+]
+
 export function DateTabs({ dates, variant = 'feed' }: DateTabsProps) {
-  const { selectedDate, setSelectedDate, getArticlesForDate } = useAppStore()
+  const { selectedDate, setSelectedDate, getArticlesForDate, setScreen } = useAppStore()
   const [open, setOpen] = useState(false)
-  const [pickerOpen, setPickerOpen] = useState(false)
-  const wrapRef = useRef<HTMLDivElement>(null)
-  const haptic = useHaptic()
   const [draft, setDraft] = useState(() => splitDate(selectedDate))
-  const draftRef = useRef(draft)
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const dialogId = useId()
+  const haptic = useHaptic()
+
+  const availableDates = useMemo(() => new Set(dates), [dates])
+  const currentYear = splitDate(TODAY).year
+  const yearRange = useMemo(() => {
+    const publishedYears = dates
+      .map(date => Number(date.slice(0, 4)))
+      .filter(year => Number.isInteger(year) && year >= 2000 && year <= currentYear + 5)
+    return {
+      min: Math.min(currentYear - 5, ...publishedYears),
+      max: Math.max(currentYear + 1, ...publishedYears),
+    }
+  }, [currentYear, dates])
 
   useEffect(() => {
-    if (open) {
-      setDraft(splitDate(selectedDate))
-      setPickerOpen(false)
-    }
+    if (open) setDraft(splitDate(selectedDate))
   }, [open, selectedDate])
 
   useEffect(() => {
-    draftRef.current = draft
-  }, [draft])
-
-  useEffect(() => {
     if (!open) return
-    function onPointerDown(e: PointerEvent) {
-      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false)
+
+    function onPointerDown(event: PointerEvent) {
+      if (!wrapRef.current?.contains(event.target as Node)) setOpen(false)
     }
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') setOpen(false)
+    }
+
     window.addEventListener('pointerdown', onPointerDown)
-    return () => window.removeEventListener('pointerdown', onPointerDown)
+    window.addEventListener('keydown', onKeyDown)
+    return () => {
+      window.removeEventListener('pointerdown', onPointerDown)
+      window.removeEventListener('keydown', onKeyDown)
+    }
   }, [open])
 
-  function getLabel(d: string) {
-    if (d === TODAY) return 'Today'
-    if (d === YESTERDAY) return 'Yesterday'
-    return dayName(d)
+  const draftDate = toDateInput(draft)
+  const activeCount = getArticlesForDate(selectedDate).length
+  const draftCount = getArticlesForDate(draftDate).length
+  const draftAvailable = availableDates.has(draftDate)
+  const selectedAvailable = availableDates.has(selectedDate)
+
+  const dayOptions = useMemo<WheelOption[]>(() => {
+    return Array.from({ length: daysInMonth(draft.year, draft.month) }, (_, index) => {
+      const value = index + 1
+      const date = toDateInput({ ...draft, day: value })
+      return { value, label: String(value).padStart(2, '0'), hasNews: availableDates.has(date) }
+    })
+  }, [availableDates, draft.month, draft.year])
+
+  const monthOptions = useMemo<WheelOption[]>(() => {
+    return MONTHS.map((label, index) => {
+      const value = index + 1
+      const prefix = `${draft.year}-${String(value).padStart(2, '0')}-`
+      return { value, label, hasNews: dates.some(date => date.startsWith(prefix)) }
+    })
+  }, [dates, draft.year])
+
+  const yearOptions = useMemo<WheelOption[]>(() => {
+    return Array.from({ length: yearRange.max - yearRange.min + 1 }, (_, index) => {
+      const value = yearRange.min + index
+      return {
+        value,
+        label: String(value),
+        hasNews: dates.some(date => date.startsWith(`${value}-`)),
+      }
+    })
+  }, [dates, yearRange.max, yearRange.min])
+
+  function getLabel(date: string) {
+    if (date === TODAY) return 'Today'
+    if (date === YESTERDAY) return 'Yesterday'
+    return dayName(date)
   }
 
   function chooseDate(date: string) {
     if (!date) return
     setSelectedDate(date)
     setOpen(false)
+    void haptic(8)
   }
 
-  function tickSound() {
-    try {
-      const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
-      if (!Ctx) return
-      const ctx = new Ctx()
-      const osc = ctx.createOscillator()
-      const gain = ctx.createGain()
-      osc.frequency.value = 520
-      gain.gain.setValueAtTime(0.0001, ctx.currentTime)
-      gain.gain.exponentialRampToValueAtTime(0.035, ctx.currentTime + 0.01)
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.055)
-      osc.connect(gain)
-      gain.connect(ctx.destination)
-      osc.start()
-      osc.stop(ctx.currentTime + 0.06)
-      window.setTimeout(() => void ctx.close(), 90)
-    } catch { /* sound is optional */ }
+  function updateDraft(part: keyof DateDraft, value: number) {
+    setDraft(previous => normalizeDraft({ ...previous, [part]: value }))
+    void haptic(4)
   }
 
-  async function nudge(part: 'day' | 'month' | 'year', delta: number) {
-    setDraft(prev => {
-      const next = normalizeDraft({ ...prev, [part]: prev[part] + delta })
-      draftRef.current = next
-      return next
-    })
-    tickSound()
-    await haptic(5)
-  }
-
-  async function pickCurrent() {
-    const date = toDateInput(draftRef.current)
-    chooseDate(date)
-    tickSound()
-    await haptic(8)
-  }
-
-  const activeCount = getArticlesForDate(selectedDate).length
   const quickDates = [TODAY, YESTERDAY]
-  const customActive = !quickDates.includes(selectedDate)
-  const draftDate = toDateInput(draft)
-  const draftCount = getArticlesForDate(draftDate).length
-  const draftAvailable = dates.includes(draftDate)
-  const selectedAvailable = dates.includes(selectedDate)
-  const yearRange = useMemo(() => {
-    const currentYear = splitDate(TODAY).year
-    return { min: currentYear - 8, max: currentYear + 1 }
-  }, [])
 
   return (
-    <div ref={wrapRef} className={`issue-date-wrap ${variant === 'globe' ? 'globe-date-wrap' : ''}`}>
+    <div ref={wrapRef} className={`issue-date-wrap ${open ? 'open' : ''} ${variant === 'globe' ? 'globe-date-wrap' : ''}`}>
       <button
         type="button"
         className={`issue-date-button ${open ? 'active' : ''}`}
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setOpen(value => !value)}
         aria-expanded={open}
-        aria-haspopup="menu"
+        aria-haspopup="dialog"
+        aria-controls={open ? dialogId : undefined}
       >
         <FontAwesomeIcon icon={faCalendarDays} />
         <span>
           <b>{getLabel(selectedDate)}</b>
           <i>{fmtFull(selectedDate)} · {activeCount} stories</i>
         </span>
+        {selectedAvailable && <i className="issue-date-live-dot" aria-label="Briefing available" />}
         <FontAwesomeIcon className="issue-date-chevron" icon={faChevronDown} />
       </button>
 
-      {open && (
-        <div className="issue-date-menu" role="menu" onPointerDown={(event) => event.stopPropagation()}>
-          {quickDates.map((d) => {
-            const active = d === selectedDate
-            const articleCount = getArticlesForDate(d).length
+      {variant === 'feed' && (
+        <button
+          type="button"
+          className="issue-date-search"
+          onClick={() => setScreen('search')}
+          aria-label="Search the briefing"
+        >
+          <FontAwesomeIcon icon={faMagnifyingGlass} />
+        </button>
+      )}
 
-            return (
-              <button
-                key={d}
-                type="button"
-                role="menuitemradio"
-                aria-checked={active}
-                className={`issue-date-option ${active ? 'active' : ''}`}
-                onClick={() => chooseDate(d)}
-              >
-                <span>
-                  <b>{getLabel(d)}</b>
-                  <i>{fmtShort(d)} · {articleCount} stories</i>
-                </span>
-                {active && <FontAwesomeIcon icon={faCheck} />}
-              </button>
-            )
-          })}
-          <div className={`issue-date-wheel-panel ${customActive ? 'active' : ''} ${pickerOpen ? 'open' : ''}`} role="menuitem">
-            <button type="button" className="issue-date-wheel-head" onClick={() => setPickerOpen(v => !v)}>
+      {open && (
+        <>
+          <button
+            type="button"
+            className="issue-date-scrim"
+            aria-label="Close date picker"
+            onClick={() => setOpen(false)}
+          />
+          <section
+            id={dialogId}
+            className="issue-date-menu"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Choose briefing date"
+            onPointerDown={event => event.stopPropagation()}
+          >
+            <header className="issue-date-menu-head">
               <span>
-                <b>{customActive ? 'Selected date' : 'Choose from calendar'}</b>
-                <i>
-                  {customActive
-                    ? `${fmtShort(selectedDate)} · ${activeCount} ${activeCount === 1 ? 'story' : 'stories'}${selectedAvailable ? '' : ' · no feed yet'}`
-                    : 'Spin the date lens'}
-                </i>
+                <small>Briefing archive</small>
+                <b>{fmtShort(draftDate)}</b>
               </span>
-                  {customActive && <FontAwesomeIcon icon={faCheck} />}
+              <button type="button" onClick={() => setOpen(false)} aria-label="Close date picker">
+                <FontAwesomeIcon icon={faXmark} />
+              </button>
+            </header>
+
+            <div className="issue-date-quick" aria-label="Recent briefings">
+              {quickDates.map(date => {
+                const active = date === selectedDate
+                const available = availableDates.has(date)
+                const articleCount = getArticlesForDate(date).length
+                return (
+                  <button
+                    key={date}
+                    type="button"
+                    className={`${active ? 'active' : ''} ${available ? 'available' : ''}`}
+                    onClick={() => chooseDate(date)}
+                  >
+                    <span>
+                      <b>{getLabel(date)}</b>
+                      <small>{articleCount} {articleCount === 1 ? 'story' : 'stories'}</small>
+                    </span>
+                    {available && <i aria-hidden="true" />}
+                    {active && <FontAwesomeIcon icon={faCheck} />}
+                  </button>
+                )
+              })}
+            </div>
+
+            <div className="issue-date-availability-key">
+              <i aria-hidden="true" />
+              <span>Dot marks a published briefing</span>
+              <b>{availableDates.size} available</b>
+            </div>
+
+            <div className="issue-date-wheel" aria-label="Scroll to choose a day, month and year">
+              <WheelColumn
+                label="Day"
+                value={draft.day}
+                options={dayOptions}
+                onChange={value => updateDraft('day', value)}
+              />
+              <WheelColumn
+                label="Month"
+                value={draft.month}
+                options={monthOptions}
+                onChange={value => updateDraft('month', value)}
+              />
+              <WheelColumn
+                label="Year"
+                value={draft.year}
+                options={yearOptions}
+                onChange={value => updateDraft('year', value)}
+              />
+            </div>
+
+            <div className={`issue-date-selection ${draftAvailable ? 'available' : ''}`}>
+              <i aria-hidden="true" />
+              <span>
+                <b>{fmtFull(draftDate)}</b>
+                <small>
+                  {draftAvailable
+                    ? `${draftCount} ${draftCount === 1 ? 'story' : 'stories'} ready to read`
+                    : 'No briefing has been published for this day'}
+                </small>
+              </span>
+            </div>
+
+            <button
+              type="button"
+              className="issue-date-picker-apply"
+              onClick={() => chooseDate(draftDate)}
+            >
+              {draftAvailable ? `Open ${draftCount || ''} ${draftCount === 1 ? 'story' : 'stories'}` : 'View this date'}
             </button>
-            {pickerOpen && (
-              <>
-                <div className="issue-date-wheel" aria-label="Choose issue date">
-                  <WheelColumn
-                    label="Day"
-                    value={draft.day}
-                    previous={wrapNumber(draft.day - 1, 1, daysInMonth(draft.year, draft.month))}
-                    next={wrapNumber(draft.day + 1, 1, daysInMonth(draft.year, draft.month))}
-                    onUp={() => nudge('day', -1)}
-                    onDown={() => nudge('day', 1)}
-                  />
-                  <WheelColumn
-                    label="Month"
-                    value={MONTHS[draft.month - 1].slice(0, 3)}
-                    previous={MONTHS[wrapNumber(draft.month - 1, 1, 12) - 1].slice(0, 3)}
-                    next={MONTHS[wrapNumber(draft.month + 1, 1, 12) - 1].slice(0, 3)}
-                    onUp={() => nudge('month', -1)}
-                    onDown={() => nudge('month', 1)}
-                  />
-                  <WheelColumn
-                    label="Year"
-                    value={draft.year}
-                    previous={wrapNumber(draft.year - 1, yearRange.min, yearRange.max)}
-                    next={wrapNumber(draft.year + 1, yearRange.min, yearRange.max)}
-                    onUp={() => nudge('year', -1)}
-                    onDown={() => nudge('year', 1)}
-                  />
-                </div>
-                <button
-                  type="button"
-                  className="issue-date-picker-apply"
-                  onClick={() => void pickCurrent()}
-                >
-                  {draftAvailable ? `Show ${draftCount} ${draftCount === 1 ? 'story' : 'stories'}` : 'Show this day'}
-                </button>
-              </>
-            )}
-          </div>
-        </div>
+          </section>
+        </>
       )}
     </div>
   )
-}
-
-const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-
-interface DateDraft {
-  year: number
-  month: number
-  day: number
 }
 
 function splitDate(date: string): DateDraft {
@@ -217,40 +285,98 @@ function daysInMonth(year: number, month: number) {
   return new Date(year, month, 0).getDate()
 }
 
-function wrapNumber(value: number, min: number, max: number) {
-  if (value < min) return max
-  if (value > max) return min
-  return value
-}
-
 function normalizeDraft(draft: DateDraft): DateDraft {
-  const month = wrapNumber(draft.month, 1, 12)
+  const month = Math.min(12, Math.max(1, draft.month))
   const maxDay = daysInMonth(draft.year, month)
   return {
     year: draft.year,
     month,
-    day: wrapNumber(Math.min(draft.day, maxDay), 1, maxDay),
+    day: Math.min(maxDay, Math.max(1, draft.day)),
   }
 }
 
 interface WheelColumnProps {
   label: string
-  value: string | number
-  previous: string | number
-  next: string | number
-  onUp: () => void
-  onDown: () => void
+  value: number
+  options: WheelOption[]
+  onChange: (value: number) => void
 }
 
-function WheelColumn({ label, value, previous, next, onUp, onDown }: WheelColumnProps) {
+const WHEEL_ROW_HEIGHT = 42
+
+function WheelColumn({ label, value, options, onChange }: WheelColumnProps) {
+  const trackRef = useRef<HTMLDivElement>(null)
+  const settleTimer = useRef<number | null>(null)
+
+  useEffect(() => {
+    const index = Math.max(0, options.findIndex(option => option.value === value))
+    trackRef.current?.scrollTo({ top: index * WHEEL_ROW_HEIGHT, behavior: 'auto' })
+  }, [options, value])
+
+  useEffect(() => {
+    return () => {
+      if (settleTimer.current !== null) window.clearTimeout(settleTimer.current)
+    }
+  }, [])
+
+  function settleSelection() {
+    const track = trackRef.current
+    if (!track || options.length === 0) return
+    const index = Math.min(options.length - 1, Math.max(0, Math.round(track.scrollTop / WHEEL_ROW_HEIGHT)))
+    const nextValue = options[index].value
+    if (nextValue !== value) onChange(nextValue)
+    track.scrollTo({ top: index * WHEEL_ROW_HEIGHT, behavior: 'smooth' })
+  }
+
+  function onScroll() {
+    if (settleTimer.current !== null) window.clearTimeout(settleTimer.current)
+    settleTimer.current = window.setTimeout(settleSelection, 80)
+  }
+
+  function moveTo(nextValue: number, behavior: ScrollBehavior = 'smooth') {
+    const index = options.findIndex(option => option.value === nextValue)
+    if (index < 0) return
+    trackRef.current?.scrollTo({ top: index * WHEEL_ROW_HEIGHT, behavior })
+    if (nextValue !== value) onChange(nextValue)
+  }
+
+  function onKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    const index = Math.max(0, options.findIndex(option => option.value === value))
+    if (event.key === 'ArrowUp' && index > 0) {
+      event.preventDefault()
+      moveTo(options[index - 1].value)
+    } else if (event.key === 'ArrowDown' && index < options.length - 1) {
+      event.preventDefault()
+      moveTo(options[index + 1].value)
+    }
+  }
+
   return (
     <div className="date-wheel-col">
-      <button type="button" aria-label={`Previous ${label}`} onClick={onUp}>‹</button>
-      <span>{previous}</span>
-      <b>{value}</b>
-      <span>{next}</span>
-      <button type="button" aria-label={`Next ${label}`} onClick={onDown}>›</button>
-      <em>{label}</em>
+      <span className="date-wheel-label">{label}</span>
+      <div
+        ref={trackRef}
+        className="date-wheel-track"
+        role="listbox"
+        aria-label={label}
+        tabIndex={0}
+        onScroll={onScroll}
+        onKeyDown={onKeyDown}
+      >
+        {options.map(option => (
+          <button
+            key={option.value}
+            type="button"
+            role="option"
+            aria-selected={option.value === value}
+            className={`date-wheel-item ${option.hasNews ? 'has-news' : ''}`}
+            onClick={() => moveTo(option.value)}
+          >
+            <span>{option.label}</span>
+            {option.hasNews && <i aria-label="Briefing available" />}
+          </button>
+        ))}
+      </div>
     </div>
   )
 }

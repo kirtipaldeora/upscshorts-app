@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, lazy, Suspense } from 'react'
+import { useState, useCallback, useEffect, useRef, lazy, Suspense } from 'react'
 import { SplashScreen } from '@/components/layout/SplashScreen'
 import { BottomNav } from '@/components/layout/BottomNav'
 import { PenniLoader } from '@/components/layout/PenniLoader'
@@ -17,8 +17,10 @@ import { StreakRecoverySheet } from '@/components/profile/StreakRecoverySheet'
 import { useFocusRuntime } from '@/hooks/useFocusRuntime'
 import { useFocusCloudSync } from '@/hooks/useFocusCloudSync'
 import { useFocusStore } from '@/stores/useFocusStore'
+import { useThemeStore } from '@/stores/useThemeStore'
 import type { FocusSession } from '@/types/focus'
 import { BreakAlarm } from '@/components/focus/BreakAlarm'
+import { MotivationCelebration } from '@/components/ui/MotivationCelebration'
 
 // Heavy / seldom-used screens are code-split so they never bloat first load.
 const ReviseScreen = lazy(() => import('@/components/revise/ReviseScreen').then(module => ({ default: module.ReviseScreen })))
@@ -48,19 +50,33 @@ export default function App() {
   const [uploadVisible, setUploadVisible] = useState(false)
   const [mainsRecordOpen, setMainsRecordOpen] = useState<MainsRecord | null>(null)
   const [streakRecoveryOpen, setStreakRecoveryOpen] = useState(false)
-  const { activeScreen, overlayScreen, setOverlay, setScreen } = useAppStore()
+  const [streakCelebrationOpen, setStreakCelebrationOpen] = useState(false)
+  const streakOpeningChecked = useRef(false)
+  const { activeScreen, overlayScreen, setOverlay, setScreen, goBack } = useAppStore()
   const { user, profile, isGuest, bootstrap } = useAuthStore()
   const { settings, stats } = usePracticeStore()
   const { message: toastMsg, show: showToast, clear: clearToast } = useToast()
   const [breakAlarm, setBreakAlarm] = useState<BreakAlarmState | null>(null)
   const [extendingBreak, setExtendingBreak] = useState(false)
   const focusAlarmSoundEnabled = useFocusStore(state => state.settings.soundsEnabled)
+  const autoShufflePalette = useThemeStore(state => state.autoShufflePalette)
+  const paletteIntervalHours = useThemeStore(state => state.paletteIntervalHours)
+  const paletteChangedAt = useThemeStore(state => state.paletteChangedAt)
+  const randomizePalette = useThemeStore(state => state.randomizePalette)
   const handleFocusComplete = useCallback((session: FocusSession) => {
     if (session.completionReason !== 'timer' || session.phase === 'focus') return
     setBreakAlarm({ id: session.id, phase: session.phase })
   }, [])
   const focusRuntime = useFocusRuntime({ onComplete: handleFocusComplete, onShowToast: showToast })
   useFocusCloudSync(showToast)
+
+  useEffect(() => {
+    if (!autoShufflePalette) return
+    const intervalMs = paletteIntervalHours * 60 * 60 * 1_000
+    const dueIn = Math.max(500, paletteChangedAt + intervalMs - Date.now())
+    const timer = window.setTimeout(randomizePalette, dueIn)
+    return () => window.clearTimeout(timer)
+  }, [autoShufflePalette, paletteChangedAt, paletteIntervalHours, randomizePalette])
 
   const finishBreakAlarm = useCallback(() => {
     const preparedFocus = useFocusStore.getState().activeTimer
@@ -130,6 +146,19 @@ export default function App() {
     const lost = stats.streak.count === 0 && Boolean(stats.streak.last) && stats.streak.last < YESTERDAY
     const dismissed = localStorage.getItem('penni.streak-recovery-dismissed') === TODAY
     setStreakRecoveryOpen(lost && !dismissed)
+  }, [phase, stats.streak.count, stats.streak.last])
+
+  useEffect(() => {
+    if (phase !== 'main' || streakOpeningChecked.current) return
+    streakOpeningChecked.current = true
+    const lost = stats.streak.count === 0 && Boolean(stats.streak.last) && stats.streak.last < YESTERDAY
+    const shownToday = localStorage.getItem('penni.streak-celebration-shown') === TODAY
+    if (lost || stats.streak.count < 1 || shownToday) return
+    const timer = window.setTimeout(() => {
+      localStorage.setItem('penni.streak-celebration-shown', TODAY)
+      setStreakCelebrationOpen(true)
+    }, 900)
+    return () => window.clearTimeout(timer)
   }, [phase, stats.streak.count, stats.streak.last])
 
   const dismissStreakRecovery = useCallback(() => {
@@ -257,7 +286,7 @@ export default function App() {
           {activeScreen === 'settings' && (
             <Suspense fallback={<PenniLoader label="Opening settings" full />}>
               <SettingsScreen
-                onClose={() => setScreen('profile')}
+                onClose={() => goBack('profile')}
                 onShowToast={showToast}
                 onOpenImport={() => setUploadVisible(true)}
               />
@@ -344,6 +373,20 @@ export default function App() {
             dismissStreakRecovery()
             setScreen('practice')
           }}
+        />
+      )}
+
+      {streakCelebrationOpen && (
+        <MotivationCelebration
+          variant="streak"
+          icon="🔥"
+          eyebrow={stats.streak.last === TODAY ? 'Today is protected' : 'Welcome back'}
+          title={stats.streak.last === TODAY ? `${stats.streak.count}-day streak secured` : `${stats.streak.count}-day streak is waiting`}
+          message={stats.streak.last === TODAY
+            ? 'You showed up again. Small, consistent study sessions are becoming a serious advantage.'
+            : 'One focused activity today keeps your momentum alive. You do not need a perfect day—just a return.'}
+          durationMs={3300}
+          onDismiss={() => setStreakCelebrationOpen(false)}
         />
       )}
 

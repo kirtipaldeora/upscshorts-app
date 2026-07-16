@@ -73,6 +73,7 @@ import {
   type FocusUnavailableReason,
 } from '@/lib/focusSocialClient'
 import { useAuthStore } from '@/stores/useAuthStore'
+import { profileMascotUrl } from '@/components/auth/ProfileMascot'
 import {
   DEFAULT_FOCUS_SUBJECT_TAGS,
   selectFocusDayStats,
@@ -301,7 +302,7 @@ export function useFocusExperience(
   const profileWriteGenerationRef = useRef(0)
   const identityRef = useRef({
     displayName: authProfile?.name || user?.name || 'UPSC Aspirant',
-    avatarUrl: authProfile?.photoUrl || user?.avatarUrl || '',
+    avatarUrl: authProfile?.photoUrl || user?.avatarUrl || profileMascotUrl(authProfile?.mascotId),
   })
 
   useEffect(() => { toastRef.current = options.onShowToast }, [options.onShowToast])
@@ -309,9 +310,9 @@ export function useFocusExperience(
   useEffect(() => {
     identityRef.current = {
       displayName: authProfile?.name || user?.name || 'UPSC Aspirant',
-      avatarUrl: authProfile?.photoUrl || user?.avatarUrl || '',
+      avatarUrl: authProfile?.photoUrl || user?.avatarUrl || profileMascotUrl(authProfile?.mascotId),
     }
-  }, [authProfile?.name, authProfile?.photoUrl, user?.avatarUrl, user?.name])
+  }, [authProfile?.mascotId, authProfile?.name, authProfile?.photoUrl, user?.avatarUrl, user?.name])
 
   const showToast = useCallback((message: string) => {
     try { toastRef.current?.(message) } catch { /* optional host UI */ }
@@ -402,10 +403,11 @@ export function useFocusExperience(
     if (nextProfile) {
       const localPrivacy = useFocusStore.getState().privacy
       const desiredRankingVisibility = localPrivacy.shareAggregateStats && localPrivacy.profileVisibility === 'public'
-      if (nextProfile.showInRankings !== desiredRankingVisibility) {
+      const identityChanged = nextProfile.displayName !== identityRef.current.displayName || nextProfile.avatarUrl !== identityRef.current.avatarUrl
+      if (nextProfile.showInRankings !== desiredRankingVisibility || identityChanged) {
         const rankingSafeProfile = await safeResult(upsertFocusProfile({
-          displayName: nextProfile.displayName || identityRef.current.displayName,
-          avatarUrl: nextProfile.avatarUrl || identityRef.current.avatarUrl,
+          displayName: identityRef.current.displayName,
+          avatarUrl: identityRef.current.avatarUrl,
           headline: nextProfile.headline,
           timezone: nextProfile.timezone,
           discoverable: nextProfile.discoverable,
@@ -643,12 +645,12 @@ export function useFocusExperience(
     username: social.profile?.username || undefined,
     name: profileName,
     initials: initials(profileName),
-    avatarUrl: social.profile?.avatarUrl || authProfile?.photoUrl || user?.avatarUrl || undefined,
+    avatarUrl: social.profile?.avatarUrl || authProfile?.photoUrl || user?.avatarUrl || profileMascotUrl(authProfile?.mascotId),
     dailyGoalSeconds: goals.default.targetMinutes * 60,
     currentStreak: streak.current,
     bestStreak: streak.longest,
     rank: social.rankings.week.find(row => row.userId === user?.id)?.rankPosition,
-  }), [authProfile?.photoUrl, goals.default.targetMinutes, profileName, social.profile?.avatarUrl, social.profile?.username, social.rankings.week, streak.current, streak.longest, user?.avatarUrl, user?.id])
+  }), [authProfile?.mascotId, authProfile?.photoUrl, goals.default.targetMinutes, profileName, social.profile?.avatarUrl, social.profile?.username, social.rankings.week, streak.current, streak.longest, user?.avatarUrl, user?.id])
 
   const historicalSubjectIds = useMemo(() => new Set(sessions.flatMap(session =>
     session.phase === 'focus' && session.subjectTagId ? [session.subjectTagId] : [])), [sessions])

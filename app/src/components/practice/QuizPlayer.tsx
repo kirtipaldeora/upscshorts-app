@@ -36,9 +36,26 @@ interface QuizPlayerProps {
   onShowToast: (msg: string) => void
 }
 
+function ReviewQuestionStem({ text }: { text: string }) {
+  const structured = splitUPSCStem(text)
+  if (!structured.statements.length) return <div className="qz-review-question">{text}</div>
+  return (
+    <div className="qz-review-question structured">
+      {structured.lead && <p>{structured.lead}</p>}
+      <ol className="upsc-statement-list">
+        {structured.statements.map((statement, index) => (
+          <li key={index}><span className="upsc-statement-label">{structured.statementLabels[index] ?? index + 1}</span><span className="upsc-statement-text">{statement}</span></li>
+        ))}
+      </ol>
+      {structured.ask && <p>{structured.ask}</p>}
+    </div>
+  )
+}
+
 type AnsweredState = { picked: number; correct: boolean } | null
 type TestAnswer = { picked: number | null; correct: boolean; skipped: boolean }
 type FinishReason = 'submitted' | 'time' | 'exit'
+type ReviewFilter = 'needs' | 'all' | 'correct'
 
 export function QuizPlayer({ title, questions, eyebrow, description, onClose, onShowToast }: QuizPlayerProps) {
   const { settings, recordAnswer, toggleQbm, questionBookmarks, pyqData, pyqReady, setPyqData } = usePracticeStore()
@@ -50,6 +67,7 @@ export function QuizPlayer({ title, questions, eyebrow, description, onClose, on
   const [answered, setAnswered] = useState<AnsweredState>(null)
   const [done, setDone] = useState(false)
   const [reviewMode, setReviewMode] = useState(false)
+  const [reviewFilter, setReviewFilter] = useState<ReviewFilter>('needs')
   const [explanationOpen, setExplanationOpen] = useState(false)
   const [startedAt, setStartedAt] = useState(Date.now())
   const [elapsedMs, setElapsedMs] = useState(0)
@@ -72,23 +90,30 @@ export function QuizPlayer({ title, questions, eyebrow, description, onClose, on
   )
 
   useEffect(() => {
-    if (!questions.some(question => question.src === 'article') || (pyqReady && pyqData.length > 1000)) return
+    // Related-PYQ hints are only rendered during an active Learn attempt.
+    // Keep the 31-year archive off the intro, Exam and post-test review paths.
+    if (!started || testMode !== 'learn' || !questions.some(question => question.src === 'article') || (pyqReady && pyqData.length > 1000)) return
+    let cancelled = false
     loadPyqManifest()
       .then(manifest => loadPyqYears(manifest.totals.years))
-      .then(items => setPyqData(items.map((item): PyqItem => ({
-        id: item.id,
-        exam: item.exam,
-        year: item.year,
-        subject: item.subject,
-        question: item.stem,
-        options: item.options,
-        answer: item.answer,
-        explanation: item.solution.detail,
-        paper: item.paper,
-        keyPoints: item.keyPoints,
-      }))))
+      .then(items => {
+        if (cancelled) return
+        setPyqData(items.map((item): PyqItem => ({
+          id: item.id,
+          exam: item.exam,
+          year: item.year,
+          subject: item.subject,
+          question: item.stem,
+          options: item.options,
+          answer: item.answer,
+          explanation: item.solution.detail,
+          paper: item.paper,
+          keyPoints: item.keyPoints,
+        })))
+      })
       .catch(() => {})
-  }, [pyqData.length, pyqReady, questions, setPyqData])
+    return () => { cancelled = true }
+  }, [pyqData.length, pyqReady, questions, setPyqData, started, testMode])
 
   function pickAnswer(i: number) {
     if (answered && testMode === 'learn') return
@@ -218,26 +243,116 @@ export function QuizPlayer({ title, questions, eyebrow, description, onClose, on
     return `${mm}:${ss}`
   }
 
-  const answerList = questions.map((item, i) => answers[i] ?? { picked: null, correct: false, skipped: true })
-  const correctCount = answerList.filter(a => a.correct).length
-  const incorrectCount = answerList.filter(a => !a.correct && !a.skipped).length
-  const skippedCount = answerList.filter(a => a.skipped).length
+  // Reconcile every result from the picked option and the current answer key.
+  // This keeps counts, accuracy, marks and the review screen on one source of truth.
+  const answerList = questions.map((item, i): TestAnswer => {
+    const picked = answers[i]?.picked ?? null
+    return { picked, correct: picked !== null && picked === item.answer, skipped: picked === null }
+  })
+  const correctCount = answerList.filter(answer => answer.correct).length
+  const incorrectCount = answerList.filter(answer => answer.picked !== null && !answer.correct).length
+  const unattemptedCount = answerList.filter(answer => answer.picked === null).length
   const attemptedCount = correctCount + incorrectCount
-  const accuracy = attemptedCount ? Math.round((correctCount / attemptedCount) * 100) : 0
-  const pct = total > 0 ? Math.round(correctCount / total * 100) : 0
+  const accuracy = attemptedCount ? (correctCount / attemptedCount) * 100 : 0
+  const attemptRate = total ? (attemptedCount / total) * 100 : 0
   const marks = correctCount * 2 - incorrectCount * (2 / 3)
+  const positiveMarks = correctCount * 2
+  const negativeMarks = incorrectCount * (2 / 3)
   const maxMarks = total * 2
-  const marksText = `${Number(marks.toFixed(2))} / ${maxMarks}`
   const estimatedMinutes = Math.max(1, Math.ceil(total * 1.2))
   const examDurationSeconds = estimatedMinutes * 60
-  const examAnsweredCount = Object.values(answers).filter(answer => answer.picked !== null).length
+  const examAnsweredCount = answerList.filter(answer => answer.picked !== null).length
   const examUnansweredCount = total - examAnsweredCount
+  const elapsedSeconds = Math.max(0, Math.round(elapsedMs / 1_000))
+  const secondsPerQuestion = total ? elapsedSeconds / total : 0
+  const timeUsed = examDurationSeconds ? Math.round((elapsedSeconds / examDurationSeconds) * 100) : 0
+  const paceTone = secondsPerQuestion < 30 ? 'rushed' : secondsPerQuestion <= 85 ? 'steady' : 'slow'
+  const paceLabel = secondsPerQuestion < 30 ? 'Rushed pace' : secondsPerQuestion <= 85 ? 'On-target pace' : 'Slow pace'
+  const paceAdvice = secondsPerQuestion < 30
+    ? 'You moved very quickly. Leave time to read qualifiers and eliminate options.'
+    : secondsPerQuestion <= 85
+      ? 'Your pace is close to the UPSC benchmark of 72 seconds per question.'
+      : 'Accuracy may improve, but practise quicker elimination to protect completion time.'
+  const resultGuidance = attemptedCount === 0
+    ? 'No responses were marked. Review the set once, then retry with a clear attempt strategy.'
+    : accuracy >= 75 && attemptRate >= 75
+      ? 'A controlled attempt. Review the few misses before increasing the set size.'
+      : accuracy >= 60
+        ? 'Your base is workable. Focus first on the incorrect concepts shown below.'
+        : 'Prioritise accuracy over guesswork. Use the topic diagnosis to plan the next revision.'
+
+  function formatMark(value: number) {
+    const rounded = Math.round((value + Number.EPSILON) * 100) / 100
+    if (Object.is(rounded, -0) || rounded === 0) return '0'
+    return rounded.toFixed(2).replace(/\.00$/, '').replace(/(\.\d)0$/, '$1')
+  }
+
+  function formatPercent(value: number) {
+    if (!Number.isFinite(value)) return '0%'
+    const rounded = Math.round(value * 10) / 10
+    return `${Number.isInteger(rounded) ? rounded.toFixed(0) : rounded.toFixed(1)}%`
+  }
+
+  function formatPace(seconds: number) {
+    const safe = Math.max(0, Math.round(seconds))
+    if (safe < 60) return `${safe}s/q`
+    return `${Math.floor(safe / 60)}m ${String(safe % 60).padStart(2, '0')}s/q`
+  }
+
   const subjects = Array.from(new Set(questions.map(item => item.subject).filter(Boolean)))
   const subjectAnalysis = subjects.map(subject => {
     const indices = questions.map((item, index) => item.subject === subject ? index : -1).filter(index => index >= 0)
-    const attempted = indices.filter(index => !answerList[index].skipped).length
+    const attempted = indices.filter(index => answerList[index].picked !== null).length
     const correct = indices.filter(index => answerList[index].correct).length
-    return { subject, total: indices.length, attempted, correct }
+    const incorrect = attempted - correct
+    const unattempted = indices.length - attempted
+    const rowMarks = correct * 2 - incorrect * (2 / 3)
+    return {
+      subject,
+      total: indices.length,
+      attempted,
+      correct,
+      incorrect,
+      unattempted,
+      accuracy: attempted ? (correct / attempted) * 100 : 0,
+      marks: rowMarks,
+    }
+  })
+  const topicMap = new Map<string, { topic: string; subject: string; years: Set<number>; indices: number[] }>()
+  questions.forEach((item, index) => {
+    const topic = item.pyq?.topic?.trim() || (item.src === 'article' ? item.srcLabel?.trim() : '')
+    if (!topic) return
+    const key = `${item.subject}::${topic}`
+    const row = topicMap.get(key) ?? { topic, subject: item.subject, years: new Set<number>(), indices: [] }
+    row.indices.push(index)
+    if (item.pyq?.year) row.years.add(item.pyq.year)
+    topicMap.set(key, row)
+  })
+  const topicAnalysis = Array.from(topicMap.values()).map(row => {
+    const attempted = row.indices.filter(index => answerList[index].picked !== null).length
+    const correct = row.indices.filter(index => answerList[index].correct).length
+    const incorrect = attempted - correct
+    const unattempted = row.indices.length - attempted
+    return {
+      ...row,
+      total: row.indices.length,
+      attempted,
+      correct,
+      incorrect,
+      unattempted,
+      accuracy: attempted ? (correct / attempted) * 100 : 0,
+    }
+  }).sort((a, b) => {
+    const aScore = a.attempted ? a.correct / a.attempted : -1
+    const bScore = b.attempted ? b.correct / b.attempted : -1
+    return aScore - bScore || b.total - a.total || a.topic.localeCompare(b.topic)
+  })
+  const reviewEntries = questions.map((item, index) => ({ item, index, answer: answerList[index] }))
+  const needsReviewCount = incorrectCount + unattemptedCount
+  const filteredReviewEntries = reviewEntries.filter(entry => {
+    if (reviewFilter === 'all') return true
+    if (reviewFilter === 'correct') return entry.answer.correct
+    return !entry.answer.correct
   })
 
   useEffect(() => {
@@ -274,7 +389,7 @@ export function QuizPlayer({ title, questions, eyebrow, description, onClose, on
     Object.entries(answers).forEach(([index, answer]) => {
       if (answer.picked === null) return
       const question = questions[Number(index)]
-      if (question) recordAnswer(question.id, answer.correct, question.subject, settings.target, onShowToast)
+      if (question) recordAnswer(question.id, answer.picked === question.answer, question.subject, settings.target, onShowToast)
     })
   }, [answers, done, onShowToast, questions, recordAnswer, settings.target, testMode])
 
@@ -294,7 +409,7 @@ export function QuizPlayer({ title, questions, eyebrow, description, onClose, on
             <div className="qz-intro-facts">
               <div><b>{total}</b><span>Questions</span></div>
               <div><b>{estimatedMinutes} min</b><span>Estimated</span></div>
-              <div><b>+2 / −0.66</b><span>Marking</span></div>
+              <div><b>+2 / −⅔</b><span>Marking</span></div>
             </div>
             <div className="qz-intro-coverage"><span>Coverage</span><p>{subjects.slice(0, 5).join(' · ') || 'General Studies'}</p></div>
           </section>
@@ -316,7 +431,7 @@ export function QuizPlayer({ title, questions, eyebrow, description, onClose, on
               <div className="qz-rules-title"><FontAwesomeIcon icon={faListOl} /><span><b>Test rules</b><small>Read before starting</small></span></div>
               <ol>
                 <li><span>1</span><p>You have <b>{estimatedMinutes} minutes</b>. The test auto-submits when the timer reaches zero.</p></li>
-                <li><span>2</span><p>Each correct answer earns <b>2 marks</b>; each incorrect answer deducts <b>0.66 marks</b>.</p></li>
+                <li><span>2</span><p>Each correct answer earns <b>2 marks</b>; each incorrect answer deducts <b>two-thirds of a mark</b>.</p></li>
                 <li><span>3</span><p>Use the palette to revisit questions or mark them for review. Unanswered questions have no penalty.</p></li>
                 <li><span>4</span><p>Answers and explanations remain hidden until you submit the entire test.</p></li>
               </ol>
@@ -347,69 +462,176 @@ export function QuizPlayer({ title, questions, eyebrow, description, onClose, on
         <div className="quiz-body qz-result modern">
           {!reviewMode ? (
             <>
-              <div className="qz-score-card">
+              <section className="qz-score-card" aria-label="Test score summary">
                 <span className={`qz-finish-reason ${finishReason}`}>
                   <FontAwesomeIcon icon={testMode === 'learn' ? faCheck : finishReason === 'time' ? faClock : finishReason === 'exit' ? faTriangleExclamation : faCheck} />
                   {testMode === 'learn' ? 'Learning set complete' : finishReason === 'time' ? 'Time expired · Auto-submitted' : finishReason === 'exit' ? 'Submitted while exiting' : 'Test submitted'}
                 </span>
-                <h3>Total Marks</h3>
-                <div className={`qz-marks ${marks >= maxMarks * 0.5 ? 'good' : 'low'}`}>{Number(marks.toFixed(2))}<span>/{maxMarks}</span></div>
-                <p>{pct >= 80 ? 'Excellent control. Keep building speed.' : pct >= 50 ? 'Good attempt. Review errors before the next set.' : "One test does not define you. Review, retry, improve."}</p>
+                <span className="qz-score-label">Net UPSC score</span>
+                <div className={`qz-marks ${marks >= maxMarks * 0.5 ? 'good' : marks < 0 ? 'negative' : 'low'}`}>
+                  {formatMark(marks)}<span>/{formatMark(maxMarks)}</span>
+                </div>
+                <p>{resultGuidance}</p>
                 <div className="qz-score-metrics">
-                  <div><FontAwesomeIcon icon={faClock} /><span>Time Taken</span><b>{formatTime(elapsedMs)}</b></div>
-                  <div><FontAwesomeIcon icon={faBullseye} /><span>Accuracy</span><b>{accuracy}%</b></div>
+                  <div><FontAwesomeIcon icon={faBullseye} /><span>Accuracy</span><b>{formatPercent(accuracy)}</b><small>{correctCount} correct ÷ {attemptedCount} attempted</small></div>
+                  <div><FontAwesomeIcon icon={faCheck} /><span>Attempted</span><b>{attemptedCount}/{total}</b><small>{formatPercent(attemptRate)} of the paper</small></div>
                 </div>
+              </section>
+
+              <section className="qz-breakdown qz-answer-audit" aria-label="Reconciled response counts">
+                <div className="qz-card-heading">
+                  <span><small>Response audit</small><h3>Where every question went</h3></span>
+                  <b>{total} total</b>
+                </div>
+                <div className="qz-audit-counts">
+                  <span className="correct"><i />Correct<b>{correctCount}</b><small>Earned marks</small></span>
+                  <span className="incorrect"><i />Incorrect<b>{incorrectCount}</b><small>Negative marks</small></span>
+                  <span className="unattempted"><i />Unattempted<b>{unattemptedCount}</b><small>No penalty</small></span>
+                </div>
+                <p className="qz-reconcile-line"><b>{correctCount}</b> correct + <b>{incorrectCount}</b> incorrect + <b>{unattemptedCount}</b> unattempted = <strong>{total} questions</strong></p>
+              </section>
+
+              <div className="qz-diagnostics-grid">
+                <section className="qz-marks-ledger">
+                  <div className="qz-card-heading">
+                    <span><small>UPSC marking</small><h3>Score calculation</h3></span>
+                    <b>+2 / −⅔ / 0</b>
+                  </div>
+                  <div className="qz-ledger-rows">
+                    <span><i className="correct">+2</i><b>{correctCount} correct</b><strong>+{formatMark(positiveMarks)}</strong></span>
+                    <span><i className="incorrect">−⅔</i><b>{incorrectCount} incorrect</b><strong>−{formatMark(negativeMarks)}</strong></span>
+                    <span><i>0</i><b>{unattemptedCount} unattempted</b><strong>0</strong></span>
+                  </div>
+                  <div className="qz-ledger-total"><span>Net score</span><b>{formatMark(positiveMarks)} − {formatMark(negativeMarks)}</b><strong>{formatMark(marks)}</strong></div>
+                </section>
+
+                <section className="qz-time-analysis">
+                  <div className="qz-card-heading">
+                    <span><small>Time & strategy</small><h3>Attempt pace</h3></span>
+                    <b><FontAwesomeIcon icon={faClock} /> {formatTime(elapsedMs)}</b>
+                  </div>
+                  <div className="qz-time-stats">
+                    <span><small>Average pace</small><b>{formatPace(secondsPerQuestion)}</b></span>
+                    <span><small>Benchmark</small><b>1m 12s/q</b></span>
+                    <span><small>Time used</small><b>{timeUsed}%</b></span>
+                  </div>
+                  <p className={`qz-pace-insight ${paceTone}`}><b>{paceLabel}</b><span>{paceAdvice}</span></p>
+                </section>
               </div>
 
-              <div className="qz-breakdown">
-                <h4>Total MCQs: {total}</h4>
-                <div>
-                  <span>Correct<b>{correctCount}</b><i>+{correctCount * 2} marks</i></span>
-                  <span>Incorrect<b>{incorrectCount}</b><i>-{Number((incorrectCount * (2 / 3)).toFixed(2))} marks</i></span>
-                  <span>Skipped<b>{skippedCount}</b><i>-</i></span>
+              <section className="qz-subject-analysis qz-performance-card">
+                <div className="qz-card-heading">
+                  <span><small>Syllabus diagnosis</small><h3>Performance by subject</h3></span>
+                  <b>{subjectAnalysis.length} {subjectAnalysis.length === 1 ? 'subject' : 'subjects'}</b>
                 </div>
-              </div>
-
-              <div className="qz-subject-analysis">
-                <div className="qz-analysis-head"><span>Performance by subject</span><b>{marksText}</b></div>
                 {subjectAnalysis.map(row => (
                   <div className="qz-analysis-row" key={row.subject}>
-                    <span><b>{row.subject}</b><i>{row.attempted}/{row.total} attempted</i></span>
-                    <strong>{row.correct}/{row.total}</strong>
+                    <div className="qz-analysis-copy">
+                      <span><b>{row.subject}</b><i>{row.attempted}/{row.total} attempted · {row.incorrect} incorrect · {row.unattempted} unattempted</i></span>
+                      <strong>{formatMark(row.marks)} marks</strong>
+                    </div>
+                    <div className="qz-analysis-bar"><i style={{ width: `${row.accuracy}%` }} /></div>
+                    <small>{row.correct}/{row.attempted || 0} correct</small><b>{formatPercent(row.accuracy)}</b>
                   </div>
                 ))}
-              </div>
+              </section>
+
+              {topicAnalysis.length > 0 && (
+                <section className="qz-topic-analysis qz-performance-card">
+                  <div className="qz-card-heading">
+                    <span><small>Concept diagnosis</small><h3>Performance by topic</h3></span>
+                    <b>Weakest first</b>
+                  </div>
+                  <div className="qz-topic-list">
+                    {topicAnalysis.map(row => {
+                      const status = row.attempted === 0 ? 'Not attempted' : row.accuracy >= 75 ? 'Strong' : row.accuracy >= 50 ? 'Revise once' : 'Priority review'
+                      const tone = row.attempted === 0 ? 'unattempted' : row.accuracy >= 75 ? 'strong' : row.accuracy >= 50 ? 'revise' : 'priority'
+                      const years = Array.from(row.years).sort((a, b) => b - a)
+                      return (
+                        <div className="qz-topic-row" key={`${row.subject}-${row.topic}`}>
+                          <span><b>{row.topic}</b><small>{row.subject}{years.length ? ` · UPSC ${years.join(', ')}` : ''}</small></span>
+                          <em className={tone}>{status}</em>
+                          <p>{row.correct}/{row.total} correct · {row.incorrect} incorrect · {row.unattempted} unattempted</p>
+                          <strong>{formatPercent(row.accuracy)}</strong>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </section>
+              )}
+
+              <section className={`qz-review-entry ${incorrectCount ? 'has-mistakes' : ''}`}>
+                <FontAwesomeIcon icon={incorrectCount ? faTriangleExclamation : faCheck} />
+                <span>
+                  <small>Recommended next step</small>
+                  <b>{needsReviewCount ? `Review ${needsReviewCount} answers before another attempt` : 'This set is fully correct'}</b>
+                  <p>{incorrectCount
+                    ? `${incorrectCount} incorrect ${incorrectCount === 1 ? 'answer is' : 'answers are'} in your Mistakes Notebook. Unattempted questions stay available in this review.`
+                    : unattemptedCount
+                      ? 'No incorrect answers were recorded; review the unattempted questions before retrying.'
+                      : 'Review the explanations once, then move to a new topic set.'}</p>
+                </span>
+              </section>
 
               <div className="qz-result-actions horizontal">
-                <button className="pn-btn ghost" onClick={() => setReviewMode(true)}>Review Answers</button>
+                <button className="pn-btn ghost" onClick={() => { setReviewFilter(needsReviewCount ? 'needs' : 'all'); setReviewMode(true) }}>Review {needsReviewCount || total}</button>
                 <button className="pn-btn" onClick={onClose}>Continue</button>
               </div>
             </>
           ) : (
             <>
               <div className="qz-review-head">
-                <button onClick={() => setReviewMode(false)}><FontAwesomeIcon icon={faArrowRight} /> Scorecard</button>
-                <h3>Review Answers</h3>
+                <button onClick={() => setReviewMode(false)} aria-label="Back to scorecard"><FontAwesomeIcon icon={faChevronLeft} /></button>
+                <span><small>Post-test study</small><h3>Review answers</h3></span>
+              </div>
+              <div className="qz-review-overview" aria-label="Answer review counts">
+                <span><b>{correctCount}</b><small>Correct</small></span>
+                <span><b>{incorrectCount}</b><small>Incorrect</small></span>
+                <span><b>{unattemptedCount}</b><small>Unattempted</small></span>
+              </div>
+              <div className="qz-review-filters" role="tablist" aria-label="Filter reviewed answers">
+                <button className={reviewFilter === 'needs' ? 'active' : ''} onClick={() => setReviewFilter('needs')}>Needs review <span>{needsReviewCount}</span></button>
+                <button className={reviewFilter === 'all' ? 'active' : ''} onClick={() => setReviewFilter('all')}>All <span>{total}</span></button>
+                <button className={reviewFilter === 'correct' ? 'active' : ''} onClick={() => setReviewFilter('correct')}>Correct <span>{correctCount}</span></button>
               </div>
               <div className="qz-review-list">
-                {questions.map((item, i) => {
-                  const answer = answerList[i]
+                {filteredReviewEntries.map(({ item, index: i, answer }) => {
+                  const status = answer.correct ? 'Correct' : answer.skipped ? 'Unattempted' : 'Incorrect'
                   return (
                     <div key={item.id} className={`qz-review-item ${answer.correct ? 'ok' : answer.skipped ? 'skip' : 'no'}`}>
-                      <span>Q{i + 1} · {item.subject}</span>
-                      <b>{item.q}</b>
-                      <p>Your answer: {answer.skipped || answer.picked === null ? 'Skipped' : item.options[answer.picked]}</p>
-                      <p>Correct answer: {item.options[item.answer]}</p>
-                      {item.pyq ? (
-                        <PyqSolutionView
-                          compact
-                          solution={item.pyq.solution}
-                          answerLabel={String.fromCharCode(65 + item.answer)}
-                        />
-                      ) : <em>{item.explanation}</em>}
+                      <div className="qz-review-item-head">
+                        <span>Question {i + 1} · {item.subject}</span>
+                        <i>{item.src === 'pyq' ? 'PYQ' : 'Current Affairs'}</i>
+                        <em className="qz-review-status"><FontAwesomeIcon icon={answer.correct ? faCheck : faXmark} />{status}</em>
+                      </div>
+                      <ReviewQuestionStem text={item.q} />
+                      <div className="qz-review-answer-grid">
+                        <div className={`response ${answer.correct ? 'ok' : answer.skipped ? 'skip' : 'no'}`}>
+                          <span>Your response</span>
+                          <b>{answer.skipped || answer.picked === null ? '—' : String.fromCharCode(65 + answer.picked)}</b>
+                          <p>{answer.skipped || answer.picked === null ? 'Not attempted' : item.options[answer.picked]}</p>
+                        </div>
+                        <div className="correct-answer">
+                          <span>Correct answer</span>
+                          <b>{String.fromCharCode(65 + item.answer)}</b>
+                          <p>{item.options[item.answer]}</p>
+                        </div>
+                      </div>
+                      <details className="qz-review-explanation">
+                        <summary><span>Explanation</span><b>Study why</b><FontAwesomeIcon icon={faChevronDown} /></summary>
+                        <div>
+                          {item.pyq ? (
+                            <PyqSolutionView compact solution={item.pyq.solution} answerLabel={String.fromCharCode(65 + item.answer)} />
+                          ) : <p>{item.explanation}</p>}
+                          {item.ref && <small>Reference · {item.ref}</small>}
+                        </div>
+                      </details>
                     </div>
                   )
                 })}
+                {!filteredReviewEntries.length && (
+                  <div className="qz-review-empty"><FontAwesomeIcon icon={faCheck} /><b>Nothing needs correction</b><p>Every response in this set was correct.</p><button onClick={() => setReviewFilter('all')}>Review all answers</button></div>
+                )}
               </div>
               <div className="qz-result-actions horizontal">
                 <button className="pn-btn ghost" onClick={retry}><FontAwesomeIcon icon={faRotateLeft} /> Retry</button>

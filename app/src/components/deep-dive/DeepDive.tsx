@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faArrowRight, faShareAlt, faPenFancy, faCircle, faDumbbell, faPlay, faCloudArrowUp, faChevronLeft, faChevronRight, faStop, faVolumeHigh, faGaugeHigh } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
 import { usePracticeStore } from '@/stores/usePracticeStore'
+import type { ArticleMilestone } from '@/stores/usePracticeStore'
 import { useHaptic } from '@/hooks/useHaptic'
 import { useNarration } from '@/hooks/useNarration'
 import { gsap, reducedMotion, DUR, EASE } from '@/anim/animations'
@@ -15,6 +16,7 @@ import { articleNarration, articleNarrationHi } from '@/utils/narration'
 import type { Article } from '@/types/article'
 import { QuizPlayer } from '@/components/practice/QuizPlayer'
 import { MainsDetail } from '@/components/practice/MainsDetail'
+import { MotivationCelebration } from '@/components/ui/MotivationCelebration'
 
 interface DeepDiveProps {
   onShowToast: (msg: string) => void
@@ -130,6 +132,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
   const scrollFrameRef = useRef<number | null>(null)
   const readThresholdRef = useRef(false)
   const [readThresholdReached, setReadThresholdReached] = useState(false)
+  const [articleCelebration, setArticleCelebration] = useState<{ milestone: ArticleMilestone; total: number } | null>(null)
 
   const visible = overlayScreen === 'deep-dive'
   const a = activeArticle
@@ -184,7 +187,7 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
       const max = el.scrollHeight - el.clientHeight
       const progress = max > 0 ? Math.min(100, (el.scrollTop / max) * 100) : 0
       if (progressBarRef.current) progressBarRef.current.style.width = `${progress}%`
-      if (progress >= 70 && !readThresholdRef.current) {
+      if (progress >= 85 && !readThresholdRef.current) {
         readThresholdRef.current = true
         setReadThresholdReached(true)
       }
@@ -197,10 +200,10 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
 
   useEffect(() => {
     if (!a || (!readThresholdReached && narration.progress < 85)) return
-    if (recordLearningActivity(a.id)) {
-      onShowToast('Deep Dive complete. Today’s learning streak is protected.')
-    }
-  }, [a, readThresholdReached, narration.progress, recordLearningActivity, onShowToast])
+    const result = recordLearningActivity(a.id)
+    if (!result.recorded) return
+    if (result.milestone) setArticleCelebration({ milestone: result.milestone, total: result.totalLearned })
+  }, [a, readThresholdReached, narration.progress, recordLearningActivity])
 
   async function goToArticle(article: Article) {
     await haptic()
@@ -592,6 +595,21 @@ export function DeepDive({ onShowToast }: DeepDiveProps) {
             <FontAwesomeIcon icon={faChevronRight} />
           </button>
         </div>
+      )}
+
+      {articleCelebration && (
+        <MotivationCelebration
+          variant="article"
+          icon={articleCelebration.milestone.icon}
+          eyebrow="Nice progress"
+          title={articleCelebration.milestone.name}
+          message="Keep going—each story is making the next one easier to understand."
+          stat={String(articleCelebration.total)}
+          statLabel={`unique articles read · next at ${articleCelebration.total + 5}`}
+          actionLabel="Keep going"
+          durationMs={3600}
+          onDismiss={() => setArticleCelebration(null)}
+        />
       )}
     </div>
   )

@@ -31,7 +31,7 @@ function saveToLS(data: ArticlesByDate) {
  * and falls back to the bundled data/articles/{date}.json.
  */
 export function useArticles(date: string) {
-  const { setArticlesByDate, mergeArticles } = useAppStore()
+  const { mergeArticles } = useAppStore()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const hydrated = useRef(false)
@@ -43,10 +43,12 @@ export function useArticles(date: string) {
       hydrated.current = true
       const cached = loadFromLS()
       if (Object.keys(cached).length > 0) {
-        setArticlesByDate(cached)
+        // Hydration must never replace a complete archive that another screen
+        // has already loaded. Merge the cache so Search/Revise keep every day.
+        mergeArticles(cached)
       }
     }
-  }, [setArticlesByDate])
+  }, [mergeArticles])
 
   // Step 2: Fetch the per-date JSON if not already in store
   useEffect(() => {

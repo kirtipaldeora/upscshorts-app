@@ -126,6 +126,7 @@
 .focus-avatar.sm { width: 36px; height: 36px; border-radius: 13px; font-size: 10px; }
 .focus-avatar.lg { width: 58px; height: 58px; border-radius: 20px; font-size: 15px; }
 .focus-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
+.focus-avatar .profile-mascot { width: 100%; height: 100%; flex: none; }
 .focus-avatar b { font-size: .82em; font-weight: 950; }
 .focus-avatar > i { position: absolute; right: -2px; bottom: -2px; width: 12px; height: 12px; border-radius: 50%; background: var(--good); border: 3px solid var(--card); box-shadow: 0 0 0 2px color-mix(in srgb, var(--good) 22%, transparent); }
 

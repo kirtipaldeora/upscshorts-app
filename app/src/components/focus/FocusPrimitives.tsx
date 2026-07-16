@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { ProfileMascot, profileMascotIdFromUrl } from '@/components/auth/ProfileMascot'
 
 export function formatFocusTime(seconds: number, includeSeconds = false) {
   const safe = Math.max(0, Math.round(seconds))
@@ -22,9 +23,10 @@ export function compactFocusTime(seconds: number) {
 }
 
 export function FocusAvatar({ name, initials, avatarUrl, live = false, size = 'md' }: { name: string; initials: string; avatarUrl?: string; live?: boolean; size?: 'sm' | 'md' | 'lg' }) {
+  const mascotId = profileMascotIdFromUrl(avatarUrl)
   return (
     <span className={`focus-avatar ${size} ${live ? 'live' : ''}`} aria-label={live ? `${name}, focusing now` : name}>
-      {avatarUrl ? <img src={avatarUrl} alt="" /> : <b>{initials}</b>}
+      {mascotId ? <ProfileMascot id={mascotId} size={size} /> : avatarUrl ? <img src={avatarUrl} alt="" /> : <b>{initials}</b>}
       {live && <i aria-hidden="true" />}
     </span>
   )

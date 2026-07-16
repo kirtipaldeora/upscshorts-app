@@ -29,9 +29,14 @@ import {
   faLifeRing,
   faUserPen,
   faEnvelopeOpenText,
+  faCheck,
 } from '@fortawesome/free-solid-svg-icons'
 import { usePracticeStore } from '@/stores/usePracticeStore'
-import { useThemeStore } from '@/stores/useThemeStore'
+import {
+  APP_PALETTES,
+  useThemeStore,
+  type PaletteIntervalHours,
+} from '@/stores/useThemeStore'
 import { useAppStore } from '@/stores/useAppStore'
 import { useBookmarkStore } from '@/stores/useBookmarkStore'
 import { useAuthStore, type StudentProfile } from '@/stores/useAuthStore'
@@ -54,19 +59,42 @@ type DeviceOrientationWithPermission = typeof DeviceOrientationEvent & {
   requestPermission?: () => Promise<'granted' | 'denied'>
 }
 
+type SettingsSection = 'appearance' | 'study' | 'reading' | 'updates' | 'data' | 'advanced'
+
+const SETTINGS_SECTION_TITLES: Record<SettingsSection, string> = {
+  appearance: 'Appearance',
+  study: 'Study & reminders',
+  reading: 'News & reading',
+  updates: 'Briefing updates',
+  data: 'Data & support',
+  advanced: 'Advanced tools',
+}
+
 export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsScreenProps) {
   const { settings, stats, saveSettings } = usePracticeStore()
-  const { theme, toggle } = useThemeStore()
+  const {
+    theme,
+    palette,
+    autoShufflePalette,
+    paletteIntervalHours,
+    toggle,
+    setTheme,
+    setPalette,
+    setAutoShufflePalette,
+    setPaletteIntervalHours,
+    randomizePalette,
+  } = useThemeStore()
   const { articlesByDate, setArticlesByDate, sourceFilter, toggleSource } = useAppStore()
   const { clearAll } = useBookmarkStore()
   const { user, profile, isGuest, loading: authSaving, signOut, deleteAccount, saveProfile } = useAuthStore()
   const previewNarration = useNarration()
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>(() => listNarrationVoices())
-  const [sourcesOpen, setSourcesOpen] = useState(false)
-  const [voicesOpen, setVoicesOpen] = useState(false)
-  const [contentToolsOpen, setContentToolsOpen] = useState(false)
-  const [advancedOpen, setAdvancedOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState<SettingsSection | null>(null)
   const [dangerOpen, setDangerOpen] = useState(false)
+  const [gsFilter, setGsFilter] = useState<string[]>(() => {
+    try { return JSON.parse(localStorage.getItem('u4gs') || '["GS1","GS2","GS3"]') as string[] }
+    catch { return ['GS1', 'GS2', 'GS3'] }
+  })
   const settingsRef = useRef<HTMLDivElement>(null)
   const profileName = isGuest ? 'Guest mode' : profile?.name || user?.name || 'Signed in student'
   const profileMethod = isGuest ? 'not signed in' : user?.method ?? 'local'
@@ -82,12 +110,8 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
     const ordered = [selectedVoice, ...preferred, ...fallback].filter(Boolean) as SpeechSynthesisVoice[]
     return ordered.filter((voice, index) => ordered.findIndex(item => item.voiceURI === voice.voiceURI) === index).slice(0, 6)
   }, [voices, selectedVoice])
-  const gsFilter = (() => {
-    try { return JSON.parse(localStorage.getItem('u4gs') || '["GS1","GS2","GS3"]') as string[] }
-    catch { return ['GS1', 'GS2', 'GS3'] }
-  })()
-
   function saveGs(val: string[]) {
+    setGsFilter(val)
     localStorage.setItem('u4gs', JSON.stringify(val))
   }
 
@@ -265,7 +289,7 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
     const root = settingsRef.current
     if (!root || reducedMotion()) return
     const ctx = gsap.context(() => {
-      gsap.fromTo('.settings-panel,.settings-rhythm-card,.settings-collapsible',
+      gsap.fromTo('.settings-profile-card,.settings-home-group,.settings-section-intro,.settings-control-card,.settings-rhythm-card',
         { opacity: 0, y: 16 },
         { opacity: 1, y: 0, duration: 0.46, ease: EASE.expo, stagger: 0.045, clearProps: 'transform,opacity' })
     }, root)
@@ -281,303 +305,196 @@ export function SettingsScreen({ onClose, onShowToast, onOpenImport }: SettingsS
     return () => window.speechSynthesis.removeEventListener('voiceschanged', refresh)
   }, [])
 
+  const currentPaletteLabel = APP_PALETTES.find(item => item.id === palette)?.label ?? 'Penni'
+
   return (
-    <div className="screen active" style={{ animation: 'scrIn 0.35s cubic-bezier(0.22,1,0.36,1)' }}>
-      <div className="screen-header">
-        <button onClick={onClose} aria-label="Back">
+    <div className="screen active settings-screen" style={{ animation: 'scrIn 0.35s cubic-bezier(0.22,1,0.36,1)' }}>
+      <div className="screen-header settings-screen-header">
+        <button onClick={() => activeSection ? setActiveSection(null) : onClose()} aria-label={activeSection ? 'Back to Settings' : 'Back to Account'}>
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
-        <h2>Settings</h2>
+        <div><span>{activeSection ? 'Settings' : 'Your app'}</span><h2>{activeSection ? SETTINGS_SECTION_TITLES[activeSection] : 'Settings'}</h2></div>
       </div>
-      <div ref={settingsRef} className="screen-body" style={{ paddingBottom: 'calc(110px + env(safe-area-inset-bottom))' }}>
 
-        {/* Account */}
-        <div className="setting-group settings-panel">
-          <div className="setting-group-title">Account</div>
-          <div className="setting-item settings-account-row" onClick={onClose}>
-            <div className="setting-left">
+      <div ref={settingsRef} className="screen-body settings-screen-body">
+        {!activeSection && (
+          <>
+            <button className="settings-profile-card" onClick={onClose}>
               <ProfileAvatar profile={profile} user={user} size="sm" />
-              <span><b>{profileName}</b><small>{isGuest ? profileMethod : `${profileCompletion.percent}% complete`}</small></span>
-            </div>
-            <FontAwesomeIcon icon={faUserPen} style={{ color: 'var(--acc)' }} />
-          </div>
-          {isGuest && (
-            <p className="pn-note">Guest mode keeps practice local on this device. Sign in to create a profile and sync progress.</p>
-          )}
-          <div className="setting-item" onClick={() => void handleSignOut()}>
-            <div className="setting-left">
-              <FontAwesomeIcon icon={isGuest ? faUser : faRightFromBracket} style={{ width: 14, color: isGuest ? 'var(--acc)' : '#E36D6D' }} />
-              <span style={{ color: isGuest ? 'var(--acc)' : '#E36D6D' }}>{isGuest ? 'Sign in to sync' : 'Sign out'}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Communication preferences */}
-        <div className="setting-group settings-panel">
-          <div className="setting-group-title">Updates</div>
-          <div className="setting-item" onClick={() => void toggleEmailUpdates()}>
-            <div className="setting-left">
-              <FontAwesomeIcon icon={faEnvelopeOpenText} style={{ width: 14 }} />
-              <span>Email updates</span>
-            </div>
-            <button className={`toggle ${profile?.emailUpdates ? 'on' : ''}`} disabled={authSaving} onClick={event => { event.stopPropagation(); void toggleEmailUpdates() }} aria-label="Toggle email updates" />
-          </div>
-          <p className="pn-note">A daily briefing email when the new pack is published, plus important Penni feature announcements.</p>
-          <div className="setting-item" onClick={() => void toggleWhatsappUpdates()}>
-            <div className="setting-left">
-              <FontAwesomeIcon icon={faWhatsapp} style={{ width: 14, color: '#23a966' }} />
-              <span>WhatsApp briefings</span>
-            </div>
-            <button className={`toggle ${profile?.whatsappUpdates ? 'on' : ''}`} disabled={authSaving} onClick={event => { event.stopPropagation(); void toggleWhatsappUpdates() }} aria-label="Toggle WhatsApp updates" />
-          </div>
-          <p className="pn-note">A daily briefing alert when the new pack is published, plus major feature updates. Turn it off anytime.</p>
-        </div>
-
-        {/* Preferences */}
-        <div className="setting-group settings-panel">
-          <div className="setting-group-title">Preferences</div>
-          <div className="setting-item" onClick={toggle}>
-            <div className="setting-left">
-              <FontAwesomeIcon icon={theme === 'dark' ? faMoon : faSun} style={{ width: 14 }} />
-              <span>Dark Mode</span>
-            </div>
-            <button
-              className={`toggle ${theme === 'dark' ? 'on' : ''}`}
-              onClick={e => { e.stopPropagation(); toggle() }}
-              aria-label="Toggle dark mode"
-            />
-          </div>
-          <div className="setting-item" onClick={toggleFeedBackdrop}>
-            <div className="setting-left">
-              <FontAwesomeIcon icon={faGlobe} style={{ width: 14 }} />
-              <span>Animated feed backdrop</span>
-            </div>
-            <button
-              className={`toggle ${settings.feedCosmicBackdrop ? 'on' : ''}`}
-              onClick={e => {
-                e.stopPropagation()
-                void toggleFeedBackdrop()
-              }}
-              aria-label="Toggle animated feed backdrop"
-            />
-          </div>
-          <div className="setting-item" onClick={() => saveSettings({ hapticsEnabled: !settings.hapticsEnabled })}>
-            <div className="setting-left">
-              <FontAwesomeIcon icon={faBullseye} style={{ width: 14 }} />
-              <span>Haptic feedback</span>
-            </div>
-            <button
-              className={`toggle ${settings.hapticsEnabled ? 'on' : ''}`}
-              onClick={event => { event.stopPropagation(); saveSettings({ hapticsEnabled: !settings.hapticsEnabled }) }}
-              aria-label="Toggle haptic feedback"
-            />
-          </div>
-          <div className="setting-item" style={{ flexWrap: 'wrap', gap: 8 }}>
-            <div className="setting-left">
-              <FontAwesomeIcon icon={faSlidersH} style={{ width: 14 }} />
-              <span>GS papers</span>
-            </div>
-            <div className="pn-gs">
-              {['GS1', 'GS2', 'GS3', 'GS4'].map(g => (
-                <button
-                  key={g}
-                  className={`pn-gschip ${gsFilter.includes(g) ? 'on' : ''}`}
-                  onClick={() => toggleGs(g)}
-                >
-                  {g}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* News sources */}
-        <div className={`setting-group settings-panel settings-disclosure ${sourcesOpen ? 'open' : ''}`}>
-          <button className="settings-summary" onClick={() => setSourcesOpen(value => !value)}>
-            <span className="settings-summary-icon"><FontAwesomeIcon icon={faNewspaper} /></span>
-            <span><b>News sources</b><small>{enabledSourceCount} of {NEWS_SOURCES.length} shown</small></span>
-            <FontAwesomeIcon icon={faChevronDown} />
-          </button>
-          {sourcesOpen && (
-            <div className="settings-options-grid">
-              {NEWS_SOURCES.map(src => (
-                <button key={src.key} className={sourceFilter[src.key] ? 'active' : ''} onClick={() => handleToggleSource(src.key)}>
-                  <span>{src.label}</span><i>{sourceFilter[src.key] ? 'On' : 'Off'}</i>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Narration voice */}
-        <div className={`setting-group settings-panel settings-disclosure ${voicesOpen ? 'open' : ''}`}>
-          <button className="settings-summary" onClick={() => setVoicesOpen(value => !value)}>
-            <span className="settings-summary-icon"><FontAwesomeIcon icon={faMicrophone} /></span>
-            <span><b>Narration voice</b><small>{selectedVoice ? `${selectedVoice.name} · ${selectedVoice.lang}` : 'Best available Indian voice'}</small></span>
-            <FontAwesomeIcon icon={faChevronDown} />
-          </button>
-          {voicesOpen && (
-            curatedVoices.length === 0 ? <p className="pn-note">No narration voices are available on this device yet.</p> : (
-              <div className="voice-picker-list compact">
-                {curatedVoices.map(voice => {
-                  const active = settings.voiceURI === voice.voiceURI
-                  return (
-                    <div key={voice.voiceURI} className={`voice-picker-row ${active ? 'on' : ''}`}>
-                      <button className="voice-picker-select" onClick={() => chooseVoice(voice.voiceURI)}>
-                        <FontAwesomeIcon icon={faMicrophone} />
-                        <span><b>{voice.name}</b><i>{voice.lang}</i></span>
-                      </button>
-                      <button className="voice-picker-preview" onClick={() => previewVoice(voice.voiceURI)} aria-label={`Preview ${voice.name}`}><FontAwesomeIcon icon={faPlay} /></button>
-                    </div>
-                  )
-                })}
-              </div>
-            )
-          )}
-        </div>
-
-        {/* Daily practice */}
-        <div className="setting-group settings-panel">
-          <div className="setting-group-title">Daily practice</div>
-          <div className="settings-rhythm-card">
-            <div className="settings-rhythm-top">
-              <FontAwesomeIcon icon={faBullseye} />
-              <div>
-                <span>Today’s progress</span>
-                <b>{todayDone} / {settings.target} questions</b>
-              </div>
-              <strong>{targetPct}%</strong>
-            </div>
-            <div className="settings-rhythm-bar"><i style={{ width: `${targetPct}%` }} /></div>
-            <div className="settings-target-row">
-              <span>Daily target</span>
-              <div className="pn-step">
-                <button onClick={() => setDailyTarget(Math.max(5, settings.target - 5))}>-</button>
-                <b>{settings.target}</b>
-                <button onClick={() => setDailyTarget(Math.min(50, settings.target + 5))}>+</button>
-              </div>
-            </div>
-            <div className="settings-reminder-row">
-              <div>
-                <FontAwesomeIcon icon={faClock} />
-                <span>Revision nudge</span>
-              </div>
-              <input
-                type="time"
-                value={settings.reminderTime || '19:00'}
-                onChange={e => setReminderTime(e.target.value)}
-                aria-label="Reminder time"
-              />
-              <button
-                className={`toggle ${settings.remind ? 'on' : ''}`}
-                onClick={() => void enableReminder(!settings.remind)}
-                aria-label="Toggle revision reminder"
-              />
-            </div>
-            <button className="settings-test-nudge" onClick={testReminder}>
-              <FontAwesomeIcon icon={faBell} />
-              Test nudge
+              <span><b>{profileName}</b><small>{isGuest ? 'Guest · progress stays on this device' : `${profileCompletion.percent}% profile complete`}</small></span>
+              <FontAwesomeIcon icon={faChevronRight} />
             </button>
-          </div>
-        </div>
 
-        {/* Advanced tools stay out of the primary launch experience. */}
-        <div className={`setting-group settings-panel settings-disclosure ${advancedOpen ? 'open' : ''}`}>
-          <button className="settings-summary" onClick={() => setAdvancedOpen(value => !value)}>
-            <span className="settings-summary-icon"><FontAwesomeIcon icon={faKey} /></span>
-            <span><b>Advanced tools</b><small>Optional personal AI evaluation key</small></span>
-            <FontAwesomeIcon icon={faChevronDown} />
-          </button>
-          {advancedOpen && (
-            <div className="settings-advanced-body">
-              <label><span>Claude API key</span><input className="pn-inp wide" type="password" defaultValue={settings.key} placeholder="sk-ant-..." onChange={e => saveSettings({ key: e.target.value.trim() })} /></label>
-              <p className="pn-note">Stored only on this device. Penni uses it only when you request a Mains evaluation. Daily limit: 5 uploads.</p>
-            </div>
-          )}
-        </div>
+            <p className="settings-home-intro">Keep everyday choices simple. Open a section only when you want to change something.</p>
 
-        {/* Data & privacy */}
-        <div className="setting-group settings-panel">
-          <div className="setting-group-title">Data &amp; privacy</div>
-          <div className="setting-item" onClick={() => window.open('/privacy.html', '_blank')}>
-            <div className="setting-left">
-              <FontAwesomeIcon icon={faShieldHalved} style={{ width: 14 }} />
-              <span>Privacy policy</span>
-            </div>
-            <FontAwesomeIcon icon={faChevronRight} style={{ color: 'var(--ink3)', fontSize: 11 }} />
-          </div>
-          <div className="setting-item" onClick={() => window.open('/terms.html', '_blank')}>
-            <div className="setting-left"><FontAwesomeIcon icon={faFileContract} style={{ width: 14 }} /><span>Terms of use</span></div>
-            <FontAwesomeIcon icon={faChevronRight} style={{ color: 'var(--ink3)', fontSize: 11 }} />
-          </div>
-          <div className="setting-item" onClick={() => window.location.href = 'mailto:support@penni.app?subject=Penni support'}>
-            <div className="setting-left"><FontAwesomeIcon icon={faLifeRing} style={{ width: 14 }} /><span>Help &amp; support</span></div>
-            <FontAwesomeIcon icon={faChevronRight} style={{ color: 'var(--ink3)', fontSize: 11 }} />
-          </div>
-          <div className="setting-item" onClick={() => window.location.href = 'mailto:support@penni.app?subject=Penni feedback'}>
-            <div className="setting-left"><FontAwesomeIcon icon={faEnvelope} style={{ width: 14 }} /><span>Send feedback</span></div>
-            <FontAwesomeIcon icon={faChevronRight} style={{ color: 'var(--ink3)', fontSize: 11 }} />
-          </div>
-
-          <div className={`settings-collapsible ${contentToolsOpen ? 'open' : ''}`}>
-            <button className="settings-collapse-head" onClick={() => setContentToolsOpen(value => !value)}>
-              <div className="setting-left">
-                <FontAwesomeIcon icon={faFileImport} style={{ width: 14 }} />
-                <span>Content tools</span>
+            <section className="settings-home-group">
+              <h3>Personalise</h3>
+              <div>
+                <button className="settings-nav-row" onClick={() => setActiveSection('appearance')}>
+                  <i><FontAwesomeIcon icon={theme === 'dark' ? faMoon : faSun} /></i>
+                  <span><b>Appearance</b><small>{currentPaletteLabel} · {theme === 'dark' ? 'Dark' : 'Light'} mode</small></span>
+                  <FontAwesomeIcon icon={faChevronRight} />
+                </button>
+                <button className="settings-nav-row" onClick={() => setActiveSection('study')}>
+                  <i><FontAwesomeIcon icon={faBullseye} /></i>
+                  <span><b>Study &amp; reminders</b><small>{settings.target} questions daily · {settings.remind ? settings.reminderTime || '19:00' : 'nudges off'}</small></span>
+                  <FontAwesomeIcon icon={faChevronRight} />
+                </button>
+                <button className="settings-nav-row" onClick={() => setActiveSection('reading')}>
+                  <i><FontAwesomeIcon icon={faNewspaper} /></i>
+                  <span><b>News &amp; reading</b><small>{enabledSourceCount} sources · {gsFilter.length} GS papers</small></span>
+                  <FontAwesomeIcon icon={faChevronRight} />
+                </button>
+                <button className="settings-nav-row" onClick={() => setActiveSection('updates')}>
+                  <i><FontAwesomeIcon icon={faBell} /></i>
+                  <span><b>Briefing updates</b><small>{isGuest ? 'Sign in to enable' : [profile?.emailUpdates && 'Email', profile?.whatsappUpdates && 'WhatsApp'].filter(Boolean).join(' + ') || 'Off'}</small></span>
+                  <FontAwesomeIcon icon={faChevronRight} />
+                </button>
               </div>
-              <FontAwesomeIcon icon={faChevronDown} />
+            </section>
+
+            <section className="settings-home-group">
+              <h3>App &amp; account</h3>
+              <div>
+                <button className="settings-nav-row" onClick={() => setActiveSection('data')}>
+                  <i><FontAwesomeIcon icon={faShieldHalved} /></i>
+                  <span><b>Data &amp; support</b><small>Privacy, backup, help and reset</small></span>
+                  <FontAwesomeIcon icon={faChevronRight} />
+                </button>
+                <button className="settings-nav-row" onClick={() => setActiveSection('advanced')}>
+                  <i><FontAwesomeIcon icon={faKey} /></i>
+                  <span><b>Advanced tools</b><small>Optional personal evaluation key</small></span>
+                  <FontAwesomeIcon icon={faChevronRight} />
+                </button>
+              </div>
+            </section>
+
+            <button className={`settings-session-action ${isGuest ? '' : 'danger'}`} onClick={() => void handleSignOut()}>
+              <FontAwesomeIcon icon={isGuest ? faUser : faRightFromBracket} />
+              {isGuest ? 'Sign in to sync progress' : 'Sign out'}
             </button>
-            {contentToolsOpen && (
-              <div className="settings-collapse-body">
-                {onOpenImport && (
-                  <button onClick={onOpenImport}>
-                    <FontAwesomeIcon icon={faFileImport} />
-                    Import content JSON
+          </>
+        )}
+
+        {activeSection === 'appearance' && (
+          <div className="settings-section-page">
+            <div className="settings-section-intro"><span>Make it yours</span><h3>Choose a calm reading environment.</h3><p>Colour and brightness change independently, so your selected pastel also works in dark mode.</p></div>
+
+            <section className="settings-control-card">
+              <div className="settings-control-head"><span><FontAwesomeIcon icon={theme === 'dark' ? faMoon : faSun} /><b>Brightness</b></span><small>Changes only when you choose it</small></div>
+              <div className="settings-segmented">
+                <button className={theme === 'light' ? 'active' : ''} onClick={() => setTheme('light')}><FontAwesomeIcon icon={faSun} /> Light</button>
+                <button className={theme === 'dark' ? 'active' : ''} onClick={() => setTheme('dark')}><FontAwesomeIcon icon={faMoon} /> Dark</button>
+              </div>
+            </section>
+
+            <section className="settings-control-card">
+              <div className="settings-control-head"><span><FontAwesomeIcon icon={faSlidersH} /><b>Pastel theme</b></span><small>{currentPaletteLabel}</small></div>
+              <div className="settings-palette-grid">
+                {APP_PALETTES.map(item => (
+                  <button key={item.id} className={palette === item.id ? 'active' : ''} onClick={() => setPalette(item.id)} aria-pressed={palette === item.id}>
+                    <span>{item.colors.map((color, index) => <i key={color} style={{ background: color, zIndex: 3 - index }} />)}</span>
+                    <b>{item.label}</b>
+                    {palette === item.id && <FontAwesomeIcon icon={faCheck} />}
                   </button>
-                )}
-                <button onClick={handleBackupContent}>
-                  <FontAwesomeIcon icon={faFileExport} />
-                  Backup content
-                </button>
+                ))}
               </div>
-            )}
-          </div>
+            </section>
 
-          <div className={`settings-collapsible danger ${dangerOpen ? 'open' : ''}`}>
-            <button className="settings-collapse-head" onClick={() => setDangerOpen(value => !value)}>
-              <div className="setting-left">
-                <FontAwesomeIcon icon={faTrash} style={{ width: 14, color: '#E36D6D' }} />
-                <span>Reset and cleanup</span>
+            <section className="settings-control-card settings-auto-theme">
+              <div className="settings-toggle-row">
+                <span><b>Auto-shuffle colours</b><small>Rotate the pastel palette on a schedule</small></span>
+                <button className={`toggle ${autoShufflePalette ? 'on' : ''}`} onClick={() => setAutoShufflePalette(!autoShufflePalette)} aria-label="Toggle automatic colour shuffle" />
               </div>
-              <FontAwesomeIcon icon={faChevronDown} />
-            </button>
-            {dangerOpen && (
-              <div className="settings-collapse-body">
-                <button onClick={handleClearBookmarks}>
-                  <FontAwesomeIcon icon={faTrash} />
-                  Clear bookmarks
-                </button>
-                <button onClick={handleResetContent}>
-                  <FontAwesomeIcon icon={faRotate} />
-                  Reset content
-                </button>
-                <button onClick={handleReset}>
-                  <FontAwesomeIcon icon={faArrowRotateLeft} />
-                  Reset app
-                </button>
-                <button className="danger-action" onClick={() => void handleDeleteAccount()}>
-                  <FontAwesomeIcon icon={faTrash} />
-                  {isGuest ? 'Erase guest data' : 'Delete account'}
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
+              {autoShufflePalette && (
+                <div className="settings-interval-row">
+                  <span>Change every</span>
+                  <div>{([3, 6, 12] as PaletteIntervalHours[]).map(hours => <button key={hours} className={paletteIntervalHours === hours ? 'active' : ''} onClick={() => setPaletteIntervalHours(hours)}>{hours}h</button>)}</div>
+                </div>
+              )}
+              <button className="settings-shuffle-now" onClick={randomizePalette}><FontAwesomeIcon icon={faRotate} /> Surprise me now</button>
+            </section>
 
-        <div style={{ textAlign: 'center', padding: '16px 16px 24px', color: 'var(--on2)', fontSize: 11, fontWeight: 700 }}>
-          Built for UPSC aspirants<br />
-          <span style={{ color: 'var(--yellow)' }}>Penni</span>
-        </div>
+            <section className="settings-control-card settings-compact-list">
+              <div className="settings-toggle-row"><span><b>Animated feed backdrop</b><small>Depth and motion on the briefing feed</small></span><button className={`toggle ${settings.feedCosmicBackdrop ? 'on' : ''}`} onClick={() => void toggleFeedBackdrop()} aria-label="Toggle animated feed backdrop" /></div>
+              <div className="settings-toggle-row"><span><b>Haptic feedback</b><small>Subtle response for study actions</small></span><button className={`toggle ${settings.hapticsEnabled ? 'on' : ''}`} onClick={() => saveSettings({ hapticsEnabled: !settings.hapticsEnabled })} aria-label="Toggle haptic feedback" /></div>
+            </section>
+          </div>
+        )}
+
+        {activeSection === 'study' && (
+          <div className="settings-section-page">
+            <div className="settings-section-intro"><span>Your rhythm</span><h3>A target that is visible, not noisy.</h3><p>Set one daily number and an optional reminder. Detailed targets remain in your Account page.</p></div>
+            <div className="settings-rhythm-card">
+              <div className="settings-rhythm-top"><FontAwesomeIcon icon={faBullseye} /><div><span>Today’s progress</span><b>{todayDone} / {settings.target} questions</b></div><strong>{targetPct}%</strong></div>
+              <div className="settings-rhythm-bar"><i style={{ width: `${targetPct}%` }} /></div>
+              <div className="settings-target-row"><span>Daily target</span><div className="pn-step"><button onClick={() => setDailyTarget(Math.max(5, settings.target - 5))}>−</button><b>{settings.target}</b><button onClick={() => setDailyTarget(Math.min(50, settings.target + 5))}>+</button></div></div>
+              <div className="settings-reminder-row"><div><FontAwesomeIcon icon={faClock} /><span>Revision nudge</span></div><input type="time" value={settings.reminderTime || '19:00'} onChange={event => setReminderTime(event.target.value)} aria-label="Reminder time" /><button className={`toggle ${settings.remind ? 'on' : ''}`} onClick={() => void enableReminder(!settings.remind)} aria-label="Toggle revision reminder" /></div>
+              <button className="settings-test-nudge" onClick={testReminder}><FontAwesomeIcon icon={faBell} /> Test nudge</button>
+            </div>
+          </div>
+        )}
+
+        {activeSection === 'reading' && (
+          <div className="settings-section-page">
+            <div className="settings-section-intro"><span>Your syllabus</span><h3>Control what reaches the feed.</h3><p>These preferences refine discovery. They do not delete articles or PYQs.</p></div>
+            <section className="settings-control-card">
+              <div className="settings-control-head"><span><FontAwesomeIcon icon={faSlidersH} /><b>GS papers</b></span><small>{gsFilter.length} selected</small></div>
+              <div className="settings-gs-grid">{['GS1', 'GS2', 'GS3', 'GS4'].map(item => <button key={item} className={gsFilter.includes(item) ? 'active' : ''} onClick={() => toggleGs(item)}>{item.replace('GS', 'GS ')}</button>)}</div>
+            </section>
+            <section className="settings-control-card">
+              <div className="settings-control-head"><span><FontAwesomeIcon icon={faNewspaper} /><b>News sources</b></span><small>{enabledSourceCount} of {NEWS_SOURCES.length}</small></div>
+              <div className="settings-options-grid clean">{NEWS_SOURCES.map(source => <button key={source.key} className={sourceFilter[source.key] ? 'active' : ''} onClick={() => handleToggleSource(source.key)}><span>{source.label}</span><i>{sourceFilter[source.key] ? 'On' : 'Off'}</i></button>)}</div>
+            </section>
+            <section className="settings-control-card">
+              <div className="settings-control-head"><span><FontAwesomeIcon icon={faMicrophone} /><b>Narration voice</b></span><small>{selectedVoice?.name || 'Automatic'}</small></div>
+              {curatedVoices.length === 0 ? <p className="settings-empty-note">No narration voices are available on this device yet.</p> : <div className="voice-picker-list compact clean">{curatedVoices.map(voice => { const active = settings.voiceURI === voice.voiceURI; return <div key={voice.voiceURI} className={`voice-picker-row ${active ? 'on' : ''}`}><button className="voice-picker-select" onClick={() => chooseVoice(voice.voiceURI)}><FontAwesomeIcon icon={faMicrophone} /><span><b>{voice.name}</b><i>{voice.lang}</i></span></button><button className="voice-picker-preview" onClick={() => previewVoice(voice.voiceURI)} aria-label={`Preview ${voice.name}`}><FontAwesomeIcon icon={faPlay} /></button></div> })}</div>}
+            </section>
+          </div>
+        )}
+
+        {activeSection === 'updates' && (
+          <div className="settings-section-page">
+            <div className="settings-section-intro"><span>Stay informed</span><h3>Only the updates you ask for.</h3><p>Briefings are sent when a new current-affairs pack is published. Feature announcements are occasional.</p></div>
+            {isGuest && <div className="settings-info-banner"><FontAwesomeIcon icon={faUser} /><span><b>Sign in required</b><small>Add an email or WhatsApp number from your Account page first.</small></span></div>}
+            <section className="settings-control-card settings-update-card">
+              <div className="settings-update-icon email"><FontAwesomeIcon icon={faEnvelopeOpenText} /></div><span><b>Email briefings</b><small>Daily pack availability and important product updates.</small></span><button className={`toggle ${profile?.emailUpdates ? 'on' : ''}`} disabled={authSaving || isGuest} onClick={() => void toggleEmailUpdates()} aria-label="Toggle email updates" />
+            </section>
+            <section className="settings-control-card settings-update-card">
+              <div className="settings-update-icon whatsapp"><FontAwesomeIcon icon={faWhatsapp} /></div><span><b>WhatsApp briefings</b><small>New-pack alert and major feature updates. No promotional spam.</small></span><button className={`toggle ${profile?.whatsappUpdates ? 'on' : ''}`} disabled={authSaving || isGuest} onClick={() => void toggleWhatsappUpdates()} aria-label="Toggle WhatsApp updates" />
+            </section>
+          </div>
+        )}
+
+        {activeSection === 'data' && (
+          <div className="settings-section-page">
+            <div className="settings-section-intro"><span>Control &amp; clarity</span><h3>Your data stays understandable.</h3><p>Support, legal documents and infrequent maintenance actions live here.</p></div>
+            <section className="settings-control-card settings-link-list">
+              <button onClick={() => window.open('/privacy.html', '_blank')}><span><FontAwesomeIcon icon={faShieldHalved} /> Privacy policy</span><FontAwesomeIcon icon={faChevronRight} /></button>
+              <button onClick={() => window.open('/terms.html', '_blank')}><span><FontAwesomeIcon icon={faFileContract} /> Terms of use</span><FontAwesomeIcon icon={faChevronRight} /></button>
+              <button onClick={() => window.location.href = 'mailto:support@penni.app?subject=Penni support'}><span><FontAwesomeIcon icon={faLifeRing} /> Help &amp; support</span><FontAwesomeIcon icon={faChevronRight} /></button>
+              <button onClick={() => window.location.href = 'mailto:support@penni.app?subject=Penni feedback'}><span><FontAwesomeIcon icon={faEnvelope} /> Send feedback</span><FontAwesomeIcon icon={faChevronRight} /></button>
+            </section>
+            <section className="settings-control-card">
+              <div className="settings-control-head"><span><FontAwesomeIcon icon={faFileImport} /><b>Content backup</b></span><small>For manual archives</small></div>
+              <div className="settings-data-actions">{onOpenImport && <button onClick={onOpenImport}><FontAwesomeIcon icon={faFileImport} /> Import JSON</button>}<button onClick={handleBackupContent}><FontAwesomeIcon icon={faFileExport} /> Export backup</button></div>
+            </section>
+            <section className={`settings-control-card settings-danger-zone ${dangerOpen ? 'open' : ''}`}>
+              <button className="settings-danger-head" onClick={() => setDangerOpen(value => !value)}><span><FontAwesomeIcon icon={faTrash} /><b>Reset &amp; cleanup</b></span><FontAwesomeIcon icon={faChevronDown} /></button>
+              {dangerOpen && <div className="settings-danger-actions"><button onClick={handleClearBookmarks}>Clear bookmarks</button><button onClick={handleResetContent}>Reset feed content</button><button onClick={handleReset}>Reset this app</button><button onClick={() => void handleDeleteAccount()}>{isGuest ? 'Erase guest data' : 'Delete account'}</button></div>}
+            </section>
+          </div>
+        )}
+
+        {activeSection === 'advanced' && (
+          <div className="settings-section-page">
+            <div className="settings-section-intro"><span>Optional</span><h3>Personal AI evaluation key.</h3><p>This is only for aspirants who want to use their own Claude key for Mains evaluation. The rest of Penni does not require it.</p></div>
+            <section className="settings-control-card settings-api-card">
+              <label><span>Claude API key</span><input type="password" defaultValue={settings.key} placeholder="sk-ant-..." onChange={event => saveSettings({ key: event.target.value.trim() })} /></label>
+              <p>Stored only on this device and used only when you request a Mains evaluation. Daily limit: five uploads.</p>
+            </section>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -34,6 +34,7 @@ import { ProgressDashboard } from './ProgressDashboard'
 import { ProfileAvatar } from './ProfileAvatar'
 import { StudyTargetsSheet } from './StudyTargetsSheet'
 import { getProfileCompletion } from '@/utils/profile'
+import './ProfileScreen.css'
 
 interface ProfileScreenProps {
   onOpenSettings: () => void
@@ -89,7 +90,7 @@ export function ProfileScreen({ onOpenSettings, onOpenMainsRecord, onShowToast }
   const goalComplete = completesDailyActivity(todayStats, target)
   const targetPct = goalComplete ? 100 : Math.min(100, Math.round((todayDone / Math.max(1, target)) * 100))
   const displayName = isGuest ? 'Guest Aspirant' : profile?.name || settings.name || 'UPSC Aspirant'
-  const profileLine = isGuest ? 'Guest mode - local only' : [profile?.targetExam, profile?.prepStage].filter(Boolean).join(' · ') || 'Civil Services Aspirant'
+  const profileLine = isGuest ? 'Explore locally. Sign in when you want to sync.' : [profile?.targetExam, profile?.prepStage].filter(Boolean).join(' · ') || 'Civil Services Aspirant'
   const completion = getProfileCompletion(profile, user)
   const enabledTargets = Object.values(settings.studyTargets).filter(Boolean).length
   const pyqAttempts = Object.keys(stats.a).filter(id => id.startsWith('pyq-')).length
@@ -108,10 +109,10 @@ export function ProfileScreen({ onOpenSettings, onOpenMainsRecord, onShowToast }
   useEffect(() => {
     if (reducedMotion()) return
     const ctx = gsap.context(() => {
-      gsap.fromTo('.account-hero,.account-panel,.account-action-row,.account-list-card',
+      gsap.fromTo('.account-identity-card,.account-today-card,.account-section',
         { opacity: 0, y: 18 },
         { opacity: 1, y: 0, duration: 0.54, ease: EASE.expo, stagger: 0.06, clearProps: 'transform,opacity' })
-      gsap.fromTo('.account-progress i',
+      gsap.fromTo('.account-hub-progress i',
         { scaleX: 0, transformOrigin: 'left center' },
         { scaleX: 1, duration: 0.8, ease: EASE.expo, delay: 0.14, clearProps: 'transform' })
     })
@@ -146,121 +147,156 @@ export function ProfileScreen({ onOpenSettings, onOpenMainsRecord, onShowToast }
   }
 
   return (
-    <div className="screen active" style={{ animation: 'scrIn 0.35s cubic-bezier(0.22,1,0.36,1)' }}>
-      {/* Header */}
-      <div className="screen-header">
+    <div className="screen active account-screen">
+      <div className="screen-header account-header">
         <button onClick={handleBack} aria-label="Back">
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
-        <h2>Profile</h2>
-        <button onClick={onOpenSettings} aria-label="Settings" style={{ marginLeft: 'auto' }}>
+        <div>
+          <span>Personal workspace</span>
+          <h2>Account</h2>
+        </div>
+        <button onClick={onOpenSettings} aria-label="Open settings">
           <FontAwesomeIcon icon={faGear} />
         </button>
       </div>
 
-      <div className="screen-body">
-        <div className="account-hero">
-          <div className="account-hero-top">
-            <ProfileAvatar profile={profile} user={user} size="lg" />
-            <button onClick={() => {
+      <div className="screen-body account-screen-body">
+        <section className="account-identity-card" aria-label="Account identity">
+          <div className="account-identity-main">
+            <div className="account-identity-avatar"><ProfileAvatar profile={profile} user={user} size="lg" /></div>
+            <div className="account-identity-copy">
+              <span>{isGuest ? 'Local preview' : 'Penni account'}</span>
+              <h3>{displayName}</h3>
+              <p>{profileLine}</p>
+            </div>
+            <button className="account-identity-action" onClick={() => {
               if (isGuest || !profile) onOpenSettings()
               else setEditOpen(true)
-            }}>
-              {isGuest ? 'Sign in' : 'Edit account'}
+            }} aria-label={isGuest ? 'Sign in to Penni' : 'Edit account'}>
+              <span>{isGuest ? 'Sign in' : 'Edit'}</span>
               <FontAwesomeIcon icon={faChevronRight} />
             </button>
           </div>
-          <span>{isGuest ? 'Preview account' : 'Penni account'}</span>
-          <h3>{displayName}</h3>
-          <p>{profileLine}</p>
-          {!isGuest && (
-            <button className="account-completion" onClick={() => setEditOpen(true)}>
-              <span><b>{completion.percent}% complete</b><small>{completion.missing.length ? `Add ${completion.missing.slice(0, 2).join(' and ')}` : 'Your profile is complete'}</small></span>
-              <i><em style={{ width: `${completion.percent}%` }} /></i>
-              <FontAwesomeIcon icon={faChevronRight} />
-            </button>
-          )}
-        </div>
 
-        <div className="account-panel">
-          <div className="account-panel-head">
+          {!isGuest ? (
+            <button className="account-profile-progress" onClick={() => setEditOpen(true)}>
+              <span><small>Profile setup</small><b>{completion.percent}% complete</b></span>
+              <i role="progressbar" aria-label="Profile completion" aria-valuemin={0} aria-valuemax={100} aria-valuenow={completion.percent}><em style={{ width: `${completion.percent}%` }} /></i>
+              <small>{completion.missing.length ? `Add ${completion.missing.slice(0, 2).join(' and ')}` : 'All details added'}</small>
+              <FontAwesomeIcon icon={faChevronRight} />
+            </button>
+          ) : (
+            <div className="account-local-note"><span>Guest mode</span><p>Your study data stays on this device until you sign in.</p></div>
+          )}
+        </section>
+
+        <section className="account-today-card" aria-labelledby="account-today-title">
+          <div className="account-today-head">
             <div>
-              <span>Today’s mission</span>
-              <b>{goalComplete ? 'Complete' : `${todayDone} / ${target} MCQs`}</b>
+              <span>Today’s preparation</span>
+              <h3 id="account-today-title">{goalComplete ? 'Daily target complete' : `${todayDone} of ${target} MCQs`}</h3>
             </div>
-            <strong>{targetPct}%</strong>
+            <strong>{targetPct}<small>%</small></strong>
           </div>
-          <div className="account-progress"><i style={{ width: `${targetPct}%` }} /></div>
-          <p>{goalComplete ? 'Your daily rhythm is protected. Review or explore whenever you are ready.' : `${enabledTargets} active target${enabledTargets === 1 ? '' : 's'} · ${Math.max(0, target - todayDone)} MCQs remaining.`}</p>
-          <div className="account-panel-actions">
+          <div className="account-hub-progress" role="progressbar" aria-label="Daily MCQ target" aria-valuemin={0} aria-valuemax={100} aria-valuenow={targetPct}><i style={{ width: `${targetPct}%` }} /></div>
+          <p>{goalComplete ? 'Target secured. Use the rest of today for revision or focused practice.' : `${Math.max(0, target - todayDone)} questions left · ${enabledTargets || 'No'} active study target${enabledTargets === 1 ? '' : 's'}.`}</p>
+          <div className="account-daily-actions">
             <button onClick={() => { void haptic(); setScreen('practice') }}>
               <FontAwesomeIcon icon={faDumbbell} />
-                {todayDone ? 'Continue practice' : 'Start practice'}
+              {todayDone ? 'Continue practice' : 'Start practice'}
             </button>
             <button className="secondary" onClick={() => setTargetsOpen(true)}>
               <FontAwesomeIcon icon={faClipboardList} /> Targets
             </button>
           </div>
-        </div>
 
-        <div className="account-action-row">
-          <button onClick={() => { void haptic(); setProgressOpen(true) }}>
+          <div className="account-stat-strip" aria-label="Preparation snapshot">
+            <button onClick={() => { void haptic(); setProgressOpen(true) }}>
             <FontAwesomeIcon icon={faFire} />
             <b>{streakCount}</b>
-            <span>streak</span>
-          </button>
-          <button onClick={() => setScreen('bookmarks')}>
-            <FontAwesomeIcon icon={faBookmark} />
-            <b>{totalBookmarks}</b>
-            <span>saved</span>
-          </button>
-          <button onClick={() => setScreen('practice')}>
+              <span>day streak</span>
+            </button>
+            <button onClick={() => setProgressOpen(true)}>
             <FontAwesomeIcon icon={faBullseye} />
-            <b>{attempted}</b>
-            <span>attempted</span>
-          </button>
-        </div>
-
-        <div className="account-list-card account-hub-list">
-          <div className="account-list-head">
-            <FontAwesomeIcon icon={faChartLine} />
-            <span>Your preparation</span>
-          </div>
-          <button onClick={() => setProgressOpen(true)}><span><FontAwesomeIcon icon={faChartLine} /> My progress</span><b>{attempted} MCQs</b></button>
-          <button onClick={() => setTargetsOpen(true)}><span><FontAwesomeIcon icon={faClipboardList} /> My targets</span><b>{enabledTargets} active</b></button>
-          <button onClick={() => setScreen('bookmarks')}><span><FontAwesomeIcon icon={faBookmark} /> Bookmarks</span><b>{totalBookmarks} saved</b></button>
-          <button onClick={() => setScreen('revise')}><span><FontAwesomeIcon icon={faBookOpen} /> Revision</span><FontAwesomeIcon icon={faChevronRight} /></button>
-          <button onClick={onOpenSettings}><span><FontAwesomeIcon icon={faGear} /> Settings</span><FontAwesomeIcon icon={faChevronRight} /></button>
-        </div>
-
-        <div className="account-insight-grid">
-          <button onClick={() => setProgressOpen(true)}><span>PYQ practice</span><b>{pyqAttempts || '—'}</b><small>{pyqAttempts ? `${pyqAccuracy}% accuracy` : 'Start in Practice'}</small></button>
-          <button onClick={() => setProgressOpen(true)}><span>Mains writing</span><b>{mainsRecs.length || '—'}</b><small>{mainsRecs.length ? 'evaluated answers' : 'Build consistency'}</small></button>
-        </div>
-
-        {mainsRecs.length > 0 && (
-          <div className="account-list-card">
-            <div className="account-list-head">
+              <b>{pyqAttempts ? `${pyqAccuracy}%` : '—'}</b>
+              <span>PYQ accuracy</span>
+            </button>
+            <button onClick={() => setProgressOpen(true)}>
               <FontAwesomeIcon icon={faFilePen} />
-              <span>Recent Mains evaluations</span>
-              <button onClick={() => setScreen('practice')}>Practice</button>
-            </div>
-            {mainsRecs.slice(0, 3).map(r => (
-              <button key={r.ts} onClick={() => onOpenMainsRecord(r)}>
-                <span>{r.qtext}</span>
-                <b>{r.eval ? `${r.eval.score}/${r.eval.max_score}` : 'Open'}</b>
-              </button>
-            ))}
+              <b>{mainsRecs.length || '—'}</b>
+              <span>Mains answers</span>
+            </button>
           </div>
-        )}
+        </section>
 
-        <div className="account-list-card account-support-list">
-          <div className="account-list-head"><FontAwesomeIcon icon={faLifeRing} /><span>Help &amp; legal</span></div>
-          <button onClick={() => window.location.href = 'mailto:support@penni.app?subject=Penni support'}><span><FontAwesomeIcon icon={faLifeRing} /> Help &amp; support</span><FontAwesomeIcon icon={faChevronRight} /></button>
-          <button onClick={() => window.open('/privacy.html', '_blank')}><span><FontAwesomeIcon icon={faScaleBalanced} /> Privacy policy</span><FontAwesomeIcon icon={faChevronRight} /></button>
-          <button onClick={() => window.open('/terms.html', '_blank')}><span><FontAwesomeIcon icon={faScaleBalanced} /> Terms of use</span><FontAwesomeIcon icon={faChevronRight} /></button>
-          <button onClick={() => window.location.href = 'mailto:support@penni.app?subject=Penni feedback'}><span><FontAwesomeIcon icon={faEnvelope} /> Send feedback</span><FontAwesomeIcon icon={faChevronRight} /></button>
-        </div>
+        <section className="account-section">
+          <div className="account-section-heading">
+            <span>Study &amp; review</span>
+            <p>Your preparation tools, kept in one place.</p>
+          </div>
+          <div className="account-menu-card">
+            <button onClick={() => setProgressOpen(true)}>
+              <i><FontAwesomeIcon icon={faChartLine} /></i>
+              <span><b>Progress &amp; analytics</b><small>{attempted ? `${attempted} questions attempted` : 'See accuracy, streaks and activity'}</small></span>
+              <em>{attempted || 'New'}</em>
+              <FontAwesomeIcon icon={faChevronRight} />
+            </button>
+            <button onClick={() => setScreen('bookmarks')}>
+              <i><FontAwesomeIcon icon={faBookmark} /></i>
+              <span><b>Bookmarks</b><small>{totalBookmarks ? `${totalBookmarks} saved for later` : 'Save articles and questions for later'}</small></span>
+              <em>{totalBookmarks || '—'}</em>
+              <FontAwesomeIcon icon={faChevronRight} />
+            </button>
+            <button onClick={() => setScreen('revise')}>
+              <i><FontAwesomeIcon icon={faBookOpen} /></i>
+              <span><b>Revision</b><small>Articles, question banks and your mistakes</small></span>
+              <FontAwesomeIcon icon={faChevronRight} />
+            </button>
+            {mainsRecs[0] && (
+              <button onClick={() => onOpenMainsRecord(mainsRecs[0])}>
+                <i><FontAwesomeIcon icon={faFilePen} /></i>
+                <span><b>Latest Mains evaluation</b><small>{mainsRecs[0].qtext}</small></span>
+                <em>{mainsRecs[0].eval ? `${mainsRecs[0].eval.score}/${mainsRecs[0].eval.max_score}` : 'Open'}</em>
+                <FontAwesomeIcon icon={faChevronRight} />
+              </button>
+            )}
+          </div>
+        </section>
+
+        <section className="account-section">
+          <div className="account-section-heading"><span>Account &amp; app</span></div>
+          <div className="account-menu-card">
+            <button onClick={onOpenSettings}>
+              <i><FontAwesomeIcon icon={faGear} /></i>
+              <span><b>Settings</b><small>Account, appearance, alerts and data</small></span>
+              <FontAwesomeIcon icon={faChevronRight} />
+            </button>
+          </div>
+        </section>
+
+        <section className="account-section account-support-section">
+          <div className="account-section-heading"><span>Support &amp; legal</span></div>
+          <div className="account-menu-card account-support-card">
+            <button onClick={() => window.location.href = 'mailto:support@penni.app?subject=Penni support'}>
+              <i><FontAwesomeIcon icon={faLifeRing} /></i>
+              <span><b>Help &amp; support</b><small>Get help with your Penni account</small></span>
+              <FontAwesomeIcon icon={faChevronRight} />
+            </button>
+            <button onClick={() => window.location.href = 'mailto:support@penni.app?subject=Penni feedback'}>
+              <i><FontAwesomeIcon icon={faEnvelope} /></i>
+              <span><b>Send feedback</b><small>Tell us what would improve your preparation</small></span>
+              <FontAwesomeIcon icon={faChevronRight} />
+            </button>
+            <div className="account-legal-links" aria-label="Legal links">
+              <FontAwesomeIcon icon={faScaleBalanced} aria-hidden="true" />
+              <button onClick={() => window.open('/privacy.html', '_blank', 'noopener,noreferrer')}>Privacy policy</button>
+              <span aria-hidden="true">·</span>
+              <button onClick={() => window.open('/terms.html', '_blank', 'noopener,noreferrer')}>Terms of use</button>
+            </div>
+          </div>
+          <p className="account-footer-note">Penni · Built for focused preparation</p>
+        </section>
       </div>
 
       {editOpen && draft && (

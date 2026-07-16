@@ -15,6 +15,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
 import { useAuthStore } from '@/stores/useAuthStore'
+import { profileMascotUrl } from '@/components/auth/ProfileMascot'
 import { FocusAnalytics } from './FocusAnalytics'
 import { FocusFriends } from './FocusFriends'
 import { FocusGroups } from './FocusGroups'
@@ -109,8 +110,8 @@ export function FocusScreen(props: FocusScreenProps) {
   const profile = useMemo(() => {
     if (data?.profile) return data.profile
     const name = authProfile?.name || authUser?.name || 'UPSC Aspirant'
-    return { ...EMPTY_FOCUS_DATA.profile, id: authUser?.id ?? '', name, initials: initials(name), avatarUrl: authProfile?.photoUrl || authUser?.avatarUrl }
-  }, [authProfile?.name, authProfile?.photoUrl, authUser?.avatarUrl, authUser?.id, authUser?.name, data?.profile])
+    return { ...EMPTY_FOCUS_DATA.profile, id: authUser?.id ?? '', name, initials: initials(name), avatarUrl: authProfile?.photoUrl || authUser?.avatarUrl || profileMascotUrl(authProfile?.mascotId) }
+  }, [authProfile?.mascotId, authProfile?.name, authProfile?.photoUrl, authUser?.avatarUrl, authUser?.id, authUser?.name, data?.profile])
   const platform = platformOverride ?? detectPlatform()
   const initialTimer = source.timer
   const controlledTimer = Boolean(data?.timer)

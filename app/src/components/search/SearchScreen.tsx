@@ -1,193 +1,209 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faArrowRight, faChevronDown, faMagnifyingGlass, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
-import { CATEGORIES, CATEGORY_COLORS } from '@/constants/categories'
+import { CATEGORIES, CATEGORY_COLORS, TODAY } from '@/constants/categories'
 import { EASE, gsap, reducedMotion } from '@/anim/animations'
 import { useHaptic } from '@/hooks/useHaptic'
+import { useAllArticles } from '@/hooks/useAllArticles'
 import type { Article, Category } from '@/types/article'
 
+type SearchScope = 'all' | 'today'
+
+function formatDate(value: string) {
+  return new Date(`${value}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+}
+
+function searchableText(article: Article) {
+  return [
+    article.headline,
+    article.summary,
+    article.whyItMatters,
+    article.category,
+    article.gsPaper,
+    article.source,
+    article.date,
+    article.deepDive.syllabusLinkage ?? '',
+    article.deepDive.context ?? '',
+    article.deepDive.explanation,
+    article.deepDive.possibleMainsQuestion,
+    article.audioScript ?? '',
+    article.audioScriptHi ?? '',
+    ...(article.keyTerms ?? []),
+    ...(article.deepDive.keyHighlights ?? []),
+    ...(article.deepDive.keyConcepts?.flatMap(item => [item.term, item.definition]) ?? []),
+    ...(article.deepDive.wayForward ?? []),
+    article.deepDive.hindi?.syllabusLinkage ?? '',
+    article.deepDive.hindi?.context ?? '',
+    article.deepDive.hindi?.possibleMainsQuestion ?? '',
+    ...(article.deepDive.hindi?.keyHighlights ?? []),
+    ...(article.deepDive.hindi?.keyConcepts?.flatMap(item => [item.term, item.definition]) ?? []),
+    ...(article.deepDive.hindi?.wayForward ?? []),
+  ].join(' ').toLocaleLowerCase()
+}
+
 export function SearchScreen() {
-  const { goBack: goBackScreen, articlesByDate, setActiveArticle, setOverlay } = useAppStore()
+  const { goBack, articlesByDate, setActiveArticle, setOverlay } = useAppStore()
   const [query, setQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState<Category | 'all'>('all')
+  const [scope, setScope] = useState<SearchScope>('all')
   const rootRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
   const haptic = useHaptic()
+  const { loading: archiveLoading } = useAllArticles()
 
-  const allArticles = useMemo(() => Object.values(articlesByDate).flat(), [articlesByDate])
+  const allArticles = useMemo(
+    () => Object.values(articlesByDate).flat().sort((left, right) => right.date.localeCompare(left.date)),
+    [articlesByDate],
+  )
 
   const results = useMemo(() => {
-    const q = query.toLowerCase().trim()
-    return allArticles.filter((a) => {
-      const matchesQuery =
-        !q ||
-        a.headline.toLowerCase().includes(q) ||
-        a.summary.toLowerCase().includes(q) ||
-        a.category.toLowerCase().includes(q) ||
-        a.date.includes(q)
-      const matchesCat = activeCategory === 'all' || a.category === activeCategory
-      return matchesQuery && matchesCat
+    const terms = query.toLocaleLowerCase().trim().split(/\s+/).filter(Boolean)
+    return allArticles.filter(article => {
+      if (scope === 'today' && article.date !== TODAY) return false
+      if (activeCategory !== 'all' && article.category !== activeCategory) return false
+      if (!terms.length) return true
+      const haystack = searchableText(article)
+      return terms.every(term => haystack.includes(term))
     })
-  }, [query, activeCategory, allArticles])
+  }, [query, activeCategory, allArticles, scope])
+
+  const isDiscovering = !query.trim() && activeCategory === 'all'
+  const visibleResults = results
+  const todayArticleCount = allArticles.filter(article => article.date === TODAY).length
+  const archiveDateCount = new Set(allArticles.map(article => article.date)).size
 
   useEffect(() => {
-    const el = rootRef.current
-    if (!el || reducedMotion()) return
+    inputRef.current?.focus({ preventScroll: true })
+    const root = rootRef.current
+    if (!root || reducedMotion()) return
     const ctx = gsap.context(() => {
-      gsap.fromTo('.search-panel, .search-result',
+      gsap.fromTo('.search-app-header, .search-toolbar, .search-context, .search-result',
         { opacity: 0, y: 12 },
         { opacity: 1, y: 0, duration: 0.42, ease: EASE.out, stagger: 0.035, clearProps: 'transform,opacity' })
-    }, el)
+    }, root)
     return () => ctx.revert()
   }, [])
 
   useEffect(() => {
-    const el = rootRef.current
-    if (!el || reducedMotion()) return
-    const results = el.querySelectorAll('.search-result')
-    gsap.fromTo(results,
-      { opacity: 0.78, y: 6 },
-      { opacity: 1, y: 0, duration: 0.24, ease: EASE.out, stagger: 0.018, overwrite: true, clearProps: 'transform,opacity' })
-  }, [activeCategory])
+    const root = rootRef.current
+    if (!root || reducedMotion()) return
+    const cards = root.querySelectorAll('.search-result')
+    gsap.fromTo(cards,
+      { opacity: 0.7, y: 6 },
+      { opacity: 1, y: 0, duration: 0.25, ease: EASE.out, stagger: 0.02, overwrite: true, clearProps: 'transform,opacity' })
+  }, [activeCategory, query])
 
-  async function openArticle(a: Article) {
+  async function openArticle(article: Article) {
     await haptic()
-    setActiveArticle(a)
+    setActiveArticle(article)
     setOverlay('deep-dive')
   }
 
-  async function goBack() {
+  async function leaveSearch() {
     await haptic()
-    goBackScreen('feed')
+    goBack('feed')
   }
 
-  async function chooseCategory(cat: Category | 'all') {
-    await haptic()
-    setActiveCategory(cat)
+  async function chooseCategory(category: Category | 'all') {
+    await haptic(5)
+    setActiveCategory(category)
+  }
+
+  function resetSearch() {
+    setQuery('')
+    setActiveCategory('all')
+    setScope('all')
+    inputRef.current?.focus()
   }
 
   function highlighted(value: string) {
     const clean = query.trim()
-    if (!clean) return value
-    const index = value.toLowerCase().indexOf(clean.toLowerCase())
+    if (!clean || clean.includes(' ')) return value
+    const index = value.toLocaleLowerCase().indexOf(clean.toLocaleLowerCase())
     if (index < 0) return value
-    return (
-      <>
-        {value.slice(0, index)}
-        <mark>{value.slice(index, index + clean.length)}</mark>
-        {value.slice(index + clean.length)}
-      </>
-    )
+    return <>{value.slice(0, index)}<mark>{value.slice(index, index + clean.length)}</mark>{value.slice(index + clean.length)}</>
   }
 
   return (
-    <div
-      ref={rootRef}
-      className="search-command"
-      style={{
-        position: 'absolute',
-        inset: 0,
-        display: 'flex',
-        flexDirection: 'column',
-        background: 'transparent',
-        zIndex: 10,
-        animation: 'scrIn 0.35s cubic-bezier(0.22,1,0.36,1)',
-      }}
-    >
-      {/* Header */}
-      <div style={{ height: 58, display: 'flex', alignItems: 'center', gap: 12, padding: '0 18px', flexShrink: 0, position: 'relative', zIndex: 2 }}>
-        <button onClick={goBack} className="icon-btn">
+    <div ref={rootRef} className="search-command">
+      <header className="search-app-header">
+        <button type="button" onClick={() => void leaveSearch()} aria-label="Back to Daily Briefing">
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
-        <h2 style={{ fontSize: 21, fontWeight: 900, letterSpacing: -0.3, flex: 1, color: 'var(--on)' }}>Search</h2>
-      </div>
+        <span><small>Daily Briefing</small><h1>Search</h1></span>
+      </header>
 
-      {/* Body */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '8px 16px calc(110px + env(safe-area-inset-bottom))', position: 'relative', zIndex: 2 }}>
-        {/* Search box */}
-        <div className="search-box search-panel" style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--panel)', border: '1px solid var(--panel-border)', backdropFilter: 'blur(16px)', borderRadius: 20, padding: '13px 17px', marginBottom: 13 }}>
-          <FontAwesomeIcon icon={faMagnifyingGlass} style={{ color: 'var(--on2)', fontSize: 14 }} />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search topics, keywords, dates..."
-            autoFocus
-            style={{ flex: 1, background: 'none', border: 'none', outline: 'none', color: 'var(--on)', fontSize: 15, fontFamily: 'Nunito, sans-serif', fontWeight: 600 }}
-          />
-          <span className="search-count">{results.length}</span>
-        </div>
+      <main className="search-app-body">
+        <div className="search-toolbar">
+          <label className="search-field">
+            <FontAwesomeIcon icon={faMagnifyingGlass} />
+            <input
+              ref={inputRef}
+              type="search"
+              value={query}
+              onChange={event => setQuery(event.target.value)}
+              placeholder="Search every article and Deep Dive"
+              aria-label="Search all current affairs"
+              autoComplete="off"
+            />
+            {query && <button type="button" onClick={() => setQuery('')} aria-label="Clear search"><FontAwesomeIcon icon={faXmark} /></button>}
+          </label>
 
-        {/* Filter chips */}
-        <div className="search-panel" style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 11, marginBottom: 2, scrollbarWidth: 'none' }}>
-          {(['all', ...CATEGORIES] as (Category | 'all')[]).map((cat) => (
-            <button
-              key={cat}
-              onClick={() => chooseCategory(cat)}
-              className={`filter-chip ${activeCategory === cat ? 'active' : ''}`}
-              style={{
-                '--cat': cat === 'all' ? 'var(--acc)' : CATEGORY_COLORS[cat],
-                padding: '8px 15px',
-                borderRadius: 18,
-                fontSize: 11.5,
-                fontWeight: 700,
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-                border: activeCategory === cat ? '1px solid transparent' : '1px solid var(--panel-border)',
-                background: activeCategory === cat ? '#fff' : 'var(--panel2)',
-                color: activeCategory === cat ? '#4A4E8C' : 'var(--on2)',
-                transition: 'all 0.2s',
-                flexShrink: 0,
-              } as CSSProperties}
-            >
-              {cat === 'all' ? 'All' : cat}
-            </button>
-          ))}
-        </div>
-
-        {/* Results */}
-        {results.length === 0 ? (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '50%', color: 'var(--on2)', gap: 12 }}>
-            <FontAwesomeIcon icon={faMagnifyingGlass} style={{ fontSize: 36, opacity: 0.5 }} />
-            <p style={{ fontSize: 13, textAlign: 'center', maxWidth: 240, lineHeight: 1.5, fontWeight: 700 }}>
-              {query ? `No results for "${query}"` : 'Start typing to search…'}
-            </p>
-          </div>
-        ) : (
-          results.map((a) => (
-            <div
-              key={a.id}
-              className="search-result"
-              onClick={() => openArticle(a)}
-              style={{
-                '--cat': CATEGORY_COLORS[a.category],
-                background: 'var(--card)',
-                borderRadius: 20,
-                padding: 15,
-                marginBottom: 9,
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                boxShadow: 'var(--shadow-soft)',
-                color: 'var(--ink)',
-              } as CSSProperties}
-            >
-              <h4 style={{ fontSize: 14, fontWeight: 800, marginBottom: 4, lineHeight: 1.3, color: 'var(--ink)' }}>{highlighted(a.headline)}</h4>
-              <p style={{ fontSize: 12.5, color: 'var(--ink2)', lineHeight: 1.55, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', fontWeight: 600 }}>
-                {highlighted(a.summary)}
-              </p>
-              <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
-                <span style={{ padding: '4px 10px', borderRadius: 12, fontSize: 9.5, fontWeight: 800, background: 'var(--card2)', color: CATEGORY_COLORS[a.category], textTransform: 'uppercase', letterSpacing: 0.4 }}>
-                  {a.category}
-                </span>
-                <span style={{ padding: '4px 10px', borderRadius: 12, fontSize: 9.5, fontWeight: 800, background: 'var(--card2)', color: 'var(--ink2)', textTransform: 'uppercase', letterSpacing: 0.4 }}>
-                  {a.date}
-                </span>
-              </div>
+          <div className="search-filter-row">
+            <div className="search-scope" role="group" aria-label="Choose article date range">
+              <button type="button" className={scope === 'all' ? 'active' : ''} onClick={() => setScope('all')}>All articles</button>
+              <button type="button" className={scope === 'today' ? 'active' : ''} onClick={() => setScope('today')}>Today {todayArticleCount > 0 && <span>{todayArticleCount}</span>}</button>
             </div>
-          ))
+            <label className="search-subject-filter">
+              <select value={activeCategory} onChange={event => void chooseCategory(event.target.value as Category | 'all')} aria-label="Filter search by subject">
+                <option value="all">All subjects</option>
+                {CATEGORIES.map(category => <option key={category} value={category}>{category}</option>)}
+              </select>
+              <FontAwesomeIcon icon={faChevronDown} />
+            </label>
+          </div>
+        </div>
+
+        <div className="search-context">
+          <span>
+            <b>{isDiscovering && scope === 'all' ? 'All published articles' : `${results.length} ${results.length === 1 ? 'match' : 'matches'}`}</b>
+            <small>{scope === 'today'
+              ? `Today’s briefing · ${formatDate(TODAY)}${activeCategory === 'all' ? '' : ` · ${activeCategory}`}`
+              : isDiscovering
+                ? archiveLoading ? 'Loading the complete archive…' : `${allArticles.length} stories across ${archiveDateCount} published ${archiveDateCount === 1 ? 'date' : 'dates'}`
+                : activeCategory === 'all' ? 'Across the complete archive' : `${activeCategory} · complete archive`}</small>
+          </span>
+          {!isDiscovering && <button type="button" onClick={resetSearch}>Reset</button>}
+        </div>
+
+        {visibleResults.length ? (
+          <section className="search-results" aria-label="Search results">
+            {visibleResults.map(article => (
+              <button
+                type="button"
+                key={`${article.date}:${article.id}`}
+                className="search-result"
+                style={{ '--cat': CATEGORY_COLORS[article.category] } as CSSProperties}
+                onClick={() => void openArticle(article)}
+              >
+                <span className="search-result-meta"><i />{article.category}<em>{formatDate(article.date)}</em></span>
+                <h2>{highlighted(article.headline)}</h2>
+                <p>{highlighted(article.summary)}</p>
+                <span className="search-result-foot"><small>{article.source} · {article.gsPaper}</small><FontAwesomeIcon icon={faArrowRight} /></span>
+              </button>
+            ))}
+          </section>
+        ) : (
+          <section className="search-empty">
+            <span><FontAwesomeIcon icon={faMagnifyingGlass} /></span>
+            <h2>{scope === 'today' && !todayArticleCount ? 'Today’s briefing is not published yet' : 'No matching story'}</h2>
+            <p>{scope === 'today' && !todayArticleCount ? 'Switch to All articles to search the complete archive.' : 'Try one clear keyword or widen the subject filter.'}</p>
+            <button type="button" onClick={resetSearch}>Clear search</button>
+          </section>
         )}
-      </div>
+      </main>
     </div>
   )
 }

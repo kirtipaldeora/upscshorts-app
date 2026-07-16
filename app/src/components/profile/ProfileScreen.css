@@ -1,0 +1,698 @@
+.account-screen {
+  --account-accent-soft: color-mix(in srgb, var(--acc) 9%, var(--card));
+  color: var(--ink);
+}
+
+.account-header {
+  height: 68px;
+  padding-inline: max(14px, calc((100vw - 620px) / 2));
+}
+
+.account-header > div {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.account-header > div > span {
+  color: var(--acc);
+  font-size: 8.5px;
+  font-weight: 950;
+  letter-spacing: .9px;
+  text-transform: uppercase;
+}
+
+.account-header h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 22px;
+  line-height: 1.05;
+  letter-spacing: -.45px;
+}
+
+.account-header > button {
+  width: 44px;
+  height: 44px;
+  flex: none;
+}
+
+.account-screen-body {
+  width: min(620px, 100%);
+  margin-inline: auto;
+  padding: 8px 14px calc(110px + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  overscroll-behavior-y: contain;
+}
+
+.account-screen button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.account-screen button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--acc) 42%, transparent);
+  outline-offset: 2px;
+}
+
+.account-identity-card,
+.account-today-card,
+.account-menu-card {
+  border: 1px solid var(--glass-border);
+  background: var(--card);
+  box-shadow: 0 16px 40px -34px rgba(17, 28, 58, .55);
+}
+
+.account-identity-card {
+  position: relative;
+  overflow: hidden;
+  padding: 14px;
+  border-radius: 24px;
+}
+
+.account-identity-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(90deg, var(--acc), color-mix(in srgb, var(--yellow) 78%, var(--acc)));
+}
+
+.account-identity-main {
+  display: grid;
+  grid-template-columns: 60px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.account-identity-avatar,
+.account-identity-avatar .profile-photo,
+.account-identity-avatar .profile-mascot {
+  width: 60px;
+  height: 60px;
+  border-radius: 19px;
+}
+
+.account-identity-avatar .profile-mascot {
+  border-radius: 50%;
+}
+
+.account-identity-avatar {
+  display: grid;
+  place-items: center;
+  background: var(--card2);
+}
+
+.account-identity-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.account-identity-copy > span,
+.account-today-head span,
+.account-section-heading > span,
+.account-local-note > span {
+  color: var(--acc);
+  font-size: 8.5px;
+  font-weight: 950;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+}
+
+.account-identity-copy h3 {
+  overflow: hidden;
+  margin: 0;
+  color: var(--ink);
+  font-size: 19px;
+  font-weight: 950;
+  line-height: 1.1;
+  letter-spacing: -.25px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-identity-copy p {
+  overflow: hidden;
+  margin: 0;
+  color: var(--ink3);
+  font-size: 10px;
+  font-weight: 750;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-identity-action {
+  min-width: 44px;
+  height: 44px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card2);
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.account-identity-action svg {
+  color: var(--ink3);
+  font-size: 9px;
+}
+
+.account-profile-progress {
+  width: 100%;
+  min-height: 52px;
+  margin-top: 12px;
+  padding: 10px 2px 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+  background: transparent;
+  color: var(--ink);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 76px 10px;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 10px;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.account-profile-progress > span {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.account-profile-progress > span small {
+  color: var(--ink3);
+  font-size: 8px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.account-profile-progress > span b {
+  font-size: 10.5px;
+  font-weight: 950;
+}
+
+.account-profile-progress > i {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  height: 7px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: var(--card2);
+}
+
+.account-profile-progress > i em {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--yellow), var(--acc));
+}
+
+.account-profile-progress > small {
+  grid-column: 1;
+  grid-row: 2;
+  overflow: hidden;
+  color: var(--ink3);
+  font-size: 9px;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-profile-progress > svg {
+  grid-column: 3;
+  grid-row: 1 / 3;
+  color: var(--ink3);
+  font-size: 9px;
+}
+
+.account-local-note {
+  margin-top: 12px;
+  padding: 10px 2px 0;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.account-local-note p {
+  min-width: 0;
+  margin: 0;
+  color: var(--ink3);
+  font-size: 9.5px;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.account-today-card {
+  margin-top: 10px;
+  padding: 15px;
+  border-radius: 24px;
+  background: linear-gradient(155deg, var(--card), var(--account-accent-soft));
+}
+
+.account-today-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.account-today-head > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.account-today-head h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 950;
+  line-height: 1.15;
+  letter-spacing: -.25px;
+}
+
+.account-today-head strong {
+  flex: none;
+  color: var(--acc);
+  font-size: 28px;
+  font-weight: 950;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.account-today-head strong small {
+  margin-left: 1px;
+  font-size: 12px;
+  letter-spacing: 0;
+}
+
+.account-hub-progress {
+  height: 8px;
+  margin: 12px 0 8px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--ink) 7%, var(--card2));
+}
+
+.account-hub-progress i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--yellow), var(--acc));
+}
+
+.account-today-card > p {
+  margin: 0 0 12px;
+  color: var(--ink2);
+  font-size: 10.5px;
+  font-weight: 750;
+  line-height: 1.4;
+}
+
+.account-daily-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.account-daily-actions button {
+  min-width: 0;
+  height: 46px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 15px;
+  background: var(--yellow);
+  color: var(--yellow-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.account-daily-actions button.secondary {
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--ink);
+}
+
+.account-stat-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.account-stat-strip button {
+  min-width: 0;
+  min-height: 62px;
+  padding: 3px 6px;
+  border: 0;
+  border-left: 1px solid var(--border);
+  background: transparent;
+  color: var(--ink);
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  align-content: center;
+  justify-content: center;
+  column-gap: 6px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.account-stat-strip button:first-child {
+  border-left: 0;
+}
+
+.account-stat-strip svg {
+  grid-row: 1;
+  align-self: center;
+  color: var(--acc);
+  font-size: 11px;
+}
+
+.account-stat-strip b {
+  grid-row: 1;
+  color: var(--ink);
+  font-size: 17px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.account-stat-strip span {
+  grid-column: 1 / 3;
+  grid-row: 2;
+  overflow: hidden;
+  margin-top: 5px;
+  color: var(--ink3);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .25px;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.account-section {
+  margin-top: 19px;
+}
+
+.account-section-heading {
+  min-height: 27px;
+  padding: 0 3px 7px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.account-section-heading > span {
+  color: var(--ink);
+  font-size: 10px;
+  letter-spacing: .75px;
+}
+
+.account-section-heading > p {
+  overflow: hidden;
+  margin: 0;
+  color: var(--ink3);
+  font-size: 9px;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-menu-card {
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.account-menu-card > button {
+  width: 100%;
+  min-height: 66px;
+  padding: 9px 12px;
+  border: 0;
+  border-top: 1px solid var(--border);
+  background: transparent;
+  color: var(--ink);
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto 9px;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.account-menu-card > button:first-child {
+  border-top: 0;
+}
+
+.account-menu-card > button:active,
+.account-identity-action:active,
+.account-daily-actions button:active {
+  background-color: color-mix(in srgb, var(--acc) 8%, var(--card2));
+}
+
+.account-menu-card > button > i {
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
+  background: var(--account-accent-soft);
+  color: var(--acc);
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-style: normal;
+}
+
+.account-menu-card > button > span {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.account-menu-card > button > span b {
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 950;
+  line-height: 1.15;
+}
+
+.account-menu-card > button > span small {
+  overflow: hidden;
+  color: var(--ink3);
+  font-size: 9.5px;
+  font-weight: 750;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-menu-card > button > em {
+  max-width: 60px;
+  overflow: hidden;
+  padding: 5px 7px;
+  border-radius: 9px;
+  background: var(--card2);
+  color: var(--acc);
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 950;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-menu-card > button > svg:last-child {
+  grid-column: 4;
+  color: var(--ink3);
+  font-size: 9px;
+}
+
+.account-support-card > button {
+  min-height: 62px;
+}
+
+.account-legal-links {
+  min-height: 48px;
+  padding: 0 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--ink3);
+}
+
+.account-legal-links > svg {
+  margin-right: 2px;
+  color: var(--acc);
+  font-size: 11px;
+}
+
+.account-legal-links > button {
+  min-height: 44px;
+  padding: 0 3px;
+  border: 0;
+  background: transparent;
+  color: var(--ink2);
+  font: inherit;
+  font-size: 9.5px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.account-footer-note {
+  margin: 10px 0 0;
+  color: var(--ink3);
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: .25px;
+  text-align: center;
+}
+
+.account-screen .account-edit-head button {
+  width: 44px;
+  height: 44px;
+}
+
+.account-screen .account-edit-mascots button {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+}
+
+.account-screen .account-photo-editor > label,
+.account-screen .account-photo-editor > button {
+  min-height: 44px;
+  padding-inline: 12px;
+}
+
+.account-screen .account-edit-save {
+  min-height: 48px;
+}
+
+@media (max-width: 390px) {
+  .account-header {
+    height: 64px;
+    padding-inline: 12px;
+  }
+
+  .account-header h2 {
+    font-size: 20px;
+  }
+
+  .account-screen-body {
+    padding: 6px 12px calc(104px + env(safe-area-inset-bottom));
+  }
+
+  .account-identity-card,
+  .account-today-card {
+    border-radius: 21px;
+  }
+
+  .account-section-heading > p {
+    display: none;
+  }
+}
+
+@media (max-width: 340px) {
+  .account-identity-card,
+  .account-today-card {
+    padding: 12px;
+  }
+
+  .account-identity-main {
+    grid-template-columns: 52px minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+
+  .account-identity-avatar,
+  .account-identity-avatar .profile-photo,
+  .account-identity-avatar .profile-mascot {
+    width: 52px;
+    height: 52px;
+    border-radius: 17px;
+  }
+
+  .account-identity-copy h3 {
+    font-size: 17px;
+  }
+
+  .account-identity-action {
+    padding-inline: 8px;
+  }
+
+  .account-profile-progress {
+    grid-template-columns: minmax(0, 1fr) 62px 9px;
+    column-gap: 7px;
+  }
+
+  .account-daily-actions button {
+    padding-inline: 12px;
+  }
+
+  .account-stat-strip button {
+    padding-inline: 3px;
+  }
+
+  .account-stat-strip span {
+    font-size: 7.4px;
+  }
+
+  .account-menu-card > button {
+    grid-template-columns: 38px minmax(0, 1fr) auto 8px;
+    gap: 8px;
+    padding-inline: 10px;
+  }
+
+  .account-menu-card > button > i {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+@media (max-height: 680px) {
+  .account-screen .account-edit-overlay {
+    padding: max(8px, env(safe-area-inset-top)) 8px max(8px, env(safe-area-inset-bottom));
+  }
+
+  .account-screen .account-edit-sheet {
+    max-height: calc(100dvh - max(8px, env(safe-area-inset-top)) - max(8px, env(safe-area-inset-bottom)));
+    border-radius: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .account-screen *,
+  .account-screen *::before,
+  .account-screen *::after {
+    scroll-behavior: auto !important;
+  }
+}

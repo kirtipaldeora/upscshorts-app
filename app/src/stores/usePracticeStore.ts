@@ -13,6 +13,36 @@ export const BADGES = [
   { id: 'sharp',   icon: '🎯', name: 'Sharpshooter',    desc: '10 correct in a day',              cond: (s: PracticeStats) => Object.values(s.d).some(d => d.c >= 10) },
 ]
 
+export const ARTICLE_MILESTONES = [
+  { id: 'read5', count: 5, icon: '🧭', name: 'Context Builder', desc: 'Completed 5 Deep Dives' },
+  { id: 'read10', count: 10, icon: '🧠', name: 'Informed Aspirant', desc: 'Completed 10 Deep Dives' },
+  { id: 'read25', count: 25, icon: '🏅', name: 'Deep Dive Scholar', desc: 'Completed 25 Deep Dives' },
+  { id: 'read50', count: 50, icon: '🏆', name: 'Current Affairs Pro', desc: 'Completed 50 Deep Dives' },
+  { id: 'read100', count: 100, icon: '💎', name: 'Newsroom Master', desc: 'Completed 100 Deep Dives' },
+] as const
+
+export interface ArticleMilestone {
+  id: string
+  count: number
+  icon: string
+  name: string
+  desc: string
+}
+export type LearningActivityResult = { recorded: boolean; totalLearned: number; milestone?: ArticleMilestone }
+
+function articleMilestone(count: number): ArticleMilestone | undefined {
+  if (count < 5 || count % 5 !== 0) return undefined
+  const named = ARTICLE_MILESTONES.find(item => item.count === count)
+  if (named) return named
+  return {
+    id: `read${count}`,
+    count,
+    icon: count % 25 === 0 ? '🏅' : '✨',
+    name: `${count} stories understood`,
+    desc: `Completed ${count} Deep Dives`,
+  }
+}
+
 // ─── Types ────────────────────────────────────────────────────
 export interface DayStats {
   n: number  // attempted
@@ -135,7 +165,7 @@ interface PracticeStore {
   saveSettings: (patch: Partial<PracticeSettings>) => void
   setPyqData: (data: PyqItem[]) => void
   incrementMainsQuota: () => void
-  recordLearningActivity: (articleId: string) => boolean
+  recordLearningActivity: (articleId: string) => LearningActivityResult
   recordArcadeAnswer: (correct: boolean, points: number) => void
   hydrateCloudState: (state: {
     stats?: PracticeStats
@@ -227,15 +257,20 @@ export const usePracticeStore = create<PracticeStore>()((set, get) => ({
     const stats = { ...get().stats, d: { ...get().stats.d } }
     const day = { ...(stats.d[TODAY] ?? { n: 0, c: 0 }) }
     const learned = [...(day.learned ?? [])]
-    if (learned.includes(articleId)) return false
+    const learnedBefore = new Set(Object.values(stats.d).flatMap(item => item.learned ?? []))
+    if (learned.includes(articleId)) return { recorded: false, totalLearned: learnedBefore.size }
     learned.push(articleId)
     day.learned = learned
     stats.d[TODAY] = day
+    const totalLearned = new Set([...learnedBefore, articleId]).size
+    const earnedMilestone = articleMilestone(totalLearned)
+    const milestone = earnedMilestone && !stats.badges.includes(earnedMilestone.id) ? earnedMilestone : undefined
+    if (milestone) stats.badges = [...stats.badges, milestone.id]
     const streak = calculateStreak(stats.d, get().settings.target, TODAY)
     stats.streak = { last: streak.last, count: streak.current, longest: streak.longest }
     localStorage.setItem('u4stats', JSON.stringify(stats))
     set({ stats })
-    return true
+    return { recorded: true, totalLearned, milestone }
   },
 
   recordArcadeAnswer: (correct, points) => {

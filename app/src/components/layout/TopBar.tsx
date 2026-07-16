@@ -2,7 +2,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faArrowLeft,
   faBookmark,
-  faMagnifyingGlass,
   faFileImport,
   faMapLocationDot,
 } from '@fortawesome/free-solid-svg-icons'
@@ -145,28 +144,6 @@ export function TopBar({ showBack, onBack, onOpenUpload }: TopBarProps) {
           }}
         >
           <FontAwesomeIcon icon={faMapLocationDot} />
-        </button>
-        <button
-          onClick={() => setScreen('search')}
-          aria-label="Search"
-          className="glass-icon-btn top-search-button"
-          style={{
-            width: 42,
-            height: 42,
-            borderRadius: 15,
-            border: '1px solid var(--panel-border)',
-            background: 'var(--panel)',
-            backdropFilter: 'blur(16px)',
-            color: 'var(--on)',
-            fontSize: 15,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.2s',
-          }}
-        >
-          <FontAwesomeIcon icon={faMagnifyingGlass} />
         </button>
         <button
           onClick={() => setScreen('profile')}
