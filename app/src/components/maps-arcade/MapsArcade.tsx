@@ -941,6 +941,7 @@ export function MapsArcade() {
   const activeDataReady = state.app === null
     || (state.app === 'world' ? Boolean(worldData) : Boolean(worldData && indiaData))
   const showIndiaMap = state.app === 'india' && activeDataReady
+  const showMapControls = showIndiaMap && (state.screen === 'play' || state.screen === 'park-learn')
   const blockingDataError = dataError && (
     !activeDataReady || (needsPhysicalData && !physicalFeatures.length)
   )
@@ -1333,6 +1334,10 @@ export function MapsArcade() {
     }
     showToast({ kind: 'hint', text: `${park.name.replace(/ National Park/g, '')}: ${park.state}` }, 1800)
   }, [patch, showToast, state.screen])
+
+  function fitMapToTopic() {
+    mapRef.current?.resetZoom()
+  }
 
   function renderHome() {
     return (
@@ -1898,11 +1903,18 @@ export function MapsArcade() {
           </Suspense>
         )}
 
-        {showIndiaMap && (
-          <div className="atlas-zoom">
-            <button onClick={() => mapRef.current?.zoomIn()} aria-label="Zoom in"><FontAwesomeIcon icon={faPlus} /></button>
-            <button onClick={() => mapRef.current?.zoomOut()} aria-label="Zoom out"><FontAwesomeIcon icon={faMinus} /></button>
-            <button onClick={() => mapRef.current?.resetZoom()} aria-label="Reset zoom"><FontAwesomeIcon icon={faCompass} /></button>
+        {showMapControls && (
+          <div className="atlas-zoom" role="group" aria-label="Map view controls">
+            <button onClick={() => mapRef.current?.zoomIn()} aria-label="Zoom in" title="Zoom in">
+              <FontAwesomeIcon icon={faPlus} />
+            </button>
+            <button onClick={() => mapRef.current?.zoomOut()} aria-label="Zoom out" title="Zoom out">
+              <FontAwesomeIcon icon={faMinus} />
+            </button>
+            <button className="atlas-fit-map" onClick={fitMapToTopic} aria-label={`Fit map to ${activeTopic}`} title="Restore the topic view">
+              <FontAwesomeIcon icon={faBullseye} />
+              <span>Fit</span>
+            </button>
           </div>
         )}
 
