@@ -1170,26 +1170,24 @@ export function MapsArcade() {
         ? prev.wrongList
         : prev.wrongList.concat(prev.target)
       if (advanceTimer.current) window.clearTimeout(advanceTimer.current)
-      if (prev.category !== 'parks') {
-        advanceTimer.current = window.setTimeout(() => {
-          setState(s => {
-            const next = s.qIndex + 1
-            if (s.screen !== 'play') return s
-            if (next >= s.queue.length) return { ...s, screen: 'results', toast: null }
-            const target = s.queue[next]
-            return {
-              ...s,
-              qIndex: next,
-              target,
-              choices: s.mode === 'name' ? makeChoicesForContext(target, s.queue) : [],
-              chosenId: null,
-              hintUsed: false,
-              removedChoiceId: null,
-              toast: null,
-            }
-          })
-        }, prev.app === 'world' ? 1450 : prev.category === 'rivers' ? 1500 : 1000)
-      }
+      advanceTimer.current = window.setTimeout(() => {
+        setState(s => {
+          const next = s.qIndex + 1
+          if (s.screen !== 'play') return s
+          if (next >= s.queue.length) return { ...s, screen: 'results', toast: null }
+          const target = s.queue[next]
+          return {
+            ...s,
+            qIndex: next,
+            target,
+            choices: s.mode === 'name' ? makeChoicesForContext(target, s.queue) : [],
+            chosenId: null,
+            hintUsed: false,
+            removedChoiceId: null,
+            toast: null,
+          }
+        })
+      }, prev.app === 'world' ? 1450 : prev.category === 'rivers' ? 1500 : prev.category === 'parks' ? 1650 : 1000)
       return {
         ...prev,
         chosenId: id,
@@ -1773,7 +1771,10 @@ export function MapsArcade() {
         <div className="atlas-controls">
           <button onClick={previous} disabled={state.qIndex === 0}><FontAwesomeIcon icon={faChevronLeft} /> Previous</button>
           <button onClick={useHint} disabled={state.hintsLeft <= 0 || state.hintUsed || Boolean(hist)}><FontAwesomeIcon icon={faLightbulb} /> Hint {state.hintsLeft}</button>
-          <button onClick={skip}>{hist ? 'Next' : 'Skip'} <FontAwesomeIcon icon={faChevronRight} /></button>
+          <button onClick={skip} disabled={Boolean(hist)}>
+            {hist ? 'Moving on…' : 'Skip'}
+            {!hist && <FontAwesomeIcon icon={faChevronRight} />}
+          </button>
         </div>
       </>
     )
