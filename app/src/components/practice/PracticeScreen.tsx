@@ -16,7 +16,6 @@ import { useAppStore } from '@/stores/useAppStore'
 import { usePracticeStore } from '@/stores/usePracticeStore'
 import { useArticles } from '@/hooks/useArticles'
 import { useAllArticles } from '@/hooks/useAllArticles'
-import { PenniLoader } from '@/components/layout/PenniLoader'
 import {
   articleQs,
   pyqPrelims,
@@ -43,13 +42,13 @@ type ActiveQuiz = {
 type Panel = null | 'previous' | 'mistakes'
 
 export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: PracticeScreenProps) {
-  const { articlesByDate, selectedDate, setScreen, goBack, setOverlay } = useAppStore()
+  const { articlesByDate, selectedDate, setScreen, goBack } = useAppStore()
   const { stats, settings, pyqData } = usePracticeStore()
   const [activeQuiz, setActiveQuiz] = useState<ActiveQuiz>(null)
   const [panel, setPanel] = useState<Panel>(null)
   const [pyqMistakesLoading, setPyqMistakesLoading] = useState(false)
   const [loadedPyqMistakes, setLoadedPyqMistakes] = useState<Question[]>([])
-  const { loading } = useArticles(selectedDate)
+  useArticles(selectedDate)
   useAllArticles()
 
   const availableDates = Object.keys(articlesByDate)
@@ -218,7 +217,7 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
                 : 'Incorrect answers will collect here'}</i></span>
               <FontAwesomeIcon icon={faChevronRight} />
             </button>
-            <button onClick={() => setOverlay('maps-arcade')}>
+            <button onClick={() => setScreen('maps')}>
               <FontAwesomeIcon icon={faEarthAsia} />
               <span><b>Maps Practice</b><i>India and world map drills</i></span>
               <FontAwesomeIcon icon={faChevronRight} />
@@ -232,7 +231,6 @@ export function PracticeScreen({ onShowToast, onOpenPYQ, onOpenMains }: Practice
           <button onClick={() => { setPanel(null); onOpenMains() }}>Open</button>
         </section>
 
-        {loading && <div className="pn-empty"><PenniLoader label="Loading questions" /></div>}
       </div>
 
       {panel && (

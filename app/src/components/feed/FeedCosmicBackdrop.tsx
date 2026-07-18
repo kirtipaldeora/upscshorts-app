@@ -1,28 +1,11 @@
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
-import { gsap, reducedMotion } from '@/anim/animations'
+import { useMemo } from 'react'
+import type { CSSProperties } from 'react'
+import { getLunarPhase } from '@/utils/lunarPhase'
 
-const FeedCosmicGlobe = lazy(() => import('./FeedCosmicGlobe').then(module => ({ default: module.FeedCosmicGlobe })))
-
-const STAR_COUNT = 42
-
-function shouldUseLiteBackdrop() {
-  if (typeof window === 'undefined') return true
-  const nav = navigator as Navigator & {
-    connection?: { saveData?: boolean }
-    deviceMemory?: number
-  }
-  return Boolean(
-    window.matchMedia('(max-width: 820px), (pointer: coarse)').matches ||
-    nav.connection?.saveData ||
-    (nav.deviceMemory && nav.deviceMemory <= 4),
-  )
-}
+const STAR_COUNT = 36
 
 export function FeedCosmicBackdrop() {
-  const shellRef = useRef<HTMLDivElement>(null)
-  const globeWrapRef = useRef<HTMLDivElement>(null)
-  const [lite, setLite] = useState(() => shouldUseLiteBackdrop())
-
+  const lunarPhase = useMemo(() => getLunarPhase(), [])
   const stars = useMemo(() => {
     return Array.from({ length: STAR_COUNT }, (_, i) => ({
       id: i,
@@ -33,71 +16,28 @@ export function FeedCosmicBackdrop() {
       alpha: 0.24 + ((i * 19) % 42) / 100,
     }))
   }, [])
-
-  useEffect(() => {
-    const media = window.matchMedia('(max-width: 820px), (pointer: coarse)')
-    const update = () => setLite(shouldUseLiteBackdrop())
-    update()
-    media.addEventListener('change', update)
-    return () => media.removeEventListener('change', update)
-  }, [])
-
-  useEffect(() => {
-    const shell = shellRef.current
-    if (!shell || reducedMotion()) return
-    const ctx = gsap.context(() => {
-      gsap.fromTo('.feed-cosmic-globe-wrap', { opacity: 0, scale: lite ? 0.96 : 0.9, y: lite ? 10 : 28 }, { opacity: 1, scale: 1, y: 0, duration: lite ? 0.65 : 1.2, ease: 'expo.out' })
-      if (!lite) {
-        gsap.to('.feed-cosmic-ring', { rotate: 360, duration: 64, ease: 'none', repeat: -1, stagger: 7 })
-        gsap.to('.feed-cosmic-star', { opacity: 'random(0.22,0.74)', scale: 'random(0.82,1.18)', duration: 'random(2.6,4.6)', repeat: -1, yoyo: true, ease: 'sine.inOut', stagger: 0.035 })
-        gsap.to('.feed-cosmic-nebula', { xPercent: 3, yPercent: -2, scale: 1.035, duration: 12, repeat: -1, yoyo: true, ease: 'sine.inOut' })
-      }
-    }, shell)
-    return () => ctx.revert()
-  }, [lite])
-
-  useEffect(() => {
-    if (reducedMotion()) return
-    const target = globeWrapRef.current
-    if (!target) return
-    let frame = 0
-    let nextX = 0
-    let nextY = 0
-
-    const move = (x: number, y: number) => {
-      nextX = x
-      nextY = y
-      if (frame) return
-      frame = window.requestAnimationFrame(() => {
-        target.style.transform = `translate3d(${nextX}px, ${nextY}px, 0) rotate(${nextX * 0.01}deg)`
-        frame = 0
-      })
-    }
-
-    const onPointer = (event: PointerEvent) => {
-      if (lite) return
-      const nx = (event.clientX / window.innerWidth - 0.5) * 2
-      const ny = (event.clientY / window.innerHeight - 0.5) * 2
-      move(nx * 14, ny * 9)
-    }
-    const onOrientation = (event: DeviceOrientationEvent) => {
-      const gamma = Math.max(-14, Math.min(14, event.gamma ?? 0))
-      const beta = Math.max(-14, Math.min(14, (event.beta ?? 0) - 45))
-      move(gamma * 0.42, beta * 0.22)
-    }
-
-    window.addEventListener('pointermove', onPointer, { passive: true })
-    window.addEventListener('deviceorientation', onOrientation, { passive: true })
-    return () => {
-      window.removeEventListener('pointermove', onPointer)
-      window.removeEventListener('deviceorientation', onOrientation)
-      if (frame) window.cancelAnimationFrame(frame)
-      target.style.transform = ''
-    }
-  }, [lite])
-
+  const nightStyle = { '--moon-scale': lunarPhase.apparentScale } as CSSProperties
   return (
-    <div ref={shellRef} className={`feed-cosmic-backdrop ${lite ? 'is-lite' : 'is-rich'}`} aria-hidden="true">
+    <div className="feed-cosmic-backdrop feed-cosmic-subtle is-lite" aria-hidden="true">
+      <div className="feed-daylight-system">
+        <span className="feed-daylight-sun">
+          <i className="feed-daylight-sun-core" />
+          <i className="feed-daylight-sun-halo" />
+        </span>
+        <span className="feed-daylight-orbit orbit-one"><i /></span>
+        <span className="feed-daylight-orbit orbit-two"><i /></span>
+        <span className="feed-daylight-orbit orbit-three"><i /></span>
+        <span className="feed-daylight-ray ray-one" />
+        <span className="feed-daylight-ray ray-two" />
+        <span className="feed-daylight-ray ray-three" />
+      </div>
+      <div className="feed-night-system" style={nightStyle}>
+        <span className={`feed-night-moon moon-phase-${lunarPhase.index}`}>
+          <i />
+        </span>
+        <span className="feed-night-ring ring-one"><i /></span>
+        <span className="feed-night-ring ring-two"><i /></span>
+      </div>
       <div className="feed-cosmic-nebula" />
       <div className="feed-cosmic-stars">
         {stars.map(star => (
@@ -117,17 +57,7 @@ export function FeedCosmicBackdrop() {
       </div>
       <span className="feed-cosmic-shooting one" />
       <span className="feed-cosmic-shooting two" />
-      <div ref={globeWrapRef} className="feed-cosmic-globe-wrap">
-        <div className="feed-cosmic-ring ring-a" />
-        <div className="feed-cosmic-ring ring-b" />
-        {lite ? (
-          <div className="feed-cosmic-planet" />
-        ) : (
-          <Suspense fallback={<div className="feed-cosmic-planet" />}>
-            <FeedCosmicGlobe />
-          </Suspense>
-        )}
-      </div>
+      <span className="feed-cosmic-shooting three" />
       <div className="feed-cosmic-haze" />
     </div>
   )

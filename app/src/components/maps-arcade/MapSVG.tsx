@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import * as d3 from 'd3'
 import type { Feature, FeatureCollection, Geometry } from 'geojson'
 import { gsap, reducedMotion } from '@/anim/animations'
@@ -118,7 +118,7 @@ function stateFeatureName(feature: Feature): string {
   return String(props?.NAME_1 ?? props?.ST_NM ?? props?.name ?? '')
 }
 
-function paddedFeatureBounds(feature: Feature, minSpan = 4.2, pad = 0.85): Geometry {
+function paddedFeatureBounds(feature: Feature | FeatureCollection, minSpan = 4.2, pad = 0.85): Geometry {
   const [[minLon, minLat], [maxLon, maxLat]] = d3.geoBounds(feature as never)
   const midLon = (minLon + maxLon) / 2
   const midLat = (minLat + maxLat) / 2
@@ -157,6 +157,31 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
   const svgRef = useRef<SVGSVGElement>(null)
   const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null)
   const focusRef = useRef<string>('')
+  const [layoutSize, setLayoutSize] = useState({ width: 0, height: 0 })
+
+  useEffect(() => {
+    const wrap = wrapRef.current
+    if (!wrap) return
+    let lastWidth = 0
+    let lastHeight = 0
+    const syncSize = () => {
+      const rect = wrap.getBoundingClientRect()
+      const width = Math.round(rect.width)
+      const height = Math.round(rect.height)
+      if (!width || !height || (width === lastWidth && height === lastHeight)) return
+      lastWidth = width
+      lastHeight = height
+      setLayoutSize({ width, height })
+    }
+    syncSize()
+    if (typeof ResizeObserver !== 'undefined') {
+      const observer = new ResizeObserver(syncSize)
+      observer.observe(wrap)
+      return () => observer.disconnect()
+    }
+    window.addEventListener('resize', syncSize)
+    return () => window.removeEventListener('resize', syncSize)
+  }, [])
 
   useImperativeHandle(ref, () => ({
     zoomIn: () => {
@@ -181,13 +206,19 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
     const svgEl = svgRef.current
     if (!wrap || !svgEl) return
 
-    const { width, height } = wrap.getBoundingClientRect()
-    const w = Math.max(320, Math.round(width))
-    const h = Math.max(320, Math.round(height))
+    const rect = wrap.getBoundingClientRect()
+    const measuredWidth = layoutSize.width || Math.round(rect.width)
+    const measuredHeight = layoutSize.height || Math.round(rect.height)
+    if (!measuredWidth || !measuredHeight) return
+    const w = Math.max(320, measuredWidth)
+    const h = Math.max(320, measuredHeight)
     const coarsePointer = window.matchMedia?.('(pointer: coarse)').matches ?? false
-    const parkLearnSideDock = view === 'parks' && phase === 'learn' && w >= 700 && w / h > 1.25
+    const parkLearnSideDock = view === 'parks' && phase === 'learn' && w >= 700
     const parkLearnDockWidth = Math.min(330, Math.max(270, w * 0.36))
     const svg = d3.select(svgEl).attr('viewBox', `0 0 ${w} ${h}`)
+    const oldMarks = svgEl.querySelectorAll('*')
+    if (oldMarks.length) gsap.killTweensOf(oldMarks)
+    gsap.killTweensOf(svgEl)
     svg.selectAll('*').remove()
 
     const g = svg.append('g')
@@ -218,7 +249,11 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
       projection.fitExtent([[20, 18], [w - 20, h - 18]], boundsFeature(WORLD_BOUNDS[activeContinent]) as never)
     } else if (isIndiaView) {
       const effectiveParkRegion = activePracticeRegion ?? activeParkRegion
-      const bottomGutter = phase === 'playing' || phase === 'answered' ? 166 : 74
+      const isQuizPhase = phase === 'playing' || phase === 'answered'
+      const shortLandscape = h < 560 && w > h
+      const topGutter = isQuizPhase ? (shortLandscape ? 72 : w < 640 ? 136 : 122) : 32
+      const bottomGutter = isQuizPhase ? (shortLandscape ? 104 : 166) : 74
+      const mapBottom = Math.max(topGutter + 96, h - bottomGutter)
       if (view === 'river-system' && visibleSystemRivers.length) {
         const targetFeature: Feature | null = targetRiver
           ? { type: 'Feature', properties: {}, geometry: targetRiver.geometry }
@@ -229,9 +264,9 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
         }
         const focusGeometry = mode === 'name' && targetFeature && (phase === 'playing' || phase === 'answered')
           ? paddedFeatureBounds(targetFeature, 6.2, 1.1)
-          : systemFeatures
+          : paddedFeatureBounds(systemFeatures, 10, 2)
         projection.fitExtent(
-          [[44, 32], [w - 44, h - bottomGutter]],
+          [[44, topGutter], [w - 44, mapBottom]],
           focusGeometry as never,
         )
       } else if (view === 'parks' && activeStateFeature) {
@@ -239,9 +274,9 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
         projection.fitExtent(
           phase === 'learn'
             ? parkLearnSideDock
-              ? [[36, 112], [w - parkLearnDockWidth - 24, h - 28]]
-              : [[compact ? 24 : 38, compact ? 106 : 104], [w - (compact ? 24 : 38), h - (compact ? 252 : 184)]]
-            : [[30, 34], [w - 30, h - bottomGutter]],
+              ? [[36, 112], [Math.max(260, w - parkLearnDockWidth - 24), Math.max(260, h - 28)]]
+              : [[compact ? 24 : 38, compact ? 106 : 104], [w - (compact ? 24 : 38), Math.max(compact ? 226 : 224, h - (compact ? 252 : 184))]]
+            : [[30, topGutter], [w - 30, mapBottom]],
           paddedFeatureBounds(activeStateFeature) as never,
         )
       } else {
@@ -779,9 +814,18 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
           ease: view === 'parks' ? 'power3.out' : 'expo.out',
           clearProps: 'transform,opacity',
         })
-      gsap.fromTo(svgEl.querySelectorAll('.atlas-country-layer path, .atlas-india-states path, .river-visible, .park-river-visible, .park'),
-        { opacity: 0.74 },
-        { opacity: 1, duration: 0.35, stagger: 0.001, ease: 'power2.out' })
+      const mapMarks = svgEl.querySelectorAll('.atlas-country-layer path, .river-visible, .park-river-visible, .park')
+      if (mapMarks.length) {
+        gsap.fromTo(mapMarks,
+          { opacity: 0.74 },
+          { opacity: 1, duration: 0.35, stagger: 0.001, ease: 'power2.out', clearProps: 'opacity' })
+      }
+      const stateLayer = svgEl.querySelector('.atlas-india-states')
+      if (stateLayer) {
+        gsap.fromTo(stateLayer,
+          { opacity: 0.78 },
+          { opacity: 1, duration: 0.32, ease: 'power2.out', clearProps: 'opacity' })
+      }
       const riversToDraw = svgEl.querySelectorAll('.river-visible')
       riversToDraw.forEach(pathNode => {
         const pathEl = pathNode as SVGPathElement
@@ -831,7 +875,7 @@ export const MapSVG = forwardRef<MapSVGHandle, MapSVGProps>(function MapSVG({
           { filter: 'drop-shadow(0 0 10px rgba(46,117,184,.45))', duration: 0.38, yoyo: true, repeat: 1, ease: 'power2.out' })
       }
     }
-  }, [view, mode, phase, countries, indiaStates, rivers, parks, activeContinent, activeRiverSystem, activeParkRegion, activePracticeRegion, activeParkState, activeParkId, learnRiverNames, activePracticeState, stateName, targetId, chosenId, history, onAnswer, onParkFocus])
+  }, [view, mode, phase, countries, indiaStates, rivers, parks, activeContinent, activeRiverSystem, activeParkRegion, activePracticeRegion, activeParkState, activeParkId, learnRiverNames, activePracticeState, stateName, targetId, chosenId, history, onAnswer, onParkFocus, layoutSize.width, layoutSize.height])
 
   return (
     <div ref={wrapRef} className="atlas-map-canvas">

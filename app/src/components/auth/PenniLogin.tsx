@@ -167,13 +167,6 @@ export function PenniLogin({ onAuthenticated, invitePending = false }: PenniLogi
         </small>
       </section>
 
-      {loading && (
-        <div className="entry-loading" role="status" aria-live="polite">
-          <span className="entry-loading-mark">P<i /></span>
-          <b>Opening Penni</b>
-          <small>Connecting your account…</small>
-        </div>
-      )}
     </main>
   )
 }

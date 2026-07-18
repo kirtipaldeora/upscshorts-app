@@ -70,10 +70,27 @@ source file into the repository.
 
 ## Automation
 
-`.github/workflows/daily-news.yml` runs the pipeline at **06:30 IST** daily
-with `--engine api` and commits the pack; Vercel auto-deploys it. Requires the
-`ANTHROPIC_API_KEY` repo secret (Settings → Secrets → Actions). Manual runs:
-Actions tab → "Daily news pack" → Run workflow (optional date/max overrides).
+Loading-screen case studies have their own deliberately small pipeline:
+`loading-briefs.mjs` reads the publisher-provided The Better India RSS feed on
+the server, selects three to five constructive stories, and writes original
+16–24 word briefs to `app/public/data/loading-briefs/latest.json`. The published
+snapshot retains provenance metadata for validation and auditing, while the
+loading interface only renders the category, title and summary.
+
+`.github/workflows/daily-loading-briefs.yml` runs at **06:30 IST** every day
+and can also be started manually with an optional date and story count. It
+requires the `ANTHROPIC_API_KEY` repository secret. Generated copy is checked
+for schema, length, topic diversity and meaningful source-phrase overlap before
+the file is touched; the workflow validates it again and commits only a real
+JSON change. If RSS, generation or validation fails, the job exits without
+replacing the last known-good snapshot.
+
+Run or verify it locally with:
+
+```bash
+node scripts/news-pipeline/loading-briefs.mjs --engine cli --dry
+node scripts/news-pipeline/loading-briefs.mjs --validate app/public/data/loading-briefs/latest.json
+```
 
 ## In-app source toggles
 

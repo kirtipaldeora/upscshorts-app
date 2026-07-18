@@ -17,13 +17,12 @@ import {
   faPlus,
   faSeedling,
   faWater,
-  faXmark,
 } from '@fortawesome/free-solid-svg-icons'
 import type { Feature, FeatureCollection, Geometry } from 'geojson'
 import type { Topology } from 'topojson-specification'
 import { useAppStore } from '@/stores/useAppStore'
 import { usePracticeStore } from '@/stores/usePracticeStore'
-import { PenniLoader } from '@/components/layout/PenniLoader'
+import { LoadingBadge } from '@/components/layout/LoadingBadge'
 import { asset } from '@/utils/asset'
 import { EASE, gsap, reducedMotion } from '@/anim/animations'
 import type {
@@ -759,7 +758,6 @@ function loadRiverGeometry(
 }
 
 export function MapsArcade() {
-  const setOverlay = useAppStore(s => s.setOverlay)
   const overlayScreen = useAppStore(s => s.overlayScreen)
   const goBackScreen = useAppStore(s => s.goBack)
   const recordArcadeAnswer = usePracticeStore(s => s.recordArcadeAnswer)
@@ -859,7 +857,7 @@ export function MapsArcade() {
     if (!root || reducedMotion()) return
     const ctx = gsap.context(() => {
       gsap.fromTo('.atlas-topbar', { opacity: 0, y: -12 }, { opacity: 1, y: 0, duration: 0.42, ease: EASE.out, clearProps: 'transform,opacity' })
-      gsap.fromTo('.atlas-stage', { opacity: 0, scale: 0.985 }, { opacity: 1, scale: 1, duration: 0.58, delay: 0.06, ease: EASE.out, clearProps: 'transform,opacity' })
+      gsap.fromTo('.atlas-stage', { opacity: 0 }, { opacity: 1, duration: 0.48, delay: 0.04, ease: EASE.out, clearProps: 'opacity' })
     }, root)
     return () => { ctx.revert() }
   }, [])
@@ -869,11 +867,14 @@ export function MapsArcade() {
     if (!panel || reducedMotion()) return
     const ctx = gsap.context(() => {
       gsap.fromTo(panel, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.32, ease: EASE.out, clearProps: 'transform,opacity' })
-      gsap.fromTo(
-        panel.querySelectorAll('.atlas-india-card, .atlas-park-card, .atlas-park-overview, .atlas-park-learn-toolbar, .atlas-park-lesson-title, .atlas-park-lesson-context>div, .atlas-park-lesson-actions'),
-        { opacity: 0, y: 14, scale: 0.98 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.36, stagger: 0.035, delay: 0.05, ease: EASE.out, clearProps: 'transform,opacity' },
-      )
+      const items = panel.querySelectorAll('.atlas-home-grid button, .atlas-india-card, .atlas-park-card, .atlas-park-overview, .atlas-park-learn-toolbar, .atlas-park-lesson-title, .atlas-park-lesson-context>div, .atlas-park-lesson-actions')
+      if (items.length) {
+        gsap.fromTo(
+          items,
+          { opacity: 0, y: 14, scale: 0.98 },
+          { opacity: 1, y: 0, scale: 1, duration: 0.36, stagger: 0.035, delay: 0.05, ease: EASE.out, clearProps: 'transform,opacity' },
+        )
+      }
     }, panel)
     return () => { ctx.revert() }
   }, [state.screen, state.qIndex, state.chosenId, state.parkLearnState, state.parkLearnParkId])
@@ -935,17 +936,21 @@ export function MapsArcade() {
   const activePracticeState = state.screen === 'play' && state.category === 'parks' && phase === 'answered' && state.target?.state
     ? normalizeStateName(state.target.state)
     : null
+  // World Mapping keeps its globe as the spatial backdrop and loading
+  // experience; browse/setup screens mute it behind their controls.
   const useWorldGlobe = state.app === 'world' && (
     currentView === 'world' || currentView === 'continent' || currentView === 'world-physical'
   )
   const activeDataReady = state.app === null
     || (state.app === 'world' ? Boolean(worldData) : Boolean(worldData && indiaData))
-  const showIndiaMap = state.app === 'india' && activeDataReady
+  const showIndiaMap = state.app === 'india' && activeDataReady && (
+    state.screen === 'play' || state.screen === 'park-learn'
+  )
   const showMapControls = showIndiaMap && (state.screen === 'play' || state.screen === 'park-learn')
   const blockingDataError = dataError && (
     !activeDataReady || (needsPhysicalData && !physicalFeatures.length)
   )
-  const mapObscured = overlayScreen !== null && overlayScreen !== 'maps-arcade'
+  const mapObscured = overlayScreen !== null
   const physicalKind = state.category === 'world-rivers'
     ? 'river'
     : state.category === 'mountains'
@@ -1271,8 +1276,7 @@ export function MapsArcade() {
 
   function goBack() {
     if (state.screen === 'home') {
-      if (overlayScreen === 'maps-arcade') setOverlay(null)
-      else goBackScreen('feed')
+      goBackScreen('feed')
       return
     }
     if (state.screen === 'play' || state.screen === 'results') {
@@ -1734,16 +1738,25 @@ export function MapsArcade() {
     const comboPct = Math.min(state.streak, 12) / 12 * 100
     return (
       <>
-        <div ref={panelRef} className={`atlas-question ${hist ? (hist.correct ? 'ok' : 'no') : ''}`}>
-          <div>
-            <span>{state.mode === 'locate' ? (state.category === 'parks' ? 'Select the state/UT' : 'Find on the map') : 'Name the highlighted feature'}</span>
-            <h3>{state.mode === 'locate' || state.category === 'parks' ? state.target.name : activeTopic}</h3>
-            {state.target.region && state.category !== 'parks' && <p>{state.target.region}</p>}
+        <div className="atlas-question-stack">
+          <div ref={panelRef} className={`atlas-question ${hist ? (hist.correct ? 'ok' : 'no') : ''}`}>
+            <div>
+              <span>{state.mode === 'locate' ? (state.category === 'parks' ? 'Select the state/UT' : 'Find on the map') : 'Name the highlighted feature'}</span>
+              <h3>{state.mode === 'locate' || state.category === 'parks' ? state.target.name : activeTopic}</h3>
+              {state.target.region && state.category !== 'parks' && <p>{state.target.region}</p>}
+            </div>
+            <div className="atlas-combo">
+              <b>x{multiplier(state.streak)}</b>
+              <i><strong style={{ width: `${comboPct}%` }} /></i>
+            </div>
           </div>
-          <div className="atlas-combo">
-            <b>x{multiplier(state.streak)}</b>
-            <i><strong style={{ width: `${comboPct}%` }} /></i>
-          </div>
+
+          {targetSource && hist && (
+            <div className="atlas-source-card">
+              <FontAwesomeIcon icon={faMountainSun} />
+              <span><b>{targetSource.name}</b><i>{targetSource.place}</i></span>
+            </div>
+          )}
         </div>
 
         {state.mode === 'name' && (
@@ -1763,13 +1776,6 @@ export function MapsArcade() {
                 </button>
               )
             })}
-          </div>
-        )}
-
-        {targetSource && hist && (
-          <div className="atlas-source-card">
-            <FontAwesomeIcon icon={faMountainSun} />
-            <span><b>{targetSource.name}</b><i>{targetSource.place}</i></span>
           </div>
         )}
 
@@ -1822,7 +1828,7 @@ export function MapsArcade() {
       )
     }
     if (loadingApp || !activeDataReady || (needsPhysicalData && (physicalLoading || !physicalFeatures.length))) {
-      return <PenniLoader label={state.app === 'india' ? 'Preparing India maps' : 'Preparing world maps'} full />
+      return <LoadingBadge label={state.app === 'india' ? 'Preparing India maps' : 'Preparing world maps'} full delayed={false} />
     }
     if (!loaded) return <div className="atlas-loading">Map data could not be loaded.</div>
     if (state.screen === 'world-home') return renderWorldHome()
@@ -1840,12 +1846,15 @@ export function MapsArcade() {
   }
 
   return (
-    <div ref={rootRef} className="atlas-screen">
+    <div
+      ref={rootRef}
+      className={`atlas-screen atlas-screen-${state.screen} ${state.app ? `atlas-screen-${state.app}` : ''} ${useWorldGlobe ? 'atlas-screen-globe' : ''} ${showIndiaMap ? 'atlas-screen-map' : ''}`}
+    >
       <div className="atlas-topbar">
         <button onClick={goBack} aria-label="Back">
-          <FontAwesomeIcon icon={state.screen === 'home' ? faXmark : faArrowLeft} />
+          <FontAwesomeIcon icon={faArrowLeft} />
         </button>
-        <div>
+        <div className="atlas-topbar-title">
           <span>{state.app === 'india' ? 'India Map Quiz' : state.app === 'world' ? 'World Map Quiz' : 'Maps Practice'}</span>
           <h2>{activeTopic}</h2>
         </div>
@@ -1858,8 +1867,18 @@ export function MapsArcade() {
       </div>
 
       <div className={`atlas-stage ${state.screen === 'home' ? 'atlas-stage-home' : ''} ${useWorldGlobe ? 'atlas-stage-globe' : ''} ${state.screen === 'park-learn' ? 'atlas-stage-park-learn' : ''}`}>
+        {state.screen === 'home' && (
+          <div className="atlas-home-solar" aria-hidden="true">
+            <span className="atlas-home-sun" />
+            <span className="atlas-home-orbit atlas-home-orbit-one"><i /></span>
+            <span className="atlas-home-orbit atlas-home-orbit-two"><i /></span>
+            <span className="atlas-home-orbit atlas-home-orbit-three"><i /></span>
+            <span className="atlas-home-orbit atlas-home-orbit-four"><i /></span>
+          </div>
+        )}
+
         {loaded && useWorldGlobe && activeDataReady ? (
-          <Suspense fallback={<PenniLoader label="Spinning up globe" full />}>
+          <Suspense fallback={<LoadingBadge label="Spinning up globe" full />}>
             <AtlasGlobe
               view={currentView}
               mode={state.mode}
@@ -1875,7 +1894,7 @@ export function MapsArcade() {
             />
           </Suspense>
         ) : showIndiaMap && loaded && (
-          <Suspense fallback={<PenniLoader label="Drawing India maps" full />}>
+          <Suspense fallback={null}>
             <MapSVG
               ref={mapRef}
               view={currentView}

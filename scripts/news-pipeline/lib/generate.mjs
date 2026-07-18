@@ -66,6 +66,7 @@ Return ONLY a JSON object with EXACTLY these fields:
   "source": "${composeSourceLabel(cluster.members)}",
   "category": one of ${JSON.stringify(CATEGORIES)},
   "gsPaper": "GS 1" | "GS 2" | "GS 3" | "GS 4",
+  "globalNews": true | false,
   "summary": "2-3 sentence factual summary",
   "whyItMatters": "2-3 sentences on why a UPSC aspirant must care",
   "deepDive": {
@@ -89,7 +90,7 @@ Return ONLY a JSON object with EXACTLY these fields:
   "audioScriptHi": "the same explanation in natural Hinglish (Latin script), 300-450 words, not a literal translation",
   "prelimsQs": [two UPSC-standard questions per the guidelines: {"q","options"(4),"answer"(0-indexed),"explanation","ref"}],
   "keyTerms": [4-7 key terms],
-  "location": {"lat": number, "lon": number, "place": "most relevant place for the news globe"}
+  "location": {"lat": number, "lon": number, "place": "most relevant place for the news globe", "countryCode": "ISO 3166-1 alpha-2 code"}
 }
 
 === DEEP DIVE QUALITY BAR ===
@@ -113,6 +114,9 @@ HINDI TRANSLATION RULES:
 - This Hindi study note is separate from audioScriptHi, which should remain naturally spoken Hinglish in Latin script.
 
 HARD RULES:
+- globalNews is an editorial inclusion flag for the strictly International Relations Global News section. Set it to true only when category is "International Relations" and the story is internationally consequential diplomacy, geopolitics, a treaty, conflict, multilateral action or a global-order development. Set it to false for domestic-only stories, including stories where foreign names or places are merely incidental.
+- For a bilateral India–X Global News story, anchor location in X, the foreign counterpart — never default to New Delhi or India. For a multilateral or conflict story, anchor the actual overseas venue, affected region or principal foreign focal point. Use India only when an internationally consequential event physically occurs there and India is the essential venue.
+- location.countryCode must be the ISO 3166-1 alpha-2 code for that anchor. Examples: an India–U.S. story uses US; India–Japan uses JP; a Strait of Hormuz event uses the country code of the specific event anchor identified by the source.
 - Do not create any additional section names.
 - Do not use phrases such as "UPSC lens", "editorial briefing", "interlinkages", "prelims nuggets", "mains framework", "memory aid" or "things not mentioned".
 - Remove jargon where plain English works. If a technical term is essential, define it in keyConcepts.
@@ -285,9 +289,11 @@ function prelimsQuestionProblems(q, index) {
 
 function validateArticle(a) {
   const problems = []
-  for (const k of ['id', 'headline', 'date', 'source', 'category', 'gsPaper', 'summary', 'whyItMatters', 'deepDive', 'audioScript', 'audioScriptHi', 'prelimsQs', 'keyTerms', 'location']) {
+  for (const k of ['id', 'headline', 'date', 'source', 'category', 'gsPaper', 'globalNews', 'summary', 'whyItMatters', 'deepDive', 'audioScript', 'audioScriptHi', 'prelimsQs', 'keyTerms', 'location']) {
     if (a?.[k] === undefined || a[k] === null || a[k] === '') problems.push(`missing ${k}`)
   }
+  if (typeof a?.globalNews !== 'boolean') problems.push('globalNews must be a boolean')
+  if (a?.globalNews === true && a.category !== 'International Relations') problems.push('globalNews can only be true for International Relations articles')
   if (a?.deepDive) {
     problems.push(...deepDiveProblems(a.deepDive))
     const q = a.deepDive.possibleMainsQuestion || ''
@@ -311,6 +317,7 @@ function validateArticle(a) {
     if (formats.length === a.prelimsQs.length && new Set(formats).size < 2) problems.push('the two prelims questions must use different UPSC formats')
   } else problems.push('prelimsQs not an array')
   if (a?.location && (typeof a.location.lat !== 'number' || typeof a.location.lon !== 'number')) problems.push('bad location')
+  if (a?.location && !/^[A-Z]{2}$/.test(a.location.countryCode || '')) problems.push('location.countryCode must be an ISO alpha-2 code')
   return problems
 }
 

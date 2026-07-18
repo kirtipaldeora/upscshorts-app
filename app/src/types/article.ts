@@ -62,6 +62,8 @@ export interface Article {
   source: string
   category: Category
   gsPaper: GsPaper
+  /** Editorial Global News inclusion flag; omitted legacy articles fall back to their IR category. */
+  globalNews?: boolean
   summary: string
   whyItMatters: string
   hindi?: {
@@ -82,6 +84,8 @@ export interface GeoLocation {
   lat: number
   lon: number
   place: string
+  /** ISO 3166-1 alpha-2 code used to anchor bilateral Global News stories. */
+  countryCode?: string
 }
 
 // ─── Data shape returned by per-date JSON files ───────────────

@@ -116,7 +116,7 @@ export function BottomNav() {
       className="bottom-nav-motion"
       style={{
         position: 'absolute',
-        bottom: 'calc(16px + env(safe-area-inset-bottom))',
+        bottom: 'var(--app-bottom-nav-edge)',
         left: '50%',
         transform: 'translateX(-50%)',
         display: 'flex',
@@ -146,7 +146,7 @@ export function BottomNav() {
               minWidth: 0,
               flex: '1 1 0',
               maxWidth: 62,
-              height: 58,
+              height: 'var(--app-bottom-nav-height)',
               borderRadius: 18,
               display: 'flex',
               flexDirection: 'column',

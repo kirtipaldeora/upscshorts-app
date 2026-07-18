@@ -82,6 +82,15 @@ export default defineConfig({
             },
           },
           {
+            urlPattern: /\/loading-briefs\/latest\.json$/,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'daily-loading-briefs',
+              expiration: { maxEntries: 2 },
+              networkTimeoutSeconds: 3,
+            },
+          },
+          {
             urlPattern: /\/data\/(countries|india-(?:rivers|national|states)|pyq).+/,
             handler: 'NetworkFirst',
             options: {

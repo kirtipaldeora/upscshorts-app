@@ -14,18 +14,16 @@ export type Screen =
   | 'maps'
   | 'settings'
 
-export type ViewMode = 'deck' | 'list'
+export type ViewMode = 'global' | 'deck' | 'list'
 export type SourceFocus = null | 'hindu' | 'ie' | 'pib' | 'govt'
 
 export type OverlayScreen =
   | null
   | 'deep-dive'
-  | 'maps-arcade'
   | 'pyq-vault'
   | 'upload'
   | 'digest'
   | 'mains'
-  | 'news-globe'
 
 interface AppStore {
   // ─── Articles ───────────────────────────────────────────────
@@ -112,13 +110,8 @@ export const useAppStore = create<AppStore>()((set, get) => ({
   // Feed state
   selectedDate: TODAY,
   setSelectedDate: (d) => set({ selectedDate: d, gsFocus: null }),
-  viewMode: (localStorage.getItem('u4view') as ViewMode) || 'deck',
-  setViewMode: (v) => {
-    try {
-      localStorage.setItem('u4view', v)
-    } catch { /* noop */ }
-    set({ viewMode: v })
-  },
+  viewMode: 'deck',
+  setViewMode: (v) => set({ viewMode: v }),
   categoryFilter: null,
   setCategoryFilter: (c) => set({ categoryFilter: c }),
 

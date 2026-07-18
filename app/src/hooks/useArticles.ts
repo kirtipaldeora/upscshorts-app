@@ -32,7 +32,7 @@ function saveToLS(data: ArticlesByDate) {
  */
 export function useArticles(date: string) {
   const { mergeArticles } = useAppStore()
-  const [loading, setLoading] = useState(false)
+  const [loadingDate, setLoadingDate] = useState<string | null>(() => date || null)
   const [error, setError] = useState<string | null>(null)
   const hydrated = useRef(false)
   const fetchedDates = useRef(new Set<string>())
@@ -60,7 +60,7 @@ export function useArticles(date: string) {
     fetchedDates.current.add(date)
 
     const controller = new AbortController()
-    setLoading(true)
+    setLoadingDate(date)
     setError(null)
 
     const fetchArticles = (targetDate: string) =>
@@ -74,12 +74,18 @@ export function useArticles(date: string) {
         saveToLS(updated)
       })
       .catch((e: Error) => {
-        if (e.name !== 'AbortError') setError(e.message)
+        if (e.name === 'AbortError') fetchedDates.current.delete(date)
+        else setError(e.message)
       })
-      .finally(() => setLoading(false))
+      .finally(() => setLoadingDate(current => current === date ? null : current))
 
     return () => controller.abort()
   }, [date, mergeArticles])
 
+  // A newly selected date is loading immediately, including the frame before
+  // its effect starts. Cached articles can still render while they refresh.
+  const loading = Boolean(date) && (
+    loadingDate === date || !fetchedDates.current.has(date)
+  )
   return { loading, error }
 }

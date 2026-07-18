@@ -7,6 +7,7 @@ import {
   faBookOpen,
   faBullseye,
   faCheck,
+  faCircleNotch,
   faClock,
   faDumbbell,
   faEarthAsia,
@@ -654,10 +655,15 @@ export function StudentProfileForm({ onComplete }: StudentProfileFormProps) {
         ) : <span className="onboarding-back-spacer" />}
         <div className="onboarding-footer-actions">
           <button type="button" className="onboarding-next" onClick={next} disabled={loading || submitting || transitioning || (mode === 'setup' && setupStep === 0 && !usernameReady)}>
-            {mode === 'setup'
-              ? setupStep === 2 ? 'Preview Penni' : 'Continue'
-              : tourIndex === TOUR_FEATURES.length - 1 ? 'Start learning' : 'Next feature'}
-            <FontAwesomeIcon icon={mode === 'tour' && tourIndex === TOUR_FEATURES.length - 1 ? faCheck : faArrowRight} />
+            {loading || submitting
+              ? 'Saving…'
+              : mode === 'setup'
+                ? setupStep === 2 ? 'Preview Penni' : 'Continue'
+                : tourIndex === TOUR_FEATURES.length - 1 ? 'Start learning' : 'Next feature'}
+            <FontAwesomeIcon
+              icon={loading || submitting ? faCircleNotch : mode === 'tour' && tourIndex === TOUR_FEATURES.length - 1 ? faCheck : faArrowRight}
+              spin={loading || submitting}
+            />
           </button>
           {mode === 'setup' && setupStep === 2 && (
             <button type="button" className="onboarding-skip-tour" onClick={() => void finish()} disabled={loading || submitting || transitioning}>Save &amp; skip tour</button>
@@ -665,11 +671,6 @@ export function StudentProfileForm({ onComplete }: StudentProfileFormProps) {
         </div>
       </footer>
 
-      {(loading || submitting) && (
-        <div className="onboarding-saving" role="status" aria-live="polite">
-          <span>P<i /></span><b>Saving your Penni</b><small>Just a moment…</small>
-        </div>
-      )}
     </main>
   )
 }

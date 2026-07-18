@@ -1,26 +1,34 @@
 import { useEffect, useState } from 'react'
-import { PenniLoader } from './PenniLoader'
+import { DailyCaseStudyLoader } from './DailyCaseStudyLoader'
 
 interface SplashScreenProps {
+  prepare: () => Promise<void>
   onDone: () => void
 }
 
-export function SplashScreen({ onDone }: SplashScreenProps) {
+export function SplashScreen({ prepare, onDone }: SplashScreenProps) {
   const [exiting, setExiting] = useState(false)
 
   useEffect(() => {
-    // Show splash for 1.6s (matching original), then animate exit
-    const timer = setTimeout(() => {
+    let active = true
+    let exitTimer: number | undefined
+
+    // This exists only for real startup work; there is no artificial wait.
+    void prepare().catch(() => undefined).then(() => {
+      if (!active) return
       setExiting(true)
-      // Wait for exit animation (0.5s) before calling onDone
-      setTimeout(onDone, 500)
-    }, 1600)
-    return () => clearTimeout(timer)
-  }, [onDone])
+      exitTimer = window.setTimeout(onDone, 500)
+    })
+
+    return () => {
+      active = false
+      if (exitTimer !== undefined) window.clearTimeout(exitTimer)
+    }
+  }, [onDone, prepare])
 
   return (
     <div id="splash" className={exiting ? 'exit' : ''}>
-      <PenniLoader label="Preparing your briefing" full />
+      <DailyCaseStudyLoader label="Preparing today’s briefing" full />
     </div>
   )
 }

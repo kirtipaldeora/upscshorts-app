@@ -3,7 +3,6 @@ import {
   faArrowLeft,
   faBookmark,
   faFileImport,
-  faMapLocationDot,
 } from '@fortawesome/free-solid-svg-icons'
 import { useAppStore } from '@/stores/useAppStore'
 import { useAuthStore } from '@/stores/useAuthStore'
@@ -17,7 +16,7 @@ interface TopBarProps {
 }
 
 export function TopBar({ showBack, onBack, onOpenUpload }: TopBarProps) {
-  const { setScreen, setOverlay, categoryFilter, setCategoryFilter } = useAppStore()
+  const { setScreen, categoryFilter, setCategoryFilter } = useAppStore()
   const { profile, user } = useAuthStore()
 
   function handleBack() {
@@ -124,28 +123,6 @@ export function TopBar({ showBack, onBack, onOpenUpload }: TopBarProps) {
           }}
         >
           <FontAwesomeIcon icon={faBookmark} />
-        </button>
-        <button
-          onClick={() => setOverlay('news-globe')}
-          aria-label="Open News Globe"
-          className="glass-icon-btn top-maps-button"
-          style={{
-            width: 42,
-            height: 42,
-            borderRadius: 15,
-            border: '1px solid var(--panel-border)',
-            background: 'var(--panel)',
-            backdropFilter: 'blur(16px)',
-            color: 'var(--on)',
-            fontSize: 15,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.2s',
-          }}
-        >
-          <FontAwesomeIcon icon={faMapLocationDot} />
         </button>
         <button
           onClick={() => setScreen('profile')}

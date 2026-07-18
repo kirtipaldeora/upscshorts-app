@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef, lazy, Suspense } from 'react'
 import { SplashScreen } from '@/components/layout/SplashScreen'
 import { BottomNav } from '@/components/layout/BottomNav'
-import { PenniLoader } from '@/components/layout/PenniLoader'
+import { LoadingBadge } from '@/components/layout/LoadingBadge'
 import { FeedScreen } from '@/components/feed/FeedScreen'
 import { PenniLogin } from '@/components/auth/PenniLogin'
 import { StudentProfileForm } from '@/components/auth/StudentProfileForm'
@@ -34,7 +34,6 @@ const SettingsScreen = lazy(() => import('@/components/settings/SettingsScreen')
 const DeepDive = lazy(() => import('@/components/deep-dive/DeepDive').then(module => ({ default: module.DeepDive })))
 const Digest = lazy(() => import('@/components/feed/Digest').then(module => ({ default: module.Digest })))
 const ImportSheet = lazy(() => import('@/components/upload/ImportSheet').then(module => ({ default: module.ImportSheet })))
-const NewsGlobe = lazy(() => import('@/components/news-globe/NewsGlobe'))
 const MapsArcade = lazy(() => import('@/components/maps-arcade/MapsArcade').then(module => ({ default: module.MapsArcade })))
 const PYQVault = lazy(() => import('@/components/pyq-vault/PYQVault').then(module => ({ default: module.PYQVault })))
 const MainsScreen = lazy(() => import('@/components/practice/MainsScreen').then(module => ({ default: module.MainsScreen })))
@@ -80,6 +79,7 @@ export default function App() {
   const [streakRecoveryOpen, setStreakRecoveryOpen] = useState(false)
   const [streakCelebrationOpen, setStreakCelebrationOpen] = useState(false)
   const streakOpeningChecked = useRef(false)
+  const splashBootstrapRef = useRef<Promise<void> | null>(null)
   const { activeScreen, overlayScreen, setOverlay, setScreen, goBack } = useAppStore()
   const { user, profile, isGuest, ready: authReady, bootstrap } = useAuthStore()
   const { settings, stats } = usePracticeStore()
@@ -142,10 +142,14 @@ export default function App() {
     useFocusStore.getState().updateSettings({ soundsEnabled: enabled })
   }, [])
 
-  const handleSplashDone = useCallback(async () => {
-    await bootstrap()
-    setPhase(phaseForCurrentAccount())
+  const prepareSplash = useCallback(() => {
+    if (!splashBootstrapRef.current) splashBootstrapRef.current = bootstrap()
+    return splashBootstrapRef.current
   }, [bootstrap])
+
+  const handleSplashDone = useCallback(() => {
+    setPhase(phaseForCurrentAccount())
+  }, [])
 
   const handleAuthenticated = useCallback(() => {
     setPhase(phaseForCurrentAccount())
@@ -233,7 +237,7 @@ export default function App() {
   }, [bootstrap])
 
   if (phase === 'splash') {
-    return <SplashScreen onDone={handleSplashDone} />
+    return <SplashScreen prepare={prepareSplash} onDone={handleSplashDone} />
   }
 
   if (phase === 'auth' || (!user && !isGuest)) {
@@ -288,26 +292,25 @@ export default function App() {
           {activeScreen === 'feed' && (
             <FeedScreen
               onShowToast={showToast}
-              onOpenUpload={() => setUploadVisible(true)}
             />
           )}
           {activeScreen === 'revise' && (
-            <Suspense fallback={<PenniLoader label="Opening revision" full />}>
+            <Suspense fallback={null}>
               <ReviseScreen />
             </Suspense>
           )}
           {activeScreen === 'search' && (
-            <Suspense fallback={<PenniLoader label="Opening search" full />}>
+            <Suspense fallback={null}>
               <SearchScreen />
             </Suspense>
           )}
           {activeScreen === 'bookmarks' && (
-            <Suspense fallback={<PenniLoader label="Opening bookmarks" full />}>
+            <Suspense fallback={null}>
               <BookmarksScreen onShowToast={showToast} />
             </Suspense>
           )}
           {activeScreen === 'practice' && (
-            <Suspense fallback={<PenniLoader label="Preparing practice" full />}>
+            <Suspense fallback={null}>
               <PracticeScreen
                 onShowToast={showToast}
                 onOpenPYQ={() => setOverlay('pyq-vault')}
@@ -316,7 +319,7 @@ export default function App() {
             </Suspense>
           )}
           {activeScreen === 'profile' && (
-            <Suspense fallback={<PenniLoader label="Opening profile" full />}>
+            <Suspense fallback={null}>
               <ProfileScreen
                 onOpenSettings={() => setScreen('settings')}
                 onOpenMainsRecord={(rec) => setMainsRecordOpen(rec)}
@@ -325,17 +328,17 @@ export default function App() {
             </Suspense>
           )}
           {activeScreen === 'maps' && (
-            <Suspense fallback={<PenniLoader label="Loading map practice" full />}>
+            <Suspense fallback={<LoadingBadge label="Opening maps" full />}>
               <MapsArcade />
             </Suspense>
           )}
           {activeScreen === 'focus' && (
-            <Suspense fallback={<PenniLoader label="Opening Focus" full />}>
+            <Suspense fallback={<LoadingBadge label="Opening Focus" full />}>
               <FocusExperience runtime={focusRuntime} onShowToast={showToast} />
             </Suspense>
           )}
           {activeScreen === 'settings' && (
-            <Suspense fallback={<PenniLoader label="Opening settings" full />}>
+            <Suspense fallback={null}>
               <SettingsScreen
                 onClose={() => goBack('profile')}
                 onShowToast={showToast}
@@ -346,50 +349,36 @@ export default function App() {
         </div>
 
         {/* Bottom navigation is reserved for the five core study areas. */}
-        {(['feed', 'revise', 'maps', 'focus', 'practice'] as const).includes(activeScreen as 'feed' | 'revise' | 'maps' | 'focus' | 'practice') && <BottomNav />}
+        {(['feed', 'revise', 'focus', 'practice'] as const).includes(activeScreen as 'feed' | 'revise' | 'focus' | 'practice') && <BottomNav />}
       </div>
 
       {/* ── Overlay screens (slide over the main app) ── */}
 
       {/* Deep Dive */}
       {overlayScreen === 'deep-dive' && (
-        <Suspense fallback={<PenniLoader label="Opening Deep Dive" full />}>
+        <Suspense fallback={<LoadingBadge label="Opening Deep Dive" full />}>
           <DeepDive onShowToast={showToast} />
         </Suspense>
       )}
 
       {/* Daily Digest */}
       {overlayScreen === 'digest' && (
-        <Suspense fallback={<PenniLoader label="Preparing digest" full />}>
+        <Suspense fallback={null}>
           <Digest />
-        </Suspense>
-      )}
-
-      {/* News Globe (3D world) */}
-      {overlayScreen === 'news-globe' && (
-        <Suspense fallback={<PenniLoader label="Opening News Globe" full />}>
-          <NewsGlobe />
         </Suspense>
       )}
 
       {/* PYQ Vault */}
       {overlayScreen === 'pyq-vault' && (
-        <Suspense fallback={<PenniLoader label="Opening PYQ Vault" full />}>
+        <Suspense fallback={<LoadingBadge label="Opening PYQ Vault" full />}>
           <PYQVault />
-        </Suspense>
-      )}
-
-      {/* Maps Arcade overlay entry, used from Revise and other cards */}
-      {overlayScreen === 'maps-arcade' && (
-        <Suspense fallback={<PenniLoader label="Loading map practice" full />}>
-          <MapsArcade />
         </Suspense>
       )}
 
       {/* Mains Screen */}
       {overlayScreen === 'mains' && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 500 }}>
-          <Suspense fallback={<PenniLoader label="Opening Mains" full />}>
+          <Suspense fallback={null}>
             <MainsScreen
               onClose={() => setOverlay(null)}
               onShowToast={showToast}
@@ -404,7 +393,7 @@ export default function App() {
 
       {/* Import sheet */}
       {uploadVisible && (
-        <Suspense fallback={<PenniLoader label="Opening import" full />}>
+        <Suspense fallback={null}>
           <ImportSheet
             visible={uploadVisible}
             onClose={() => setUploadVisible(false)}

@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "date": "2026-07-18",
+  "generatedAt": "2026-07-18T14:30:00.000Z",
+  "briefs": [
+    {
+      "id": "tbi-mango-grafting-11-varieties",
+      "title": "Eleven harvests from one tree",
+      "summary": "After retirement, a Lucknow gardener grafted eleven mango varieties onto one mature tree, using a single root system to preserve diversity in limited space.",
+      "category": "Horticulture",
+      "sourceUrl": "https://thebetterindia.com/farming/anup-kumar-bajpai-11-mango-varieties-one-tree-grafting-experiment-lucknow-childhood-village-memories-12173132",
+      "publishedAt": "2026-07-17T14:00:37.000Z"
+    },
+    {
+      "id": "tbi-mango-seed-orchards",
+      "title": "Discarded mango stones become orchards",
+      "summary": "A collector gathered eleven lakh discarded mango stones and routed them to farmers, turning seasonal waste into affordable planting material for future orchards.",
+      "category": "Community collection",
+      "sourceUrl": "https://thebetterindia.com/web-stories/farming/gutli-man-india-mango-seeds-helping-farmers-grow-orchards-12174116",
+      "publishedAt": "2026-07-18T03:30:37.000Z"
+    },
+    {
+      "id": "tbi-ganga-conservation-agarwal",
+      "title": "A scientist’s river commitment",
+      "summary": "Former IIT professor G. D. Agarwal paired scientific advocacy with a 111-day fast, keeping stronger protection for the Ganga in public debate.",
+      "category": "River conservation",
+      "sourceUrl": "https://thebetterindia.com/videos/the-man-who-fasted-111-days-to-save-the-ganga-12175254",
+      "publishedAt": "2026-07-18T03:30:14.000Z"
+    },
+    {
+      "id": "tbi-finland-schools",
+      "title": "Schools designed around childhood",
+      "summary": "Finland combines later formal schooling, shorter days, play and early support, showing that childhood wellbeing can strengthen rather than weaken serious learning.",
+      "category": "Education design",
+      "sourceUrl": "https://thebetterindia.com/videos/knowledge/why-finland-has-the-worlds-best-education-system-12174512",
+      "publishedAt": "2026-07-17T14:38:34.000Z"
+    }
+  ]
+}
